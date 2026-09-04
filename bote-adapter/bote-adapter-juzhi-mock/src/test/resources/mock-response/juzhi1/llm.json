@@ -1,0 +1,24 @@
+{
+  "result": {
+    "ROOT": {
+      "HEADER": {},
+      "BODY": {
+        "RETURN_MSG": "success",
+        "RETURN_CODE": "0",
+        "USER_MSG": "success",
+        "DETAIL_MSG": "success",
+        "OUT_DATA": {
+          "TRANS_IDO_TIME": "20250520103815990",
+          "OPR_RESULT": "200",
+          "MESSAGE_ID": "43100770120250520103815000428",
+          "TRANS_IDH": "232a4497cff4455db15669a45eb29b05",
+          "RESULT_DESC": "请求成功",
+          "RES": "{\"role\": \"assistant\", \"content\": \"周星驰，1962年6月22日出生于中国香港，是一位著名的电影演员、导演、编剧及制片人\"}",
+          "TRANS_IDH_TIME": "20250520103752"
+        }
+      }
+    }
+  },
+  "respDesc": "Success",
+  "respCode": "00000"
+}

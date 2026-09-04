@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptStatsMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptStatsEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="pending_cnt" property="pendingCnt" jdbcType="INTEGER"/>
+    <result column="success_cnt" property="successCnt" jdbcType="INTEGER"/>
+    <result column="fail_cnt" property="failCnt" jdbcType="INTEGER"/>
+    <result column="credit_cost" property="creditCost" jdbcType="DECIMAL"/>
+    <result column="input_token_cost" property="inputTokenCost" jdbcType="BIGINT"/>
+    <result column="output_token_cost" property="outputTokenCost" jdbcType="BIGINT"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="processing_cnt" property="processingCnt" jdbcType="INTEGER"/>
+    <result column="terminated_cnt" property="terminatedCnt" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, pending_cnt, success_cnt, fail_cnt, credit_cost,
+    input_token_cost, output_token_cost, created_at, updated_at, deleted_at,
+    processing_cnt, terminated_cnt
+  </sql>
+
+  <!-- 创建实验统计 -->
+  <insert id="create" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptStatsEntity" >
+    INSERT INTO bt_expt_stats (
+    id, space_id, expt_id, pending_cnt, success_cnt, fail_cnt, credit_cost,
+    input_token_cost, output_token_cost, created_at, updated_at, deleted_at,
+    processing_cnt, terminated_cnt
+    ) VALUES (
+    #{id}, #{spaceId}, #{exptId}, #{pendingCnt}, #{successCnt}, #{failCnt}, #{creditCost},
+    #{inputTokenCost}, #{outputTokenCost}, #{createdAt}, #{updatedAt}, #{deletedAt},
+    #{processingCnt}, #{terminatedCnt}
+    )
+  </insert>
+
+  <!-- 获取实验统计 -->
+  <select id="get" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_stats
+    WHERE expt_id = #{exptId}
+    AND space_id = #{spaceId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 批量获取实验统计 -->
+  <select id="mGet" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_stats
+    WHERE expt_id IN
+    <foreach collection="exptIds" item="exptId" open="(" separator="," close=")">
+      #{exptId}
+    </foreach>
+    AND space_id = #{spaceId}
+  </select>
+
+  <!-- 根据实验ID更新统计 -->
+  <update id="updateByExptId">
+    UPDATE bt_expt_stats
+    SET processing_cnt = #{stats.processingCnt},
+    pending_cnt = #{stats.pendingCnt},
+    success_cnt = #{stats.successCnt},
+    fail_cnt = #{stats.failCnt},
+    terminated_cnt = #{stats.terminatedCnt}
+    WHERE expt_id = #{exptId}
+    AND space_id = #{spaceId}
+  </update>
+
+  <!-- 算术操作计数 -->
+  <update id="arithOperateCount">
+    UPDATE bt_expt_stats
+    <set>
+      <foreach collection="cntArithOp.opStatusCnt" index="status" item="opCnt" separator=",">
+        <choose>
+          <when test="status.name() == 'QUEUEING'">
+            pending_cnt = pending_cnt + #{opCnt}
+          </when>
+          <when test="status.name() == 'FAIL'">
+            fail_cnt = fail_cnt + #{opCnt}
+          </when>
+          <when test="status.name() == 'SUCCESS'">
+            success_cnt = success_cnt + #{opCnt}
+          </when>
+          <when test="status.name() == 'PROCESSING'">
+            processing_cnt = processing_cnt + #{opCnt}
+          </when>
+          <when test="status.name() == 'TERMINAL'">
+            terminated_cnt = terminated_cnt + #{opCnt}
+          </when>
+        </choose>
+      </foreach>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+  </update>
+
+  <!-- 检查记录是否存在 -->
+  <select id="existsByExptIdAndSpaceId" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_expt_stats
+    WHERE expt_id = #{exptId}
+    AND space_id = #{spaceId}
+  </select>
+
+  <!-- 插入实验统计 -->
+  <insert id="insertStats" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptStatsEntity" >
+    INSERT INTO bt_expt_stats (
+    id, space_id, expt_id, pending_cnt, success_cnt, fail_cnt, credit_cost,
+    input_token_cost, output_token_cost, created_at, updated_at, deleted_at,
+    processing_cnt, terminated_cnt
+    ) VALUES (
+    #{id}, #{spaceId}, #{exptId}, #{pendingCnt}, #{successCnt}, #{failCnt}, #{creditCost},
+    #{inputTokenCost}, #{outputTokenCost}, #{createdAt}, #{updatedAt}, #{deletedAt},
+    #{processingCnt}, #{terminatedCnt}
+    )
+  </insert>
+
+  <!-- 更新实验统计 -->
+  <update id="updateStats" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptStatsEntity">
+    UPDATE bt_expt_stats
+    SET pending_cnt = #{pendingCnt},
+    success_cnt = #{successCnt},
+    fail_cnt = #{failCnt},
+    credit_cost = #{creditCost},
+    input_token_cost = #{inputTokenCost},
+    output_token_cost = #{outputTokenCost},
+    updated_at = #{updatedAt},
+    deleted_at = #{deletedAt},
+    processing_cnt = #{processingCnt},
+    terminated_cnt = #{terminatedCnt}
+    WHERE expt_id = #{exptId}
+    AND space_id = #{spaceId}
+  </update>
+</mapper>

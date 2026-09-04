@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.PlatBotInfoQueryMapper">
+
+  <select id="getPlatBot" resultType="com.iwhalecloud.bote.dto.bot.SimplePlatBotInfoDTO">
+    SELECT plat_bot_id, bot_name, bot_id, owner_tenant_id, bot_type, req_url
+    FROM bt_plat_bot_info
+    WHERE status_cd = '00A'
+      AND status = '1'
+      AND plat_bot_id = #{platBotId}
+  </select>
+
+  <select id="selectPlatBotListByIds" resultType="com.iwhalecloud.bote.dto.bot.SimplePlatBotInfoDTO">
+    SELECT plat_bot_id, bot_name, bot_id, owner_tenant_id, bot_type, req_url, status
+    FROM bt_plat_bot_info
+    WHERE status_cd = '00A'
+      AND plat_bot_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+</mapper>

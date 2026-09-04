@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.WeKnoraChatSessionMapper">
+
+  <resultMap id="WeKnoraChatSessionMap" type="com.iwhalecloud.bote.doc.module.knowledge.entity.WeKnoraChatSessionEntity">
+    <id property="weKnoraChatSessionId" column="weknora_chat_session_id"/>
+    <result property="boteSessionId" column="bote_session_id"/>
+    <result property="weKnoraSessionId" column="weknora_session_id"/>
+    <result property="tenantId" column="tenant_id"/>
+    <result property="creatorId" column="creator_id"/>
+    <result property="createTime" column="create_time"/>
+  </resultMap>
+
+  <select id="findByTenantAndBoteSessionAndCreator" resultMap="WeKnoraChatSessionMap">
+    SELECT weknora_chat_session_id, bote_session_id, weknora_session_id, tenant_id, creator_id, create_time
+    FROM bt_weknora_chat_session
+    WHERE tenant_id = #{tenantId}
+      AND bote_session_id = #{boteSessionId}
+      AND creator_id = #{creatorId}
+    LIMIT 1
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_weknora_chat_session (
+      weknora_chat_session_id,
+      bote_session_id,
+      weknora_session_id,
+      tenant_id,
+      creator_id,
+      create_time
+    ) VALUES (
+      #{entity.weKnoraChatSessionId},
+      #{entity.boteSessionId},
+      #{entity.weKnoraSessionId},
+      #{entity.tenantId},
+      #{entity.creatorId},
+      #{entity.createTime}
+    )
+  </insert>
+
+</mapper>

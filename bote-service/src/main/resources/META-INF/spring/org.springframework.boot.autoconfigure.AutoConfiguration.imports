@@ -1,0 +1,13 @@
+com.iwhalecloud.bote.config.BoteAutoConfiguration
+com.iwhalecloud.bote.config.BoteA2aAutoConfiguration
+com.iwhalecloud.bote.portal.config.NgportalAutoConfiguration
+com.iwhalecloud.bote.portal.config.UportalAutoConfiguration
+com.iwhalecloud.bote.portal.config.BasicCenterAutoConfiguration
+com.iwhalecloud.bote.portal.config.NonePortalAutoConfiguration
+com.iwhalecloud.bote.portal.config.DefaultPortalAutoConfiguration
+com.iwhalecloud.bote.portal.config.SsoPortalAutoConfiguration
+com.iwhalecloud.bote.portal.config.DingtalkAutoConfiguration
+com.iwhalecloud.bote.portal.config.OAuth2PortalAutoConfiguration
+com.iwhalecloud.bote.config.ElasticSearchAutoConfiguration
+com.iwhalecloud.bote.config.OAuth2AutoConfiguration
+

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptItemResultRunLogMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptItemResultRunLogEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="expt_run_id" property="exptRunId" jdbcType="BIGINT"/>
+    <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="err_msg" property="errMsg" jdbcType="BLOB"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="log_id" property="logId" jdbcType="VARCHAR"/>
+    <result column="result_state" property="resultState" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, expt_run_id, item_id, status, err_msg,
+    created_at, updated_at, deleted_at, log_id, result_state
+  </sql>
+
+  <!-- 批量创建实验数据项运行日志（如果不存在） -->
+  <insert id="batchCreateNxRunLogs">
+    INSERT INTO bt_expt_item_result_run_log (
+    id, space_id, expt_id, expt_run_id, item_id, status, err_msg,
+    created_at, updated_at, deleted_at, log_id, result_state
+    ) VALUES
+    <foreach collection="itemRunLogs" item="item" separator=",">
+      (
+      #{item.id}, #{item.spaceId}, #{item.exptId}, #{item.exptRunId}, #{item.itemId},
+      #{item.status}, #{item.errMsg}, #{item.createdAt}, #{item.updatedAt},
+      #{item.deletedAt}, #{item.logId}, #{item.resultState}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量创建实验数据项运行日志（如果不存在）- Oracle语法 -->
+  <insert id="batchCreateNxRunLogs" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="itemRunLogs" item="item" separator=" ">
+      INTO bt_expt_item_result_run_log (
+      id, space_id, expt_id, expt_run_id, item_id, status, err_msg,
+      created_at, updated_at, deleted_at, log_id, result_state
+      ) VALUES (
+      #{item.id}, #{item.spaceId}, #{item.exptId}, #{item.exptRunId}, #{item.itemId},
+      #{item.status}, #{item.errMsg}, #{item.createdAt}, #{item.updatedAt},
+      #{item.deletedAt}, #{item.logId}, #{item.resultState}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 扫描实验数据项运行日志 -->
+  <select id="scanItemRunLogs" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM (
+      SELECT
+      <include refid="Base_Column_List"/>
+      FROM bt_expt_item_result_run_log
+      WHERE space_id = #{spaceId}
+      AND expt_id = #{exptId}
+      AND expt_run_id = #{exptRunId}
+      <if test="filter != null and filter.resultState != null">
+        AND result_state = #{filter.resultState.value}
+      </if>
+      <if test="filter != null and filter.status != null and filter.status.size > 0">
+        AND status IN
+        <foreach collection="filter.status" item="statusItem" open="(" separator="," close=")">
+          #{statusItem}
+        </foreach>
+      </if>
+      <if test="cursor != null and cursor > 0">
+        AND id > #{cursor}
+      </if>
+      ORDER BY id ASC
+    ) t
+    where 1 = 1
+    <if test="limit != null and limit > 0">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+
+  <!-- 更新数据项运行日志 -->
+  <update id="updateItemRunLog">
+    UPDATE bt_expt_item_result_run_log
+    <set>
+      <foreach collection="ufields" index="key" item="value" separator=",">
+        ${key} = #{value}
+      </foreach>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </update>
+
+  <!-- 获取数据项运行日志 -->
+  <select id="getItemRunLog" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_item_result_run_log
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id = #{itemId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 批量获取数据项运行日志 -->
+  <select id="mGetItemRunLog" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_item_result_run_log
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </select>
+
+  <!-- 新增方法：拆分MySQL特殊语法 -->
+
+  <!-- 检查数据项运行日志是否存在 -->
+  <select id="existsByKeys" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_expt_item_result_run_log
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id = #{itemId}
+  </select>
+
+  <!-- 插入数据项运行日志 -->
+  <insert id="insertItemRunLog" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptItemResultRunLogEntity">
+    INSERT INTO bt_expt_item_result_run_log (
+    id, space_id, expt_id, expt_run_id, item_id, status, err_msg,
+    created_at, updated_at, deleted_at, log_id, result_state
+    ) VALUES (
+    #{id}, #{spaceId}, #{exptId}, #{exptRunId}, #{itemId},
+    #{status}, #{errMsg}, #{createdAt}, #{updatedAt},
+    #{deletedAt}, #{logId}, #{resultState}
+    )
+  </insert>
+
+  <!-- 更新数据项运行日志（保持原有条件） -->
+  <update id="updateItemRunLogByKeys" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptItemResultRunLogEntity">
+    UPDATE bt_expt_item_result_run_log
+    SET status = #{status},
+    err_msg = #{errMsg},
+    updated_at = #{updatedAt},
+    deleted_at = #{deletedAt},
+    log_id = #{logId},
+    result_state = #{resultState}
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id = #{itemId}
+  </update>
+</mapper>

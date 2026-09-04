@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.AgentSkillSquareMapper">
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.skill.AgentSkillSquareEntity">
+    <id column="skill_id" property="skillId"/>
+    <result column="skill_code" property="skillCode"/>
+    <result column="skill_name" property="skillName"/>
+    <result column="skill_desc" property="skillDesc"/>
+    <result column="skill_type" property="skillType"/>
+    <result column="tags" property="tags"/>
+    <result column="version" property="version"/>
+    <result column="install_count" property="installCount"/>
+    <result column="skill_content" property="skillContent"/>
+    <result column="file_info_id" property="fileInfoId"/>
+    <result column="source" property="source"/>
+    <result column="online_status" property="onlineStatus"/>
+    <result column="status_cd" property="statusCd"/>
+    <result column="created_time" property="createdTime"/>
+    <result column="updated_time" property="updatedTime"/>
+    <result column="owner_user_id" property="ownerUserId"/>
+    <result column="owner_tenant_id" property="ownerTenantId"/>
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    skill_id
+    , skill_code, skill_name, skill_desc, skill_type, tags, version,
+    install_count, skill_content, file_info_id, source, online_status, status_cd,
+    created_time, updated_time, owner_user_id, owner_tenant_id
+  </sql>
+
+  <sql id="Query_Condition">
+    AND status_cd = '00A'
+    <if test="onlineStatus != null and onlineStatus != ''">
+      AND online_status = #{onlineStatus}
+    </if>
+    <if test="type != null and type != '' and type != 'all'">
+      <if test="type == 'platform' or type == 'skillHub' or type == 'userHub'">
+        AND skill_type = #{type}
+      </if>
+    </if>
+    <if test="keyword != null and keyword != ''">
+      AND (
+      skill_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR skill_desc LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      <choose>
+        <when test="_databaseId == 'postgresql'">
+          CAST(tags AS TEXT) LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        </when>
+        <when test="_databaseId == 'oracle'">
+          TO_CHAR(tags) LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        </when>
+        <otherwise>
+          CAST(tags AS CHAR) LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        </otherwise>
+      </choose>
+      )
+    </if>
+  </sql>
+
+  <sql id="Admin_Query_Condition">
+    AND status_cd = COALESCE(#{statusCd}, '00A')
+    <if test="onlineStatus != null and onlineStatus != ''">
+      AND online_status = #{onlineStatus}
+    </if>
+    <if test="source != null and source != ''">
+      AND source = #{source}
+    </if>
+    <if test="skillType != null and skillType != ''">
+      AND skill_type = #{skillType}
+    </if>
+    <if test="keyword != null and keyword != ''">
+      AND (
+      skill_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR skill_desc LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="skillId">
+    INSERT INTO bt_agent_skill_square (
+    skill_id, skill_code, skill_name, skill_desc, skill_type, tags, version, install_count,
+    skill_content, file_info_id, source, online_status, status_cd, created_time, updated_time, owner_user_id, owner_tenant_id
+    ) VALUES (
+    #{skillId}, #{skillCode}, #{skillName}, #{skillDesc}, #{skillType}, #{tags}, #{version},
+    COALESCE(#{installCount}, 0), #{skillContent}, #{fileInfoId}, #{source},
+    COALESCE(#{onlineStatus}, 'T'), COALESCE(#{statusCd}, '00A'),
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{ownerUserId},
+    #{ownerTenantId}
+    )
+  </insert>
+
+  <update id="updateById">
+    UPDATE bt_agent_skill_square
+    <set>
+      <if test="skillName != null">skill_name = #{skillName},</if>
+      <if test="skillDesc != null">skill_desc = #{skillDesc},</if>
+      <if test="skillType != null">skill_type = #{skillType},</if>
+      <if test="tags != null">tags = #{tags},</if>
+      <if test="version != null">version = #{version},</if>
+      <if test="skillContent != null">skill_content = #{skillContent},</if>
+      <if test="fileInfoId != null">file_info_id = #{fileInfoId},</if>
+      <if test="onlineStatus != null">online_status = #{onlineStatus},</if>
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE skill_id = #{skillId}
+  </update>
+
+  <update id="updateStatus">
+    UPDATE bt_agent_skill_square
+    SET online_status = #{onlineStatus},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{skillId}
+  </update>
+
+  <update id="updateStatusCd">
+    UPDATE bt_agent_skill_square
+    SET status_cd = #{statusCd},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{skillId}
+  </update>
+
+  <update id="incrementInstallCount">
+    UPDATE bt_agent_skill_square
+    SET install_count = install_count + 1,
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{skillId}
+  </update>
+
+  <select id="selectById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_agent_skill_square
+    WHERE skill_id = #{skillId}
+  </select>
+
+  <select id="selectByCode" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_agent_skill_square
+    WHERE skill_code = #{skillCode} and status_cd = '00A'
+  </select>
+
+  <select id="selectPage" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>,
+    <choose>
+      <when test="spaceId != null">
+        CASE WHEN EXISTS(SELECT 1 FROM bt_agent_skill WHERE status_cd = '00A' AND skill_square_id = bt_agent_skill_square.skill_id
+                        AND tenant_id = #{spaceId} AND creator_id = #{userId}) THEN 1 ELSE 0 END AS installed
+      </when>
+      <otherwise>
+        CASE WHEN EXISTS(SELECT 1 FROM bt_agent_skill WHERE status_cd = '00A' AND skill_square_id = bt_agent_skill_square.skill_id
+                        AND tenant_id = #{tenantId} AND (data_from IS NULL OR data_from = '')) THEN 1 ELSE 0 END AS installed,
+        (SELECT b.skill_id FROM bt_agent_skill b
+                          WHERE bt_agent_skill_square.skill_id = b.skill_square_id
+                            AND b.tenant_id = #{tenantId} AND (b.data_from IS NULL OR b.data_from = '')
+                            AND b.status_cd = '00A') AS agentSkillId
+      </otherwise>
+    </choose>
+    FROM bt_agent_skill_square
+    WHERE 1=1
+    <include refid="Query_Condition"/>
+    <if test="installed != null">
+      <choose>
+        <when test="installed">
+          AND EXISTS(SELECT 1 FROM bt_agent_skill
+                      WHERE status_cd = '00A' AND skill_square_id = bt_agent_skill_square.skill_id
+                        AND tenant_id = #{tenantId} AND (data_from IS NULL OR data_from = ''))
+        </when>
+        <otherwise>
+          AND NOT EXISTS(SELECT 1 FROM bt_agent_skill
+                          WHERE status_cd = '00A' AND skill_square_id = bt_agent_skill_square.skill_id
+                            AND tenant_id = #{tenantId} AND (data_from IS NULL OR data_from = ''))
+        </otherwise>
+      </choose>
+    </if>
+    <choose>
+      <when test="type == 'hot'">
+        ORDER BY install_count DESC
+      </when>
+      <otherwise>
+        ORDER BY updated_time DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="countPage" resultType="long">
+    SELECT COUNT(*)
+    FROM bt_agent_skill_square
+    WHERE 1=1
+    <include refid="Query_Condition"/>
+  </select>
+
+  <select id="selectAdminPage" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_agent_skill_square
+    WHERE 1=1
+    <include refid="Admin_Query_Condition"/>
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="countAdminPage" resultType="long">
+    SELECT COUNT(*)
+    FROM bt_agent_skill_square
+    WHERE 1=1
+    <include refid="Admin_Query_Condition"/>
+  </select>
+
+  <select id="countForExport" resultType="long">
+    <choose>
+      <when test="topLimit != null and topLimit > 0">
+        <choose>
+          <when test="_databaseId == 'oracle'">
+            SELECT COUNT(1)
+            FROM (
+            SELECT 1
+            FROM (
+            SELECT t_inner.skill_id, ROWNUM rn
+            FROM (
+            SELECT skill_id
+            FROM bt_agent_skill_square
+            WHERE online_status = 'T' AND status_cd = '00A'
+            ORDER BY NVL(install_count, 0) DESC, skill_id ASC
+            ) t_inner
+            WHERE ROWNUM &lt;= #{topLimit}
+            )
+            ) export_top_cnt
+          </when>
+          <otherwise>
+            SELECT COUNT(1)
+            FROM (
+            SELECT 1
+            FROM bt_agent_skill_square
+            WHERE online_status = 'T' AND status_cd = '00A'
+            ORDER BY COALESCE(install_count, 0) DESC, skill_id ASC
+            LIMIT #{topLimit}
+            ) t
+          </otherwise>
+        </choose>
+      </when>
+      <otherwise>
+        SELECT COUNT(1)
+        FROM bt_agent_skill_square
+        WHERE online_status = 'T' AND status_cd = '00A'
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectExistingKeysForBulkImportPage" resultType="com.iwhalecloud.bote.dto.skill.SkillSquareExistingKey">
+    SELECT skill_code AS skillCode, skill_id AS skillId, file_info_id AS fileInfoId
+    FROM bt_agent_skill_square
+    WHERE status_cd = '00A'
+    ORDER BY skill_id
+  </select>
+
+  <select id="selectForExportPage" resultMap="BaseResultMap">
+    <choose>
+      <when test="_databaseId == 'oracle'">
+        SELECT * FROM (
+        SELECT t_inner.*, ROWNUM rn FROM (
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM bt_agent_skill_square
+        WHERE online_status = 'T' AND status_cd = '00A'
+        ORDER BY NVL(install_count, 0) DESC, skill_id ASC
+        ) t_inner
+        WHERE ROWNUM &lt;=
+        <choose>
+          <when test="topLimit != null and topLimit > 0">
+            <choose>
+              <when test="(offset + limit) &lt;= topLimit">
+                #{offset} + #{limit}
+              </when>
+              <otherwise>
+                #{topLimit}
+              </otherwise>
+            </choose>
+          </when>
+          <otherwise>
+            #{offset} + #{limit}
+          </otherwise>
+        </choose>
+        )
+        WHERE rn &gt; #{offset}
+      </when>
+      <otherwise>
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM (
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM bt_agent_skill_square
+        WHERE online_status = 'T' AND status_cd = '00A'
+        ORDER BY COALESCE(install_count, 0) DESC, skill_id ASC
+        <if test="topLimit != null and topLimit > 0">
+          LIMIT #{topLimit}
+        </if>
+        ) sub
+        ORDER BY COALESCE(install_count, 0) DESC, skill_id ASC
+        LIMIT #{limit} OFFSET #{offset}
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="countSkillByType" resultType="com.iwhalecloud.bote.dto.skill.SkillTypeStatisticsVO">
+    SELECT skill_type AS skillType, COUNT(*) AS count
+    FROM bt_agent_skill_square
+    WHERE status_cd = '00A'
+      AND online_status = 'T'
+    GROUP BY skill_type
+  </select>
+</mapper>

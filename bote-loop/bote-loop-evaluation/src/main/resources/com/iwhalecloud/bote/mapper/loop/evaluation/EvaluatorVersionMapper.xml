@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.EvaluatorVersionMapper">
+  <!-- 结果映射 -->
+  <resultMap id="EvaluatorVersionEntityMap" type="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorVersionEntity">
+    <id column="id" property="id"/>
+    <result column="space_id" property="spaceId"/>
+    <result column="evaluator_type" property="evaluatorType"/>
+    <result column="evaluator_id" property="evaluatorId"/>
+    <result column="version" property="version"/>
+    <result column="description" property="description"/>
+    <result column="metainfo" property="metainfo"/>
+    <result column="receive_chat_history" property="receiveChatHistory"/>
+    <result column="input_schema" property="inputSchema"/>
+    <result column="created_by" property="createdBy"/>
+    <result column="updated_by" property="updatedBy"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 创建评估器版本 -->
+  <insert id="createEvaluatorVersion" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorVersionEntity">
+    INSERT INTO bt_evaluator_version (
+    id, space_id, evaluator_type, evaluator_id, version, description, metainfo,
+    receive_chat_history, input_schema, created_by, updated_by, created_at, updated_at
+    ) VALUES (
+    #{version.id}, #{version.spaceId}, #{version.evaluatorType}, #{version.evaluatorId}, #{version.version},
+    #{version.description}, #{version.metainfo}, #{version.receiveChatHistory}, #{version.inputSchema},
+    #{version.createdBy}, #{version.updatedBy},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <insert id="createEvaluatorVersion" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorVersionEntity" databaseId="oracle">
+    INSERT INTO bt_evaluator_version (
+    id, space_id, evaluator_type, evaluator_id, version, description, metainfo,
+    receive_chat_history, input_schema, created_by, updated_by, created_at, updated_at
+    ) VALUES (
+    #{version.id}, #{version.spaceId}, #{version.evaluatorType}, #{version.evaluatorId}, #{version.version},
+    #{version.description}, #{version.metainfo},
+    <choose>
+      <when test="version.receiveChatHistory == null">0</when>
+      <when test="version.receiveChatHistory == true">1</when>
+      <otherwise>0</otherwise>
+    </choose>,
+    #{version.inputSchema},
+    #{version.createdBy}, #{version.updatedBy},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <!-- 更新评估器草稿 -->
+  <update id="updateEvaluatorDraft">
+    UPDATE bt_evaluator_version
+    SET
+    space_id = #{version.spaceId},
+    evaluator_type = #{version.evaluatorType},
+    description = #{version.description},
+    metainfo = #{version.metainfo},
+    receive_chat_history = #{version.receiveChatHistory},
+    input_schema = #{version.inputSchema},
+    updated_by = #{version.updatedBy},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE evaluator_id = #{version.evaluatorId}
+    AND version = 'draft'
+    AND deleted_at IS NULL
+  </update>
+
+  <update id="updateEvaluatorDraft" databaseId="oracle">
+    UPDATE bt_evaluator_version
+    SET
+    space_id = #{version.spaceId},
+    evaluator_type = #{version.evaluatorType},
+    description = #{version.description},
+    metainfo = #{version.metainfo},
+    receive_chat_history =
+      <choose>
+        <when test="version.receiveChatHistory == null">0</when>
+        <when test="version.receiveChatHistory == true">1</when>
+        <otherwise>0</otherwise>
+      </choose>,
+    input_schema = #{version.inputSchema},
+    updated_by = #{version.updatedBy},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE evaluator_id = #{version.evaluatorId}
+    AND version = 'draft'
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 删除评估器版本 -->
+  <update id="deleteEvaluatorVersion">
+    UPDATE bt_evaluator_version
+    SET
+    deleted_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <!-- 根据评估器ID批量删除版本 -->
+  <update id="batchDeleteEvaluatorVersionByEvaluatorIds">
+    UPDATE bt_evaluator_version
+    SET
+    deleted_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE evaluator_id IN
+    <foreach collection="evaluatorIds" item="evaluatorId" open="(" separator="," close=")">
+      #{evaluatorId}
+    </foreach>
+  </update>
+
+  <!-- 分页查询评估器版本列表 -->
+  <select id="listEvaluatorVersion" resultMap="EvaluatorVersionEntityMap">
+    SELECT * FROM bt_evaluator_version
+    WHERE evaluator_id = #{request.evaluatorId}
+    <if test="request.queryVersions != null and request.queryVersions.size() > 0">
+      AND version IN
+      <foreach collection="request.queryVersions" item="queryVersion" open="(" separator="," close=")">
+        #{queryVersion}
+      </foreach>
+    </if>
+    AND version != 'draft'
+    AND deleted_at IS NULL
+    <if test="request.orderBy != null and request.orderBy.size() > 0">
+      ORDER BY
+      <foreach collection="request.orderBy" item="order" separator=",">
+        <choose>
+          <when test="order.field == 'updated_at'">
+            updated_at
+          </when>
+          <when test="order.field == 'created_at'">
+            created_at
+          </when>
+          <otherwise>
+            created_at
+          </otherwise>
+        </choose>
+        <if test="order.isAsc == false or order.isAsc == null">
+          DESC
+        </if>
+      </foreach>
+    </if>
+  </select>
+
+  <!-- 批量根据ID获取评估器版本 -->
+  <select id="batchGetEvaluatorVersionById" resultMap="EvaluatorVersionEntityMap">
+    SELECT * FROM bt_evaluator_version
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    <if test="spaceId != null">
+      AND space_id IN (#{spaceId}, -1)
+    </if>
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 根据评估器ID批量获取草稿版本 -->
+  <select id="batchGetEvaluatorDraftByEvaluatorId" resultMap="EvaluatorVersionEntityMap">
+    SELECT * FROM bt_evaluator_version
+    WHERE evaluator_id IN
+    <foreach collection="evaluatorIds" item="evaluatorId" open="(" separator="," close=")">
+      #{evaluatorId}
+    </foreach>
+    AND version = 'draft'
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 根据评估器ID批量获取版本 -->
+  <select id="batchGetEvaluatorVersionsByEvaluatorIds" resultMap="EvaluatorVersionEntityMap">
+    SELECT * FROM bt_evaluator_version
+    WHERE evaluator_id IN
+    <foreach collection="evaluatorIds" item="evaluatorId" open="(" separator="," close=")">
+      #{evaluatorId}
+    </foreach>
+    AND version != 'draft'
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 检查版本是否存在 -->
+  <select id="checkVersionExist" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence FROM bt_evaluator_version
+    WHERE evaluator_id = #{evaluatorId}
+    AND version = #{version}
+    AND deleted_at IS NULL
+  </select>
+</mapper>

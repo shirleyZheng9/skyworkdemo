@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.data.dataset.ItemSnapshotMapper">
+  <!-- 结果映射 -->
+  <resultMap id="ItemSnapshotResultMap" type="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetItemSnapshotEntity">
+    <id column="id" property="id"/>
+    <result column="app_id" property="appId"/>
+    <result column="space_id" property="spaceId"/>
+    <result column="dataset_id" property="datasetId"/>
+    <result column="schema_id" property="schemaId"/>
+    <result column="version_id" property="versionId"/>
+    <result column="item_primary_id" property="itemPrimaryId"/>
+    <result column="item_id" property="itemId"/>
+    <result column="item_key" property="itemKey"/>
+    <result column="data" property="data"/>
+    <result column="repeated_data" property="repeatedData"/>
+    <result column="data_properties" property="dataProperties"/>
+    <result column="add_vn" property="addVn"/>
+    <result column="del_vn" property="delVn"/>
+    <result column="created_at" property="createdAt"/>
+    <result column="item_created_by" property="itemCreatedBy"/>
+    <result column="item_created_at" property="itemCreatedAt"/>
+    <result column="item_updated_by" property="itemUpdatedBy"/>
+    <result column="item_updated_at" property="itemUpdatedAt"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , app_id, space_id, dataset_id, schema_id, version_id, item_primary_id, item_id,
+        item_key, data, repeated_data, data_properties, add_vn, del_vn, created_at,
+        item_created_by, item_created_at, item_updated_by, item_updated_at
+  </sql>
+
+  <!-- 批量插入条目快照 -->
+  <insert id="batchUpsertItemSnapshots" parameterType="java.util.List">
+    INSERT INTO bt_dataset_item_snapshot (
+    id, app_id, space_id, dataset_id, schema_id, version_id, item_primary_id, item_id,
+    item_key, data, repeated_data, data_properties, add_vn, del_vn, created_at,
+    item_created_by, item_created_at, item_updated_by, item_updated_at
+    ) VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+      #{item.id}, #{item.appId}, #{item.spaceId}, #{item.datasetId}, #{item.schemaId}, #{item.versionId},
+      #{item.itemPrimaryId}, #{item.itemId}, #{item.itemKey}, #{item.data}, #{item.repeatedData},
+      #{item.dataProperties}, #{item.addVn}, #{item.delVn}, #{item.createdAt},
+      #{item.itemCreatedBy}, #{item.itemCreatedAt}, #{item.itemUpdatedBy}, #{item.itemUpdatedAt}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 列表查询条目快照 -->
+  <select id="listItemSnapshots" resultMap="ItemSnapshotResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset_item_snapshot
+    <where>
+      space_id = #{spaceId}
+      AND version_id = #{versionId}
+    </where>
+    <if test="paginator != null">
+      <if test="paginator.orderBy != null and paginator.orderBy != ''">
+        ORDER BY ${paginator.orderBy}
+      </if>
+    </if>
+  </select>
+
+  <!-- 统计条目快照数量 -->
+  <select id="countItemSnapshots" resultType="java.lang.Long">
+    SELECT COUNT(*)
+    FROM bt_dataset_item_snapshot
+    <where>
+      space_id = #{spaceId}
+      AND version_id = #{versionId}
+    </where>
+  </select>
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.ChatGroupCfgMapper">
+
+  <sql id="groupColumns">
+    a.id,
+    a.space_id,
+    a.user_id,
+    a.setting_json,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <select id="getChatGroupCfg" resultType="com.iwhalecloud.bote.dto.chat.ChatGroupCfgDTO">
+    SELECT
+    <include refid="groupColumns"/>
+    FROM bt_chat_group_cfg a
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.user_id = #{userId}
+  </select>
+
+  <insert id="insertChatGroupCfg">
+    INSERT INTO bt_chat_group_cfg (
+    id,
+    space_id,
+    user_id,
+    setting_json,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.userId},
+    #{dto.settingJson},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateChatGroupCfg">
+    UPDATE bt_chat_group_cfg
+    <set>
+      <if test="dto.spaceId != null">
+        space_id = #{dto.spaceId},
+      </if>
+      <if test="dto.userId != null">
+        user_id = #{dto.userId},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != ''">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null and dto.remark != ''">
+        remark = #{dto.remark},
+      </if>
+      setting_json = #{dto.settingJson},
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+</mapper>

@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.SessionTaskMapper">
+  <!-- @formatter:off -->
+  <insert id="insertTask">
+    INSERT INTO bt_session_task (
+      id,
+      session_id,
+      task_id,
+      subject,
+      description,
+      active_form,
+      task_status,
+      blocks_json,
+      blocked_by_json,
+      is_deleted,
+      created_time,
+      updated_time
+    ) VALUES (
+      #{entity.id},
+      #{entity.sessionId},
+      #{entity.taskId},
+      #{entity.subject},
+      #{entity.description},
+      #{entity.activeForm},
+      #{entity.taskStatus},
+      #{entity.blocksJson},
+      #{entity.blockedByJson},
+      #{entity.isDeleted},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <update id="updateTaskById">
+    UPDATE bt_session_task
+    SET
+    <if test="entity.subject != null">
+      subject = #{entity.subject},
+    </if>
+    <if test="entity.description != null">
+      description = #{entity.description},
+    </if>
+    <if test="entity.activeForm != null">
+      active_form = #{entity.activeForm},
+    </if>
+    <if test="entity.taskStatus != null">
+      task_status = #{entity.taskStatus},
+    </if>
+    <if test="entity.blocksJson != null">
+      blocks_json = #{entity.blocksJson},
+    </if>
+    <if test="entity.blockedByJson != null">
+      blocked_by_json = #{entity.blockedByJson},
+    </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{entity.id}
+  </update>
+
+  <update id="updateTaskBlocks">
+    UPDATE bt_session_task
+    SET blocks_json = #{blocksJson},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateTaskBlockedBy">
+    UPDATE bt_session_task
+    SET blocked_by_json = #{blockedByJson},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="deleteTaskById">
+    UPDATE bt_session_task
+    SET is_deleted = 1,
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <delete id="deleteTasksBySessionIds">
+    DELETE
+    FROM bt_session_task
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </delete>
+
+  <select id="selectTaskById" resultType="com.iwhalecloud.bote.entity.agent.SessionTaskEntity">
+    SELECT id,
+           task_id,
+           subject,
+           description,
+           active_form,
+           task_status,
+           blocks_json,
+           blocked_by_json,
+           is_deleted
+    FROM bt_session_task
+    WHERE id = #{id}
+      AND is_deleted = 0
+  </select>
+
+  <select id="selectTaskBySessionIdAndTaskId" resultType="com.iwhalecloud.bote.entity.agent.SessionTaskEntity">
+    SELECT id,
+           task_id,
+           subject,
+           description,
+           active_form,
+           task_status,
+           blocks_json,
+           blocked_by_json
+    FROM bt_session_task
+    WHERE session_id = #{sessionId}
+      AND task_id = #{taskId}
+      AND is_deleted = 0
+  </select>
+
+  <select id="selectTasksBySessionId" resultType="com.iwhalecloud.bote.entity.agent.SessionTaskEntity">
+    SELECT id,
+           task_id,
+           subject,
+           task_status,
+           blocks_json,
+           blocked_by_json
+    FROM bt_session_task
+    WHERE session_id = #{sessionId}
+      AND is_deleted = 0
+    ORDER BY task_id
+  </select>
+
+  <select id="selectMaxTaskId" resultType="java.lang.Integer">
+    SELECT MAX(task_id) AS max_task_id
+    FROM bt_session_task
+    WHERE session_id = #{sessionId}
+  </select>
+
+</mapper>

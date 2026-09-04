@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.prompt.PromptDebugLogMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.prompt.PromptDebugLogEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="prompt_id" property="promptId" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="prompt_key" property="promptKey" jdbcType="VARCHAR"/>
+    <result column="version" property="version" jdbcType="VARCHAR"/>
+    <result column="input_tokens" property="inputTokens" jdbcType="BIGINT"/>
+    <result column="output_tokens" property="outputTokens" jdbcType="BIGINT"/>
+    <result column="started_at" property="startedAt" jdbcType="BIGINT"/>
+    <result column="ended_at" property="endedAt" jdbcType="BIGINT"/>
+    <result column="cost_ms" property="costMs" jdbcType="BIGINT"/>
+    <result column="status_code" property="statusCode" jdbcType="INTEGER"/>
+    <result column="debugged_by" property="debuggedBy" jdbcType="VARCHAR"/>
+    <result column="debug_id" property="debugId" jdbcType="BIGINT"/>
+    <result column="debug_step" property="debugStep" jdbcType="INTEGER"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , prompt_id, space_id, prompt_key, version, input_tokens, output_tokens, started_at, ended_at,
+    cost_ms, status_code, debugged_by, debug_id, debug_step, created_at, updated_at, deleted_at
+  </sql>
+
+  <!-- 插入记录 -->
+  <insert id="insert" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptDebugLogEntity" >
+    INSERT INTO bt_prompt_debug_log (id, prompt_id, space_id, prompt_key, version, input_tokens, output_tokens, started_at, ended_at,
+                                     cost_ms, status_code, debugged_by, debug_id, debug_step, created_at, updated_at, deleted_at)
+    VALUES (#{id,jdbcType=BIGINT},
+            #{promptId,jdbcType=BIGINT},
+            #{spaceId,jdbcType=BIGINT},
+            #{promptKey,jdbcType=VARCHAR},
+            #{version,jdbcType=VARCHAR},
+            #{inputTokens,jdbcType=BIGINT},
+            #{outputTokens,jdbcType=BIGINT},
+            #{startedAt,jdbcType=BIGINT},
+            #{endedAt,jdbcType=BIGINT},
+            #{costMs,jdbcType=BIGINT},
+            #{statusCode,jdbcType=INTEGER},
+            #{debuggedBy,jdbcType=VARCHAR},
+            #{debugId,jdbcType=BIGINT},
+            #{debugStep,jdbcType=INTEGER},
+            #{createdAt,jdbcType=TIMESTAMP},
+            #{updatedAt,jdbcType=TIMESTAMP},
+            #{deletedAt,jdbcType=BIGINT})
+  </insert>
+
+  <!-- 根据条件查询（分页） -->
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_debug_log
+    WHERE deleted_at = 0
+    <if test="promptId != null">
+      AND prompt_id = #{promptId,jdbcType=BIGINT}
+    </if>
+    <if test="userId != null">
+      AND debugged_by = #{userId,jdbcType=VARCHAR}
+    </if>
+    <if test="startBefore != null">
+      AND started_at &lt;= #{startBefore,jdbcType=BIGINT}
+    </if>
+    <if test="startAfter != null">
+      AND ended_at &gt;= #{startAfter,jdbcType=BIGINT}
+    </if>
+    <if test="debugIds != null and debugIds.size() > 0">
+      AND debug_id IN
+      <foreach collection="debugIds" item="debugId" open="(" separator="," close=")">
+        #{debugId,jdbcType=BIGINT}
+      </foreach>
+    </if>
+    <if test="debugStep != null">
+      AND debug_step = #{debugStep,jdbcType=INTEGER}
+    </if>
+    ORDER BY started_at DESC
+    <!-- RowBounds会自动处理分页，不需要LIMIT -->
+  </select>
+</mapper>

@@ -1,0 +1,34 @@
+server:
+  port: 18090
+
+logging:
+  level:
+    root: info
+    com.iwhalecloud: debug
+
+cxf:
+  # 所有 WebService 的根路径
+  path: /services
+
+# 认证信息
+sms:
+  client:
+    bill:
+      # 用户名
+      username: your_username
+      # 用户密码
+      password: your_password
+      # 所属系统
+      sysCode: henan-telecom
+      # 产品ID（可为空）
+      productId: 10010
+      # 本地网ID
+      latnId: 10020
+      # 业务场景ID
+      businessId: 10030
+      # 短信服务地址
+      serviceUrl: http://localhost:18090/services/BillDataSvr
+      # X-APP-ID
+      appId: aabbccdd
+      # X-APP-KEY
+      appKey: eeffgghh

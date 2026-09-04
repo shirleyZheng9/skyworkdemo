@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.DcPublicQueryMapper">
+
+  <sql id="dcPublicColumns">
+    a.stype,
+    a.pkey,
+    a.pcode,
+    a.pname,
+    a.comments,
+    a.codea,
+    a.codeb,
+    a.codec,
+    a.coded,
+    a.codee,
+    a.sortby,
+    a.systemid
+  </sql>
+
+  <select id="selectDcPublicListByStype" resultType="com.iwhalecloud.bote.entity.base.DcPublicEntity">
+    SELECT
+    <include refid="dcPublicColumns"/>
+    FROM bt_dc_public a
+    WHERE stype = #{stype}
+    ORDER BY sortby
+  </select>
+
+  <select id="selectDcPublicList" resultType="com.iwhalecloud.bote.entity.base.DcPublicEntity">
+    SELECT
+    <include refid="dcPublicColumns"/>
+    FROM bt_dc_public a
+    WHERE 1=1
+    ORDER BY sortby
+  </select>
+</mapper>

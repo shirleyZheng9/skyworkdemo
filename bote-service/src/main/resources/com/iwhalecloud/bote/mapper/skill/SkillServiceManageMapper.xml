@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillServiceManageMapper">
+  <sql id="serviceColumns">
+    a.service_id,
+    a.service_code,
+    a.service_name,
+    a.platform_id,
+    a.relative_path,
+    a.req_method,
+    a.header_json,
+    a.path_json,
+    a.query_json,
+    a.body_json,
+    a.response_json,
+    a.mock_response_json,
+    a.is_mock,
+    a.is_sse,
+    a.catalog_item_id,
+    a.body_type,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    a.post_script,
+    a.connect_timeout,
+    a.read_timeout,
+    a.is_encrypt
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND ( a.service_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.service_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.isMock != null and query.isMock != ''">
+      AND a.is_mock = #{query.isMock}
+    </if>
+  </sql>
+
+  <insert id="batchInsertSkillService">
+    INSERT INTO bt_skill_service(
+    service_id,
+    service_code,
+    service_name,
+    platform_id,
+    relative_path,
+    req_method,
+    header_json,
+    path_json,
+    query_json,
+    body_json,
+    response_json,
+    mock_response_json,
+    is_mock,
+    is_sse,
+    catalog_item_id,
+    body_type,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    post_script,
+    connect_timeout,
+    read_timeout,
+    is_encrypt
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.serviceId},
+      #{dto.serviceCode},
+      #{dto.serviceName},
+      #{dto.platformId},
+      #{dto.relativePath},
+      #{dto.reqMethod},
+      #{dto.headerJson},
+      #{dto.pathJson},
+      #{dto.queryJson},
+      #{dto.bodyJson},
+      #{dto.responseJson},
+      #{dto.mockResponseJson},
+      #{dto.isMock},
+      #{dto.isSse},
+      #{dto.catalogItemId},
+      #{dto.bodyType},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.postScript},
+      #{dto.connectTimeout},
+      #{dto.readTimeout},
+      #{dto.isEncrypt}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSkillService" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_skill_service(
+      service_id,
+      service_code,
+      service_name,
+      platform_id,
+      relative_path,
+      req_method,
+      header_json,
+      path_json,
+      query_json,
+      body_json,
+      response_json,
+      mock_response_json,
+      is_mock,
+      is_sse,
+      catalog_item_id,
+      body_type,
+      tenant_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark,
+      post_script,
+      connect_timeout,
+      read_timeout,
+      is_encrypt
+      ) VALUES(
+      #{dto.serviceId},
+      #{dto.serviceCode},
+      #{dto.serviceName},
+      #{dto.platformId},
+      #{dto.relativePath},
+      #{dto.reqMethod},
+      #{dto.headerJson},
+      #{dto.pathJson},
+      #{dto.queryJson},
+      #{dto.bodyJson},
+      #{dto.responseJson},
+      #{dto.mockResponseJson},
+      #{dto.isMock},
+      #{dto.isSse},
+      #{dto.catalogItemId},
+      #{dto.bodyType},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.postScript},
+      #{dto.connectTimeout},
+      #{dto.readTimeout},
+      #{dto.isEncrypt}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <insert id="insertSkillService">
+    INSERT INTO bt_skill_service (
+    service_id,
+    service_code,
+    service_name,
+    platform_id,
+    relative_path,
+    req_method,
+    header_json,
+    path_json,
+    query_json,
+    body_json,
+    response_json,
+    mock_response_json,
+    is_mock,
+    is_sse,
+    catalog_item_id,
+    body_type,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    post_script,
+    connect_timeout,
+    read_timeout,
+    is_encrypt
+    )
+    VALUES (
+    #{dto.serviceId},
+    #{dto.serviceCode},
+    #{dto.serviceName},
+    #{dto.platformId},
+    #{dto.relativePath},
+    #{dto.reqMethod},
+    #{dto.headerJson},
+    #{dto.pathJson},
+    #{dto.queryJson},
+    #{dto.bodyJson},
+    #{dto.responseJson},
+    #{dto.mockResponseJson},
+    #{dto.isMock},
+    #{dto.isSse},
+    #{dto.catalogItemId},
+    #{dto.bodyType},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark},
+    #{dto.postScript},
+    #{dto.connectTimeout},
+    #{dto.readTimeout},
+    #{dto.isEncrypt}
+    )
+  </insert>
+
+  <update id="updateSkillService">
+    UPDATE bt_skill_service
+    SET
+    <if test="dto.checkFieldUpdateFlag('serviceCode')">
+      service_code = #{dto.serviceCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('serviceName')">
+      service_name = #{dto.serviceName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('platformId')">
+      platform_id = #{dto.platformId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('relativePath')">
+      relative_path = #{dto.relativePath},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('isMock')">
+      is_mock = #{dto.isMock},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('isSse')">
+      is_sse = #{dto.isSse},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('reqMethod')">
+      req_method = #{dto.reqMethod},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('headerJson')">
+      header_json = #{dto.headerJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('pathJson')">
+      path_json = #{dto.pathJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('queryJson')">
+      query_json = #{dto.queryJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('bodyJson')">
+      body_json = #{dto.bodyJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('responseJson')">
+      response_json = #{dto.responseJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('mockResponseJson')">
+      mock_response_json = #{dto.mockResponseJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+      catalog_item_id = #{dto.catalogItemId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('bodyType')">
+      body_type = #{dto.bodyType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('dto.statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('postScript')">
+      post_script = #{dto.postScript},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('connectTimeout')">
+      connect_timeout = #{dto.connectTimeout},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('readTimeout')">
+      read_timeout = #{dto.readTimeout},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('isEncrypt')">
+      is_encrypt = #{dto.isEncrypt},
+    </if>
+
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{dto.updatorId}
+    WHERE service_id = #{dto.serviceId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getSkillService" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT <include refid="serviceColumns"/>
+    FROM bt_skill_service a
+    WHERE 1=1
+      AND a.service_id = #{id}
+      AND a.tenant_id IN (#{tenantId}, -1)
+    <if test="statusCd != null and statusCd != ''">
+      AND a.status_cd = #{statusCd}
+    </if>
+  </select>
+
+  <select id="selectSimpleServiceById" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT service_id, service_name, service_code, platform_id, req_method, relative_path,
+           path_json, header_json, query_json, body_json, response_json, is_sse, is_mock, tenant_id, body_type,
+           CASE WHEN is_mock = 'T' THEN mock_response_json END AS mock_response_json, post_script,
+           connect_timeout, read_timeout, is_encrypt
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND service_id = #{id}
+  </select>
+
+  <select id="selectSimpleServiceByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT service_id, service_name, service_code, platform_id, req_method, relative_path,
+           path_json, header_json, query_json, body_json, response_json, is_sse, is_mock, tenant_id, body_type,
+           CASE WHEN is_mock = 'T' THEN mock_response_json END AS mock_response_json, post_script,
+           connect_timeout, read_timeout, is_encrypt
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSkillServicePage" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT
+    <include refid="serviceColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_service a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteSkillService">
+    UPDATE bt_skill_service
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd ='00A'
+      AND service_id = #{serviceId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="existsServiceCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+    AND service_code = #{dto.serviceCode}
+    <if test="dto.serviceId != null">
+      AND service_id != #{dto.serviceId}
+    </if>
+    AND tenant_id IN (#{dto.tenantId}, -1)
+  </select>
+
+  <select id="selectServiceByServiceCodes" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT <include refid="serviceColumns"/>
+    FROM bt_skill_service a
+    WHERE a.status_cd = '00A'
+    AND a.service_code in (<foreach collection="serviceCodes" item="serviceCode" separator=",">#{serviceCode}</foreach>)
+    AND a.tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <update id="updateServiceMock">
+    UPDATE bt_skill_service
+    SET is_mock = #{params.isMock},
+    updator_id = #{params.updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+    AND tenant_id = #{params.tenantId}
+    <if test="params.serviceIds != null and params.serviceIds.size > 0">
+      AND service_id IN (<foreach collection="params.serviceIds" item="serviceId" separator=",">#{serviceId}</foreach>)
+    </if>
+    AND (is_mock is null OR is_mock != #{params.isMock})
+  </update>
+
+  <update id="deleteServiceByCatalogId">
+    UPDATE bt_skill_service
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd ='00A'
+      AND catalog_item_id = #{catalogId}
+      AND tenant_id = #{tenantId}
+  </update>
+</mapper>

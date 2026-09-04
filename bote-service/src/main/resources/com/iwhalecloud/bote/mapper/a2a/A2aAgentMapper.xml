@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.a2a.A2aAgentMapper">
+  <!-- @formatter:off -->
+  <select id="selectAgent" resultType="com.iwhalecloud.bote.dto.a2a.A2aAgentDTO">
+    SELECT a.agent_id, a.agent_name, a.agent_desc, a.agent_card_url, a.agent_card_json, a.auth_config_json, a.skill_count,
+           b.scene_icon AS agent_icon,
+           a.catalog_item_id, a.platform_id, a.tenant_id, a.ext_agent_id,
+           a.status_cd, a.creator_id, a.created_time, a.updator_id, a.updated_time, a.remark
+    FROM bt_a2a_agent a
+    JOIN bt_bot_scene b ON b.tenant_id = a.tenant_id AND b.scene_id = a.agent_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.agent_id = #{id}
+  </select>
+
+  <select id="selectAgentByExtAgentId" resultType="com.iwhalecloud.bote.dto.a2a.A2aAgentDTO">
+    SELECT agent_id, a.agent_name, a.agent_desc, a.agent_card_url, a.agent_card_json, a.auth_config_json, a.skill_count,
+           b.scene_icon AS agent_icon,
+           a.catalog_item_id, a.platform_id, a.tenant_id, a.ext_agent_id,
+           a.status_cd, a.creator_id, a.created_time, a.updator_id, a.updated_time, a.remark
+    FROM bt_a2a_agent a
+    JOIN bt_bot_scene b ON b.tenant_id = a.tenant_id AND b.scene_id = a.agent_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.platform_id = #{platformId}
+      AND a.ext_agent_id = #{extAgentId}
+  </select>
+
+  <select id="selectPlatformIdByAgentId" resultType="java.lang.Long">
+    SELECT platform_id
+    FROM bt_a2a_agent
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND agent_id = #{agentId}
+  </select>
+
+  <select id="existsAgentName" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_a2a_agent
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND agent_name = #{agentName}
+  </select>
+
+  <insert id="insertAgent">
+    INSERT INTO bt_a2a_agent (
+      agent_id,
+      agent_name,
+      agent_desc,
+      agent_card_url,
+      agent_card_json,
+      auth_config_json,
+      skill_count,
+      catalog_item_id,
+      platform_id,
+      ext_agent_id,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES (
+      #{dto.agentId},
+      #{dto.agentName},
+      #{dto.agentDesc},
+      #{dto.agentCardUrl},
+      #{dto.agentCardJson},
+      #{dto.authConfigJson},
+      #{dto.skillCount},
+      #{dto.catalogItemId},
+      #{dto.platformId},
+      #{dto.extAgentId},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAgent">
+    UPDATE bt_a2a_agent
+    SET
+      <if test="dto.checkFieldUpdateFlag('agentName')">
+        agent_name = #{dto.agentName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentDesc')">
+        agent_desc = #{dto.agentDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentCardUrl')">
+        agent_card_url = #{dto.agentCardUrl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentCardJson')">
+        agent_card_json = #{dto.agentCardJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('authConfigJson')">
+        auth_config_json = #{dto.authConfigJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillCount')">
+        skill_count = #{dto.skillCount},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('platformId')">
+        platform_id = #{dto.platformId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{dto.tenantId}
+      AND agent_id = #{dto.agentId}
+  </update>
+
+  <update id="deleteAgent">
+    UPDATE bt_a2a_agent
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND agent_id = #{agentId}
+  </update>
+
+  <select id="selectAgentList" resultType="com.iwhalecloud.bote.dto.a2a.A2aAgentDTO">
+    SELECT a.agent_id, a.agent_name, a.agent_desc, b.scene_icon AS agent_icon
+    FROM bt_a2a_agent a
+    JOIN bt_bot_scene b ON b.status_cd = '00A' AND b.tenant_id = a.tenant_id AND b.scene_id = a.agent_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.platformId != null">
+      AND a.platform_id = #{query.platformId}
+    </if>
+    <if test="query.catalogItemIds != null and !query.catalogItemIds.isEmpty()">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemIds" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+        LOWER(a.agent_name) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        LOWER(a.agent_desc) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectAgentPage" resultType="com.iwhalecloud.bote.dto.a2a.A2aAgentDTO">
+    SELECT a.agent_id, a.agent_name, a.agent_desc, a.platform_id, b.scene_icon AS agent_icon, a.skill_count, a.updated_time
+    FROM bt_a2a_agent a
+    JOIN bt_bot_scene b ON b.status_cd = '00A' AND b.tenant_id = a.tenant_id AND b.scene_id = a.agent_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.platformId != null">
+      AND a.platform_id = #{query.platformId}
+    </if>
+    <if test="query.catalogItemIds != null and !query.catalogItemIds.isEmpty()">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemIds" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+        LOWER(a.agent_name) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        LOWER(a.agent_desc) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+</mapper>

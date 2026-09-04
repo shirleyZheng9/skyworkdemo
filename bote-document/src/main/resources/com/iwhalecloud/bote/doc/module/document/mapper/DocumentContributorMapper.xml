@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocumentContributorMapper">
+  <!-- @formatter:off -->
+  <sql id="contributorColumns">
+    id, document_id, user_id, contributor_score, creator_id, updator_id,
+    created_time, updated_time, tenant_id, status_cd
+  </sql>
+  <!-- @formatter:on -->
+
+  <select id="selectById" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    SELECT <include refid="contributorColumns" />
+    FROM bt_dc_document_contributor
+    WHERE id = #{id}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentIdAndUserId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    SELECT
+    <include refid="contributorColumns"/>
+    FROM bt_dc_document_contributor
+    WHERE document_id = #{documentId}
+    AND user_id = #{userId}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    SELECT <include refid="contributorColumns" />
+    FROM bt_dc_document_contributor
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+    ORDER BY contributor_score DESC, created_time DESC
+  </select>
+
+  <select id="selectByUserId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    SELECT <include refid="contributorColumns" />
+    FROM bt_dc_document_contributor
+    WHERE user_id = #{userId}
+      AND status_cd = '00A'
+    ORDER BY contributor_score DESC, created_time DESC
+  </select>
+
+  <insert id="insert" parameterType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    INSERT INTO bt_dc_document_contributor (
+      id, document_id, user_id, contributor_score, creator_id, updator_id,
+      created_time, updated_time, status_cd
+    ) VALUES (
+      #{contributor.id}, #{contributor.documentId}, #{contributor.userId}, #{contributor.contributorScore},
+      #{contributor.creatorId}, #{contributor.updatorId}, #{contributor.createdTime}, #{contributor.updatedTime},
+      #{contributor.statusCd}
+    )
+  </insert>
+
+  <update id="updateContributorScore">
+    UPDATE bt_dc_document_contributor
+    SET contributor_score = #{contributorScore},
+        updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+      AND status_cd = '00A'
+  </update>
+
+  <insert id="batchInsert">
+    INSERT INTO bt_dc_document_contributor (
+      id, document_id, user_id, contributor_score, creator_id, updator_id,
+      created_time, updated_time, tenant_id, status_cd
+    ) VALUES
+    <foreach collection="contributors" item="contributor" index="index" separator=", ">
+      (
+      #{contributor.id}, #{contributor.documentId}, #{contributor.userId}, #{contributor.contributorScore},
+      #{contributor.creatorId}, #{contributor.updatorId}, #{contributor.createdTime}, #{contributor.updatedTime},
+      #{contributor.tenantId}, #{contributor.statusCd}
+      )
+    </foreach>
+  </insert>
+
+  <!-- Oracle 批量插入使用 INSERT ALL，避免 JSQLParser 对裸 INTO 的解析错误 -->
+  <insert id="batchInsert" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="contributors" item="contributor" index="index" separator=" ">
+      INTO bt_dc_document_contributor (
+      id, document_id, user_id, contributor_score, creator_id, updator_id,
+      created_time, updated_time, tenant_id, status_cd
+      ) VALUES (
+      #{contributor.id}, #{contributor.documentId}, #{contributor.userId}, #{contributor.contributorScore},
+      #{contributor.creatorId}, #{contributor.updatorId}, #{contributor.createdTime}, #{contributor.updatedTime},
+      #{contributor.tenantId}, #{contributor.statusCd}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="selectByDocumentIdsAndUserId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    SELECT
+    <include refid="contributorColumns"/>
+    FROM bt_dc_document_contributor
+    WHERE document_id IN
+    <foreach collection="documentIds" item="documentId" open="(" separator="," close=")">
+      #{documentId}
+    </foreach>
+    AND user_id = #{userId}
+    AND status_cd = '00A'
+  </select>
+
+  <update id="batchUpdateContributorScore">
+    UPDATE bt_dc_document_contributor
+    SET contributor_score = CASE id
+    <foreach collection="updates" item="update">
+      WHEN #{update.id} THEN #{update.contributorScore}
+    </foreach>
+    END,
+    updator_id = CASE id
+    <foreach collection="updates" item="update">
+      WHEN #{update.id} THEN #{update.updatorId}
+    </foreach>
+    END,
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id IN
+    <foreach collection="updates" item="update" open="(" separator="," close=")">
+      #{update.id}
+    </foreach>
+    AND status_cd = '00A'
+  </update>
+
+  <select id="countByDocumentId" resultType="java.lang.Integer">
+    SELECT COUNT(*)
+    FROM bt_dc_document_contributor
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectTopContributorsByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    select * from (
+    SELECT <include refid="contributorColumns" />
+    FROM bt_dc_document_contributor
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+    ORDER BY contributor_score DESC, created_time DESC
+    ) tmp
+    where tmp.status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    #{limit}
+  </select>
+
+  <select id="selectTopContributorsByUserId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    select * from (
+    SELECT
+    <include refid="contributorColumns"/>
+    FROM bt_dc_document_contributor
+    WHERE user_id = #{userId}
+    AND status_cd = '00A'
+    ORDER BY contributor_score DESC, created_time DESC
+    ) tmp
+    where tmp.status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    #{limit}
+  </select>
+
+  <update id="deleteByDocumentIdAndUserId">
+    update bt_dc_document_contributor
+    set status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{updatorId}
+    where document_id = #{documentId}
+    and user_id = #{userId}
+  </update>
+
+  <select id="selectDocumentContributorsPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContributorDTO">
+    SELECT u.user_id, u.real_name
+    FROM bt_dc_document_contributor a
+    LEFT JOIN bt_user u ON u.user_id = a.user_id
+    WHERE a.status_cd = '00A'
+    AND a.document_id = #{query.documentId}
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+  </select>
+</mapper>

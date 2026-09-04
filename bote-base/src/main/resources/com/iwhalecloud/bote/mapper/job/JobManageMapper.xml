@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.job.JobManageMapper">
+
+  <sql id="JobColumns">
+    a.bss_job_id,
+    a.bss_job_name,
+    a.bss_job_class,
+    a.bss_job_cron,
+    a.ip,
+    a.center,
+    a.state,
+    a.sharding_total_count,
+    a.sharding_item_parameters,
+    a.job_exception_handler,
+    a.executor_service_handler,
+    a.monitor_port,
+    a.job_sharding_strategy_class,
+    a.description,
+    a.job_parameter,
+    a.tenant_id,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.space_id,
+    a.bot_id,
+    a.cron_desc,
+    a.job_cron_parameter
+  </sql>
+
+  <sql id="jobLogColumns">
+    b.log_id,
+    b.job_id,
+    b.ip,
+    b.start_time,
+    b.end_time,
+    b.spent_time,
+    b.status_cd,
+    b.fail_reason
+  </sql>
+
+  <sql id="batchQueryCondition">
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.creatorId != null">
+      AND a.creator_id = #{query.creatorId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND ( a.bss_job_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <select id="existsJobName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_job
+    WHERE state = '00A'
+    AND bss_job_name = #{dto.bssJobName}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.spaceId != null">
+      AND space_id = #{dto.spaceId}
+    </if>
+    <if test="dto.botId != null">
+      AND bot_id = #{dto.botId}
+    </if>
+    <if test="dto.creatorId != null">
+      AND creator_id = #{dto.creatorId}
+    </if>
+    <if test="dto.bssJobId != null and dto.bssJobId != ''">
+      AND bss_job_id != #{dto.bssJobId}
+    </if>
+  </select>
+
+  <select id="getJob" resultType="com.iwhalecloud.bote.dto.job.JobDTO">
+    SELECT
+    <include refid="JobColumns"/>
+    FROM bt_job a
+    WHERE a.bss_job_id = #{jobId}
+    AND a.state in ('00A', '00W')
+  </select>
+
+  <insert id="insertJob">
+    INSERT INTO bt_job (
+    bss_job_id,
+    bss_job_name,
+    bss_job_class,
+    bss_job_cron,
+    ip,
+    center,
+    state,
+    sharding_total_count,
+    sharding_item_parameters,
+    job_exception_handler,
+    executor_service_handler,
+    monitor_port,
+    job_sharding_strategy_class,
+    description,
+    job_parameter,
+    tenant_id,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    space_id,
+    bot_id,
+    cron_desc,
+    job_cron_parameter,
+    data_from
+    ) VALUES (
+    #{dto.bssJobId},
+    #{dto.bssJobName},
+    #{dto.bssJobClass},
+    #{dto.bssJobCron},
+    #{dto.ip},
+    #{dto.center},
+    #{dto.state},
+    #{dto.shardingTotalCount},
+    #{dto.shardingItemParameters},
+    #{dto.jobExceptionHandler},
+    #{dto.executorServiceHandler},
+    #{dto.monitorPort},
+    #{dto.jobShardingStrategyClass},
+    #{dto.description},
+    #{dto.jobParameter},
+    #{dto.tenantId},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.cronDesc},
+    #{dto.jobCronParameter},
+    #{dto.dataFrom}
+    )
+  </insert>
+
+  <insert id="insertJobLog">
+    INSERT INTO bt_job_log (
+      log_id,
+      job_id,
+      ip,
+      start_time,
+      end_time,
+      spent_time,
+      status_cd,
+      fail_reason
+    ) VALUES (
+      #{dto.logId},
+      #{dto.jobId},
+      #{dto.ip},
+      #{dto.startTime},
+      #{dto.endTime},
+      #{dto.spentTime},
+      #{dto.statusCd},
+      #{dto.failReason}
+    )
+  </insert>
+
+  <update id="updateJob">
+    UPDATE bt_job
+    <set>
+    <if test="dto.checkFieldUpdateFlag('bssJobId')">
+      bss_job_id = #{dto.bssJobId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('bssJobName')">
+      bss_job_name = #{dto.bssJobName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('bssJobClass')">
+      bss_job_class = #{dto.bssJobClass},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('bssJobCron')">
+      bss_job_cron = #{dto.bssJobCron},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('ip')">
+      ip = #{dto.ip},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('center')">
+      center = #{dto.center},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('state')">
+      state = #{dto.state},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('jobExceptionHandler')">
+      job_exception_handler = #{dto.jobExceptionHandler},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('executorServiceHandler')">
+      executor_service_handler = #{dto.executorServiceHandler},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('monitorPort')">
+      monitor_port = #{dto.monitorPort},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('jobShardingStrategyClass')">
+      job_sharding_strategy_class = #{dto.jobShardingStrategyClass},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('jobParameter')">
+      job_parameter = #{dto.jobParameter},
+    </if>
+    <if test="dto.shardingTotalCount != null">
+      sharding_total_count = #{dto.shardingTotalCount},
+    </if>
+    <if test="dto.shardingItemParameters != null">
+      sharding_item_parameters = #{dto.shardingItemParameters},
+    </if>
+    <if test="dto.description != null">
+      description = #{dto.description},
+    </if>
+    <if test="dto.botId != null">
+      bot_id = #{dto.botId},
+    </if>
+    <if test="dto.cronDesc != null and dto.cronDesc != ''">
+      cron_desc = #{dto.cronDesc},
+    </if>
+    <if test="dto.jobCronParameter != null and dto.jobCronParameter != ''">
+      job_cron_parameter = #{dto.jobCronParameter},
+    </if>
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE bss_job_id = #{dto.bssJobId}
+  </update>
+
+  <update id="deleteJob">
+    UPDATE bt_job
+    SET state = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bss_job_id = #{jobId}
+  </update>
+
+  <select id="selectJobList" resultType="com.iwhalecloud.bote.dto.job.JobDTO">
+    SELECT
+    <include refid="JobColumns"/>
+    FROM bt_job a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.state != null and query.state != ''">
+      AND a.state = #{query.state}
+    </if>
+  </select>
+
+  <select id="selectJobPage" resultType="com.iwhalecloud.bote.dto.job.JobDTO">
+    SELECT
+    <include refid="JobColumns"/>
+    FROM bt_job a
+    WHERE 1=1
+    AND a.state in ('00A', '00W')
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectJobLogPage" resultType="com.iwhalecloud.bote.dto.job.JobLogDTO">
+    SELECT
+    <include refid="jobLogColumns"/>, a.bss_job_name as jobName
+    FROM bt_job_log b
+    LEFT JOIN bt_job a ON b.job_id = a.bss_job_id
+    WHERE 1=1
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.bss_job_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY b.start_time DESC
+  </select>
+
+  <select id="selectJobPageForRuntime" resultType="com.iwhalecloud.bote.dto.job.JobDTO">
+    SELECT <include refid="JobColumns"/>,
+        b.bot_name, c.last_run_time
+    FROM bt_job a
+    LEFT JOIN bt_bot b ON a.bot_id = b.bot_id AND a.tenant_id = b.tenant_id
+    LEFT JOIN (SELECT job_id, MAX(start_time) AS last_run_time FROM bt_job_log GROUP BY job_id) c ON a.bss_job_id = c.job_id
+    WHERE 1=1
+      AND a.state in ('00A', '00W')
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+</mapper>

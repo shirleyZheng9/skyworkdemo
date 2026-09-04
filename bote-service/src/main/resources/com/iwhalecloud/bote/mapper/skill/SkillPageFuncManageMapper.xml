@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillPageFuncManageMapper">
+  <sql id="skillPageFuncColumns">
+    a.page_func_id,
+    a.func_code,
+    a.func_name,
+    a.req_json,
+    a.resp_json,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.terminal_type,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.func_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.func_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.terminalType != null and query.terminalType != ''">
+      AND a.terminal_type = #{query.terminalType}
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+  </sql>
+
+  <insert id="insertSkillPageFunc">
+    INSERT INTO bt_skill_page_func(
+    page_func_id,
+    func_code,
+    func_name,
+    req_json,
+    resp_json,
+    catalog_item_id,
+    tenant_id,
+    terminal_type,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    )
+    VALUES (
+    #{dto.pageFuncId},
+    #{dto.funcCode},
+    #{dto.funcName},
+    #{dto.reqJson},
+    #{dto.respJson},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    #{dto.terminalType},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillPageFunc">
+    UPDATE bt_skill_page_func
+    <set>
+      <if test="dto.checkFieldUpdateFlag('funcCode')">
+        func_code = #{dto.funcCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('funcName')">
+        func_name = #{dto.funcName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('reqJson')">
+        req_json = #{dto.reqJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('respJson')">
+        resp_json = #{dto.respJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('terminalType')">
+        terminal_type = #{dto.terminalType},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE page_func_id = #{dto.pageFuncId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getSkillPageFunc" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT <include refid="skillPageFuncColumns"/>
+    FROM bt_skill_page_func a
+    WHERE a.status_cd = '00A'
+      AND a.page_func_id = #{id}
+      AND a.tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSimplePageFunc" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT page_func_id, func_code, func_name, req_json, tenant_id
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_func_id = #{id}
+  </select>
+
+  <select id="selectSkillPageFuncByCode" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT <include refid="skillPageFuncColumns"/>
+    FROM bt_skill_page_func a
+    WHERE a.status_cd = '00A'
+      AND a.func_code = #{funcCode}
+      AND a.tenant_id = #{tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSimplePageFuncList" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT page_func_id, func_code, func_name, req_json, tenant_id
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSkillPageFuncList" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT
+    <include refid="skillPageFuncColumns"/>
+    FROM bt_skill_page_func a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillPageFuncPage" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT
+    <include refid="skillPageFuncColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_page_func a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteSkillPageFunc">
+    UPDATE bt_skill_page_func
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE page_func_id = #{pageFuncId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="existsSkillPageFuncCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+    AND func_code = #{dto.funcCode}
+    AND tenant_id IN (#{dto.tenantId}, -1)
+    <if test="dto.pageFuncId != null">
+      AND page_func_id != #{dto.pageFuncId}
+    </if>
+  </select>
+</mapper>

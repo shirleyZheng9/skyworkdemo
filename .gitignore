@@ -1,0 +1,59 @@
+# Maven
+target
+.m2-repository
+
+# IntelliJ IDEA
+.idea
+*.iml
+
+# Eclipse
+.project
+.classpath
+.settings
+.factorypath
+
+# VS code
+.vscode
+
+# AI
+.cursor
+.claude
+/openspec
+
+.maven-dependency-updator-config.yaml
+
+# OS generated files
+.DS_Store
+
+# Local temporary files
+/*.sql
+/*.json
+/*.sh
+/*.txt
+/*.xlsx
+/*.env
+/tmp
+/backup
+/local
+
+/bote-llm-client/src/test/resources/model-api-key.txt
+/bote-service-boot/src/test/
+
+DevController.java
+Test*.java
+test*.groovy
+/ZSMART_APP_HOME
+/ZSMART_HOME*
+!/ZSMART_HOME_example
+.env.local
+
+# CodingPlus Check
+/checker_result
+my.md
+
+扩展脚本
+logs/
+.mybatis
+
+# 规划/设计文档：仅本地保存，不纳入 git 追踪
+/docs/superpowers/

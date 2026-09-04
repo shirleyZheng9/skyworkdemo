@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.ServicePlatformManageMapper">
+  <sql id="platformColumns">
+    a.platform_id,
+    a.platform_code,
+    a.platform_name,
+    a.acc_type,
+    a.acc_token,
+    a.acc_token_exp_date,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd ='00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.platform_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.platform_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+  </sql>
+
+  <select id="existsServicePlatformCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_service_platform
+    WHERE status_cd = '00A'
+    AND platform_code = #{dto.platformCode}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.platformId != null">
+      AND platform_id != #{dto.platformId}
+    </if>
+  </select>
+
+  <insert id="insertServicePlatform">
+    INSERT INTO bt_service_platform(
+       platform_id,
+       platform_code,
+       platform_name,
+       acc_type,
+       acc_token,
+       acc_token_exp_date,
+       tenant_id,
+       created_time,
+       status_cd,
+       updated_time,
+       creator_id,
+       updator_id,
+       remark
+    )
+    VALUES(
+      #{dto.platformId},
+      #{dto.platformCode},
+      #{dto.platformName},
+      #{dto.accType},
+      #{dto.accToken},
+      #{dto.accTokenExpDate},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateServicePlatform">
+    UPDATE bt_service_platform
+    <set>
+      <if test="dto.platformCode != null and dto.platformCode != ''">
+        platform_code = #{dto.platformCode},
+      </if>
+      <if test="dto.platformName != null and dto.platformName != ''">
+        platform_name = #{dto.platformName},
+      </if>
+      <if test="dto.accType != null">
+        acc_type = #{dto.accType},
+      </if>
+      <if test="dto.accToken != null">
+        acc_token = #{dto.accToken},
+      </if>
+      <if test="dto.accTokenExpDate != null">
+        acc_token_exp_date = #{dto.accTokenExpDate},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != ''">
+        status_cd = #{dto.statusCd},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE platform_id =#{dto.platformId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getServicePlatform" resultType="com.iwhalecloud.bote.dto.skill.ServicePlatformDTO">
+    SELECT
+    <include refid="platformColumns"/>
+    FROM bt_service_platform a
+    WHERE a.status_cd = '00A'
+      AND a.platform_id = #{id}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectServicePlatformList" resultType="com.iwhalecloud.bote.dto.skill.ServicePlatformDTO">
+    SELECT
+    <include refid="platformColumns"/>
+    FROM bt_service_platform a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+      ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectServicePlatformPage" resultType="com.iwhalecloud.bote.dto.skill.ServicePlatformDTO">
+    SELECT
+    <include refid="platformColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_service_platform a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+      AND a.tenant_id = #{query.tenantId}
+      ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteServicePlatform">
+    UPDATE bt_service_platform
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd ='00A'
+      AND platform_id = #{platformId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectServicePlatformByIds" resultType="com.iwhalecloud.bote.dto.skill.ServicePlatformDTO">
+    SELECT <include refid="platformColumns"/>
+    FROM bt_service_platform a
+    WHERE a.status_cd ='00A'
+      AND a.platform_id IN (<foreach collection="platformIds" separator="," item="platformId">#{platformId}</foreach>)
+      AND a.tenant_id = #{tenantId}
+  </select>
+</mapper>

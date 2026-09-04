@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.library.mapper.LibraryPermissionMapper">
+  <!-- @formatter:off -->
+  <select id="selectByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.document.entity.LibraryPermissionEntity">
+    SELECT permission_id, library_id, subject_type, subject_id, permission_type, granted_by, expires_at,
+           updator_id, tenant_id, creator_id, created_time, updated_time, status_cd
+    FROM bt_dc_library_permission
+    WHERE permission_id = #{permissionId}
+      AND status_cd = '00A'
+  </select>
+  <!-- @formatter:on -->
+
+  <select id="selectByLibraryAndSubject" resultType="com.iwhalecloud.bote.doc.module.document.entity.LibraryPermissionEntity">
+    SELECT permission_id,
+           library_id,
+           subject_type,
+           subject_id,
+           permission_type,
+           granted_by,
+           expires_at,
+           updator_id,
+           tenant_id,
+           creator_id,
+           created_time,
+           updated_time,
+           status_cd
+    FROM bt_dc_library_permission
+    WHERE library_id = #{libraryId}
+      AND subject_type = #{subjectType}
+      AND subject_id = #{subjectId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_library_permission (
+    permission_id, library_id, subject_type, subject_id, permission_type, granted_by, expires_at,
+    updator_id, tenant_id, creator_id, created_time, status_cd
+    ) VALUES (
+    #{entity.permissionId},
+    #{entity.libraryId},
+    #{entity.subjectType},
+    #{entity.subjectId},
+    #{entity.permissionType},
+    #{entity.grantedBy},
+    #{entity.expiresAt},
+    #{entity.updatorId},
+    #{entity.tenantId},
+    #{entity.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey">
+    UPDATE bt_dc_library_permission
+    SET library_id = #{entity.libraryId},
+    subject_type = #{entity.subjectType},
+    subject_id = #{entity.subjectId},
+    permission_type = #{entity.permissionType},
+    granted_by = #{entity.grantedBy},
+    expires_at = #{entity.expiresAt},
+    updator_id = #{entity.updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE permission_id = #{entity.permissionId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_library_permission
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE permission_id = #{permissionId}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="querySubjectLibraryPermissionBatch" resultType="com.iwhalecloud.bote.doc.module.library.dto.LibraryPermissionDTO">
+    SELECT permission_id, library_id, subject_type, subject_id, permission_type, granted_by, expires_at,
+    updator_id, tenant_id, creator_id, created_time, updated_time, status_cd
+    FROM bt_dc_library_permission
+    WHERE library_id = #{libraryId}
+    and subject_id in
+    <foreach collection="subjectIdList" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    and subject_type = #{subjectType}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="querySubjectLibraryPermissionTypesBatch" resultType="java.lang.String">
+    SELECT permission_type
+    FROM bt_dc_library_permission
+    WHERE library_id = #{libraryId}
+    and subject_id in
+    <foreach collection="subjectIdList" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    and subject_type = #{subjectType}
+    AND status_cd = '00A'
+  </select>
+
+  <!-- 批量插入权限记录 - 通用实现 -->
+  <insert id="batchInsertPermissions">
+    INSERT INTO bt_dc_library_permission (
+    permission_id, library_id, subject_type, subject_id, permission_type, granted_by, expires_at,
+    updator_id, tenant_id, creator_id, created_time, status_cd
+    ) VALUES
+    <foreach collection="list" item="permission" index="index" separator=", ">
+      (
+      #{permission.permissionId},
+      #{permission.libraryId},
+      #{permission.subjectType},
+      #{permission.subjectId},
+      #{permission.permissionType},
+      #{permission.grantedBy},
+      #{permission.expiresAt},
+      #{permission.updatorId},
+      #{permission.tenantId},
+      #{permission.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{permission.statusCd}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量插入权限记录 - Oracle专用实现 -->
+  <insert id="batchInsertPermissions" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="permission" index="index" separator=" ">
+      INTO bt_dc_library_permission (
+      permission_id, library_id, subject_type, subject_id, permission_type, granted_by, expires_at,
+      updator_id, tenant_id, creator_id, created_time, status_cd
+      ) VALUES (
+      #{permission.permissionId},
+      #{permission.libraryId},
+      #{permission.subjectType},
+      #{permission.subjectId},
+      #{permission.permissionType},
+      #{permission.grantedBy},
+      #{permission.expiresAt},
+      #{permission.updatorId},
+      #{permission.tenantId},
+      #{permission.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{permission.statusCd}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 批量删除权限记录 -->
+  <update id="batchDeletePermissions">
+    UPDATE bt_dc_library_permission
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE permission_id IN
+    <foreach collection="permissionIds" item="permissionId" open="(" separator="," close=")">
+      #{permissionId}
+    </foreach>
+    AND status_cd = '00A'
+  </update>
+
+  <select id="selectByLibraryId" resultType="com.iwhalecloud.bote.doc.module.library.dto.LibraryPermissionDTO">
+    SELECT permission_id,
+           library_id,
+           subject_type,
+           subject_id,
+           permission_type,
+           granted_by,
+           expires_at,
+           updator_id,
+           tenant_id,
+           creator_id,
+           created_time,
+           updated_time,
+           status_cd
+    FROM bt_dc_library_permission
+    WHERE library_id = #{libraryId}
+      and status_cd = '00A'
+  </select>
+
+
+</mapper>

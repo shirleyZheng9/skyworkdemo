@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotAuthManageMapper">
+
+  <sql id="BotAuthColumns">
+    a.auth_id,
+    a.bot_name,
+    a.bot_icon,
+    a.bot_desc,
+    a.bot_id,
+    a.owner_tenant_id,
+    a.auth_tenant_id,
+    a.user_id,
+    a.org_id,
+    a.catalog_item_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    a.data_from
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    AND a.auth_tenant_id in (#{query.tenantId}, -1)
+    AND a.user_id in (#{query.userId}, -1)
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+  </sql>
+
+  <select id="selectBotAuthList" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT <include refid="BotAuthColumns"/>,
+    (SELECT tenant_name FROM bt_tenant WHERE tenant_id = a.owner_tenant_id) AS tenant_name,
+    (SELECT user_name FROM bt_user WHERE user_id = a.user_id) AS user_name,
+    (SELECT org_name FROM bt_organization WHERE org_id = a.org_id) AS org_name,
+    (SELECT b.catalog_name FROM bt_catalog b  WHERE b.catalog_id = a.catalog_item_id) AS catalogName
+    FROM bt_bot_auth a
+    WHERE a.status_cd = '00A'
+    AND a.bot_id = #{botId}
+  </select>
+
+  <select id="getBotAuth" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT
+    <include refid="BotAuthColumns"/>
+    FROM bt_bot_auth a
+    WHERE auth_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertBotAuth">
+    INSERT INTO bt_bot_auth (
+    auth_id,
+    bot_name,
+    bot_icon,
+    bot_desc,
+    bot_id,
+    owner_tenant_id,
+    auth_tenant_id,
+    user_id,
+    org_id,
+    catalog_item_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    auth_publisher,
+    auth_status,
+    auth_operator,
+    auth_operate_time,
+    data_from
+    ) VALUES (
+    #{dto.authId},
+    #{dto.botName},
+    #{dto.botIcon},
+    #{dto.botDesc},
+    #{dto.botId},
+    #{dto.ownerTenantId},
+    #{dto.authTenantId},
+    #{dto.userId},
+    #{dto.orgId},
+    #{dto.catalogItemId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark},
+    #{dto.authPublisher},
+    #{dto.authStatus},
+    #{dto.authOperator},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.dataFrom}
+    )
+  </insert>
+
+  <insert id="batchInsertBotAuth">
+    INSERT INTO bt_bot_auth (
+    auth_id,
+    bot_name,
+    bot_icon,
+    bot_desc,
+    bot_id,
+    owner_tenant_id,
+    auth_tenant_id,
+    user_id,
+    org_id,
+    catalog_item_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    auth_publisher,
+    auth_status,
+    auth_operator,
+    auth_operate_time,
+    data_from
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.authId},
+      #{dto.botName},
+      #{dto.botIcon},
+      #{dto.botDesc},
+      #{dto.botId},
+      #{dto.ownerTenantId},
+      #{dto.authTenantId},
+      #{dto.userId},
+      #{dto.orgId},
+      #{dto.catalogItemId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.authPublisher},
+      #{dto.authStatus},
+      #{dto.authOperator},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.dataFrom}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertBotAuth" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_bot_auth (
+      auth_id,
+      bot_name,
+      bot_icon,
+      bot_desc,
+      bot_id,
+      owner_tenant_id,
+      auth_tenant_id,
+      user_id,
+      org_id,
+      catalog_item_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark,
+      auth_publisher,
+      auth_status,
+      auth_operator,
+      auth_operate_time,
+      data_from
+      ) VALUES (
+      #{dto.authId},
+      #{dto.botName},
+      #{dto.botIcon},
+      #{dto.botDesc},
+      #{dto.botId},
+      #{dto.ownerTenantId},
+      #{dto.authTenantId},
+      #{dto.userId},
+      #{dto.orgId},
+      #{dto.catalogItemId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.authPublisher},
+      #{dto.authStatus},
+      #{dto.authOperator},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.dataFrom}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateBotAuth">
+    UPDATE bt_bot_auth
+    <set>
+      <if test="dto.checkFieldUpdateFlag('authId')">
+        auth_id = #{dto.authId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botName')">
+        bot_name = #{dto.botName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botIcon')">
+        bot_icon = #{dto.botIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botDesc')">
+        bot_desc = #{dto.botDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botId')">
+        bot_id = #{dto.botId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('ownerTenantId')">
+        owner_tenant_id = #{dto.ownerTenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('authTenantId')">
+        auth_tenant_id = #{dto.authTenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('userId')">
+        user_id = #{dto.userId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('orgId')">
+        org_id = #{dto.orgId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('creatorId')">
+        creator_id = #{dto.creatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE auth_id = #{dto.authId}
+  </update>
+
+  <update id="deleteBotAuth">
+    UPDATE bt_bot_auth
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE auth_id = #{authId}
+  </update>
+
+  <select id="selectBotAuthPage" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT
+    <include refid="BotAuthColumns"/>, c.catalog_name, b.bot_use, t.tenant_name
+    FROM bt_bot_auth a
+    LEFT JOIN bt_bot b on a.bot_id = b.bot_id and b.tenant_id = a.owner_tenant_id and b.bot_status = '1' and b.status_cd = '00A'
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id and a.tenant_id = c.tenant_id
+    LEFT JOIN bt_tenant t on t.tenant_id = a.owner_tenant_id
+    WHERE 1=1
+    AND t.status_cd = '00A'
+    AND b.status_cd = '00A'
+    AND b.bot_status = '1'
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <update id="batchDeleteAuth">
+    UPDATE bt_bot_auth
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE auth_id IN (<foreach collection="list" item="authId" index="index"  separator=",">
+    #{authId}
+  </foreach>)
+  </update>
+
+  <select id="selectByUserId" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT <include refid="BotAuthColumns"/>
+    FROM bt_bot_auth a
+    WHERE a.user_id = #{userId}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="selectByTenantId" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT <include refid="BotAuthColumns"/>
+    FROM bt_bot_auth a
+    WHERE a.auth_tenant_id = #{tenantId}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="selectByOrgId" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT <include refid="BotAuthColumns"/>
+    FROM bt_bot_auth a
+    WHERE a.org_id = #{orgId}
+    AND a.status_cd = '00A'
+  </select>
+
+  <update id="deleteAuthByUserIdAndBotId">
+    UPDATE bt_bot_auth
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+    AND bot_id = #{botId}
+  </update>
+
+  <update id="deleteAuthByBotId">
+    UPDATE bt_bot_auth
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bot_id = #{botId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="batchUpdateBotAuth">
+    UPDATE bt_bot_auth
+    <set>
+      updator_id = #{dto.updatorId},
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botIcon')">
+        bot_icon = #{dto.botIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botDesc')">
+        bot_desc = #{dto.botDesc},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE auth_id IN (<foreach collection="dto.authIds" item="authId" index="index" separator=",">#{authId}</foreach>)
+  </update>
+
+  <select id="selectPageForManage" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT bot_id, min(auth_id) as auth_id FROM bt_bot_auth
+    WHERE status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemId != null">
+      AND catalog_item_id = #{query.catalogItemId}
+    </if>
+    GROUP BY bot_id
+    ORDER BY max(auth_operate_time) DESC
+  </select>
+
+  <select id="selectListByAuthIds" resultType="com.iwhalecloud.bote.dto.bot.BotAuthDTO">
+    SELECT a.auth_id, a.bot_id, a.bot_name, a.bot_desc, a.bot_icon, a.auth_status, a.auth_operate_time, a.catalog_item_id,
+           c.catalog_name, u.user_name, t.tenant_name
+    FROM bt_bot_auth a
+    LEFT JOIN bt_user u ON a.auth_publisher = u.user_id
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.owner_tenant_id
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id and c.tenant_id = -1
+    WHERE a.status_cd = '00A'
+      AND a.auth_id IN (<foreach collection="authIds" item="authId" index="index" separator=",">#{authId}</foreach>)
+    ORDER BY a.auth_operate_time DESC
+  </select>
+
+  <update id="updateAuthStatus">
+    UPDATE bt_bot_auth
+    SET auth_status = #{authStatus},
+        auth_operator = #{authOperator},
+        auth_operate_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+  </update>
+
+  <update id="updateAuthOperateInfo">
+    UPDATE bt_bot_auth
+    SET auth_operator = #{authOperator},
+      auth_operate_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+  </update>
+
+  <update id="updateBotAuthBasicInfo">
+    UPDATE bt_bot_auth
+    <set>
+      <if test="dto.botIcon != null and dto.botIcon != ''">
+        bot_icon = #{dto.botIcon},
+      </if>
+      <if test="dto.botDesc != null and dto.botDesc != ''">
+        bot_desc = #{dto.botDesc},
+      </if>
+      <if test="dto.catalogItemId != null">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      auth_operator = #{dto.authOperator},
+      auth_operate_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.authOperator},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE status_cd = '00A'
+      AND bot_id = #{dto.botId}
+  </update>
+
+</mapper>

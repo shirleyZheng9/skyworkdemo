@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptRunLogMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptRunLogEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="expt_run_id" property="exptRunId" jdbcType="BIGINT"/>
+    <result column="item_ids" property="itemIds" jdbcType="VARCHAR"/>
+    <result column="mode" property="mode" jdbcType="INTEGER"/>
+    <result column="status" property="status" jdbcType="BIGINT"/>
+    <result column="pending_cnt" property="pendingCnt" jdbcType="INTEGER"/>
+    <result column="success_cnt" property="successCnt" jdbcType="INTEGER"/>
+    <result column="fail_cnt" property="failCnt" jdbcType="INTEGER"/>
+    <result column="credit_cost" property="creditCost" jdbcType="DECIMAL"/>
+    <result column="token_cost" property="tokenCost" jdbcType="BIGINT"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="status_message" property="statusMessage" jdbcType="VARCHAR"/>
+    <result column="processing_cnt" property="processingCnt" jdbcType="INTEGER"/>
+    <result column="terminated_cnt" property="terminatedCnt" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id, space_id, created_by, expt_id, expt_run_id, item_ids, mode, status,
+    pending_cnt, success_cnt, fail_cnt, credit_cost, token_cost, created_at,
+    updated_at, deleted_at, status_message, processing_cnt, terminated_cnt
+  </sql>
+
+  <sql id="Base_Column_List" databaseId="oracle">
+    id, space_id, created_by, expt_id, expt_run_id, item_ids, "mode", status,
+    pending_cnt, success_cnt, fail_cnt, credit_cost, token_cost, created_at,
+    updated_at, deleted_at, status_message, processing_cnt, terminated_cnt
+  </sql>
+
+  <!-- 创建实验运行日志 -->
+  <insert id="create" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptRunLogEntity">
+    INSERT INTO bt_expt_run_log (
+    id, space_id, created_by, expt_id, expt_run_id, item_ids, mode, status,
+    pending_cnt, success_cnt, fail_cnt, credit_cost, token_cost, created_at,
+    updated_at, deleted_at, status_message, processing_cnt, terminated_cnt
+    ) VALUES (
+    #{id}, #{spaceId}, #{createdBy}, #{exptId}, #{exptRunId}, #{itemIds}, #{mode}, #{status},
+    #{pendingCnt}, #{successCnt}, #{failCnt}, #{creditCost}, #{tokenCost}, #{createdAt},
+    #{updatedAt}, #{deletedAt}, #{statusMessage}, #{processingCnt}, #{terminatedCnt}
+    )
+  </insert>
+
+  <insert id="create" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptRunLogEntity" databaseId="oracle">
+    INSERT INTO bt_expt_run_log (
+      id, space_id, created_by, expt_id, expt_run_id, item_ids, "mode", status,
+      pending_cnt, success_cnt, fail_cnt, credit_cost, token_cost, created_at,
+      updated_at, deleted_at, status_message, processing_cnt, terminated_cnt
+    ) VALUES (
+               #{id}, #{spaceId}, #{createdBy}, #{exptId}, #{exptRunId}, #{itemIds}, #{mode}, #{status},
+               #{pendingCnt}, #{successCnt}, #{failCnt}, #{creditCost}, #{tokenCost}, #{createdAt},
+               #{updatedAt}, #{deletedAt}, #{statusMessage}, #{processingCnt}, #{terminatedCnt}
+             )
+  </insert>
+
+  <!-- 更新实验运行日志 -->
+  <update id="save" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptRunLogEntity">
+    UPDATE bt_expt_run_log
+    <set>
+      <if test="spaceId != null">
+        space_id = #{spaceId},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy},
+      </if>
+      <if test="itemIds != null">
+        item_ids = #{itemIds},
+      </if>
+      <if test="mode != null">
+        mode = #{mode},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="pendingCnt != null">
+        pending_cnt = #{pendingCnt},
+      </if>
+      <if test="successCnt != null">
+        success_cnt = #{successCnt},
+      </if>
+      <if test="failCnt != null">
+        fail_cnt = #{failCnt},
+      </if>
+      <if test="creditCost != null">
+        credit_cost = #{creditCost},
+      </if>
+      <if test="tokenCost != null">
+        token_cost = #{tokenCost},
+      </if>
+      <if test="statusMessage != null">
+        status_message = #{statusMessage},
+      </if>
+      <if test="processingCnt != null">
+        processing_cnt = #{processingCnt},
+      </if>
+      <if test="terminatedCnt != null">
+        terminated_cnt = #{terminatedCnt},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt},
+      </if>
+    </set>
+    WHERE expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND deleted_at = 0
+  </update>
+
+  <update id="save" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptRunLogEntity" databaseId="oracle">
+    UPDATE bt_expt_run_log
+    <set>
+      <if test="spaceId != null">
+        space_id = #{spaceId},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy},
+      </if>
+      <if test="itemIds != null">
+        item_ids = #{itemIds},
+      </if>
+      <if test="mode != null">
+        "mode" = #{mode},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="pendingCnt != null">
+        pending_cnt = #{pendingCnt},
+      </if>
+      <if test="successCnt != null">
+        success_cnt = #{successCnt},
+      </if>
+      <if test="failCnt != null">
+        fail_cnt = #{failCnt},
+      </if>
+      <if test="creditCost != null">
+        credit_cost = #{creditCost},
+      </if>
+      <if test="tokenCost != null">
+        token_cost = #{tokenCost},
+      </if>
+      <if test="statusMessage != null">
+        status_message = #{statusMessage},
+      </if>
+      <if test="processingCnt != null">
+        processing_cnt = #{processingCnt},
+      </if>
+      <if test="terminatedCnt != null">
+        terminated_cnt = #{terminatedCnt},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt},
+      </if>
+    </set>
+    WHERE expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND deleted_at = 0
+  </update>
+
+  <!-- 更新实验运行日志 -->
+  <update id="update">
+    UPDATE bt_expt_run_log
+    <set>
+      <if test="ufields.spaceId != null">
+        space_id = #{ufields.spaceId},
+      </if>
+      <if test="ufields.createdBy != null">
+        created_by = #{ufields.createdBy},
+      </if>
+      <if test="ufields.itemIds != null">
+        item_ids = #{ufields.itemIds},
+      </if>
+      <if test="ufields.mode != null">
+        mode = #{ufields.mode},
+      </if>
+      <if test="ufields.status != null">
+        status = #{ufields.status},
+      </if>
+      <if test="ufields.pendingCnt != null">
+        pending_cnt = #{ufields.pendingCnt},
+      </if>
+      <if test="ufields.successCnt != null">
+        success_cnt = #{ufields.successCnt},
+      </if>
+      <if test="ufields.failCnt != null">
+        fail_cnt = #{ufields.failCnt},
+      </if>
+      <if test="ufields.creditCost != null">
+        credit_cost = #{ufields.creditCost},
+      </if>
+      <if test="ufields.tokenCost != null">
+        token_cost = #{ufields.tokenCost},
+      </if>
+      <if test="ufields.statusMessage != null">
+        status_message = #{ufields.statusMessage},
+      </if>
+      <if test="ufields.processingCnt != null">
+        processing_cnt = #{ufields.processingCnt},
+      </if>
+      <if test="ufields.terminatedCnt != null">
+        terminated_cnt = #{ufields.terminatedCnt},
+      </if>
+      <if test="ufields.updatedAt != null">
+        updated_at = #{ufields.updatedAt},
+      </if>
+      <if test="ufields.deletedAt != null">
+        deleted_at = #{ufields.deletedAt},
+      </if>
+    </set>
+    WHERE expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND deleted_at = 0
+  </update>
+
+  <update id="update" databaseId="oracle">
+    UPDATE bt_expt_run_log
+    <set>
+      <if test="ufields.spaceId != null">
+        space_id = #{ufields.spaceId},
+      </if>
+      <if test="ufields.createdBy != null">
+        created_by = #{ufields.createdBy},
+      </if>
+      <if test="ufields.itemIds != null">
+        item_ids = #{ufields.itemIds},
+      </if>
+      <if test="ufields.mode != null">
+        "mode" = #{ufields.mode},
+      </if>
+      <if test="ufields.status != null">
+        status = #{ufields.status},
+      </if>
+      <if test="ufields.pendingCnt != null">
+        pending_cnt = #{ufields.pendingCnt},
+      </if>
+      <if test="ufields.successCnt != null">
+        success_cnt = #{ufields.successCnt},
+      </if>
+      <if test="ufields.failCnt != null">
+        fail_cnt = #{ufields.failCnt},
+      </if>
+      <if test="ufields.creditCost != null">
+        credit_cost = #{ufields.creditCost},
+      </if>
+      <if test="ufields.tokenCost != null">
+        token_cost = #{ufields.tokenCost},
+      </if>
+      <if test="ufields.statusMessage != null">
+        status_message = #{ufields.statusMessage},
+      </if>
+      <if test="ufields.processingCnt != null">
+        processing_cnt = #{ufields.processingCnt},
+      </if>
+      <if test="ufields.terminatedCnt != null">
+        terminated_cnt = #{ufields.terminatedCnt},
+      </if>
+      <if test="ufields.updatedAt != null">
+        updated_at = #{ufields.updatedAt},
+      </if>
+      <if test="ufields.deletedAt != null">
+        deleted_at = #{ufields.deletedAt},
+      </if>
+    </set>
+    WHERE expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND deleted_at = 0
+  </update>
+
+  <!-- 获取实验运行日志 -->
+  <select id="get" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_run_log
+    WHERE id = #{exptRunId}
+    AND deleted_at = 0
+  </select>
+</mapper>

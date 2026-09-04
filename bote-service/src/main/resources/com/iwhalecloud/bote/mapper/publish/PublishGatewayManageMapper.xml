@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.publish.PublishGatewayManageMapper">
+
+  <sql id="publishGatewayColumns">
+    a.gateway_id,
+    a.tenant_id,
+    a.gateway_name,
+    a.gateway_icon,
+    a.gateway_url,
+    a.gateway_token,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="publishGatewayColumnsWithoutIcon">
+    a.gateway_id,
+    a.tenant_id,
+    a.gateway_name,
+    a.gateway_url,
+    a.gateway_token,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.gateway_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+  </sql>
+
+  <select id="getPublishGateway" resultType="com.iwhalecloud.bote.dto.publish.PublishGatewayDTO">
+    SELECT
+    <include refid="publishGatewayColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_publish_gateway a
+    WHERE a.status_cd = '00A'
+    AND a.gateway_id = #{id}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="getPublishGatewaySimple" resultType="com.iwhalecloud.bote.dto.publish.PublishGatewaySimpleDTO">
+    SELECT
+    a.gateway_id,
+    a.tenant_id,
+    a.gateway_url,
+    a.gateway_token
+    FROM bt_publish_gateway a
+    WHERE a.status_cd = '00A'
+    AND a.gateway_id = #{id}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertPublishGateway">
+    INSERT INTO bt_publish_gateway(
+    gateway_id,
+    tenant_id,
+    gateway_name,
+    gateway_icon,
+    gateway_url,
+    gateway_token,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.gatewayId},
+    #{dto.tenantId},
+    #{dto.gatewayName},
+    #{dto.gatewayIcon},
+    #{dto.gatewayUrl},
+    #{dto.gatewayToken},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePublishGateway">
+    UPDATE bt_publish_gateway
+    <set>
+      <if test="dto.checkFieldUpdateFlag('gatewayName')">
+        gateway_name = #{dto.gatewayName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('gatewayIcon')">
+        gateway_icon = #{dto.gatewayIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('gatewayUrl')">
+        gateway_url = #{dto.gatewayUrl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('gatewayToken')">
+        gateway_token = #{dto.gatewayToken},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE gateway_id = #{dto.gatewayId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deletePublishGateway">
+    UPDATE bt_publish_gateway
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE gateway_id = #{gatewayId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectPublishGatewayPage" resultType="com.iwhalecloud.bote.dto.publish.PublishGatewayDTO">
+    SELECT
+    <include refid="publishGatewayColumnsWithoutIcon"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_publish_gateway a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+</mapper>
+

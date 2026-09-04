@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillPageCompManageMapper">
+
+  <sql id="skillPageCompColumns">
+    a.page_comp_id,
+    a.page_comp_name,
+    a.comp_icon,
+    a.comp_json,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="skillPageCompColumnsWithoutIcon">
+    a.page_comp_id,
+    a.page_comp_name,
+    a.comp_json,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.page_comp_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+  </sql>
+
+  <select id="getSkillPageComp" resultType="com.iwhalecloud.bote.dto.skill.SkillPageCompDTO">
+    SELECT
+    <include refid="skillPageCompColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_skill_page_comp a
+    WHERE a.status_cd = '00A'
+    AND a.page_comp_id = #{id}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertSkillPageComp">
+    INSERT INTO bt_skill_page_comp(
+    page_comp_id,
+    page_comp_name,
+    comp_icon,
+    comp_json,
+    catalog_item_id,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.pageCompId},
+    #{dto.pageCompName},
+    #{dto.compIcon},
+    #{dto.compJson},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillPageComp">
+    UPDATE bt_skill_page_comp
+    <set>
+      <if test="dto.checkFieldUpdateFlag('pageCompName')">
+        page_comp_name = #{dto.pageCompName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('compIcon')">
+        comp_icon = #{dto.compIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('compJson')">
+        comp_json = #{dto.compJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE page_comp_id = #{dto.pageCompId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteSkillPageComp">
+    UPDATE bt_skill_page_comp
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE page_comp_id = #{pageCompId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectSkillPageCompPage" resultType="com.iwhalecloud.bote.dto.skill.SkillPageCompDTO">
+    SELECT
+    <include refid="skillPageCompColumnsWithoutIcon"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_skill_page_comp a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="existsSkillPageCompName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_page_comp
+    WHERE status_cd = '00A'
+    AND page_comp_name = #{dto.pageCompName}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.pageCompId != null">
+      AND page_comp_id != #{dto.pageCompId}
+    </if>
+  </select>
+
+</mapper>
+

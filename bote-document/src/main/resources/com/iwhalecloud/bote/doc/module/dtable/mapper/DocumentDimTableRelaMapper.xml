@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.dtable.mapper.DocumentDimTableRelaMapper">
+  <!-- @formatter:off -->
+  <sql id="relaColumns">
+    id, document_id, table_space_id, root_node_id, creator_id, updator_id,
+    created_time, updated_time, status_cd, tenant_id
+  </sql>
+  <!-- @formatter:on -->
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.dtable.entity.DocumentDimTableRelaEntity">
+    SELECT
+    <include refid="relaColumns"/>
+    FROM bt_dc_document_dtable_rela
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insert" parameterType="com.iwhalecloud.bote.doc.module.dtable.entity.DocumentDimTableRelaEntity">
+    INSERT INTO bt_dc_document_dtable_rela (
+    id, document_id, table_space_id, root_node_id, creator_id, updator_id,
+    created_time, updated_time, status_cd
+    ) VALUES (
+    #{rela.id}, #{rela.documentId}, #{rela.tableSpaceId}, #{rela.rootNodeId},
+    #{rela.creatorId}, #{rela.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{rela.statusCd}
+    )
+  </insert>
+
+  <update id="deleteByDocumentId">
+    UPDATE bt_dc_document_dtable_rela
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+  </update>
+</mapper>

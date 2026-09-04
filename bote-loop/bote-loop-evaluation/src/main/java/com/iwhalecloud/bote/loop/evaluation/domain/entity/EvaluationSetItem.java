@@ -1,0 +1,61 @@
+package com.iwhalecloud.bote.loop.evaluation.domain.entity;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ * 评估集项实体
+ * 迁移对应关系: Go语言EvaluationSetItem
+ * - 功能: 评估集项数据结构
+ * - 字段: id, appId, spaceId, evaluationSetId, schemaId, itemId, itemKey, turns, baseInfo
+ * <p>
+ * Java实现说明:
+ * - 对应Go的EvaluationSetItem结构体
+ * - 使用Lombok注解简化代码
+ * - 使用Jackson注解进行JSON序列化
+ * <p>
+ * 技术栈迁移:
+ * - Go结构体 -> Java类
+ * - Go int64 -> Java Long
+ * - Go int32 -> Java Integer
+ * - Go string -> Java String
+ * - Go []*Turn -> Java List<Turn>
+ * - Go *BaseInfo -> Java BaseInfo
+ * - Go json标签 -> Jackson注解
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class EvaluationSetItem {
+  @JsonProperty("id")
+  private Long id;
+
+  @JsonProperty("app_id")
+  private Integer appId;
+
+  @JsonProperty("space_id")
+  private Long spaceId;
+
+  @JsonProperty("evaluation_set_id")
+  private Long evaluationSetId;
+
+  @JsonProperty("schema_id")
+  private Long schemaId;
+
+  @JsonProperty("item_id")
+  private Long itemId;
+
+  @JsonProperty("item_key")
+  private String itemKey;
+
+  @JsonProperty("turns")
+  private List<Turn> turns;
+
+  @JsonProperty("base_info")
+  private BaseInfo baseInfo;
+}

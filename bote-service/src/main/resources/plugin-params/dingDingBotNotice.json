@@ -1,0 +1,299 @@
+{
+  "key": -1,
+  "description": "根节点",
+  "name": "root",
+  "type": "object",
+  "require": false,
+  "children": [
+    {
+      "description": "webhook地址accessToken",
+      "name": "accessToken",
+      "type": "string",
+      "require": true,
+      "key": "adcb3439-2fde-4e56-b9d7-9fa27f5deb67",
+      "parentKey": -1
+    },
+    {
+      "description": "密钥",
+      "name": "secret",
+      "type": "string",
+      "require": true,
+      "key": "fc440006-34fa-4713-88bc-645febe57d40",
+      "parentKey": -1
+    },
+    {
+      "description": "被@的人",
+      "name": "at",
+      "type": "object",
+      "require": false,
+      "key": "79009da6-ebfd-a8e9-2618-0062cb9d172f",
+      "parentKey": -1,
+      "children": [
+        {
+          "description": "被@的人的手机号列表",
+          "name": "atMobiles",
+          "type": "array",
+          "require": false,
+          "key": "170a0948-e701-160b-54d7-326979850032",
+          "parentKey": "79009da6-ebfd-a8e9-2618-0062cb9d172f"
+        },
+        {
+          "description": "被@的人的用户ID列表",
+          "name": "atUserIds",
+          "type": "array",
+          "require": false,
+          "key": "396a2ea8-56d8-644e-0349-11922efabb92",
+          "parentKey": "79009da6-ebfd-a8e9-2618-0062cb9d172f"
+        },
+        {
+          "description": "是否@全部用户",
+          "name": "isAtAll",
+          "type": "boolean",
+          "require": false,
+          "key": "396a2ea8-56d8-644e-0349-11922efabb92",
+          "parentKey": "79009da6-ebfd-a8e9-2618-0062cb9d172f"
+        }
+      ]
+    },
+    {
+      "description": "消息对象",
+      "name": "message",
+      "type": "object",
+      "require": true,
+      "key": "fea2186e-365f-43eb-9d97-d8a42b755425",
+      "parentKey": -1,
+      "children": [
+        {
+          "description": "消息类型",
+          "name": "msgType",
+          "type": "string",
+          "require": true,
+          "key": "8578933e-2004-c7a3-dd96-36b26cecc589",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425"
+        },
+        {
+          "description": "卡片消息",
+          "name": "actionCard",
+          "type": "object",
+          "require": false,
+          "key": "8d2c9f97-150e-b260-6b9f-01b03322975b",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": " 0-按钮竖直排列，1-按钮横向排列",
+              "name": "btnOrientation",
+              "type": "string",
+              "require": false,
+              "value": "",
+              "key": "5b26ea1c-1410-bb11-91ff-52c31a92c928",
+              "parentKey": "8d2c9f97-150e-b260-6b9f-01b03322975b"
+            },
+            {
+              "description": "0-隐藏，1-展示",
+              "name": "hideAvatar",
+              "type": "string",
+              "require": false,
+              "value": "",
+              "key": "77d3b639-5071-5c49-f006-5f63e872b2d8",
+              "parentKey": "8d2c9f97-150e-b260-6b9f-01b03322975b"
+            },
+            {
+              "description": "单个按钮的标题",
+              "name": "singleTitle",
+              "type": "string",
+              "require": false,
+              "value": "",
+              "key": "a4dc204a-b96d-2d9d-cc44-c5854a0dc2ff",
+              "parentKey": "8d2c9f97-150e-b260-6b9f-01b03322975b"
+            },
+            {
+              "description": "消息内容",
+              "name": "text",
+              "type": "string",
+              "require": false,
+              "value": "",
+              "key": "74f27918-d4bf-701c-524e-367640881552",
+              "parentKey": "8d2c9f97-150e-b260-6b9f-01b03322975b"
+            },
+            {
+              "description": "标题",
+              "name": "title",
+              "type": "string",
+              "require": false,
+              "value": "",
+              "key": "46b564e8-6965-40bc-d1f9-60c6b5a51579",
+              "parentKey": "8d2c9f97-150e-b260-6b9f-01b03322975b"
+            },
+            {
+              "description": "按钮信息",
+              "name": "btns",
+              "type": "array",
+              "require": false,
+              "value": "",
+              "key": "dbcb0b05-d567-3d65-0166-30162c4021ad",
+              "parentKey": "8d2c9f97-150e-b260-6b9f-01b03322975b",
+              "children": [
+                {
+                  "description": "按钮对象",
+                  "name": "btn",
+                  "type": "object",
+                  "require": false,
+                  "value": "",
+                  "key": "7528e42c-a8cd-f49a-fddf-7dfb3d5486d4",
+                  "parentKey": "dbcb0b05-d567-3d65-0166-30162c4021ad",
+                  "children": [
+                    {
+                      "description": "按钮的url",
+                      "name": "actionURL",
+                      "type": "string",
+                      "require": false,
+                      "value": "",
+                      "key": "b3f20a76-e427-993d-599b-44a512769105",
+                      "parentKey": "7528e42c-a8cd-f49a-fddf-7dfb3d5486d4"
+                    },
+                    {
+                      "description": "按钮的标题",
+                      "name": "title",
+                      "type": "string",
+                      "require": false,
+                      "value": "",
+                      "key": "48e12491-a2ab-f87f-5585-12881b175c64",
+                      "parentKey": "7528e42c-a8cd-f49a-fddf-7dfb3d5486d4"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "description": "文本消息",
+          "name": "text",
+          "type": "object",
+          "require": false,
+          "key": "6feba29e-4bab-abe0-b81b-890a7f768115",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "消息内容",
+              "name": "content",
+              "type": "string",
+              "require": true,
+              "key": "cf562210-e517-bc73-7049-f137e5c8644c",
+              "parentKey": "6feba29e-4bab-abe0-b81b-890a7f768115"
+            }
+          ]
+        },
+        {
+          "description": "链接消息",
+          "name": "link",
+          "type": "object",
+          "require": false,
+          "value": "",
+          "key": "60e68ced-8ac7-4d2b-65b9-366b8291b852",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "消息URL",
+              "name": "messageUrl",
+              "type": "string",
+              "require": true,
+              "key": "1cfd85e7-c63f-da3c-86a2-7f9fea355b4e",
+              "parentKey": "60e68ced-8ac7-4d2b-65b9-366b8291b852"
+            },
+            {
+              "description": "图片URL",
+              "name": "picUrl",
+              "type": "string",
+              "require": false,
+              "key": "ae55b23e-6251-2ecc-ffe8-e2037647fbae",
+              "parentKey": "60e68ced-8ac7-4d2b-65b9-366b8291b852"
+            }
+          ]
+        },
+        {
+          "description": "Markdown消息",
+          "name": "markdown",
+          "type": "object",
+          "require": false,
+          "value": "",
+          "key": "d95ee4b8-6fbc-fb7e-7939-5ce5b539b2c0",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "标题",
+              "name": "title",
+              "type": "string",
+              "require": true,
+              "key": "dd575c0c-0da8-2cfa-84b2-5f2a6f9c9e7f",
+              "parentKey": "d95ee4b8-6fbc-fb7e-7939-5ce5b539b2c0"
+            },
+            {
+              "description": "文本内容",
+              "name": "text",
+              "type": "string",
+              "require": true,
+              "key": "3f045213-5071-895f-4399-a8604fbe029b",
+              "parentKey": "d95ee4b8-6fbc-fb7e-7939-5ce5b539b2c0"
+            }
+          ]
+        },
+        {
+          "description": "图文消息",
+          "name": "feedCard",
+          "type": "object",
+          "require": false,
+          "value": "",
+          "key": "07e456fa-fb29-83ab-e369-31f87ea55246",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "链接消息",
+              "name": "links",
+              "type": "array",
+              "require": true,
+              "key": "3c099d78-993d-40b9-231e-a77ff386285f",
+              "parentKey": "07e456fa-fb29-83ab-e369-31f87ea55246",
+              "children": [
+                {
+                  "description": "链接消息对象",
+                  "name": "link",
+                  "type": "object",
+                  "require": true,
+                  "key": "6d1ce139-11aa-df68-cec4-87038354aa7a",
+                  "parentKey": "3c099d78-993d-40b9-231e-a77ff386285f",
+                  "children": [
+                    {
+                      "description": "点击单条信息到跳转链接",
+                      "name": "messageURL",
+                      "type": "string",
+                      "require": true,
+                      "key": "dfff8d5d-a6ad-2bd1-4fe0-33a213a6f2df",
+                      "parentKey": "6d1ce139-11aa-df68-cec4-87038354aa7a"
+                    },
+                    {
+                      "description": "单条信息文本",
+                      "name": "title",
+                      "type": "string",
+                      "require": true,
+                      "key": "332817c2-850a-8e68-9bda-6c79439627db",
+                      "parentKey": "6d1ce139-11aa-df68-cec4-87038354aa7a"
+                    },
+                    {
+                      "description": "单条信息后面图片的URL",
+                      "name": "picURL",
+                      "type": "string",
+                      "require": true,
+                      "key": "4df0a7c1-e6bb-fe51-0760-a9139cc29c0c",
+                      "parentKey": "6d1ce139-11aa-df68-cec4-87038354aa7a"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

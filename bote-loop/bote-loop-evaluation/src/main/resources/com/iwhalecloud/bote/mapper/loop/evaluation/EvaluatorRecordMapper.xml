@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.EvaluatorRecordMapper">
+  <!-- 结果映射 -->
+  <resultMap id="EvaluatorRecordEntityMap" type="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorRecordEntity">
+    <id column="id" property="id"/>
+    <result column="space_id" property="spaceId"/>
+    <result column="evaluator_version_id" property="evaluatorVersionId"/>
+    <result column="experiment_id" property="experimentId"/>
+    <result column="experiment_run_id" property="experimentRunId"/>
+    <result column="item_id" property="itemId"/>
+    <result column="turn_id" property="turnId"/>
+    <result column="log_id" property="logId"/>
+    <result column="trace_id" property="traceId"/>
+    <result column="score" property="score"/>
+    <result column="status" property="status"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP"/>
+    <result column="input_data" property="inputData"/>
+    <result column="output_data" property="outputData"/>
+    <result column="created_by" property="createdBy"/>
+    <result column="updated_by" property="updatedBy"/>
+    <result column="ext" property="ext"/>
+  </resultMap>
+
+  <!-- 创建评估器执行结果 -->
+  <insert id="createEvaluatorRecord" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorRecordEntity">
+    INSERT INTO bt_evaluator_record (
+    id, space_id, evaluator_version_id, experiment_id, experiment_run_id, item_id, turn_id,
+    log_id, trace_id, score, status, created_at, updated_at, input_data, output_data,
+    created_by, updated_by, ext
+    ) VALUES (
+    #{evaluatorRecord.id}, #{evaluatorRecord.spaceId}, #{evaluatorRecord.evaluatorVersionId}, #{evaluatorRecord.experimentId},
+    #{evaluatorRecord.experimentRunId}, #{evaluatorRecord.itemId}, #{evaluatorRecord.turnId},
+    #{evaluatorRecord.logId}, #{evaluatorRecord.traceId}, #{evaluatorRecord.score}, #{evaluatorRecord.status},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{evaluatorRecord.inputData}, #{evaluatorRecord.outputData},
+    #{evaluatorRecord.createdBy}, #{evaluatorRecord.updatedBy}, #{evaluatorRecord.ext}
+    )
+  </insert>
+
+  <!-- 更新评估器执行结果 -->
+  <update id="updateEvaluatorRecord">
+    UPDATE bt_evaluator_record
+    SET
+    space_id = #{evaluatorRecord.spaceId},
+    evaluator_version_id = #{evaluatorRecord.evaluatorVersionId},
+    experiment_id = #{evaluatorRecord.experimentId},
+    experiment_run_id = #{evaluatorRecord.experimentRunId},
+    item_id = #{evaluatorRecord.itemId},
+    turn_id = #{evaluatorRecord.turnId},
+    log_id = #{evaluatorRecord.logId},
+    trace_id = #{evaluatorRecord.traceId},
+    score = #{evaluatorRecord.score},
+    status = #{evaluatorRecord.status},
+    input_data = #{evaluatorRecord.inputData},
+    output_data = #{evaluatorRecord.outputData},
+    updated_by = #{evaluatorRecord.updatedBy},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    ext = #{evaluatorRecord.ext}
+    WHERE id = #{evaluatorRecord.id}
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 根据ID获取评估器执行结果 -->
+  <select id="getEvaluatorRecord" resultMap="EvaluatorRecordEntityMap">
+    SELECT * FROM bt_evaluator_record
+    WHERE id = #{evaluatorRecordId}
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 批量根据ID获取评估器执行结果 -->
+  <select id="batchGetEvaluatorRecord" resultMap="EvaluatorRecordEntityMap">
+    SELECT * FROM bt_evaluator_record
+    WHERE id IN
+    <foreach collection="evaluatorRecordIds" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 根据实验ID、数据项ID和轮次ID批量获取评估器执行结果 -->
+  <select id="batchGetByExperimentItemTurn" resultMap="EvaluatorRecordEntityMap">
+    SELECT * FROM bt_evaluator_record
+    WHERE space_id = #{spaceId}
+    AND experiment_id = #{experimentId}
+    <if test="itemIds != null and itemIds.size > 0">
+      AND item_id IN
+      <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+        #{itemId}
+      </foreach>
+    </if>
+    <if test="turnIds != null and turnIds.size > 0">
+      AND turn_id IN
+      <foreach collection="turnIds" item="turnId" open="(" separator="," close=")">
+        #{turnId}
+      </foreach>
+    </if>
+    AND deleted_at IS NULL
+  </select>
+</mapper>

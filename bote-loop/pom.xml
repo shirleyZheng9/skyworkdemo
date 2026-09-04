@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.iwhalecloud.bote</groupId>
+    <artifactId>bote</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bote-loop</artifactId>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>bote-loop-common</module>
+    <module>bote-loop-data</module>
+    <module>bote-loop-evaluation</module>
+    <module>bote-loop-prompt</module>
+    <module>bote-loop-api</module>
+    <module>bote-loop-client</module>
+  </modules>
+</project>

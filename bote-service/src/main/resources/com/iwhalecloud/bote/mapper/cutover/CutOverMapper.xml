@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.cutover.CutOverMapper">
+
+  <select id="selectFlowsWithQuestionClassifierNode" resultType="com.iwhalecloud.bote.dto.skill.SkillFlowWithParamDTO">
+    SELECT a.flow_id,
+           a.flow_name,
+           a.flow_code,
+           a.tenant_id,
+           a.flow_type,
+           a.flow_graph_json,
+           b.variable_json,
+           b.request_json,
+           c.tenant_name
+    FROM bt_skill_flow a
+    LEFT JOIN bt_skill_flow_param b ON b.tenant_id = a.tenant_id AND b.flow_id = a.flow_id AND b.status_cd = '00A'
+    <!-- 租户不存在或被禁用的也查出来，避免日后启用租户后打开工作流报错 -->
+    LEFT JOIN bt_tenant c ON c.tenant_id = a.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.flow_graph_json IS NOT null
+      AND a.flow_graph_json LIKE '%"questionClassifier"%'
+    ORDER BY a.tenant_id, a.flow_id
+  </select>
+
+  <update id="updateFlowGraphAndDsl">
+    UPDATE bt_skill_flow
+    SET flow_graph_json = #{flow.flowGraphJson},
+        flow_dsl = #{flow.flowDsl}
+    WHERE flow_id = #{flow.flowId}
+      AND tenant_id = #{flow.tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="selectBot" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT a.bot_id, a.tenant_id
+    FROM bt_bot a
+    WHERE status_cd = '00A'
+      AND EXISTS (SELECT 1
+                  FROM bt_bot_scene b
+                  WHERE a.tenant_id = b.tenant_id
+                    AND a.bot_id = b.bot_id
+                    AND b.status_cd = '00A')
+      AND NOT EXISTS(SELECT 1
+                     FROM bt_bot_scene_rel r
+                     WHERE r.status_cd = '00A' AND a.tenant_id = r.tenant_id AND a.bot_id = r.bot_id)
+  </select>
+
+  <select id="selectBotScene" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT a.scene_id
+    FROM bt_bot_scene a
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectUsersForEncryption" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT user_id, user_name, phone_no, email
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND (
+        (phone_no IS NOT NULL AND phone_no != '')
+          OR
+        (email IS NOT NULL AND email != '')
+      )
+    ORDER BY user_id
+  </select>
+
+  <select id="selectUsersForEncryption" resultType="com.iwhalecloud.bote.entity.portal.UserEntity" databaseId="oracle">
+    SELECT user_id, user_name, phone_no, email
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND (phone_no IS NOT NULL OR email IS NOT NULL)
+    ORDER BY user_id
+  </select>
+
+  <update id="updateUserEncryptFields">
+    UPDATE bt_user
+    <set>
+      <if test="user.phoneNo != null and user.phoneNo != ''">
+        phone_no = #{user.phoneNo},
+      </if>
+      <if test="user.email != null and user.email != ''">
+        email = #{user.email},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE user_id = #{user.userId}
+  </update>
+
+  <select id="selectBotUserExperience" resultType="com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO">
+    SELECT a.experience_id, a.bot_id, a.tenant_id
+    FROM bt_bot_user_experience a
+    WHERE a.status_cd = '00A'
+      AND NOT EXISTS(SELECT 1 FROM bt_resource_element b
+                     WHERE a.experience_id = b.element_id
+                     AND a.tenant_id = b.tenant_id
+                     AND b.element_type = 'bot_user_experience')
+  </select>
+
+  <select id="selectAllTenants" resultType="com.iwhalecloud.bote.dto.portal.SimpleTenantDTO">
+    SELECT tenant_id, tenant_name, creator_id
+    FROM bt_tenant
+    WHERE status_cd = '00A'
+    <if test="ignoreSpaceId">
+      AND space_id is null
+    </if>
+  </select>
+
+  <select id="selectScenesWithGroovy" resultType="com.iwhalecloud.bote.entity.bot.BotSceneEntity">
+    SELECT tenant_id, scene_id, scene_name, scene_dsl
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND scene_type = 'chatflow'
+      AND scene_dsl IS NOT NULL
+      AND scene_dsl LIKE '%"scriptType":"Groovy"%'
+      AND tenant_id IN (SELECT tenant_id FROM bt_tenant WHERE status_cd = '00A')
+    ORDER BY tenant_id, scene_id
+  </select>
+
+  <select id="selectFlowsWithGroovy" resultType="com.iwhalecloud.bote.entity.skill.SkillFlowEntity">
+    SELECT tenant_id, flow_id, flow_name, flow_dsl
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+      AND flow_dsl IS NOT NULL
+      AND flow_dsl LIKE '%"scriptType":"Groovy"%'
+      AND tenant_id IN (SELECT tenant_id FROM bt_tenant WHERE status_cd = '00A')
+    ORDER BY tenant_id, flow_id
+  </select>
+
+  <select id="selectFunctionsWithGroovy" resultType="com.iwhalecloud.bote.entity.skill.SkillFunctionEntity">
+    SELECT tenant_id, func_id, func_name
+    FROM bt_skill_function
+    WHERE status_cd = '00A'
+      AND func_type = 'Groovy'
+      AND script_json IS NOT NULL
+      AND (tenant_id = -1 OR tenant_id IN (SELECT tenant_id FROM bt_tenant WHERE status_cd = '00A'))
+    ORDER BY tenant_id, func_id
+  </select>
+
+  <select id="selectExternalPortalsWithGroovy" resultType="com.iwhalecloud.bote.entity.portal.ExternalPortalEntity">
+    SELECT default_tenant_id, id, portal_name
+    FROM bt_external_portal
+    WHERE status_cd = '00A'
+      AND portal_type = 'sso'
+      AND sso_script IS NOT NULL
+      AND default_tenant_id IN (SELECT tenant_id FROM bt_tenant WHERE status_cd = '00A')
+    ORDER BY default_tenant_id, id
+  </select>
+
+  <update id="updateTenantSpaceId">
+    update bt_tenant set space_id = tenant_id where status_cd = '00A' and space_id is null
+  </update>
+
+  <select id="selectAllOrgMember" resultType="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    SELECT DISTINCT a.user_id, b.space_id, o.org_id
+    FROM bt_tenant_user a
+    LEFT JOIN bt_tenant b ON a.tenant_id = b.tenant_id
+    LEFT JOIN bt_organization o ON b.space_id = o.space_id
+    LEFT JOIN bt_user u ON u.user_id = a.user_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND o.status_cd = '00A'
+      AND u.status_cd = '00A'
+      AND u.system_code = 'default'
+      AND o.org_type = 'company'
+      AND o.parent_org_id IS NULL
+      AND b.space_id IS NOT NULL
+      AND NOT EXISTS (SELECT 1 FROM bt_organization_member c
+                      WHERE c.status_cd = '00A' AND b.space_id = c.space_id AND a.user_id = c.user_id)
+  </select>
+
+  <select id="selectAllOrgMemberRole" resultType="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    SELECT a.user_id, a.space_id, a.member_role
+    FROM bt_organization_member a
+    JOIN bt_organization o ON a.org_id = o.org_id
+    WHERE a.status_cd = '00A'
+      AND o.status_cd = '00A'
+      AND NOT EXISTS(SELECT 1 FROM bt_org_user_role r
+                    WHERE r.status_cd = '00A' AND r.space_id = a.space_id AND a.user_id = r.user_id)
+  </select>
+
+  <select id="selectAppPublishUrls" resultType="com.iwhalecloud.bote.dto.base.AppPublishDTO">
+    SELECT publish_id, url
+    FROM bt_app_publish
+    WHERE status_cd = '00A'
+      AND url IS NOT NULL
+      AND url NOT LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      'accessToken'
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+  </select>
+
+  <update id="updateAppPublishUrl">
+    UPDATE bt_app_publish
+    SET url = #{newUrl}
+    WHERE status_cd = '00A'
+      AND publish_id = #{publishId}
+  </update>
+
+  <select id="selectDocumentIds" resultType="java.lang.String">
+    SELECT a.document_id
+    FROM bt_dc_document a
+    WHERE a.status_cd = '00A'
+      AND a.document_type NOT IN ('ROOT', 'FOLDER')
+      AND a.content_source = 'UPLOAD'
+      AND NOT EXISTS(SELECT 1 FROM bt_dc_document_contributor b WHERE b.status_cd = '00A' and b.document_id = a.document_id AND b.user_id = a.creator_id)
+      ORDER BY a.document_id
+  </select>
+
+  <select id="selectDocumentByIds" resultType="com.iwhalecloud.bote.dto.convert.BtDcDocumentDTO">
+    SELECT document_id, tenant_id, creator_id
+    FROM bt_dc_document
+    WHERE document_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <insert id="batchInsertDocumentContributor" parameterType="com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity">
+    INSERT INTO bt_dc_document_contributor (
+      id,
+      tenant_id,
+      document_id,
+      user_id,
+      contributor_score,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      status_cd
+    ) VALUES
+    <foreach collection="contributors" item="contributor" index="index" separator=", ">
+     (
+      #{contributor.id},
+      #{contributor.tenantId},
+      #{contributor.documentId},
+      #{contributor.userId},
+      #{contributor.contributorScore},
+      #{contributor.creatorId},
+      #{contributor.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{contributor.statusCd}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertDocumentContributor" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="contributors" item="contributor" index="index" separator=" ">
+      INTO bt_dc_document_contributor (
+      id,
+      tenant_id,
+      document_id,
+      user_id,
+      contributor_score,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      tenant_id,
+      status_cd
+      ) VALUES (
+      #{contributor.id},
+      #{contributor.tenantId},
+      #{contributor.documentId},
+      #{contributor.userId},
+      #{contributor.contributorScore},
+      #{contributor.creatorId},
+      #{contributor.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{contributor.tenantId},
+      #{contributor.statusCd}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+</mapper>

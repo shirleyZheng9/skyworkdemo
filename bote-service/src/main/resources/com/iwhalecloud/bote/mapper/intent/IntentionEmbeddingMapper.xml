@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.intent.IntentionEmbeddingMapper">
+  <!-- @formatter:off -->
+  <insert id="insert">
+    INSERT INTO bt_intention_embedding (id, tenant_id, question_id, question, created_time)
+    VALUES (
+    #{dto.id},
+    #{dto.tenantId},
+    #{dto.questionId},
+    #{dto.question},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <insert id="batchInsert">
+    INSERT INTO bt_intention_embedding (id, tenant_id, question_id, question, created_time)
+    VALUES
+    <foreach collection="list" item="dto" separator=",">
+      (
+      #{dto.id},
+      #{dto.tenantId},
+      #{dto.questionId},
+      #{dto.question,typeHandler=org.apache.ibatis.type.UnknownTypeHandler},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+  </insert>
+
+  <update id="update">
+    UPDATE bt_intention_embedding
+    SET question = #{question},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <select id="selectIdByQuestionId" resultType="java.lang.Long">
+    SELECT id
+    FROM bt_intention_embedding
+    WHERE question_id = #{questionId}
+  </select>
+
+  <select id="selectIdsByQuestionIds" resultType="com.iwhalecloud.bote.dto.intent.IntentionEmbeddingDTO">
+    SELECT id, question_id
+    FROM bt_intention_embedding
+    WHERE question_id IN (<foreach collection="questionIds" item="questionId" separator=",">#{questionId}</foreach>)
+  </select>
+
+  <delete id="deleteByQuestionId">
+    DELETE
+    FROM bt_intention_embedding
+    WHERE question_id = #{questionId}
+  </delete>
+
+  <delete id="deleteByBotId">
+    DELETE
+    FROM bt_intention_embedding
+    WHERE bot_id = #{botId}
+  </delete>
+
+  <delete id="deleteByTenantId">
+    DELETE
+    FROM bt_intention_embedding
+    WHERE tenant_id = #{tenantId}
+  </delete>
+
+  <select id="selectTopMatches" resultType="com.iwhalecloud.bote.dto.intent.IntentionMatchItemDTO">
+    SELECT a.question_id, (2 - (a.question &lt;=&gt; #{question}::halfvec)) / 2 AS score
+    FROM bt_intention_embedding a
+    LEFT JOIN bt_intention_question b ON a.question_id = b.question_id AND a.tenant_id = b.tenant_id
+    LEFT JOIN bt_bot_scene c ON b.scene_id = c.scene_id AND b.tenant_id = c.tenant_id
+    WHERE a.tenant_id = #{tenantId}
+      AND c.status_cd = '00A'
+      AND c.scene_status = '1'
+    <if test="botId != null">
+      AND EXISTS (SELECT 1 FROM bt_bot_scene_rel r
+                  WHERE c.scene_id = r.scene_id AND c.tenant_id = r.tenant_id AND r.status_cd = '00A'
+                    AND r.bot_id = #{botId})
+    </if>
+      AND (2 - (a.question &lt;=&gt; #{question}::halfvec)) / 2 &gt; #{minScore}
+    ORDER BY score DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{topNum}
+  </select>
+</mapper>

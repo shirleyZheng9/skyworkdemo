@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.mcp.McpToolFileMapper">
+
+  <insert id="insertMcpToolFile">
+    INSERT INTO bt_mcp_tool_file (id,
+                                  tenant_id,
+                                  file_id,
+                                  session_id,
+                                  transaction_id,
+                                  context_id,
+                                  mcp_server_id,
+                                  mcp_tool_name,
+                                  status_cd,
+                                  creator_id,
+                                  created_time)
+    VALUES (#{dto.id},
+            #{dto.tenantId},
+            #{dto.fileId},
+            #{dto.sessionId},
+            #{dto.transactionId},
+            #{dto.contextId},
+            #{dto.mcpServerId},
+            #{dto.mcpToolName},
+            #{dto.statusCd},
+            #{dto.creatorId},
+            <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>)
+  </insert>
+
+  <select id="selectFileIdsBySessionIds" resultType="java.lang.Long">
+    SELECT file_id
+    FROM bt_mcp_tool_file
+    WHERE status_cd = '00A'
+      AND session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </select>
+
+  <update id="disableFilesBySessionIds" timeout="120">
+    UPDATE bt_file
+    SET status_cd = '00D',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND file_id IN (
+        SELECT file_id
+        FROM bt_mcp_tool_file
+        WHERE status_cd = '00A'
+        AND session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+      )
+  </update>
+
+  <update id="deleteBySessionIds" timeout="120">
+    UPDATE bt_mcp_tool_file
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </update>
+
+  <update id="disableTestFiles" timeout="120">
+    UPDATE bt_file
+    SET status_cd = '00D',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND file_id IN (
+        SELECT file_id
+        FROM bt_mcp_tool_file
+        WHERE status_cd = '00A'
+          AND session_id = #{sessionId}
+          AND created_time &lt;= #{maxCreatedTime}
+      )
+  </update>
+
+  <update id="deleteTestFiles" timeout="120">
+    UPDATE bt_mcp_tool_file
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND session_id = #{sessionId}
+      AND created_time &lt;= #{maxCreatedTime}
+  </update>
+</mapper>

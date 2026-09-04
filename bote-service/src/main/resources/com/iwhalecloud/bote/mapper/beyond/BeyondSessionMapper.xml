@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.beyond.BeyondSessionMapper">
+  <!-- @formatter:off -->
+  <insert id="insert">
+    INSERT INTO bt_beyond_session (beyond_session_id, tenant_id, sso_token, status_cd, creator_id, created_time, updated_time)
+    VALUES (
+      #{session.beyondSessionId},
+      #{session.tenantId},
+      #{session.ssoToken},
+      #{session.statusCd},
+      #{session.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <select id="existsBeyondSession" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_beyond_session
+    WHERE beyond_session_id = #{beyondSessionId}
+      AND status_cd = '00A'
+  </select>
+  <update id="updateSsoToken">
+    UPDATE bt_beyond_session
+    SET sso_token = #{ssoToken},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE beyond_session_id = #{beyondSessionId}
+    AND status_cd = '00A'
+  </update>
+</mapper>

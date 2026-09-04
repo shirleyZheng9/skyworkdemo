@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.SessionMsgFileMapper">
+
+  <select id="selectSessionMsgFiles" resultType="com.iwhalecloud.bote.dto.chat.SessionMsgFileDTO">
+    SELECT a.rela_id, a.msg_id, a.file_id,
+           c.file_name, c.file_size, c.file_type
+    FROM bt_bot_session_msg_file a
+    JOIN bt_bot_session_msg b ON b.msg_id = a.msg_id
+    JOIN bt_file c ON c.file_id = a.file_id AND c.status_cd = '00A'
+    WHERE a.session_id = #{sessionId}
+    ORDER BY b.begin_time DESC
+  </select>
+
+  <insert id="batchInsertSessionMsgFile">
+    INSERT INTO bt_bot_session_msg_file (
+    rela_id,
+    msg_id,
+    session_id,
+    file_id
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=",">
+      (
+      #{dto.relaId},
+      #{dto.msgId},
+      #{dto.sessionId},
+      #{dto.fileId}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSessionMsgFile" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_bot_session_msg_file (
+      rela_id,
+      msg_id,
+      session_id,
+      file_id
+      )
+      VALUES
+      (
+      #{dto.relaId},
+      #{dto.msgId},
+      #{dto.sessionId},
+      #{dto.fileId}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+</mapper>

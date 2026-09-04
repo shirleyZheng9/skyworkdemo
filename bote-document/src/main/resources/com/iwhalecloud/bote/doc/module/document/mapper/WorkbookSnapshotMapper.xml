@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.WorkbookSnapshotMapper">
+  <!-- @formatter:off -->
+  <select id="selectByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookSnapshotEntity">
+    SELECT id, document_id, snapshot_id, revision, sheet_count, original_data,
+           tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_workbook_snapshot
+    WHERE id = #{id}
+      AND status_cd = '00A'
+  </select>
+  <!-- @formatter:on -->
+
+  <insert id="insert">
+    INSERT INTO bt_dc_workbook_snapshot (
+    id, document_id, snapshot_id, revision, sheet_count, original_data, created_time, updated_time, status_cd
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.snapshotId},
+    #{entity.revision},
+    #{entity.sheetCount},
+    #{entity.originalData},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_workbook_snapshot
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="queryLastRevision" resultType="java.lang.Long">
+    select max(revision)
+    from bt_dc_workbook_snapshot
+    where document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+  <select id="selectByRevisionAndDocumentId"
+          resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookSnapshotEntity">
+    SELECT id,
+           document_id,
+           snapshot_id,
+           revision,
+           sheet_count,
+           original_data,
+           tenant_id,
+           created_time,
+           updated_time,
+           status_cd
+    FROM bt_dc_workbook_snapshot
+    WHERE document_id = #{documentId}
+      and revision = #{revision}
+      AND status_cd = '00A'
+  </select>
+</mapper>

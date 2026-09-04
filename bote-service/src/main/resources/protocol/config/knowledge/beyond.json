@@ -1,0 +1,23 @@
+{
+  "name": "百应",
+  "code": "beyond",
+  "description": "对接浩鲸科技的百应平台",
+  "attrs": [
+    {
+      "type": "input",
+      "name": [
+        "knowledgeTypeExt",
+        "beyondKnowledgeId"
+      ],
+      "label": "百应知识库 ID",
+      "formProps": {
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入百应知识库 ID"
+          }
+        ]
+      }
+    }
+  ]
+}

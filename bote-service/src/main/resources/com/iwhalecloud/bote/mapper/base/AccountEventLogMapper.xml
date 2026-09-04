@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.AccountEventLogMapper">
+
+  <sql id="accountChangeLogColumns">
+    log_id,
+    operator_id,
+    operator_name,
+    event_type,
+    event_code,
+    event_desc,
+    event_content,
+    oper_ip,
+    oper_date,
+    tenant_id,
+    remark
+  </sql>
+
+  <insert id="insertLog">
+    INSERT INTO bt_account_event_log (
+    <include refid="accountChangeLogColumns"/>
+    ) VALUES (
+    #{log.logId},
+    #{log.operatorId},
+    #{log.operatorName},
+    #{log.eventType},
+    #{log.eventCode},
+    #{log.eventDesc},
+    #{log.eventContent},
+    #{log.operIp},
+    #{log.operDate},
+    #{log.tenantId},
+    #{log.remark}
+    )
+  </insert>
+
+  <select id="selectLogPage" resultType="com.iwhalecloud.bote.dto.base.AccountEventLog">
+    SELECT
+    <include refid="accountChangeLogColumns"/>
+    FROM bt_account_event_log
+    where 1 = 1
+    <if test="log.operatorName != null and log.operatorName != ''">
+      AND operator_name = #{param.operatorName}
+    </if>
+    <if test="log.eventType != null and log.eventType != ''">
+      AND event_type = #{param.eventType}
+    </if>
+    <if test="log.eventCode != null and log.eventCode != ''">
+      AND event_code = #{param.eventCode}
+    </if>
+    <if test="log.tenantId != null">
+      AND tenant_id = #{param.tenantId}
+    </if>
+    ORDER BY oper_date DESC
+  </select>
+
+</mapper>

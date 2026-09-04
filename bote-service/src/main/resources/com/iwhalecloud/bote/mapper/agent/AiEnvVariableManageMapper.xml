@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.AiEnvVariableManageMapper">
+
+  <sql id="envVariableColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.variable_code,
+    a.variable_value,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.variable_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.userId != null">
+      AND a.creator_id = #{query.userId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+  </sql>
+
+  <insert id="batchInsertAiEnvVariable">
+    INSERT INTO bt_ai_env_variable (
+    id,
+    space_id,
+    bot_id,
+    variable_code,
+    variable_value,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.variableCode},
+    #{dto.variableValue},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertAiEnvVariable" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_ai_env_variable (
+      id,
+      space_id,
+      bot_id,
+      variable_code,
+      variable_value,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.id},
+      #{dto.spaceId},
+      #{dto.botId},
+      #{dto.variableCode},
+      #{dto.variableValue},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateAiEnvVariable">
+    UPDATE bt_ai_env_variable
+    <set>
+    <if test="dto.checkFieldUpdateFlag('variableCode')">
+      variable_code = #{dto.variableCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('variableValue')">
+      variable_value = #{dto.variableValue},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId},
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <select id="selectAiEnvVariableList" resultType="com.iwhalecloud.bote.dto.agent.AiEnvVariableDTO">
+    SELECT
+    <include refid="envVariableColumns"/>
+    FROM bt_ai_env_variable a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    order by a.created_time
+  </select>
+
+  <delete id="deleteAiEnvVariableByIds">
+   UPDATE bt_ai_env_variable
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id in <foreach collection="ids" item="id" open="(" separator="," close=")">#{id}</foreach>
+  </delete>
+</mapper>

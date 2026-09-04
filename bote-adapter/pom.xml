@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.iwhalecloud.bote</groupId>
+    <artifactId>bote</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bote-adapter</artifactId>
+  <description>接口适配模块，部分现场不提供标准协议的大模型接口、不允许部署 DocChain, 需要做兼容处理（比如通过第三方智能体平台间接调用）</description>
+  <packaging>pom</packaging>
+
+  <modules>
+    <module>bote-adapter-juzhi</module>
+    <module>bote-adapter-juzhi-mock</module>
+    <module>bote-adapter-panzhi</module>
+    <module>bote-adapter-dify</module>
+  </modules>
+</project>

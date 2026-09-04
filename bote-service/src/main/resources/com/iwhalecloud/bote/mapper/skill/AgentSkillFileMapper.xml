@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.AgentSkillFileMapper">
+
+  <insert id="insertAgentSkillFile">
+    INSERT INTO bt_agent_skill_file (
+      skill_file_id, dir_id, skill_id, tenant_id, file_name, file_type, file_content, file_info_id, status_cd,
+      created_time, updated_time, creator_id, updator_id, remark
+    ) VALUES (
+      #{dto.skillFileId}, #{dto.dirId}, #{dto.skillId}, #{dto.tenantId}, #{dto.fileName}, #{dto.fileType},
+      #{dto.fileContent}, #{dto.fileInfoId}, #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAgentSkillFile">
+    UPDATE bt_agent_skill_file
+    SET
+    <if test="dto.fileName != null and dto.fileName != ''">
+      file_name = #{dto.fileName},
+    </if>
+    <if test="dto.fileType != null and dto.fileType != ''">
+      file_type = #{dto.fileType},
+    </if>
+    <if test="dto.fileContent != null and dto.fileContent != ''">
+      file_content = #{dto.fileContent},
+    </if>
+    <if test="dto.fileInfoId != null">
+      file_info_id = #{dto.fileInfoId},
+    </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_file_id = #{dto.skillFileId} AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectBySkillFileId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillFileDTO">
+    SELECT a.skill_file_id, a.dir_id, a.skill_id, a.tenant_id, a.file_name, a.file_type, a.file_content, a.file_info_id, a.status_cd,
+           a.created_time, a.updated_time, a.creator_id, a.updator_id, a.remark, b.skill_ext_json, b.skill_template_type
+    FROM bt_agent_skill_file a
+    LEFT JOIN bt_agent_skill b ON b.skill_id = a.skill_id AND b.tenant_id = a.tenant_id
+    WHERE a.tenant_id = #{tenantId}
+      AND a.skill_file_id = #{skillFileId}
+      AND a.status_cd = '00A'
+  </select>
+
+  <select id="selectActiveByDirId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillFileDTO">
+    SELECT skill_file_id, dir_id, skill_id, tenant_id, file_name, file_type, file_content, file_info_id, status_cd,
+           created_time, updated_time, creator_id, updator_id, remark
+    FROM bt_agent_skill_file
+    WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
+    ORDER BY created_time ASC, skill_file_id ASC
+  </select>
+
+  <select id="selectActiveMetaByDirId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillFileDTO">
+    SELECT skill_file_id, dir_id, skill_id, tenant_id, file_name, file_type, file_info_id, status_cd,
+           created_time, updated_time, creator_id, updator_id, remark
+    FROM bt_agent_skill_file
+    WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
+    ORDER BY created_time ASC, skill_file_id ASC
+  </select>
+
+  <select id="selectActiveBySkillId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillFileDTO">
+    SELECT skill_file_id, dir_id, skill_id, tenant_id, file_name, file_type, file_content, file_info_id, status_cd,
+           created_time, updated_time, creator_id, updator_id, remark
+    FROM bt_agent_skill_file
+    WHERE tenant_id = #{tenantId}
+      AND skill_id = #{skillId}
+      AND status_cd = '00A'
+    ORDER BY dir_id ASC, created_time ASC
+  </select>
+
+  <select id="selectSkillMdBySkillId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillFileDTO">
+    SELECT f.skill_file_id, f.dir_id, f.skill_id, f.tenant_id, f.file_name, f.file_type, f.file_content, f.file_info_id, f.status_cd,
+           f.created_time, f.updated_time, f.creator_id, f.updator_id, f.remark
+    FROM bt_agent_skill_file f
+    INNER JOIN bt_agent_skill_dir d ON d.tenant_id = f.tenant_id AND d.dir_id = f.dir_id AND d.status_cd = '00A'
+    WHERE f.tenant_id = #{tenantId}
+      AND f.skill_id = #{skillId}
+      AND f.status_cd = '00A'
+      AND f.file_name = 'SKILL.md'
+    ORDER BY f.created_time ASC, f.skill_file_id ASC
+  </select>
+
+  <select id="existByFileNameInDir" resultType="int">
+    SELECT COUNT(1) FROM bt_agent_skill_file
+    WHERE tenant_id = #{tenantId}
+      AND dir_id = #{dirId}
+      AND status_cd = '00A'
+      AND file_name = #{fileName}
+    <if test="excludeSkillFileId != null">
+      AND skill_file_id != #{excludeSkillFileId}
+    </if>
+  </select>
+
+  <update id="deleteBySkillFileId">
+    UPDATE bt_agent_skill_file
+    SET status_cd = '00X', updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND skill_file_id = #{skillFileId} AND status_cd = '00A'
+  </update>
+
+  <update id="deleteAllByDirId">
+    UPDATE bt_agent_skill_file
+    SET status_cd = '00X', updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
+  </update>
+
+  <update id="deleteAllBySkillId">
+    UPDATE bt_agent_skill_file
+    SET status_cd = '00X', updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
+  </update>
+</mapper>

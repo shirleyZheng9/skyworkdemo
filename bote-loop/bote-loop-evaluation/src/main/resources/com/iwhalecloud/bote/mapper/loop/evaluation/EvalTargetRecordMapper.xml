@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.EvalTargetRecordMapper">
+  <!-- 创建评估目标记录 -->
+  <insert id="create" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.TargetRecordEntity" >
+    INSERT INTO bt_eval_target_record (
+    id, space_id, target_id, target_version_id, experiment_run_id, item_id, turn_id,
+    log_id, trace_id, input_data, output_data, status, created_at, updated_at, deleted_at
+    ) VALUES (
+    #{record.id}, #{record.spaceId}, #{record.targetId}, #{record.targetVersionId}, #{record.experimentRunId}, #{record.itemId}, #{record.turnId},
+    #{record.logId}, #{record.traceId}, #{record.inputData}, #{record.outputData}, #{record.status},
+    #{record.createdAt}, #{record.updatedAt}, #{record.deletedAt}
+    )
+  </insert>
+
+  <!-- 根据ID和空间ID获取评估目标记录 -->
+  <select id="getByIdAndSpaceId" resultType="com.iwhalecloud.bote.entity.loop.evaluation.TargetRecordEntity">
+    SELECT *
+    FROM bt_eval_target_record
+    WHERE id = #{recordId}
+      AND space_id = #{spaceId}
+      AND deleted_at = 0
+  </select>
+
+  <!-- 根据ID列表和空间ID列出评估目标记录 -->
+  <select id="listByIdsAndSpaceId" resultType="com.iwhalecloud.bote.entity.loop.evaluation.TargetRecordEntity">
+    SELECT * FROM bt_eval_target_record
+    WHERE id IN
+    <foreach collection="recordIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND space_id = #{spaceId}
+    AND deleted_at = 0
+  </select>
+</mapper>

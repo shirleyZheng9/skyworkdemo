@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillTextManageMapper">
+  <sql id="textColumns">
+    a.text_id,
+    a.text_content,
+    a.text_title,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test = "query.searchContent != null and query.searchContent != ''">
+      AND (  a.text_title LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.text_content LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+  </sql>
+
+  <insert id="insertSkillText">
+    INSERT INTO bt_skill_text(
+    text_id,
+    text_content,
+    text_title,
+    catalog_item_id,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    )
+    VALUES (
+    #{dto.textId},
+    #{dto.textContent},
+    #{dto.textTitle},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillText">
+    UPDATE bt_skill_text
+    <set>
+      <if test="dto.checkFieldUpdateFlag('textContent')">
+        text_content = #{dto.textContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textTitle')">
+        text_title = #{dto.textTitle},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE text_id = #{dto.textId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getSkillText" resultType="com.iwhalecloud.bote.dto.skill.SkillTextDTO">
+    SELECT <include refid="textColumns"/>
+    FROM bt_skill_text a
+    WHERE a.status_cd = '00A'
+    AND a.text_id = #{id}
+    AND a.tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillTextList" resultType="com.iwhalecloud.bote.dto.skill.SkillTextDTO">
+    SELECT
+    <include refid="textColumns"/>
+    FROM bt_skill_text a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    AND a.tenant_id IN (#{query.tenantId}, -1)
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillTextPage" resultType="com.iwhalecloud.bote.dto.skill.SkillTextDTO">
+    SELECT
+    <include refid="textColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_text a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteSkillText">
+    UPDATE bt_skill_text
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE text_id = #{textId}
+      AND tenant_id = #{tenantId}
+  </update>
+</mapper>

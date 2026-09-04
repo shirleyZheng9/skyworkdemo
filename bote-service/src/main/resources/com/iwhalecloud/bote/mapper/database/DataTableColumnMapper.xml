@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.database.DataTableColumnMapper">
+
+  <sql id="dataTableColumnColumns">
+    a.table_column_id,
+    a.table_id,
+    a.column_code,
+    a.column_name,
+    a.data_type,
+    a.data_length,
+    a.data_scale,
+    a.primary_key,
+    a.nullable,
+    a.platform_column,
+    a.tenant_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertDataTableColumnBatch">
+    INSERT INTO bt_data_table_column (
+      table_column_id,
+      table_id,
+      column_code,
+      column_name,
+      data_type,
+      data_length,
+      data_scale,
+      primary_key,
+      nullable,
+      platform_column,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES
+    <foreach collection="columnList" item="dto" index="index" separator=", ">
+    (
+      #{dto.tableColumnId},
+      #{dto.tableId},
+      #{dto.columnCode},
+      #{dto.columnName},
+      #{dto.dataType},
+      #{dto.dataLength},
+      #{dto.dataScale},
+      #{dto.primaryKey},
+      #{dto.nullable},
+      #{dto.platformColumn},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="insertDataTableColumnBatch" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="columnList" item="dto" index="index" separator=" ">
+      INTO bt_data_table_column (
+      table_column_id,
+      table_id,
+      column_code,
+      column_name,
+      data_type,
+      data_length,
+      data_scale,
+      primary_key,
+      nullable,
+      platform_column,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES (
+      #{dto.tableColumnId},
+      #{dto.tableId},
+      #{dto.columnCode},
+      #{dto.columnName},
+      #{dto.dataType},
+      #{dto.dataLength},
+      #{dto.dataScale},
+      #{dto.primaryKey},
+      #{dto.nullable},
+      #{dto.platformColumn},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateDataTableColumn">
+    UPDATE bt_data_table_column
+    <set>
+      <if test="dto.checkFieldUpdateFlag('columnCode')">
+        column_code = #{dto.columnCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('columnName')">
+        column_name = #{dto.columnName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dataType')">
+        data_type = #{dto.dataType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dataLength')">
+        data_length = #{dto.dataLength},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dataScale')">
+        data_scale = #{dto.dataScale},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('primaryKey')">
+        primary_key = #{dto.primaryKey},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('nullable')">
+        nullable = #{dto.nullable},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE status_cd = '00A'
+      AND table_column_id = #{dto.tableColumnId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectDataTableColumn" resultType="com.iwhalecloud.bote.dto.database.DataTableColumnDTO">
+    SELECT <include refid="dataTableColumnColumns"/>
+    FROM bt_data_table_column a
+    WHERE a.status_cd = '00A'
+      AND a.table_column_id = #{tableColumnId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectDataTableColumnList" resultType="com.iwhalecloud.bote.dto.database.DataTableColumnDTO">
+    SELECT <include refid="dataTableColumnColumns"/>
+    FROM bt_data_table_column a
+    WHERE a.status_cd = '00A'
+      AND a.table_id = #{tableId}
+      AND a.tenant_id = #{tenantId}
+    ORDER BY a.table_column_id
+  </select>
+
+  <select id="selectColumnBasicInfoList" resultType="com.iwhalecloud.bote.dto.database.DataTableColumnDTO">
+    SELECT a.table_column_id, a.table_id, a.column_code, a.column_name, a.data_type, a.primary_key,
+           a.nullable, a.platform_column
+    FROM bt_data_table_column a
+    WHERE a.status_cd = '00A'
+      AND a.table_id = #{tableId}
+      AND a.tenant_id = #{tenantId}
+    ORDER BY a.table_column_id
+  </select>
+
+  <select id="checkDataTableColumnExists" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(1) &gt; 0 THEN 1 ELSE 0 END
+    FROM bt_data_table_column
+    WHERE status_cd = '00A'
+      AND table_id = #{tableId}
+      AND tenant_id = #{tenantId}
+      AND column_code = #{columnCode}
+  </select>
+
+  <update id="batchDeleteByColumnIds">
+    UPDATE bt_data_table_column
+    SET status_cd = '00X',
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND table_column_id IN (<foreach collection="tableColumnIds" item="tableColumnId" separator=", ">#{tableColumnId}</foreach>)
+  </update>
+
+</mapper>
+

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.DataSourceManageMapper">
+  <sql id="dataSourceColumns">
+    a.data_source_id,
+    a.data_source_code,
+    a.data_source_name,
+    a.data_source_type,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.data_source_channel
+  </sql>
+
+  <sql id="dataSourceInstColumns">
+    a.data_source_inst_id,
+    a.data_source_id,
+    a.env_code,
+    a.url,
+    a.user_name,
+    a.password,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    a.tenant_id
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent !=''">
+      AND (a.data_source_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.data_source_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.dataSourceChannel != null and query.dataSourceChannel != ''">
+      AND a.data_source_channel = #{query.dataSourceChannel}
+    </if>
+  </sql>
+
+  <insert id="insertDataSource">
+    INSERT INTO bt_data_source (
+    data_source_id,
+    data_source_code,
+    data_source_name,
+    data_source_type,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    catalog_item_id,
+    tenant_id,
+    data_source_channel
+    ) VALUES (
+    #{dto.dataSourceId},
+    #{dto.dataSourceCode},
+    #{dto.dataSourceName},
+    #{dto.dataSourceType},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    #{dto.dataSourceChannel}
+    )
+  </insert>
+
+  <update id="updateDataSource">
+    UPDATE bt_data_source
+    <set>
+      <if test="dto.dataSourceCode != null and dto.dataSourceCode != '' ">
+        data_source_code = #{dto.dataSourceCode},
+      </if>
+      <if test="dto.dataSourceName != null and dto.dataSourceName != '' ">
+        data_source_name = #{dto.dataSourceName},
+      </if>
+      <if test="dto.dataSourceType != null and dto.dataSourceType != '' ">
+        data_source_type = #{dto.dataSourceType},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != '' ">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null and dto.remark != '' ">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.catalogItemId != null">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE data_source_id = #{dto.dataSourceId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getDataSource" resultType="com.iwhalecloud.bote.dto.skill.DataSourceDTO">
+    SELECT
+    <include refid="dataSourceColumns"/>
+    FROM bt_data_source a
+    WHERE a.data_source_id = #{id}
+    AND a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectDataSourceList" resultType="com.iwhalecloud.bote.dto.skill.DataSourceDTO">
+    SELECT
+    <include refid="dataSourceColumns"/>
+    FROM bt_data_source a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    AND a.tenant_id IN (#{query.tenantId}, -1)
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectDataSourcePage" resultType="com.iwhalecloud.bote.dto.skill.DataSourceDTO">
+    SELECT
+    <include refid="dataSourceColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_data_source a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteDataSource">
+    UPDATE bt_data_source
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE data_source_id =#{dataSourceId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="existsDataSourceCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_data_source
+    WHERE status_cd = '00A'
+    AND data_source_code = #{dto.dataSourceCode}
+    AND tenant_id IN (#{dto.tenantId}, -1)
+    <if test="dto.dataSourceId != null">
+      AND data_source_id != #{dto.dataSourceId}
+    </if>
+    <if test="dto.dataSourceChannel != null and dto.dataSourceChannel != ''">
+      AND data_source_channel = #{dto.dataSourceChannel}
+    </if>
+  </select>
+
+  <insert id="batchInsertDataSourceInst">
+    INSERT INTO bt_data_source_inst (
+    data_source_inst_id,
+    data_source_id,
+    env_code,
+    url,
+    user_name,
+    password,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    tenant_id
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.dataSourceInstId},
+      #{dto.dataSourceId},
+      #{dto.envCode},
+      #{dto.url},
+      #{dto.userName},
+      #{dto.password},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.tenantId}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertDataSourceInst" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_data_source_inst (
+      data_source_inst_id,
+      data_source_id,
+      env_code,
+      url,
+      user_name,
+      password,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark,
+      tenant_id
+      ) VALUES (
+      #{dto.dataSourceInstId},
+      #{dto.dataSourceId},
+      #{dto.envCode},
+      #{dto.url},
+      #{dto.userName},
+      #{dto.password},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.tenantId}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateDataSourceInst">
+    UPDATE bt_data_source_inst
+    <set>
+      <if test="dto.dataSourceId != null">
+        data_source_id = #{dto.dataSourceId},
+      </if>
+      <if test="dto.envCode != null and dto.envCode != '' ">
+        env_code = #{dto.envCode},
+      </if>
+      <if test="dto.url != null">
+        url = #{dto.url},
+      </if>
+      <if test="dto.userName != null">
+        user_name = #{dto.userName},
+      </if>
+      <if test="dto.password != null">
+        password = #{dto.password},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != '' ">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null and dto.remark != '' ">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE data_source_inst_id = #{dto.dataSourceInstId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectDataSourceInstList" resultType="com.iwhalecloud.bote.dto.skill.DataSourceInstDTO">
+    SELECT <include refid="dataSourceInstColumns"/>
+    FROM bt_data_source_inst a
+    WHERE a.status_cd = '00A'
+    AND a.data_source_id = #{dataSourceId}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectInstByDataSourceIdAndEnvCode" resultType="com.iwhalecloud.bote.dto.base.DataSourceProperties">
+    SELECT url, user_name AS username, password
+    FROM bt_data_source_inst
+    WHERE status_cd = '00A'
+      AND data_source_id = #{dataSourceId}
+      AND tenant_id = #{tenantId}
+      AND env_code = #{envCode}
+  </select>
+
+  <select id="selectDataSourceInstByEnvCode" resultType="com.iwhalecloud.bote.dto.skill.DataSourceInstDTO">
+    SELECT <include refid="dataSourceInstColumns"/>, b.data_source_code, b.data_source_name
+    FROM bt_data_source_inst a
+    Left join bt_data_source b ON a.data_source_id = b.data_source_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.env_code = #{envCode}
+  </select>
+
+  <select id="selectPlatformDataSource" resultType="com.iwhalecloud.bote.dto.skill.DataSourceDTO">
+    SELECT <include refid="dataSourceColumns"/>
+    FROM bt_data_source a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.data_source_channel = 'platform'
+  </select>
+
+  <select id="selectDataSourceBasicInfo" resultType="com.iwhalecloud.bote.dto.skill.DataSourceDTO">
+    SELECT a.data_source_id, a.data_source_code, a.data_source_name, a.data_source_type, a.tenant_id,
+           a.data_source_channel
+    FROM bt_data_source a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.data_source_id = #{dataSourceId}
+  </select>
+
+</mapper>

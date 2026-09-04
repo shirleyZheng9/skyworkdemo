@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.prompt.PromptCommitMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.prompt.PromptCommitEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="prompt_id" property="promptId" jdbcType="BIGINT"/>
+    <result column="prompt_key" property="promptKey" jdbcType="VARCHAR"/>
+    <result column="template_type" property="templateType" jdbcType="VARCHAR"/>
+    <result column="messages" property="messages" jdbcType="VARCHAR"/>
+    <result column="model_config" property="modelConfig" jdbcType="VARCHAR"/>
+    <result column="variable_defs" property="variableDefs" jdbcType="VARCHAR"/>
+    <result column="tools" property="tools" jdbcType="VARCHAR"/>
+    <result column="tool_call_config" property="toolCallConfig" jdbcType="VARCHAR"/>
+    <result column="version" property="version" jdbcType="VARCHAR"/>
+    <result column="base_version" property="baseVersion" jdbcType="VARCHAR"/>
+    <result column="committed_by" property="committedBy" jdbcType="VARCHAR"/>
+    <result column="description" property="description" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id, space_id, prompt_id, prompt_key, template_type, messages, model_config, variable_defs,
+    tools, tool_call_config, version, base_version, committed_by, description, created_at, updated_at
+  </sql>
+
+  <!-- 插入记录 -->
+  <insert id="insert" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptCommitEntity" >
+    INSERT INTO bt_prompt_commit (id, space_id, prompt_id, prompt_key, template_type, messages, model_config, variable_defs,
+                                  tools, tool_call_config, version, base_version, committed_by, description, created_at, updated_at)
+    VALUES (#{id,jdbcType=BIGINT},
+            #{spaceId,jdbcType=BIGINT},
+            #{promptId,jdbcType=BIGINT},
+            #{promptKey,jdbcType=VARCHAR},
+            #{templateType,jdbcType=VARCHAR},
+            #{messages,jdbcType=VARCHAR},
+            #{modelConfig,jdbcType=VARCHAR},
+            #{variableDefs,jdbcType=VARCHAR},
+            #{tools,jdbcType=VARCHAR},
+            #{toolCallConfig,jdbcType=VARCHAR},
+            #{version,jdbcType=VARCHAR},
+            #{baseVersion,jdbcType=VARCHAR},
+            #{committedBy,jdbcType=VARCHAR},
+            #{description,jdbcType=VARCHAR},
+            #{createdAt,jdbcType=TIMESTAMP},
+            #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+
+  <!-- 根据PromptID和版本查询 -->
+  <select id="selectByPromptIdAndVersion" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_commit
+    WHERE prompt_id = #{promptId,jdbcType=BIGINT}
+    AND version = #{commitVersion,jdbcType=VARCHAR}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 根据条件对查询 -->
+  <select id="selectByPairs" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_commit
+    WHERE
+    <foreach collection="pairs" item="pair" separator=" OR ">
+      (prompt_id = #{pair.promptId,jdbcType=BIGINT} AND version = #{pair.commitVersion,jdbcType=VARCHAR})
+    </foreach>
+  </select>
+
+  <!-- 根据条件查询（分页） -->
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_commit
+    WHERE prompt_id = #{promptId,jdbcType=BIGINT}
+    <if test="cursor != null">
+      <choose>
+        <when test="asc">
+          AND id &gt;= #{cursor,jdbcType=BIGINT}
+          ORDER BY id ASC
+        </when>
+        <otherwise>
+          AND id &lt;= #{cursor,jdbcType=BIGINT}
+          ORDER BY id DESC
+        </otherwise>
+      </choose>
+    </if>
+    <if test="cursor == null">
+      <choose>
+        <when test="asc">
+          ORDER BY id ASC
+        </when>
+        <otherwise>
+          ORDER BY id DESC
+        </otherwise>
+      </choose>
+    </if>
+    <!-- RowBounds会自动处理分页，不需要LIMIT -->
+  </select>
+
+  <!-- 根据条件统计数量 -->
+  <select id="countByCondition" resultType="long">
+    SELECT COUNT(*)
+    FROM bt_prompt_commit
+    WHERE prompt_id = #{promptId,jdbcType=BIGINT}
+  </select>
+
+  <!-- 根据ID更新 -->
+  <update id="updateById" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptCommitEntity">
+    UPDATE bt_prompt_commit
+    <set>
+      <if test="spaceId != null">
+        space_id = #{spaceId,jdbcType=BIGINT},
+      </if>
+      <if test="promptId != null">
+        prompt_id = #{promptId,jdbcType=BIGINT},
+      </if>
+      <if test="promptKey != null">
+        prompt_key = #{promptKey,jdbcType=VARCHAR},
+      </if>
+      <if test="templateType != null">
+        template_type = #{templateType,jdbcType=VARCHAR},
+      </if>
+      <if test="messages != null">
+        messages = #{messages,jdbcType=VARCHAR},
+      </if>
+      <if test="modelConfig != null">
+        model_config = #{modelConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="variableDefs != null">
+        variable_defs = #{variableDefs,jdbcType=VARCHAR},
+      </if>
+      <if test="tools != null">
+        tools = #{tools,jdbcType=VARCHAR},
+      </if>
+      <if test="toolCallConfig != null">
+        tool_call_config = #{toolCallConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="version != null">
+        version = #{version,jdbcType=VARCHAR},
+      </if>
+      <if test="baseVersion != null">
+        base_version = #{baseVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="committedBy != null">
+        committed_by = #{committedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    WHERE id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <!-- 根据ID删除 -->
+  <delete id="deleteById">
+    DELETE
+    FROM bt_prompt_commit
+    WHERE id = #{id,jdbcType=BIGINT}
+  </delete>
+</mapper>

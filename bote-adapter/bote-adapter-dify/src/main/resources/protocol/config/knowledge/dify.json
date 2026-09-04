@@ -1,0 +1,58 @@
+{
+  "name": "Dify",
+  "code": "dify",
+  "description": "对接dify平台，通过chatFlow接口实现知识问答",
+  "attrs": [
+    {
+      "type": "input",
+      "name": [
+        "knowledgeTypeExt",
+        "difyKnowledgeId"
+      ],
+      "label": "dify知识库ID",
+      "formProps": {
+        "tooltip": "在dify的知识库详情页面，从浏览器地址中找出 id, 比如 fb8264f8-c30c-437f-997b-eb26ee2c4137",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入dify知识库 ID, 比如 fb8264f8-c30c-437f-997b-eb26ee2c4137"
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "name": [
+        "knowledgeTypeExt",
+        "difyChatFlowSecret"
+      ],
+      "label": "知识问答chatFlow的API密钥",
+      "formProps": {
+        "tooltip": "dify知识问答chatFlow流程的API密钥（注意：每个chatFlow的密钥不一致）。chatFlow流程应该只包含知识库技能。API密钥获取路径: chatFlow流程 -> 访问API -> API密钥，比如 app-KbPHGY8Ald5gGcTA4pnC4Ut",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入chatFlow流程的API密钥，比如 app-KbPHGY8Ald5gGcTA4pnC4Ut"
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "name": [
+        "knowledgeTypeExt",
+        "difyKnowledgeDetail"
+      ],
+      "label": "dify知识库配置参数",
+      "formProps": {
+        "tooltip": "用于知识检索，旧版本dify没有提供知识库详情接口, 需要进行配置。 \n 参数示例如下：{\n        \"search_method\": \"keyword_search\", --用于检索的搜索方法 \n        \"reranking_enable\": false, -- 是否启用重新排序模型\n        \"reranking_model\": {  -- 重新排序模型的配置\n            \"reranking_provider_name\": \"\", -- 重新排序模型的提供商\n            \"reranking_modelName\": \"\" -- 重新排序模型的名称\n        },\n        \"weights\": null, -- 混合搜索模式中语义搜索的权重\n}",
+        "rules": [
+          {
+            "required": false,
+            "message": "请输入dify 知识库配置参数，比如 app-KbPHGY8Ald5gGcTA4pnC4Ut"
+          }
+        ]
+      }
+    }
+  ]
+}

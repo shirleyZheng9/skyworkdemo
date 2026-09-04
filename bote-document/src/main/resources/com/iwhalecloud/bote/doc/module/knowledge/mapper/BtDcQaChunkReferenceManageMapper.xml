@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.BtDcQaChunkReferenceManageMapper">
+
+  <sql id="btDcQaChunkReferenceColumns">
+    a.reference_id,
+    a.qa_id,
+    a.kb_id,
+    a.doc_id,
+    a.reference_type,
+    a.chunk_id,
+    a.chunk_content,
+    a.chunk_title,
+    a.relevance_score,
+    a.document_name,
+    a.document_url,
+    a.tenant_id,
+    a.creator_id,
+    a.created_time,
+    a.updated_time,
+    a.status_cd
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+  </sql>
+
+  <select id="getBtDcQaChunkReference" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaChunkReferenceDTO">
+    SELECT
+    <include refid="btDcQaChunkReferenceColumns"/>
+    FROM bt_dc_qa_chunk_reference a
+    WHERE reference_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertBtDcQaChunkReference">
+    INSERT INTO bt_dc_qa_chunk_reference (
+    reference_id,
+    qa_id,
+    kb_id,
+    doc_id,
+    reference_type,
+    chunk_id,
+    chunk_content,
+    chunk_title,
+    relevance_score,
+    document_name,
+    document_url,
+    tenant_id,
+    creator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES (
+    #{dto.referenceId},
+    #{dto.qaId},
+    #{dto.kbId},
+    #{dto.docId},
+    #{dto.referenceType},
+    #{dto.chunkId},
+    #{dto.chunkContent},
+    #{dto.chunkTitle},
+    #{dto.relevanceScore},
+    #{dto.documentName},
+    #{dto.documentUrl},
+    #{dto.tenantId},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd}
+    )
+  </insert>
+
+  <insert id="batchInsertBtDcQaChunkReference">
+    INSERT INTO bt_dc_qa_chunk_reference (
+    reference_id,
+    qa_id,
+    kb_id,
+    doc_id,
+    reference_type,
+    chunk_id,
+    chunk_content,
+    chunk_title,
+    relevance_score,
+    document_name,
+    document_url,
+    tenant_id,
+    creator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.referenceId},
+      #{dto.qaId},
+      #{dto.kbId},
+      #{dto.docId},
+      #{dto.referenceType},
+      #{dto.chunkId},
+      #{dto.chunkContent},
+      #{dto.chunkTitle},
+      #{dto.relevanceScore},
+      #{dto.documentName},
+      #{dto.documentUrl},
+      #{dto.tenantId},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertBtDcQaChunkReference" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_dc_qa_chunk_reference (
+      reference_id,
+      qa_id,
+      kb_id,
+      doc_id,
+      reference_type,
+      chunk_id,
+      chunk_content,
+      chunk_title,
+      relevance_score,
+      document_name,
+      document_url,
+      tenant_id,
+      creator_id,
+      created_time,
+      updated_time,
+      status_cd
+      ) VALUES (
+      #{dto.referenceId},
+      #{dto.qaId},
+      #{dto.kbId},
+      #{dto.docId},
+      #{dto.referenceType},
+      #{dto.chunkId},
+      #{dto.chunkContent},
+      #{dto.chunkTitle},
+      #{dto.relevanceScore},
+      #{dto.documentName},
+      #{dto.documentUrl},
+      #{dto.tenantId},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateBtDcQaChunkReference">
+    UPDATE bt_dc_qa_chunk_reference
+    <set>
+      <if test="dto.checkFieldUpdateFlag('referenceId')">
+        reference_id = #{dto.referenceId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('qaId')">
+        qa_id = #{dto.qaId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('kbId')">
+        kb_id = #{dto.kbId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('docId')">
+        doc_id = #{dto.docId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('referenceType')">
+        reference_type = #{dto.referenceType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('chunkId')">
+        chunk_id = #{dto.chunkId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('chunkContent')">
+        chunk_content = #{dto.chunkContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('chunkTitle')">
+        chunk_title = #{dto.chunkTitle},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('relevanceScore')">
+        relevance_score = #{dto.relevanceScore},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('documentName')">
+        document_name = #{dto.documentName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('documentUrl')">
+        document_url = #{dto.documentUrl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantId')">
+        tenant_id = #{dto.tenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('creatorId')">
+        creator_id = #{dto.creatorId},
+      </if>
+      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+    </set>
+    WHERE reference_id = #{dto.referenceId}
+  </update>
+
+  <select id="selectBtDcQaChunkReferenceList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaChunkReferenceDTO">
+    SELECT
+    <include refid="btDcQaChunkReferenceColumns"/>,b.doc_name,b.document_id,b.dc_document_id,c.document_type as dc_document_type,d.knowledge_name,c.library_id,d.is_exist,c.content_source
+    FROM bt_dc_qa_chunk_reference a
+    left join bt_document b on a.doc_id = b.ext_system_id and a.kb_id = b.knowledge_id
+    left join bt_dc_document c on c.document_id = b.dc_document_id
+    left join bt_knowledge_base d on d.knowledge_id = a.kb_id
+    WHERE a.qa_id=#{qaId} and a.status_cd='00A' and a.tenant_id = #{tenantId}
+  </select>
+  <update id="deleteBtDcQaChunkReference">
+    update bt_dc_qa_chunk_reference set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
+  </update>
+  <select id="selectBtDcQaChunkReferenceListByknowledgeId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaChunkReferenceDTO">
+     SELECT <include refid="btDcQaChunkReferenceColumns"/> FROM bt_dc_qa_chunk_reference a WHERE a.status_cd = '00A' and a.doc_id = #{extSystemId} and a.tenant_id = #{tenantId}
+  </select>
+  <update id="deleteBtDcQaChunkReferenceByExtSystemId">
+    update bt_dc_qa_chunk_reference set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId} and doc_id = #{extSystemId}
+  </update>
+
+</mapper>

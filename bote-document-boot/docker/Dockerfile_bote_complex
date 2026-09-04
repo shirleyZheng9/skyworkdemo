@@ -1,0 +1,75 @@
+FROM hub-nj.iwhalecloud.com/lingxi/java:8-python3-nodejs AS tmp
+
+COPY bote-service/bote-service-boot/target/bote-service-boot.jar /app/app.jar
+
+WORKDIR /app/tmp
+
+RUN jar xf ../app.jar && \
+    find-start-class META-INF/MANIFEST.MF > start-class && \
+    rm -rf org BOOT-INF/classpath.idx BOOT-INF/layers.idx META-INF/MANIFEST.MF META-INF/maven && \
+    mv META-INF BOOT-INF/classes/
+
+FROM hub-nj.iwhalecloud.com/lingxi/java:8-python3-nodejs
+
+LABEL maintainer=bian.jiaping
+LABEL description="博特 - 后端服务"
+
+ # 设置时区
+ENV TZ=Asia/Shanghai
+
+ENV ZSMART_HOME=/opt/ZSMART_HOME \
+    # 需要与 management.port 一致，否则 endpoints 不会注册 MVC
+    SERVER_PORT=9080 \
+    APP_CONTEXT_PATH=/ \
+    MANAGEMENT_PORT=9080 \
+    MANAGEMENT_CONTEXT_PATH=/management \
+    MANAGEMENT_SECURITY_ENABLED=true \
+    FTF_MANAGEMENT_SECURITY_ENABLED=true \
+    FTF_MANAGEMENT_SECURITY_ALLOW=127.0.0.1 \
+    # JVM
+    JAVA_OPTS="-XX:MaxRAMPercentage=60.0 -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dfile.encoding=UTF-8" \
+    # 日志
+    z_app=lcdp \
+    zcm_log_type="project=kp"
+
+LABEL zcm.logs.lcdp="/app/log/*.log" \
+      zcm.logs.lcdp.tags="project=kp"
+
+## java 后端服务
+COPY --chown=zpaas:zpaas bote-service/bote-document-boot/docker/docker-app-multi-def.sh /app/docker-app.def
+COPY --chown=zpaas:zpaas --from=tmp /app/tmp /app/app
+COPY --chown=zpaas:zpaas bote-service/bote-document-boot/docker/start_node.sh /app/start_node.sh
+
+#RUN mkdir -p /app/collab-server
+
+WORKDIR /app/collab-server
+
+## nodejs 后端服务
+# 复制已编译的应用代码和依赖包
+COPY --chown=zpaas:zpaas docs-web/apps/server/dist ./dist
+COPY --chown=zpaas:zpaas docs-web/packages/editor-ext/dist ./packages/editor-ext/dist
+COPY --chown=zpaas:zpaas docs-web/packages/Icons/dist ./packages/Icons/dist
+
+# 复制各级node_modules依赖
+COPY --chown=zpaas:zpaas docs-web/node_modules ./node_modules
+COPY --chown=zpaas:zpaas docs-web/apps/server/node_modules ./apps/server/node_modules
+COPY --chown=zpaas:zpaas docs-web/packages/Icons/node_modules ./packages/Icons/node_modules
+
+# 复制package.json文件
+COPY --chown=zpaas:zpaas docs-web/package.json ./
+COPY --chown=zpaas:zpaas docs-web/apps/server/package.json ./apps/server/
+COPY --chown=zpaas:zpaas docs-web/packages/editor-ext/package.json ./packages/editor-ext/
+COPY --chown=zpaas:zpaas docs-web/apps/server/.env.defaults ./
+
+WORKDIR /app
+
+# 设置环境变量
+ENV NODE_ENV=production
+ENV COLLAB_SERVER_PORT=9300
+
+# 暴露端口
+EXPOSE 9080
+EXPOSE 9300
+EXPOSE 9888
+
+USER 1810

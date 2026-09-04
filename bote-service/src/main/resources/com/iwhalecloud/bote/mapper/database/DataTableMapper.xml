@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.database.DataTableMapper">
+
+  <sql id="dataTableColums">
+    a.table_id,
+    a.table_name,
+    a.table_code,
+    a.table_desc,
+    a.table_icon,
+    a.data_source_id,
+    a.data_source_channel,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertDataTable">
+    INSERT INTO bt_data_table (
+      table_id,
+      table_name,
+      table_code,
+      table_desc,
+      table_icon,
+      data_source_id,
+      data_source_channel,
+      catalog_item_id,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES (
+      #{dto.tableId},
+      #{dto.tableName},
+      #{dto.tableCode},
+      #{dto.tableDesc},
+      #{dto.tableIcon},
+      #{dto.dataSourceId},
+      #{dto.dataSourceChannel},
+      #{dto.catalogItemId},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+     )
+  </insert>
+
+  <update id="updateDataTable">
+    UPDATE bt_data_table
+    <set>
+      <if test="dto.checkFieldUpdateFlag('tableName')">
+        table_name = #{dto.tableName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tableDesc')">
+        table_desc = #{dto.tableDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tableIcon')">
+        table_icon = #{dto.tableIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE status_cd = '00A'
+      AND table_id = #{dto.tableId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectDataTable" resultType="com.iwhalecloud.bote.dto.database.DataTableDTO">
+    SELECT <include refid="dataTableColums"/>
+    FROM bt_data_table a
+    WHERE a.status_cd = '00A'
+      AND a.table_id = #{tableId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectDataTablePage" resultType="com.iwhalecloud.bote.dto.database.DataTableDTO">
+    SELECT a.table_id, a.table_name, a.table_code, a.table_desc, a.data_source_channel, a.catalog_item_id, a.updated_time,
+           a.tenant_id, a.updator_id,
+           u.real_name AS updatorName, s.data_source_name
+    FROM bt_data_table a
+    LEFT JOIN bt_user u ON a.updator_id = u.user_id
+    LEFT JOIN bt_data_source s ON a.data_source_id = s.data_source_id AND a.tenant_id = s.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.tableName != null and query.tableName != ''">
+      AND (
+        a.table_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        a.table_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <if test="query.dataSourceChannel != null and query.dataSourceChannel != ''">
+      AND a.data_source_channel = #{query.dataSourceChannel}
+    </if>
+    <if test="query.dataSourceId != null">
+      AND a.data_source_id = #{query.dataSourceId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectDataTableList" resultType="com.iwhalecloud.bote.dto.database.DataTableDTO">
+    SELECT a.table_id, a.table_name, a.table_code, a.data_source_id, a.tenant_id
+    FROM bt_data_table a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.dataSourceChannel != null and query.dataSourceChannel != ''">
+      AND a.data_source_channel = #{query.dataSourceChannel}
+    </if>
+    <if test="query.dataSourceId != null">
+      AND a.data_source_id = #{query.dataSourceId}
+    </if>
+  </select>
+
+  <select id="checkDataTableExists" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_data_table
+    WHERE status_cd = '00A'
+      AND table_code = #{tableCode}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <update id="deleteDataTable">
+    UPDATE bt_data_table
+    SET status_cd = '00X',
+      remark = #{backupTableCode},
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND table_id = #{tableId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectDataTableIcon" resultType="java.lang.String">
+    SELECT table_icon
+    FROM bt_data_table
+    WHERE status_cd = '00A'
+      AND table_id = #{tableId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectDataTableBasicInfo" resultType="com.iwhalecloud.bote.dto.database.DataTableDTO">
+    SELECT a.table_id, a.table_name, a.table_code, a.table_desc, a.data_source_id, a.catalog_item_id,
+           a.data_source_channel, a.tenant_id
+    FROM bt_data_table a
+    WHERE a.status_cd = '00A'
+      AND a.table_id = #{tableId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+</mapper>

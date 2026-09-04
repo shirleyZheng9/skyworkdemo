@@ -1,0 +1,709 @@
+{
+  "key": -1,
+  "description": "根节点",
+  "name": "root",
+  "type": "object",
+  "require": false,
+  "children": [
+    {
+      "description": "webhook地址accessToken",
+      "name": "key",
+      "type": "string",
+      "require": true,
+      "key": "adcb3439-2fde-4e56-b9d7-9fa27f5deb67",
+      "parentKey": -1
+    },
+    {
+      "description": "密钥",
+      "name": "secret",
+      "type": "string",
+      "require": true,
+      "key": "fc440006-34fa-4713-88bc-645febe57d40",
+      "parentKey": -1
+    },
+    {
+      "description": "消息对象",
+      "name": "message",
+      "type": "object",
+      "require": true,
+      "key": "fea2186e-365f-43eb-9d97-d8a42b755425",
+      "parentKey": -1,
+      "children": [
+        {
+          "description": "消息类型",
+          "name": "msgType",
+          "type": "string",
+          "require": true,
+          "key": "8578933e-2004-c7a3-dd96-36b26cecc589",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425"
+        },
+        {
+          "description": "文本消息",
+          "name": "text",
+          "type": "object",
+          "require": false,
+          "key": "6feba29e-4bab-abe0-b81b-890a7f768115",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "消息内容",
+              "name": "content",
+              "type": "string",
+              "require": true,
+              "key": "cf562210-e517-bc73-7049-f137e5c8644c",
+              "parentKey": "6feba29e-4bab-abe0-b81b-890a7f768115"
+            },
+            {
+              "description": "userid的列表",
+              "name": "mentionedList",
+              "type": "array",
+              "require": true,
+              "key": "38a9d29f-e8af-5a7d-2261-6a7afe92fb55",
+              "parentKey": "6feba29e-4bab-abe0-b81b-890a7f768115",
+              "children": [
+                {
+                  "description": "userid",
+                  "name": "mentioned",
+                  "type": "string",
+                  "require": true,
+                  "key": "85b82afc-7751-4579-9737-ffda1af342bd",
+                  "parentKey": "38a9d29f-e8af-5a7d-2261-6a7afe92fb55"
+                }
+              ]
+            },
+            {
+              "description": "手机号列表",
+              "name": "mentionedMobileList",
+              "type": "array",
+              "require": true,
+              "key": "ec7365d9-6342-66fe-c652-e49919c4916c",
+              "parentKey": "6feba29e-4bab-abe0-b81b-890a7f768115",
+              "children": [
+                {
+                  "description": "手机号",
+                  "name": "mentionedMobile",
+                  "type": "string",
+                  "require": true,
+                  "key": "a25481b6-4472-5f1c-8c8f-0e662d8dcbc9",
+                  "parentKey": "ec7365d9-6342-66fe-c652-e49919c4916c"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "description": "Markdown消息",
+          "name": "markdown",
+          "type": "object",
+          "require": false,
+          "value": "",
+          "key": "d95ee4b8-6fbc-fb7e-7939-5ce5b539b2c0",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "markdown内容，最长不超过4096个字节，必须是utf8编码",
+              "name": "content",
+              "type": "string",
+              "require": true,
+              "key": "dd575c0c-0da8-2cfa-84b2-5f2a6f9c9e7f",
+              "parentKey": "d95ee4b8-6fbc-fb7e-7939-5ce5b539b2c0"
+            }
+          ]
+        },
+        {
+          "description": "图片消息",
+          "name": "image",
+          "type": "object",
+          "require": false,
+          "key": "f0206925-51f4-936c-b7d1-5c5a21f231d8",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "图片url",
+              "name": "picUrl",
+              "type": "string",
+              "require": true,
+              "key": "369f8001-4d02-7fdb-3f82-0d974e5d4eb3",
+              "parentKey": "f0206925-51f4-936c-b7d1-5c5a21f231d8"
+            },
+            {
+              "description": "图片mediaId",
+              "name": "mediaId",
+              "type": "string",
+              "require": true,
+              "key": "456223f3-5ef7-f058-1560-d0c2f0776870",
+              "parentKey": "f0206925-51f4-936c-b7d1-5c5a21f231d8"
+            }
+          ]
+        },
+        {
+          "description": "文件消息",
+          "name": "file",
+          "type": "object",
+          "require": false,
+          "value": "",
+          "key": "2b93f12b-4fbe-0a22-386d-6cf10af01f04",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "媒体ID",
+              "name": "mediaId",
+              "type": "string",
+              "require": true,
+              "key": "ae75f632-26a3-0915-8cd1-0ff28b03ec40",
+              "parentKey": "2b93f12b-4fbe-0a22-386d-6cf10af01f04"
+            }
+          ]
+        },
+        {
+          "description": "语音消息",
+          "name": "voice",
+          "type": "object",
+          "require": false,
+          "key": "1e77a88b-18b8-b5c5-9fe7-b187ea46a977",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "媒体ID",
+              "name": "mediaId",
+              "type": "string",
+              "require": true,
+              "key": "09584ed7-0d28-ecd0-85d3-cd90c63d49e5",
+              "parentKey": "1e77a88b-18b8-b5c5-9fe7-b187ea46a977"
+            }
+          ]
+        },
+        {
+          "description": "图文",
+          "name": "news",
+          "type": "object",
+          "require": false,
+          "key": "cd2ab49c-32a3-4162-2b34-099200afc5c0",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "图文消息",
+              "name": "articles",
+              "type": "array",
+              "require": true,
+              "key": "0a504660-af4d-a209-3711-c368b9a45123",
+              "parentKey": "cd2ab49c-32a3-4162-2b34-099200afc5c0",
+              "children": [
+                {
+                  "description": "图文消息对象",
+                  "name": "article",
+                  "type": "object",
+                  "require": true,
+                  "key": "e7b255e4-6f0a-33e6-d751-d55a8c298191",
+                  "parentKey": "0a504660-af4d-a209-3711-c368b9a45123",
+                  "children": [
+                    {
+                      "description": "标题，不超过128个字节",
+                      "name": "title",
+                      "type": "string",
+                      "require": true,
+                      "key": "2e0220ec-95d4-89f7-5c73-0aeb949bbabf",
+                      "parentKey": "e7b255e4-6f0a-33e6-d751-d55a8c298191"
+                    },
+                    {
+                      "description": "描述，不超过512个字节",
+                      "name": "description",
+                      "type": "string",
+                      "require": false,
+                      "key": "ac6b7639-0d70-c09e-83f4-9aa0472eaf0a",
+                      "parentKey": "e7b255e4-6f0a-33e6-d751-d55a8c298191"
+                    },
+                    {
+                      "description": "点击后跳转的链接",
+                      "name": "url",
+                      "type": "string",
+                      "require": true,
+                      "key": "7aaf3ee5-655f-b913-f92e-eef894c36cde",
+                      "parentKey": "e7b255e4-6f0a-33e6-d751-d55a8c298191"
+                    },
+                    {
+                      "description": "图文消息的图片链接",
+                      "name": "picurl",
+                      "type": "string",
+                      "require": false,
+                      "key": "e8461882-8618-ee85-1739-78507a8e9668",
+                      "parentKey": "e7b255e4-6f0a-33e6-d751-d55a8c298191"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "description": "模版卡片",
+          "name": "templateCard",
+          "type": "object",
+          "require": false,
+          "key": "784e72b9-63e1-9a28-7f54-cca79036867f",
+          "parentKey": "fea2186e-365f-43eb-9d97-d8a42b755425",
+          "children": [
+            {
+              "description": "卡片类型, 图文展示模版卡片:news_notice, 文本通知模版卡片: text_notice",
+              "name": "cardType",
+              "type": "string",
+              "require": true,
+              "key": "59b97729-b53f-44e0-8015-374640285c6a",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f"
+            },
+            {
+              "description": "二级普通文本， 仅 cardType 为 text_notice 使用",
+              "name": "subTitleText",
+              "type": "string",
+              "require": false,
+              "key": "a1d086a3-1b15-0214-a3d2-98cc409e0b43",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f"
+            },
+            {
+              "description": "卡片来源样式信息",
+              "name": "source",
+              "type": "object",
+              "require": false,
+              "key": "0a89ac69-4762-6511-2834-ddf081970be6",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "来源图片的url",
+                  "name": "iconUrl",
+                  "type": "string",
+                  "require": false,
+                  "key": "9bee9427-8be0-2e87-1faa-e21aebfa5955",
+                  "parentKey": "0a89ac69-4762-6511-2834-ddf081970be6"
+                },
+                {
+                  "description": "来源图片的描述，建议不超过13个字",
+                  "name": "desc",
+                  "type": "string",
+                  "require": false,
+                  "key": "32f7d164-6b88-8f71-14d3-8e9e11e73c70",
+                  "parentKey": "0a89ac69-4762-6511-2834-ddf081970be6"
+                },
+                {
+                  "description": "来源文字的颜色，目前支持：0(默认) 灰色，1 黑色，2 红色，3 绿色",
+                  "name": "descColor",
+                  "type": "string",
+                  "require": false,
+                  "key": "8a2c4b70-571c-1d43-36b5-020c389405b2",
+                  "parentKey": "0a89ac69-4762-6511-2834-ddf081970be6"
+                }
+              ]
+            },
+            {
+              "description": "模版卡片的主要内容",
+              "name": "mainTitle",
+              "type": "object",
+              "require": true,
+              "key": "9e2d2ac0-49b0-8e51-0a56-e7f9ea074792",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "一级标题, 模版卡片主要内容的一级标题mainTitle.title和二级普通文本subTitleText必须有一项填写",
+                  "name": "title",
+                  "type": "string",
+                  "require": false,
+                  "key": "d976ba3e-1bc9-d40e-3394-2189b5dc75d2",
+                  "parentKey": "9e2d2ac0-49b0-8e51-0a56-e7f9ea074792"
+                },
+                {
+                  "description": "标题辅助信息",
+                  "name": "desc",
+                  "type": "string",
+                  "require": false,
+                  "key": "7f0b4c87-0882-fef7-2810-4d4e5277c365",
+                  "parentKey": "9e2d2ac0-49b0-8e51-0a56-e7f9ea074792"
+                }
+              ]
+            },
+            {
+              "description": "关键数据样式, 仅 cardType 为 text_notice 使用",
+              "name": "emphasisContent",
+              "type": "object",
+              "require": false,
+              "key": "ec5c0d51-19d1-c6d1-9ba0-7742fa45ec60",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "关键数据样式的数据内容",
+                  "name": "title",
+                  "type": "string",
+                  "require": false,
+                  "key": "64590af1-8a8a-e656-b331-39d14202b6d7",
+                  "parentKey": "ec5c0d51-19d1-c6d1-9ba0-7742fa45ec60"
+                },
+                {
+                  "description": "关键数据样式的数据描述内容",
+                  "name": "desc",
+                  "type": "string",
+                  "require": false,
+                  "key": "08fdd2a7-431a-75ed-f24c-5942d2afd41e",
+                  "parentKey": "ec5c0d51-19d1-c6d1-9ba0-7742fa45ec60"
+                },
+                {
+                  "description": "关键数据样式",
+                  "name": "content",
+                  "type": "string",
+                  "require": false,
+                  "key": "dfeaea7a-4b73-e332-fe14-34cb9ed4ee12",
+                  "parentKey": "ec5c0d51-19d1-c6d1-9ba0-7742fa45ec60"
+                }
+              ]
+            },
+            {
+              "description": "引用文献样式",
+              "name": "quoteArea",
+              "type": "object",
+              "require": false,
+              "key": "27211b50-7017-eb2c-7284-1c5c49ef9437",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "引用文献样式区域点击事件，0或不填代表没有点击事件，1 代表跳转url，2 代表跳转小程序",
+                  "name": "type",
+                  "type": "string",
+                  "require": false,
+                  "key": "4a11841b-1891-8691-949d-3ef8614da12f",
+                  "parentKey": "27211b50-7017-eb2c-7284-1c5c49ef9437"
+                },
+                {
+                  "description": "点击跳转的小程序的appid，quote_area.type是2时必填",
+                  "name": "appid",
+                  "type": "string",
+                  "require": false,
+                  "key": "17b9f572-e723-1280-c63c-beae71640301",
+                  "parentKey": "27211b50-7017-eb2c-7284-1c5c49ef9437"
+                },
+                {
+                  "description": "点击跳转的小程序的pagepath，quote_area.type是2时选填",
+                  "name": "pagepath",
+                  "type": "string",
+                  "require": false,
+                  "key": "258170fb-2844-5f0d-0c64-b41526755c2d",
+                  "parentKey": "27211b50-7017-eb2c-7284-1c5c49ef9437"
+                },
+                {
+                  "description": "引用文献样式的标题",
+                  "name": "title",
+                  "type": "string",
+                  "require": false,
+                  "key": "74124c35-8eda-776a-fa10-e31c9d42d7ca",
+                  "parentKey": "27211b50-7017-eb2c-7284-1c5c49ef9437"
+                },
+                {
+                  "description": "点击跳转的url，quote_area.type是1时必填",
+                  "name": "url",
+                  "type": "string",
+                  "require": false,
+                  "key": "ce38a1a7-04b0-3a24-5de9-d0aa47f03e54",
+                  "parentKey": "27211b50-7017-eb2c-7284-1c5c49ef9437"
+                },
+                {
+                  "description": "引用文献样式的引用文案",
+                  "name": "quoteText",
+                  "type": "string",
+                  "require": false,
+                  "key": "b6ea0227-d6f0-a1f8-37c3-db08dbd3f2eb",
+                  "parentKey": "27211b50-7017-eb2c-7284-1c5c49ef9437"
+                }
+              ]
+            },
+            {
+              "description": "二级标题+文本列表，该字段可为空数组",
+              "name": "horizontalContentList",
+              "type": "array",
+              "require": false,
+              "key": "8e87c14b-eb11-be30-5b9b-f6b60139f1f2",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "列表对象",
+                  "name": "horizontalContent",
+                  "type": "string",
+                  "require": false,
+                  "key": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01",
+                  "parentKey": "8e87c14b-eb11-be30-5b9b-f6b60139f1f2",
+                  "children": [
+                    {
+                      "description": "级标题，建议不超过5个字 ",
+                      "name": "keyName",
+                      "type": "string",
+                      "require": true,
+                      "key": "f3a76f64-cf1d-a988-4241-dc22ce84b75c",
+                      "parentKey": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01"
+                    },
+                    {
+                      "description": "二级标题，建议不超过5个字",
+                      "name": "value",
+                      "type": "string",
+                      "require": false,
+                      "key": "3594a8a5-84ae-6d8c-5f56-83899fe2e6aa",
+                      "parentKey": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01"
+                    },
+                    {
+                      "description": "模版卡片的二级标题信息内容支持的类型，1是url，2是文件附件，3 代表点击跳转成员详情",
+                      "name": "type",
+                      "type": "string",
+                      "require": false,
+                      "key": "3a57e085-ed3e-f040-dbd1-882a4b49e38e",
+                      "parentKey": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01"
+                    },
+                    {
+                      "description": "链接跳转的url，horizontalContentList.type是1时必填",
+                      "name": "url",
+                      "type": "string",
+                      "require": false,
+                      "key": "623a6c7b-d2c6-eb8d-6e97-11cf09148647",
+                      "parentKey": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01"
+                    },
+                    {
+                      "description": "附件的mediaId，horizontalContentList.type是2时必填",
+                      "name": "mediaId",
+                      "type": "string",
+                      "require": false,
+                      "key": "1494516b-ae13-76c8-5672-8eeae63eb2c3",
+                      "parentKey": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01"
+                    },
+                    {
+                      "description": "成员详情的userId，horizontalContentList.type是3时必填",
+                      "name": "userId",
+                      "type": "string",
+                      "require": false,
+                      "key": "d0a1acae-fd7f-055f-4b59-a149565b8a5a",
+                      "parentKey": "91ee306b-94e4-b3f9-5a4f-d2db3a971e01"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": "跳转指引样式的列表, 该字段可为空数组",
+              "name": "jumpList",
+              "type": "array",
+              "require": false,
+              "key": "04bebc76-e85b-9a4a-29ea-e64502718d29",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "列表对象",
+                  "name": "Jump",
+                  "type": "object",
+                  "require": false,
+                  "key": "33a725fe-2108-ede5-64b4-25c66f56b90b",
+                  "parentKey": "04bebc76-e85b-9a4a-29ea-e64502718d29",
+                  "children": [
+                    {
+                      "description": "跳转链接样式的文案内容",
+                      "name": "title",
+                      "type": "string",
+                      "require": true,
+                      "key": "9b01aebc-e6fa-4f3e-253f-3ea479c5422f",
+                      "parentKey": "33a725fe-2108-ede5-64b4-25c66f56b90b"
+                    },
+                    {
+                      "description": "跳转链接类型，0或不填代表不是链接，1 代表跳转url，2 代表跳转小程序",
+                      "name": "type",
+                      "type": "string",
+                      "require": false,
+                      "key": "8f073b40-98cd-1b51-b284-64441424a2dd",
+                      "parentKey": "33a725fe-2108-ede5-64b4-25c66f56b90b"
+                    },
+                    {
+                      "description": "跳转链接的url，jump_list.type是1时必填",
+                      "name": "url",
+                      "type": "string",
+                      "require": false,
+                      "key": "9eb0f3b4-7999-46af-63d9-972729f2f2c3",
+                      "parentKey": "33a725fe-2108-ede5-64b4-25c66f56b90b"
+                    },
+                    {
+                      "description": "跳转链接的小程序的pagepath，jump_list.type是2时选填",
+                      "name": "pagepath",
+                      "type": "string",
+                      "require": false,
+                      "key": "9cd497f4-a724-80c5-bc62-712c54555019",
+                      "parentKey": "33a725fe-2108-ede5-64b4-25c66f56b90b"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "description": "卡片跳转",
+              "name": "cardAction",
+              "type": "object",
+              "require": true,
+              "key": "be51c686-1c5f-a912-01bc-3780ec35b5f1",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "卡片跳转类型",
+                  "name": "type",
+                  "type": "string",
+                  "require": true,
+                  "key": "d6a4f32a-baae-76c4-f6e7-690cb5c6f71a",
+                  "parentKey": "be51c686-1c5f-a912-01bc-3780ec35b5f1"
+                },
+                {
+                  "description": "跳转事件的url，card_action.type是1时必填",
+                  "name": "url",
+                  "type": "string",
+                  "require": false,
+                  "key": "131f4717-f876-20fa-d5b1-5cf28c9d1449",
+                  "parentKey": "be51c686-1c5f-a912-01bc-3780ec35b5f1"
+                },
+                {
+                  "description": "跳转事件的小程序的pagepath，card_action.type是2时选填",
+                  "name": "pagepath",
+                  "type": "string",
+                  "require": false,
+                  "key": "9d1a2eab-0308-a25f-daed-22178b6be1a7",
+                  "parentKey": "be51c686-1c5f-a912-01bc-3780ec35b5f1"
+                },
+                {
+                  "description": "跳转事件的小程序的appid，card_action.type是2时必填",
+                  "name": "appid",
+                  "type": "string",
+                  "require": false,
+                  "key": "d8efb77c-bed8-e139-a779-9c4bbc2a048c",
+                  "parentKey": "be51c686-1c5f-a912-01bc-3780ec35b5f1"
+                }
+              ]
+            },
+            {
+              "description": "图片样式，仅 cardType 为 news_notice 使用",
+              "name": "cardImage",
+              "type": "object",
+              "require": true,
+              "key": "dd11697a-5b11-c689-eb13-3cc61ff20ba6",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "图片的url",
+                  "name": "url",
+                  "type": "string",
+                  "require": true,
+                  "key": "ed36cae1-6d0d-86a3-feaf-bb9f97f9992d",
+                  "parentKey": "dd11697a-5b11-c689-eb13-3cc61ff20ba6"
+                },
+                {
+                  "description": "图片的宽高比，宽高比要小于2.25，大于1.3，不填该参数默认1.3",
+                  "name": "aspectRatio",
+                  "type": "string",
+                  "require": false,
+                  "key": "bc9c12ce-a18b-53a7-a663-f7b98c5389be",
+                  "parentKey": "dd11697a-5b11-c689-eb13-3cc61ff20ba6"
+                }
+              ]
+            },
+            {
+              "description": "左图右文样式, 仅 cardType 为 news_notice 使用",
+              "name": "imageTextArea",
+              "type": "object",
+              "require": false,
+              "key": "c9a83ff0-43ce-1fef-b104-c69f0efad85a",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "左图右文样式区域点击事件，0或不填代表没有点击事件，1 代表跳转url，2 代表跳转小程序",
+                  "name": "type",
+                  "type": "string",
+                  "require": false,
+                  "key": "f30945ec-2cda-159b-d1e1-23b91ee56925",
+                  "parentKey": "c9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                },
+                {
+                  "description": "击跳转的url，image_text_area.type是1时必填",
+                  "name": "url",
+                  "type": "string",
+                  "require": false,
+                  "key": "76ec377e-bb6b-1d9d-272e-a5a494f0498a",
+                  "parentKey": "dc9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                },
+                {
+                  "description": "左图右文样式的标题",
+                  "name": "title",
+                  "type": "string",
+                  "require": false,
+                  "key": "63003280-d023-1745-137a-cb17f8c07ff3",
+                  "parentKey": "c9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                },
+                {
+                  "description": "左图右文样式的描述",
+                  "name": "desc",
+                  "type": "string",
+                  "require": false,
+                  "key": "e327d922-a9af-3a21-5703-8c38f2c43078",
+                  "parentKey": "c9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                },
+                {
+                  "description": "左图右文样式的图片url",
+                  "name": "imageUrl",
+                  "type": "string",
+                  "require": true,
+                  "key": "7999d848-7d40-ce8e-3f30-2ac58597c272",
+                  "parentKey": "c9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                },
+                {
+                  "description": "击跳转的小程序的pagepath，image_text_area.type是2时选填",
+                  "name": "pagepath",
+                  "type": "string",
+                  "require": false,
+                  "key": "3212dc40-4f55-b24a-d26d-e4ccb09bbc2d",
+                  "parentKey": "c9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                },
+                {
+                  "description": "击跳转的小程序的appid，必须是与当前应用关联的小程序，image_text_area.type是2时必填",
+                  "name": "appid",
+                  "type": "string",
+                  "require": false,
+                  "key": "ea210793-6453-025f-2ad8-47c88395a845",
+                  "parentKey": "c9a83ff0-43ce-1fef-b104-c69f0efad85a"
+                }
+              ]
+            },
+            {
+              "description": "卡片二级垂直内容，该字段可为空数组, 仅 cardType 为 news_notice 使用",
+              "name": "verticalContentList",
+              "type": "array",
+              "require": false,
+              "key": "addad928-c67a-4d41-debd-11c71aee1cb2",
+              "parentKey": "784e72b9-63e1-9a28-7f54-cca79036867f",
+              "children": [
+                {
+                  "description": "列表对象",
+                  "name": "verticalContent",
+                  "type": "object",
+                  "require": false,
+                  "key": "3f5670fc-e472-8eae-785e-f2cc5f623b8d",
+                  "parentKey": "addad928-c67a-4d41-debd-11c71aee1cb2",
+                  "children": [
+                    {
+                      "description": "卡片二级标题",
+                      "name": "title",
+                      "type": "string",
+                      "require": true,
+                      "key": "0b1fad9f-1db2-e82c-9c9f-b6a424845f0b",
+                      "parentKey": "3f5670fc-e472-8eae-785e-f2cc5f623b8d"
+                    },
+                    {
+                      "description": "二级普通文本",
+                      "name": "desc",
+                      "type": "string",
+                      "require": false,
+                      "key": "15b6b2e4-d7ec-c34d-05fa-b93e7f699f65",
+                      "parentKey": "3f5670fc-e472-8eae-785e-f2cc5f623b8d"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.database.DataTableQueryMapper">
+
+  <select id="selectSimpleTable" resultType="com.iwhalecloud.bote.dto.database.SimpleDataTableDTO">
+    SELECT table_id, table_name, table_code, data_source_id, tenant_id
+    FROM bt_data_table
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND table_id = #{tableId}
+  </select>
+
+  <select id="selectSimpleTableList" resultType="com.iwhalecloud.bote.dto.database.SimpleDataTableDTO">
+    SELECT table_id, table_name, table_code, data_source_id, tenant_id
+    FROM bt_data_table
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND table_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSimpleTablePage" resultType="com.iwhalecloud.bote.dto.database.SimpleDataTableDTO">
+    SELECT table_id, table_name, table_code, data_source_id, tenant_id
+    FROM bt_data_table
+    WHERE status_cd = '00A'
+      AND tenant_id = #{query.tenantId}
+    <if test="query.dataSourceId != null">
+      AND data_source_id = #{query.dataSourceId}
+    </if>
+    <if test="query.tableName != null and query.tableName != ''">
+      AND (table_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          OR table_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+    </if>
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="selectSimpleTableColumnList" resultType="com.iwhalecloud.bote.dto.database.SimpleDataTableColumnDTO">
+    SELECT table_id, column_name, column_code, data_type, data_length,
+           data_scale, primary_key, nullable, platform_column
+    FROM bt_data_table_column
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND table_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+</mapper>

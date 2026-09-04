@@ -1,0 +1,615 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.person.mapper.FavoriteMapper">
+  <!-- @formatter:off -->
+
+  <!-- 置顶收藏：文档或文件夹 -->
+  <select id="selectPinnedDocumentOrFolderFavorites" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoritePinnedDTO">
+    SELECT f.favorite_id,
+           f.target_id,
+           f.target_type,
+           d.document_name         AS "resourceName",
+           d.library_id,
+           d.content_source,
+           d.creator_id            AS "creatorUserId",
+          d.document_type         AS "resourceType",
+           f.favorite_pin_order,
+           f.created_time          AS "favoriteTime",
+           f.updated_time          AS "pinTime",
+           d.tenant_id,
+           d.space_id
+    FROM bt_dc_user_favorite f
+           JOIN bt_dc_document d ON f.target_id = d.document_id
+    WHERE f.user_id = #{userId}
+     <if test="tenantId != null">
+      AND f.tenant_id = #{tenantId}
+    </if>
+      AND f.space_id = #{spaceId}
+      AND f.target_type = #{targetType}
+      AND f.is_favorite_pinned = 'T'
+      AND f.status_cd = '00A'
+      AND d.status_cd = '00A'
+    ORDER BY f.favorite_pin_order ASC, f.updated_time DESC
+  </select>
+
+  <!-- 置顶收藏：文档库 -->
+  <select id="selectPinnedLibraryFavorites" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoritePinnedDTO">
+    SELECT f.favorite_id,
+           f.target_id,
+           f.target_type,
+           l.library_name          AS "resourceName",
+           l.library_icon          AS "resourceIcon",
+           l.color,
+           (SELECT COUNT(*) FROM bt_dc_document WHERE library_id = l.library_id AND status_cd = '00A') AS "documentCount",
+           l.creator_id            AS "creatorUserId",
+           f.favorite_pin_order,
+           f.created_time          AS "favoriteTime",
+           f.updated_time          AS "pinTime",
+           l.tenant_id,
+           l.space_id
+    FROM bt_dc_user_favorite f
+           JOIN bt_dc_document_library l ON f.target_id = l.library_id
+    WHERE f.user_id = #{userId}
+      AND f.space_id = #{spaceId}
+       <if test="tenantId != null">
+      AND f.tenant_id = #{tenantId}
+    </if>
+      AND f.target_type = #{targetType}
+      AND f.is_favorite_pinned = 'T'
+      AND f.status_cd = '00A'
+      AND l.status_cd = '00A'
+    ORDER BY f.favorite_pin_order ASC, f.updated_time DESC
+  </select>
+
+  <!-- 置顶收藏：知识库 -->
+  <select id="selectPinnedKnowledgeFavorites" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoritePinnedDTO">
+    SELECT f.favorite_id,
+           f.target_id,
+           f.target_type,
+           k.knowledge_name        AS "resourceName",
+           k.creator_id            AS "creatorUserId",
+           f.favorite_pin_order,
+           f.created_time          AS "favoriteTime",
+           f.updated_time          AS "pinTime",
+           k.color,
+           k.knowledge_icon        AS "resourceIcon",
+           k.knowledge_id          AS "resourceCode",
+           k.tenant_id,
+           k.space_id
+    FROM bt_dc_user_favorite f
+           JOIN bt_knowledge_base k ON f.target_id = k.kb_code
+    WHERE f.user_id = #{userId}
+      AND f.space_id = #{spaceId}
+      <if test="tenantId != null">
+      AND f.tenant_id = #{tenantId}
+    </if>
+      AND f.target_type = #{targetType}
+      AND f.is_favorite_pinned = 'T'
+      AND f.status_cd = '00A'
+    ORDER BY f.favorite_pin_order ASC, f.updated_time DESC
+  </select>
+
+  <!-- 置顶收藏：所有类型（UNION 查询） -->
+  <select id="selectPinnedAllFavorites" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoritePinnedDTO">
+    SELECT * FROM (
+      SELECT f.favorite_id,
+             f.target_id,
+             f.target_type,
+             d.document_name         AS "resourceName",
+             d.library_id,
+             ''                      AS "contentSource",
+             d.document_type         AS "resourceType",
+             NULL                    AS "resourceIcon",
+             ''                      AS "color",
+             0                       AS "documentCount",
+             0                       AS "resourceCode",
+             d.creator_id            AS "creatorUserId",
+             f.favorite_pin_order,
+             f.created_time          AS "favoriteTime",
+             f.updated_time          AS "pinTime",
+             d.tenant_id,
+             d.space_id
+      FROM bt_dc_user_favorite f
+             JOIN bt_dc_document d ON f.target_id = d.document_id
+      WHERE f.user_id = #{userId}
+        <if test="tenantId != null">
+        AND f.tenant_id = #{tenantId}
+       </if>
+        <if test="spaceId != null">
+        AND f.space_id = #{spaceId}
+      </if>
+        AND f.target_type IN ('DOCUMENT','FOLDER')
+        AND f.is_favorite_pinned = 'T'
+        AND f.status_cd = '00A'
+        AND d.status_cd = '00A'
+      UNION ALL
+      SELECT f.favorite_id,
+             f.target_id,
+             f.target_type,
+             l.library_name          AS "resourceName",
+             ''                      AS "libraryId",
+             ''                      AS "contentSource",
+             ''                      AS "resourceType",
+             l.library_icon          AS "resourceIcon",
+             l.color,
+            (SELECT COUNT(*) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = '00A') AS "documentCount",
+             0                       AS "resourceCode",
+             l.creator_id            AS "creatorUserId",
+             f.favorite_pin_order,
+             f.created_time          AS "favoriteTime",
+             f.updated_time          AS "pinTime",
+             l.tenant_id,
+             l.space_id
+      FROM bt_dc_user_favorite f
+             JOIN bt_dc_document_library l ON f.target_id = l.library_id
+      WHERE f.user_id = #{userId}
+        <if test="tenantId != null">
+        AND f.tenant_id = #{tenantId}
+       </if>
+        <if test="spaceId != null">
+        AND f.space_id = #{spaceId}
+      </if>
+        AND f.target_type = 'LIBRARY'
+        AND f.is_favorite_pinned = 'T'
+        AND f.status_cd = '00A'
+        AND l.status_cd = '00A'
+      UNION ALL
+      SELECT f.favorite_id,
+             f.target_id,
+             f.target_type,
+             k.knowledge_name        AS "resourceName",
+             ''                      AS "libraryId",
+             ''                      AS "contentSource",
+             ''                      AS "resourceType",
+             k.knowledge_icon        AS "resourceIcon",
+             k.color,
+             0                       AS "documentCount",
+             k.knowledge_id          AS "resourceCode",
+             k.creator_id            AS "creatorUserId",
+             f.favorite_pin_order,
+             f.created_time          AS "favoriteTime",
+             f.updated_time          AS "pinTime",
+             k.tenant_id,
+             k.space_id
+      FROM bt_dc_user_favorite f
+             JOIN bt_knowledge_base k ON f.target_id = k.kb_code
+      WHERE f.user_id = #{userId}
+        <if test="tenantId != null">
+        AND f.tenant_id = #{tenantId}
+       </if>
+        <if test="spaceId != null">
+        AND f.space_id = #{spaceId}
+      </if>
+        AND f.target_type = 'KNOWLEDGE'
+        AND f.is_favorite_pinned = 'T'
+        AND f.status_cd = '00A'
+    ) t
+    <choose>
+      <when test="_databaseId == 'mysql'">
+        ORDER BY t.pinTime DESC
+      </when>
+      <otherwise>
+        ORDER BY t."pinTime" DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 收藏列表：文档或文件夹 -->
+  <select id="selectFavoriteDocumentOrFolderList" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoriteListDTO">
+    SELECT f.favorite_id,
+           f.target_id,
+           f.target_type,
+           d.document_name         AS "resourceName",
+           d.content_source,
+           d.library_id,
+           d.tenant_id,
+           d.space_id,
+           d.document_type         AS "resourceType",
+           d.creator_id            AS "creatorUserId",
+           f.is_favorite_pinned,
+           f.created_time          AS "favoriteTime",
+           CASE WHEN f.is_favorite_pinned = 'T' THEN f.updated_time ELSE NULL END AS "pinTime",
+           CASE
+             WHEN EXISTS (
+               SELECT 1
+               FROM bt_dc_document_library lib
+               WHERE lib.library_id = d.library_id
+                 AND lib.visibility_scope = 'PRIVATE'
+                 AND lib.is_builtin = 'T'
+                 AND lib.library_name = '我的文档'
+                 AND lib.status_cd = '00A'
+             ) THEN 'T'
+             ELSE 'F'
+           END AS "myDoc"
+    FROM bt_dc_user_favorite f
+           JOIN bt_dc_document d ON f.target_id = d.document_id
+    WHERE f.user_id = #{userId}
+     <if test="tenantId != null">
+      AND f.tenant_id = #{tenantId}
+    </if>
+    <if test="spaceId != null">
+      AND f.space_id = #{spaceId}
+      AND d.space_id = #{spaceId}
+    </if>
+      AND f.target_type = #{targetType}
+      AND f.status_cd = '00A'
+      AND d.status_cd = '00A'
+      AND f.favorite_pin_order = 0
+    ORDER BY f.is_favorite_pinned DESC, f.favorite_pin_order ASC, f.created_time DESC
+  </select>
+
+  <!-- 收藏列表：文档库 -->
+  <select id="selectFavoriteLibraryList" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoriteListDTO">
+    SELECT f.favorite_id,
+           f.target_id,
+           f.target_type,
+           l.library_name          AS "resourceName",
+           l.library_icon          AS "resourceIcon",
+           l.color,
+           COUNT(d2.document_id)   AS "documentCount",
+           l.creator_id            AS "creatorUserId",
+           f.is_favorite_pinned,
+           l.tenant_id,
+           l.space_id,
+           f.created_time          AS "favoriteTime",
+           CASE WHEN f.is_favorite_pinned = 'T' THEN f.updated_time ELSE NULL END AS "pinTime"
+    FROM bt_dc_user_favorite f
+           JOIN bt_dc_document_library l ON f.target_id = l.library_id
+           LEFT JOIN bt_dc_document d2 ON d2.library_id = l.library_id AND d2.status_cd = '00A'
+    WHERE f.user_id = #{userId}
+    <if test="tenantId != null">
+      AND f.tenant_id = #{tenantId}
+    </if>
+    <if test="spaceId != null">
+      AND f.space_id = #{spaceId}
+      AND l.space_id = #{spaceId}
+    </if>
+      AND f.target_type = #{targetType}
+      AND f.status_cd = '00A'
+      AND l.status_cd = '00A'
+      AND f.favorite_pin_order = 0
+    GROUP BY f.favorite_id, f.target_id, f.target_type, l.library_name, l.tenant_id, l.space_id, l.library_icon, l.creator_id, f.is_favorite_pinned, f.created_time, f.updated_time, l.color
+    ORDER BY f.is_favorite_pinned DESC, f.favorite_pin_order ASC, f.created_time DESC
+  </select>
+
+  <!-- 收藏列表：知识库 -->
+  <select id="selectFavoriteKnowledgeList" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoriteListDTO">
+    SELECT f.favorite_id,
+           f.target_id,
+           f.target_type,
+           k.knowledge_name        AS "resourceName",
+           k.color,
+           k.knowledge_icon        AS "resourceIcon",
+           k.creator_id            AS "creatorUserId",
+           k.knowledge_id          AS "resourceCode",
+           f.is_favorite_pinned,
+           k.tenant_id,
+           k.space_id,
+           f.created_time          AS "favoriteTime",
+           CASE WHEN f.is_favorite_pinned = 'T' THEN f.updated_time ELSE NULL END AS "pinTime"
+    FROM bt_dc_user_favorite f
+           JOIN bt_knowledge_base k ON f.target_id = k.kb_code
+    WHERE f.user_id = #{userId}
+       <if test="tenantId != null">
+       AND f.tenant_id = #{tenantId}
+       </if>
+       <if test="spaceId != null">
+        AND k.space_id = #{spaceId}
+        AND f.space_id = #{spaceId}
+       </if>
+      AND f.target_type = #{targetType}
+      AND f.status_cd = '00A'
+      AND f.favorite_pin_order = 0
+    ORDER BY f.is_favorite_pinned DESC, f.favorite_pin_order ASC, f.created_time DESC
+  </select>
+
+  <!-- 收藏列表：合并所有类型（文档/文件夹、文档库、知识库） -->
+  <select id="selectFavoriteAllList" resultType="com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoriteListDTO">
+    SELECT * FROM (
+      SELECT f.favorite_id,
+             f.target_id,
+             f.target_type,
+             d.document_name         AS "resourceName",
+             ''                      AS "contentSource",
+             d.library_id,
+             d.space_id,
+             d.tenant_id,
+             d.document_type         AS "resourceType",
+             d.creator_id            AS "creatorUserId",
+             f.is_favorite_pinned,
+             f.created_time          AS "favoriteTime",
+             CASE WHEN f.is_favorite_pinned = 'T' THEN f.updated_time ELSE NULL END AS "pinTime",
+             NULL                    AS "resourceIcon",
+             ''                      AS "color",
+             0                       AS "documentCount",
+             0                       AS "resourceCode",
+              CASE
+             WHEN EXISTS (
+               SELECT 1
+               FROM bt_dc_document_library lib
+               WHERE lib.library_id = d.library_id
+                 AND lib.visibility_scope = 'PRIVATE'
+                 AND lib.is_builtin = 'T'
+                 AND lib.library_name = '我的文档'
+                 AND lib.status_cd = '00A'
+             ) THEN 'T'
+             ELSE 'F'
+           END AS "myDoc"
+      FROM bt_dc_user_favorite f
+             JOIN bt_dc_document d ON f.target_id = d.document_id
+      WHERE f.user_id = #{userId}
+        <if test="tenantId != null">
+        AND f.tenant_id = #{tenantId}
+       </if>
+       <if test="spaceId != null">
+        AND d.space_id = #{spaceId}
+        AND f.space_id = #{spaceId}
+       </if>
+        AND f.target_type IN ('DOCUMENT','FOLDER')
+        AND f.status_cd = '00A'
+        AND d.status_cd = '00A'
+        AND f.favorite_pin_order = 0
+      UNION ALL
+      SELECT f.favorite_id,
+             f.target_id,
+             f.target_type,
+             l.library_name          AS "resourceName",
+             ''                      AS "contentSource",
+             l.library_id,
+             l.space_id,
+             l.tenant_id,
+             ''                      AS "resourceType",
+             l.creator_id            AS "creatorUserId",
+             f.is_favorite_pinned,
+             f.created_time          AS "favoriteTime",
+             CASE WHEN f.is_favorite_pinned = 'T' THEN f.updated_time ELSE NULL END AS "pinTime",
+             l.library_icon          AS "resourceIcon",
+             l.color,
+             (SELECT COUNT(*) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = '00A') AS "documentCount",
+             0                       AS "resourceCode",
+             'F' AS "myDoc"
+      FROM bt_dc_user_favorite f
+             JOIN bt_dc_document_library l ON f.target_id = l.library_id
+      WHERE f.user_id = #{userId}
+        <if test="tenantId != null">
+        AND f.tenant_id = #{tenantId}
+       </if>
+       <if test="spaceId != null">
+        AND l.space_id = #{spaceId}
+        AND f.space_id = #{spaceId}
+       </if>
+        AND f.target_type = 'LIBRARY'
+        AND f.status_cd = '00A'
+        AND l.status_cd = '00A'
+        AND f.favorite_pin_order = 0
+      UNION ALL
+      SELECT f.favorite_id,
+             f.target_id,
+             f.target_type,
+             k.knowledge_name        AS "resourceName",
+             ''                      AS "contentSource",
+             ''                      AS "libraryId",
+             k.space_id,
+             k.tenant_id,
+             ''                      AS "resourceType",
+             k.creator_id            AS "creatorUserId",
+             f.is_favorite_pinned,
+             f.created_time          AS "favoriteTime",
+             CASE WHEN f.is_favorite_pinned = 'T' THEN f.updated_time ELSE NULL END AS "pinTime",
+             k.knowledge_icon        AS "resourceIcon",
+             k.color,
+             0                       AS "documentCount",
+             k.knowledge_id          AS "resourceCode",
+             'F' AS "myDoc"
+      FROM bt_dc_user_favorite f
+             JOIN bt_knowledge_base k ON f.target_id = k.kb_code
+      WHERE f.user_id = #{userId}
+        <if test="tenantId != null">
+        AND f.tenant_id = #{tenantId}
+       </if>
+       <if test="spaceId != null">
+        AND k.space_id = #{spaceId}
+        AND f.space_id = #{spaceId}
+       </if>
+        AND f.target_type = 'KNOWLEDGE'
+        AND f.status_cd = '00A'
+        AND f.favorite_pin_order = 0
+    ) t
+    <choose>
+      <when test="_databaseId == 'mysql'">
+        ORDER BY t.favoriteTime DESC
+      </when>
+      <otherwise>
+        ORDER BY t."favoriteTime" DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 检查用户是否已收藏指定资源 -->
+  <select id="existsFavorite" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_dc_user_favorite
+    WHERE user_id = #{userId}
+      AND space_id = #{spaceId}
+      AND target_id = #{targetId}
+      and tenant_id= #{tenantId}
+      AND target_type = #{targetType}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 获取用户收藏指定资源的收藏ID -->
+  <select id="getFavoriteId" resultType="java.lang.Long">
+    SELECT favorite_id
+    FROM bt_dc_user_favorite
+    WHERE user_id = #{userId}
+      AND space_id = #{spaceId}
+      AND target_id = #{targetId}
+      AND target_type = #{targetType}
+      AND status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <!-- 插入收藏记录 -->
+  <insert id="insert" parameterType="com.iwhalecloud.bote.doc.module.person.entity.UserFavoriteEntity">
+    INSERT INTO bt_dc_user_favorite (
+      favorite_id,
+      user_id,
+      target_id,
+      target_type,
+      is_favorite_pinned,
+      favorite_pin_order,
+      tenant_id,
+      space_id,
+      creator_id,
+      updator_id,
+      status_cd,
+      created_time,
+      updated_time
+    ) VALUES (
+               #{favoriteId},
+               #{userId},
+               #{targetId},
+               #{targetType},
+               #{isFavoritePinned},
+               #{favoritePinOrder},
+               #{tenantId},
+               #{spaceId},
+               #{creatorId},
+               #{updatorId},
+               #{statusCd},
+               #{createdTime},
+               #{updatedTime}
+             )
+  </insert>
+
+  <!-- 根据收藏ID和用户ID查询收藏记录 -->
+  <select id="selectByFavoriteIdAndUserId" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserFavoriteEntity">
+    SELECT favorite_id,
+           user_id,
+           target_id,
+           target_type,
+           is_favorite_pinned,
+           favorite_pin_order,
+           tenant_id,
+           space_id,
+           creator_id,
+           updator_id,
+           status_cd,
+           created_time,
+           updated_time
+    FROM bt_dc_user_favorite
+    WHERE favorite_id = #{favoriteId}
+      AND user_id = #{userId}
+      AND space_id = #{spaceId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 删除收藏记录（软删除） -->
+  <update id="deleteFavorite">
+    UPDATE bt_dc_user_favorite
+    SET status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE favorite_id = #{favoriteId}
+    AND user_id = #{userId}
+    AND status_cd = '00A'
+  </update>
+
+  <!-- 根据目标资源删除收藏记录（软删除） -->
+  <update id="deleteFavoriteByTarget">
+    UPDATE bt_dc_user_favorite
+    SET status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+    AND space_id = #{spaceId}
+    AND target_id = #{targetId}
+    and tenant_id = #{tenantId}
+    AND target_type = #{targetType}
+    AND status_cd = '00A'
+  </update>
+
+  <!-- 根据租户和目标资源删除所有收藏记录（软删除） -->
+  <update id="deleteTenantFavoriteByTarget">
+    UPDATE bt_dc_user_favorite
+    SET status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+    AND target_id = #{targetId}
+    AND target_type = #{targetType}
+    <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+    AND status_cd = '00A'
+  </update>
+
+  <!-- 更新收藏置顶状态 -->
+  <update id="updatePinStatus">
+    UPDATE bt_dc_user_favorite
+    SET is_favorite_pinned = #{isPinned},
+    favorite_pin_order = #{pinOrder},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE favorite_id = #{favoriteId}
+    AND user_id = #{userId}
+    AND tenant_id = #{tenantId}
+    AND space_id = #{spaceId}
+    AND status_cd = '00A'
+  </update>
+
+  <!-- 获取用户收藏的最大置顶排序号 -->
+  <select id="getMaxPinOrder" resultType="integer">
+    SELECT MAX(favorite_pin_order)
+    FROM bt_dc_user_favorite
+    WHERE user_id = #{userId}
+      AND space_id = #{spaceId}
+      AND is_favorite_pinned = 'T'
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 检查知识库是否存在 -->
+  <select id="existsKnowledgeBaseByKbCode" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_knowledge_base
+    WHERE kb_code = #{kbCode}
+      <if test="tenantId != null and platform != 'portal'">
+        AND tenant_id = #{tenantId}
+      </if>
+      AND space_id = #{spaceId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 恢复无效收藏记录为有效状态 -->
+  <update id="restoreFavorite">
+    UPDATE bt_dc_user_favorite
+    SET status_cd = '00A',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE favorite_id = #{favoriteId}
+    AND user_id = #{userId}
+    AND status_cd = '00X'
+  </update>
+
+  <!-- 根据用户ID和目标资源查询收藏记录（无论状态） -->
+  <select id="selectByUserIdAndTarget" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserFavoriteEntity">
+    SELECT favorite_id,
+           user_id,
+           target_id,
+           target_type,
+           is_favorite_pinned,
+           favorite_pin_order,
+           tenant_id,
+           space_id,
+           creator_id,
+           updator_id,
+           status_cd,
+           created_time,
+           updated_time
+    FROM bt_dc_user_favorite
+    WHERE user_id = #{userId}
+      AND space_id = #{spaceId}
+      AND tenant_id = #{tenantId}
+      AND target_id = #{targetId}
+      AND target_type = #{targetType}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+</mapper>
+

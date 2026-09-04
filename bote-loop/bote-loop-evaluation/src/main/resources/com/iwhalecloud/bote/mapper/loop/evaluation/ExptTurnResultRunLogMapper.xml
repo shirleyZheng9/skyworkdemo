@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnResultRunLogMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultRunLogEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="expt_run_id" property="exptRunId" jdbcType="BIGINT"/>
+    <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+    <result column="turn_id" property="turnId" jdbcType="BIGINT"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="trace_id" property="traceId" jdbcType="BIGINT"/>
+    <result column="log_id" property="logId" jdbcType="VARCHAR"/>
+    <result column="target_result_id" property="targetResultId" jdbcType="BIGINT"/>
+    <result column="evaluator_result_ids" property="evaluatorResultIds" jdbcType="BLOB"/>
+    <result column="err_msg" property="errMsg" jdbcType="BLOB"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, expt_run_id, item_id, turn_id, status, trace_id, log_id,
+    target_result_id, evaluator_result_ids, err_msg, created_at, updated_at, deleted_at
+  </sql>
+
+  <!-- 批量创建轮次运行日志（如果不存在） -->
+  <insert id="batchCreateNxRunLog">
+    INSERT INTO bt_expt_turn_result_run_log (
+    id, space_id, expt_id, expt_run_id, item_id, turn_id, status, trace_id, log_id,
+    target_result_id, evaluator_result_ids, err_msg, created_at, updated_at, deleted_at
+    ) VALUES
+    <foreach collection="turnResults" item="result" separator=",">
+      (
+      #{result.id}, #{result.spaceId}, #{result.exptId}, #{result.exptRunId}, #{result.itemId},
+      #{result.turnId}, #{result.status}, #{result.traceId}, #{result.logId}, #{result.targetResultId},
+      #{result.evaluatorResultIds}, #{result.errMsg}, #{result.createdAt}, #{result.updatedAt}, #{result.deletedAt}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量创建轮次运行日志（如果不存在）- Oracle语法 -->
+  <insert id="batchCreateNxRunLog" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="turnResults" item="result" separator=" ">
+      INTO bt_expt_turn_result_run_log (
+      id, space_id, expt_id, expt_run_id, item_id, turn_id, status, trace_id, log_id,
+      target_result_id, evaluator_result_ids, err_msg, created_at, updated_at, deleted_at
+      ) VALUES (
+      #{result.id}, #{result.spaceId}, #{result.exptId}, #{result.exptRunId}, #{result.itemId},
+      #{result.turnId}, #{result.status}, #{result.traceId}, #{result.logId}, #{result.targetResultId},
+      #{result.evaluatorResultIds}, #{result.errMsg}, #{result.createdAt}, #{result.updatedAt}, #{result.deletedAt}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 获取数据项轮次运行日志 -->
+  <select id="getItemTurnRunLogs" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_result_run_log
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id = #{itemId}
+  </select>
+
+  <!-- 批量获取数据项轮次运行日志 -->
+  <select id="mGetItemTurnRunLogs" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_result_run_log
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </select>
+
+  <!-- 保存单个轮次运行日志 -->
+  <update id="saveTurnRunLog">
+    UPDATE bt_expt_turn_result_run_log
+    <set>
+      <if test="result.status != null">
+        status = #{result.status},
+      </if>
+      <if test="result.traceId != null">
+        trace_id = #{result.traceId},
+      </if>
+      <if test="result.logId != null">
+        log_id = #{result.logId},
+      </if>
+      <if test="result.targetResultId != null">
+        target_result_id = #{result.targetResultId},
+      </if>
+      <if test="result.evaluatorResultIds != null">
+        evaluator_result_ids = #{result.evaluatorResultIds,jdbcType=VARCHAR},
+      </if>
+      <if test="result.errMsg != null">
+        err_msg = #{result.errMsg},
+      </if>
+      <if test="result.updatedAt != null">
+        updated_at = #{result.updatedAt},
+      </if>
+    </set>
+    WHERE id = #{result.id}
+    AND deleted_at = 0
+  </update>
+
+  <!-- 根据数据项ID更新轮次运行日志 -->
+  <update id="updateTurnRunLogWithItemIds">
+    UPDATE bt_expt_turn_result_run_log
+    <set>
+      <foreach collection="ufields" index="key" item="value" separator=",">
+        ${key} = #{value}
+      </foreach>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </update>
+
+  <!-- 扫描轮次运行日志 -->
+  <select id="scanTurnRunLogs" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM (
+      SELECT
+      <include refid="Base_Column_List"/>
+      FROM bt_expt_turn_result_run_log
+      WHERE space_id = #{spaceId}
+      AND expt_id = #{exptId}
+      <if test="cursor != null and cursor > 0">
+        AND id > #{cursor}
+      </if>
+      ORDER BY id ASC
+    ) t
+    where 1 = 1
+    <if test="limit != null and limit > 0">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+</mapper>

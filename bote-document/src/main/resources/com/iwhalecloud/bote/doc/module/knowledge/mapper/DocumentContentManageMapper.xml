@@ -1,0 +1,875 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.DocumentContentManageMapper">
+
+  <sql id="documentContentColumns">
+    a.content_id,
+    a.tenant_id,
+    a.document_id,
+    a.sort,
+    a.varchar_tiny_col1,
+    a.varchar_tiny_col2,
+    a.varchar_tiny_col3,
+    a.varchar_tiny_col4,
+    a.varchar_tiny_col5,
+    a.varchar_tiny_col6,
+    a.varchar_tiny_col7,
+    a.varchar_tiny_col8,
+    a.varchar_tiny_col9,
+    a.varchar_tiny_col10,
+    a.varchar_small_col1,
+    a.varchar_small_col2,
+    a.varchar_small_col3,
+    a.varchar_small_col4,
+    a.varchar_small_col5,
+    a.varchar_small_col6,
+    a.varchar_small_col7,
+    a.varchar_small_col8,
+    a.varchar_small_col9,
+    a.varchar_small_col10,
+    a.varchar_medium_col1,
+    a.varchar_medium_col2,
+    a.varchar_medium_col3,
+    a.varchar_medium_col4,
+    a.varchar_medium_col5,
+    a.varchar_medium_col6,
+    a.varchar_medium_col7,
+    a.varchar_medium_col8,
+    a.varchar_medium_col9,
+    a.varchar_medium_col10,
+    a.varchar_large_col1,
+    a.varchar_large_col2,
+    a.varchar_large_col3,
+    a.varchar_large_col4,
+    a.varchar_large_col5,
+    a.varchar_large_col6,
+    a.varchar_large_col7,
+    a.varchar_large_col8,
+    a.varchar_large_col9,
+    a.varchar_large_col10,
+    a.text_col1,
+    a.text_col2,
+    a.text_col3,
+    a.text_col4,
+    a.text_col5,
+    a.text_col6,
+    a.text_col7,
+    a.text_col8,
+    a.text_col9,
+    a.text_col10,
+    a.status_cd,
+    a.creator_id,
+    a.updator_id,
+    a.created_time,
+    a.status_time,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <select id="getDocumentContent" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContentDTO">
+    SELECT
+    <include refid="documentContentColumns"/>
+    FROM bt_document_content a
+    WHERE content_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertDocumentContent">
+    INSERT INTO bt_document_content (
+    content_id,
+    tenant_id,
+    document_id,
+    sort,
+    varchar_tiny_col1,
+    varchar_tiny_col2,
+    varchar_tiny_col3,
+    varchar_tiny_col4,
+    varchar_tiny_col5,
+    varchar_tiny_col6,
+    varchar_tiny_col7,
+    varchar_tiny_col8,
+    varchar_tiny_col9,
+    varchar_tiny_col10,
+    varchar_small_col1,
+    varchar_small_col2,
+    varchar_small_col3,
+    varchar_small_col4,
+    varchar_small_col5,
+    varchar_small_col6,
+    varchar_small_col7,
+    varchar_small_col8,
+    varchar_small_col9,
+    varchar_small_col10,
+    varchar_medium_col1,
+    varchar_medium_col2,
+    varchar_medium_col3,
+    varchar_medium_col4,
+    varchar_medium_col5,
+    varchar_medium_col6,
+    varchar_medium_col7,
+    varchar_medium_col8,
+    varchar_medium_col9,
+    varchar_medium_col10,
+    varchar_large_col1,
+    varchar_large_col2,
+    varchar_large_col3,
+    varchar_large_col4,
+    varchar_large_col5,
+    varchar_large_col6,
+    varchar_large_col7,
+    varchar_large_col8,
+    varchar_large_col9,
+    varchar_large_col10,
+    text_col1,
+    text_col2,
+    text_col3,
+    text_col4,
+    text_col5,
+    text_col6,
+    text_col7,
+    text_col8,
+    text_col9,
+    text_col10,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    status_time,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.contentId},
+    #{dto.tenantId},
+    #{dto.documentId},
+    #{dto.sort},
+    #{dto.varcharTinyCol1},
+    #{dto.varcharTinyCol2},
+    #{dto.varcharTinyCol3},
+    #{dto.varcharTinyCol4},
+    #{dto.varcharTinyCol5},
+    #{dto.varcharTinyCol6},
+    #{dto.varcharTinyCol7},
+    #{dto.varcharTinyCol8},
+    #{dto.varcharTinyCol9},
+    #{dto.varcharTinyCol10},
+    #{dto.varcharSmallCol1},
+    #{dto.varcharSmallCol2},
+    #{dto.varcharSmallCol3},
+    #{dto.varcharSmallCol4},
+    #{dto.varcharSmallCol5},
+    #{dto.varcharSmallCol6},
+    #{dto.varcharSmallCol7},
+    #{dto.varcharSmallCol8},
+    #{dto.varcharSmallCol9},
+    #{dto.varcharSmallCol10},
+    #{dto.varcharMediumCol1},
+    #{dto.varcharMediumCol2},
+    #{dto.varcharMediumCol3},
+    #{dto.varcharMediumCol4},
+    #{dto.varcharMediumCol5},
+    #{dto.varcharMediumCol6},
+    #{dto.varcharMediumCol7},
+    #{dto.varcharMediumCol8},
+    #{dto.varcharMediumCol9},
+    #{dto.varcharMediumCol10},
+    #{dto.varcharLargeCol1},
+    #{dto.varcharLargeCol2},
+    #{dto.varcharLargeCol3},
+    #{dto.varcharLargeCol4},
+    #{dto.varcharLargeCol5},
+    #{dto.varcharLargeCol6},
+    #{dto.varcharLargeCol7},
+    #{dto.varcharLargeCol8},
+    #{dto.varcharLargeCol9},
+    #{dto.varcharLargeCol10},
+    #{dto.textCol1},
+    #{dto.textCol2},
+    #{dto.textCol3},
+    #{dto.textCol4},
+    #{dto.textCol5},
+    #{dto.textCol6},
+    #{dto.textCol7},
+    #{dto.textCol8},
+    #{dto.textCol9},
+    #{dto.textCol10},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusTime},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertDocumentContent">
+    INSERT INTO bt_document_content (
+    content_id,
+    tenant_id,
+    document_id,
+    sort,
+    varchar_tiny_col1,
+    varchar_tiny_col2,
+    varchar_tiny_col3,
+    varchar_tiny_col4,
+    varchar_tiny_col5,
+    varchar_tiny_col6,
+    varchar_tiny_col7,
+    varchar_tiny_col8,
+    varchar_tiny_col9,
+    varchar_tiny_col10,
+    varchar_small_col1,
+    varchar_small_col2,
+    varchar_small_col3,
+    varchar_small_col4,
+    varchar_small_col5,
+    varchar_small_col6,
+    varchar_small_col7,
+    varchar_small_col8,
+    varchar_small_col9,
+    varchar_small_col10,
+    varchar_medium_col1,
+    varchar_medium_col2,
+    varchar_medium_col3,
+    varchar_medium_col4,
+    varchar_medium_col5,
+    varchar_medium_col6,
+    varchar_medium_col7,
+    varchar_medium_col8,
+    varchar_medium_col9,
+    varchar_medium_col10,
+    varchar_large_col1,
+    varchar_large_col2,
+    varchar_large_col3,
+    varchar_large_col4,
+    varchar_large_col5,
+    varchar_large_col6,
+    varchar_large_col7,
+    varchar_large_col8,
+    varchar_large_col9,
+    varchar_large_col10,
+    text_col1,
+    text_col2,
+    text_col3,
+    text_col4,
+    text_col5,
+    text_col6,
+    text_col7,
+    text_col8,
+    text_col9,
+    text_col10,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    status_time,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.contentId},
+      #{dto.tenantId},
+      #{dto.documentId},
+      #{dto.sort},
+      #{dto.varcharTinyCol1},
+      #{dto.varcharTinyCol2},
+      #{dto.varcharTinyCol3},
+      #{dto.varcharTinyCol4},
+      #{dto.varcharTinyCol5},
+      #{dto.varcharTinyCol6},
+      #{dto.varcharTinyCol7},
+      #{dto.varcharTinyCol8},
+      #{dto.varcharTinyCol9},
+      #{dto.varcharTinyCol10},
+      #{dto.varcharSmallCol1},
+      #{dto.varcharSmallCol2},
+      #{dto.varcharSmallCol3},
+      #{dto.varcharSmallCol4},
+      #{dto.varcharSmallCol5},
+      #{dto.varcharSmallCol6},
+      #{dto.varcharSmallCol7},
+      #{dto.varcharSmallCol8},
+      #{dto.varcharSmallCol9},
+      #{dto.varcharSmallCol10},
+      #{dto.varcharMediumCol1},
+      #{dto.varcharMediumCol2},
+      #{dto.varcharMediumCol3},
+      #{dto.varcharMediumCol4},
+      #{dto.varcharMediumCol5},
+      #{dto.varcharMediumCol6},
+      #{dto.varcharMediumCol7},
+      #{dto.varcharMediumCol8},
+      #{dto.varcharMediumCol9},
+      #{dto.varcharMediumCol10},
+      #{dto.varcharLargeCol1},
+      #{dto.varcharLargeCol2},
+      #{dto.varcharLargeCol3},
+      #{dto.varcharLargeCol4},
+      #{dto.varcharLargeCol5},
+      #{dto.varcharLargeCol6},
+      #{dto.varcharLargeCol7},
+      #{dto.varcharLargeCol8},
+      #{dto.varcharLargeCol9},
+      #{dto.varcharLargeCol10},
+      #{dto.textCol1},
+      #{dto.textCol2},
+      #{dto.textCol3},
+      #{dto.textCol4},
+      #{dto.textCol5},
+      #{dto.textCol6},
+      #{dto.textCol7},
+      #{dto.textCol8},
+      #{dto.textCol9},
+      #{dto.textCol10},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusTime},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertDocumentContent" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_document_content (
+      content_id,
+      tenant_id,
+      document_id,
+      sort,
+      varchar_tiny_col1,
+      varchar_tiny_col2,
+      varchar_tiny_col3,
+      varchar_tiny_col4,
+      varchar_tiny_col5,
+      varchar_tiny_col6,
+      varchar_tiny_col7,
+      varchar_tiny_col8,
+      varchar_tiny_col9,
+      varchar_tiny_col10,
+      varchar_small_col1,
+      varchar_small_col2,
+      varchar_small_col3,
+      varchar_small_col4,
+      varchar_small_col5,
+      varchar_small_col6,
+      varchar_small_col7,
+      varchar_small_col8,
+      varchar_small_col9,
+      varchar_small_col10,
+      varchar_medium_col1,
+      varchar_medium_col2,
+      varchar_medium_col3,
+      varchar_medium_col4,
+      varchar_medium_col5,
+      varchar_medium_col6,
+      varchar_medium_col7,
+      varchar_medium_col8,
+      varchar_medium_col9,
+      varchar_medium_col10,
+      varchar_large_col1,
+      varchar_large_col2,
+      varchar_large_col3,
+      varchar_large_col4,
+      varchar_large_col5,
+      varchar_large_col6,
+      varchar_large_col7,
+      varchar_large_col8,
+      varchar_large_col9,
+      varchar_large_col10,
+      text_col1,
+      text_col2,
+      text_col3,
+      text_col4,
+      text_col5,
+      text_col6,
+      text_col7,
+      text_col8,
+      text_col9,
+      text_col10,
+      status_cd,
+      creator_id,
+      updator_id,
+      created_time,
+      status_time,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.contentId},
+      #{dto.tenantId},
+      #{dto.documentId},
+      #{dto.sort},
+      #{dto.varcharTinyCol1},
+      #{dto.varcharTinyCol2},
+      #{dto.varcharTinyCol3},
+      #{dto.varcharTinyCol4},
+      #{dto.varcharTinyCol5},
+      #{dto.varcharTinyCol6},
+      #{dto.varcharTinyCol7},
+      #{dto.varcharTinyCol8},
+      #{dto.varcharTinyCol9},
+      #{dto.varcharTinyCol10},
+      #{dto.varcharSmallCol1},
+      #{dto.varcharSmallCol2},
+      #{dto.varcharSmallCol3},
+      #{dto.varcharSmallCol4},
+      #{dto.varcharSmallCol5},
+      #{dto.varcharSmallCol6},
+      #{dto.varcharSmallCol7},
+      #{dto.varcharSmallCol8},
+      #{dto.varcharSmallCol9},
+      #{dto.varcharSmallCol10},
+      #{dto.varcharMediumCol1},
+      #{dto.varcharMediumCol2},
+      #{dto.varcharMediumCol3},
+      #{dto.varcharMediumCol4},
+      #{dto.varcharMediumCol5},
+      #{dto.varcharMediumCol6},
+      #{dto.varcharMediumCol7},
+      #{dto.varcharMediumCol8},
+      #{dto.varcharMediumCol9},
+      #{dto.varcharMediumCol10},
+      #{dto.varcharLargeCol1},
+      #{dto.varcharLargeCol2},
+      #{dto.varcharLargeCol3},
+      #{dto.varcharLargeCol4},
+      #{dto.varcharLargeCol5},
+      #{dto.varcharLargeCol6},
+      #{dto.varcharLargeCol7},
+      #{dto.varcharLargeCol8},
+      #{dto.varcharLargeCol9},
+      #{dto.varcharLargeCol10},
+      #{dto.textCol1},
+      #{dto.textCol2},
+      #{dto.textCol3},
+      #{dto.textCol4},
+      #{dto.textCol5},
+      #{dto.textCol6},
+      #{dto.textCol7},
+      #{dto.textCol8},
+      #{dto.textCol9},
+      #{dto.textCol10},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusTime},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateDocumentContent">
+    UPDATE bt_document_content
+    <set>
+      <if test="dto.checkFieldUpdateFlag('contentId')">
+        content_id = #{dto.contentId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantId')">
+        tenant_id = #{dto.tenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('documentId')">
+        document_id = #{dto.documentId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol1')">
+        varchar_tiny_col1 = #{dto.varcharTinyCol1},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol2')">
+        varchar_tiny_col2 = #{dto.varcharTinyCol2},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol3')">
+        varchar_tiny_col3 = #{dto.varcharTinyCol3},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol4')">
+        varchar_tiny_col4 = #{dto.varcharTinyCol4},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol5')">
+        varchar_tiny_col5 = #{dto.varcharTinyCol5},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol6')">
+        varchar_tiny_col6 = #{dto.varcharTinyCol6},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol7')">
+        varchar_tiny_col7 = #{dto.varcharTinyCol7},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol8')">
+        varchar_tiny_col8 = #{dto.varcharTinyCol8},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol9')">
+        varchar_tiny_col9 = #{dto.varcharTinyCol9},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharTinyCol10')">
+        varchar_tiny_col10 = #{dto.varcharTinyCol10},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol1')">
+        varchar_small_col1 = #{dto.varcharSmallCol1},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol2')">
+        varchar_small_col2 = #{dto.varcharSmallCol2},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol3')">
+        varchar_small_col3 = #{dto.varcharSmallCol3},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol4')">
+        varchar_small_col4 = #{dto.varcharSmallCol4},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol5')">
+        varchar_small_col5 = #{dto.varcharSmallCol5},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol6')">
+        varchar_small_col6 = #{dto.varcharSmallCol6},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol7')">
+        varchar_small_col7 = #{dto.varcharSmallCol7},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol8')">
+        varchar_small_col8 = #{dto.varcharSmallCol8},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol9')">
+        varchar_small_col9 = #{dto.varcharSmallCol9},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharSmallCol10')">
+        varchar_small_col10 = #{dto.varcharSmallCol10},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol1')">
+        varchar_medium_col1 = #{dto.varcharMediumCol1},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol2')">
+        varchar_medium_col2 = #{dto.varcharMediumCol2},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol3')">
+        varchar_medium_col3 = #{dto.varcharMediumCol3},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol4')">
+        varchar_medium_col4 = #{dto.varcharMediumCol4},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol5')">
+        varchar_medium_col5 = #{dto.varcharMediumCol5},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol6')">
+        varchar_medium_col6 = #{dto.varcharMediumCol6},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol7')">
+        varchar_medium_col7 = #{dto.varcharMediumCol7},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol8')">
+        varchar_medium_col8 = #{dto.varcharMediumCol8},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol9')">
+        varchar_medium_col9 = #{dto.varcharMediumCol9},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharMediumCol10')">
+        varchar_medium_col10 = #{dto.varcharMediumCol10},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol1')">
+        varchar_large_col1 = #{dto.varcharLargeCol1},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol2')">
+        varchar_large_col2 = #{dto.varcharLargeCol2},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol3')">
+        varchar_large_col3 = #{dto.varcharLargeCol3},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol4')">
+        varchar_large_col4 = #{dto.varcharLargeCol4},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol5')">
+        varchar_large_col5 = #{dto.varcharLargeCol5},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol6')">
+        varchar_large_col6 = #{dto.varcharLargeCol6},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol7')">
+        varchar_large_col7 = #{dto.varcharLargeCol7},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol8')">
+        varchar_large_col8 = #{dto.varcharLargeCol8},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol9')">
+        varchar_large_col9 = #{dto.varcharLargeCol9},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('varcharLargeCol10')">
+        varchar_large_col10 = #{dto.varcharLargeCol10},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol1')">
+        text_col1 = #{dto.textCol1},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol2')">
+        text_col2 = #{dto.textCol2},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol3')">
+        text_col3 = #{dto.textCol3},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol4')">
+        text_col4 = #{dto.textCol4},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol5')">
+        text_col5 = #{dto.textCol5},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol6')">
+        text_col6 = #{dto.textCol6},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol7')">
+        text_col7 = #{dto.textCol7},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol8')">
+        text_col8 = #{dto.textCol8},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol9')">
+        text_col9 = #{dto.textCol9},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('textCol10')">
+        text_col10 = #{dto.textCol10},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('creatorId')">
+        creator_id = #{dto.creatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusTime')">
+        status_time = #{dto.statusTime},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+    </set>
+    WHERE content_id = #{dto.contentId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="batchUpdateDocumentContent">
+      UPDATE bt_document_content
+      <set>
+        <if test="dto.checkFieldUpdateFlag('contentId')">
+          content_id = #{dto.contentId},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('tenantId')">
+          tenant_id = #{dto.tenantId},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('documentId')">
+          document_id = #{dto.documentId},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('sort')">
+          sort = #{dto.sort},
+        </if>
+        <if test="dto.varcharTinyCol1 != null">
+          varchar_tiny_col1 = #{dto.varcharTinyCol1},
+        </if>
+        <if test="dto.varcharTinyCol2 != null">
+          varchar_tiny_col2 = #{dto.varcharTinyCol2},
+        </if>
+        <if test="dto.varcharTinyCol3 != null">
+          varchar_tiny_col3 = #{dto.varcharTinyCol3},
+        </if>
+        <if test="dto.varcharTinyCol4 != null">
+          varchar_tiny_col4 = #{dto.varcharTinyCol4},
+        </if>
+        <if test="dto.varcharTinyCol5 != null">
+          varchar_tiny_col5 = #{dto.varcharTinyCol5},
+        </if>
+        <if test="dto.varcharTinyCol6 != null">
+          varchar_tiny_col6 = #{dto.varcharTinyCol6},
+        </if>
+        <if test="dto.varcharTinyCol7 != null">
+          varchar_tiny_col7 = #{dto.varcharTinyCol7},
+        </if>
+        <if test="dto.varcharTinyCol8 != null">
+          varchar_tiny_col8 = #{dto.varcharTinyCol8},
+        </if>
+        <if test="dto.varcharTinyCol9 != null">
+          varchar_tiny_col9 = #{dto.varcharTinyCol9},
+        </if>
+        <if test="dto.varcharTinyCol10 != null">
+          varchar_tiny_col10 = #{dto.varcharTinyCol10},
+        </if>
+        <if test="dto.varcharSmallCol1 != null">
+          varchar_small_col1 = #{dto.varcharSmallCol1},
+        </if>
+        <if test="dto.varcharSmallCol2 != null">
+          varchar_small_col2 = #{dto.varcharSmallCol2},
+        </if>
+        <if test="dto.varcharSmallCol3 != null">
+          varchar_small_col3 = #{dto.varcharSmallCol3},
+        </if>
+        <if test="dto.varcharSmallCol4 != null">
+          varchar_small_col4 = #{dto.varcharSmallCol4},
+        </if>
+        <if test="dto.varcharSmallCol5 != null">
+          varchar_small_col5 = #{dto.varcharSmallCol5},
+        </if>
+        <if test="dto.varcharSmallCol6 != null">
+          varchar_small_col6 = #{dto.varcharSmallCol6},
+        </if>
+        <if test="dto.varcharSmallCol7 != null">
+          varchar_small_col7 = #{dto.varcharSmallCol7},
+        </if>
+        <if test="dto.varcharSmallCol8 != null">
+          varchar_small_col8 = #{dto.varcharSmallCol8},
+        </if>
+        <if test="dto.varcharSmallCol9 != null">
+          varchar_small_col9 = #{dto.varcharSmallCol9},
+        </if>
+        <if test="dto.varcharSmallCol10 != null">
+          varchar_small_col10 = #{dto.varcharSmallCol10},
+        </if>
+        <if test="dto.varcharMediumCol1 != null">
+          varchar_medium_col1 = #{dto.varcharMediumCol1},
+        </if>
+        <if test="dto.varcharMediumCol2 != null">
+          varchar_medium_col2 = #{dto.varcharMediumCol2},
+        </if>
+        <if test="dto.varcharMediumCol3 != null">
+          varchar_medium_col3 = #{dto.varcharMediumCol3},
+        </if>
+        <if test="dto.varcharMediumCol4  != null">
+          varchar_medium_col4 = #{dto.varcharMediumCol4},
+        </if>
+        <if test="dto.varcharMediumCol5 != null">
+          varchar_medium_col5 = #{dto.varcharMediumCol5},
+        </if>
+        <if test="dto.varcharMediumCol6 != null">
+          varchar_medium_col6 = #{dto.varcharMediumCol6},
+        </if>
+        <if test="dto.varcharMediumCol7 != null">
+          varchar_medium_col7 = #{dto.varcharMediumCol7},
+        </if>
+        <if test="dto.varcharMediumCol8 != null">
+          varchar_medium_col8 = #{dto.varcharMediumCol8},
+        </if>
+        <if test="dto.varcharMediumCol9 != null">
+          varchar_medium_col9 = #{dto.varcharMediumCol9},
+        </if>
+        <if test="dto.varcharMediumCol10 != null">
+          varchar_medium_col10 = #{dto.varcharMediumCol10},
+        </if>
+        <if test="dto.varcharLargeCol1 != null">
+          varchar_large_col1 = #{dto.varcharLargeCol1},
+        </if>
+        <if test="dto.varcharLargeCol2 != null">
+          varchar_large_col2 = #{dto.varcharLargeCol2},
+        </if>
+        <if test="dto.varcharLargeCol3 != null">
+          varchar_large_col3 = #{dto.varcharLargeCol3},
+        </if>
+        <if test="dto.varcharLargeCol4 != null">
+          varchar_large_col4 = #{dto.varcharLargeCol4},
+        </if>
+        <if test="dto.varcharLargeCol5 != null">
+          varchar_large_col5 = #{dto.varcharLargeCol5},
+        </if>
+        <if test="dto.varcharLargeCol6 != null">
+          varchar_large_col6 = #{dto.varcharLargeCol6},
+        </if>
+        <if test="dto.varcharLargeCol7 != null">
+          varchar_large_col7 = #{dto.varcharLargeCol7},
+        </if>
+        <if test="dto.varcharLargeCol8 != null">
+          varchar_large_col8 = #{dto.varcharLargeCol8},
+        </if>
+        <if test="dto.varcharLargeCol9 != null">
+          varchar_large_col9 = #{dto.varcharLargeCol9},
+        </if>
+        <if test="dto.varcharLargeCol10 != null">
+          varchar_large_col10 = #{dto.varcharLargeCol10},
+        </if>
+        <if test="dto.textCol1 != null">
+          text_col1 = #{dto.textCol1},
+        </if>
+        <if test="dto.textCol2 != null">
+          text_col2 = #{dto.textCol2},
+        </if>
+        <if test="dto.textCol3 != null">
+          text_col3 = #{dto.textCol3},
+        </if>
+        <if test="dto.textCol4 != null">
+          text_col4 = #{dto.textCol4},
+        </if>
+        <if test="dto.textCol5 != null">
+          text_col5 = #{dto.textCol5},
+        </if>
+        <if test="dto.textCol6 != null">
+          text_col6 = #{dto.textCol6},
+        </if>
+        <if test="dto.textCol7 != null">
+          text_col7 = #{dto.textCol7},
+        </if>
+        <if test="dto.textCol8 != null">
+          text_col8 = #{dto.textCol8},
+        </if>
+        <if test="dto.textCol9 != null">
+          text_col9 = #{dto.textCol9},
+        </if>
+        <if test="dto.textCol10 != null">
+          text_col10 = #{dto.textCol10},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('statusCd')">
+          status_cd = #{dto.statusCd},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('creatorId')">
+          creator_id = #{dto.creatorId},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('updatorId')">
+          updator_id = #{dto.updatorId},
+        </if>
+        <if test="dto.checkFieldUpdateFlag('statusTime')">
+          status_time = #{dto.statusTime},
+        </if>
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        <if test="dto.checkFieldUpdateFlag('remark')">
+          remark = #{dto.remark},
+        </if>
+      </set>
+      WHERE content_id = #{dto.contentId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteDocumentContentByDocumentId">
+    UPDATE bt_document_content
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectDocumentContentList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContentDTO">
+    SELECT
+    <include refid="documentContentColumns"/>
+    FROM bt_document_content a
+    WHERE a.status_cd = '00A'
+    AND a.document_id = #{query.documentId}
+    AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectDocumentContentPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContentDTO">
+    SELECT
+    <include refid="documentContentColumns"/>
+    FROM bt_document_content a
+    WHERE a.status_cd = '00A'
+    AND a.document_id = #{query.documentId}
+    AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="batchDeleteDocumentContent">
+    UPDATE bt_document_content
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE content_id IN (<foreach collection="dto.contentIds" item="contentId" separator=",">#{contentId}</foreach>)
+    AND document_id = #{dto.documentId}
+    AND tenant_id = #{tenantId}
+  </update>
+</mapper>

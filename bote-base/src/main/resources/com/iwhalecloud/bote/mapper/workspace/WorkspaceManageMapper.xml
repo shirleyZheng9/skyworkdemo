@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.workspace.WorkspaceManageMapper">
+
+  <sql id="spaceColumns">
+    a.space_id,
+    a.space_name,
+    a.space_icon,
+    a.space_tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="selectWorkspaceById" resultType="com.iwhalecloud.bote.dto.workspace.WorkspaceDTO">
+    SELECT <include refid="spaceColumns"/>
+    FROM bt_workspace a
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+  </select>
+
+  <insert id="insertWorkspace">
+    INSERT INTO bt_workspace (
+    space_id,
+    space_name,
+    space_icon,
+    space_tenant_id,
+    ext_space_id,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark)
+    SELECT
+    #{dto.spaceId},
+    #{dto.spaceName},
+    #{dto.spaceIcon},
+    #{dto.spaceTenantId},
+    #{dto.extSpaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM bt_workspace
+      WHERE status_cd = '00A'
+        AND (
+          space_name = #{dto.spaceName}
+          <if test="dto.extSpaceId != null and dto.extSpaceId != ''">
+          OR ext_space_id = #{dto.extSpaceId}
+          </if>
+        )
+    )
+  </insert>
+
+  <insert id="batchInsertWorkspace">
+    INSERT INTO bt_workspace (
+    space_id,
+    space_name,
+    space_icon,
+    space_tenant_id,
+    ext_space_id,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark)
+    VALUES
+    <foreach collection="list" item="dto" separator=",">
+      (
+      #{dto.spaceId},
+      #{dto.spaceName},
+      #{dto.spaceIcon},
+      #{dto.spaceTenantId},
+      #{dto.extSpaceId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertWorkspace" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" separator=" ">
+      INTO bt_workspace (
+      space_id,
+      space_name,
+      space_icon,
+      space_tenant_id,
+      space_tenant_id,
+      status_cd,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      remark)
+      VALUES (
+      #{dto.spaceId},
+      #{dto.spaceName},
+      #{dto.spaceIcon},
+      #{dto.spaceTenantId},
+      #{dto.extSpaceId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateWorkspace">
+    UPDATE bt_workspace
+    SET
+    <if test="dto.checkFieldUpdateFlag('spaceName')">
+      space_name = #{dto.spaceName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('spaceIcon')">
+      space_icon = #{dto.spaceIcon},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('spaceTenantId')">
+      space_tenant_id = #{dto.spaceTenantId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('extSpaceId')">
+      ext_space_id = #{dto.extSpaceId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.remark != null">
+      remark = #{dto.remark},
+    </if>
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE space_id = #{dto.spaceId}
+  </update>
+
+  <update id="deleteWorkspace">
+    UPDATE bt_workspace
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE space_id = #{spaceId}
+  </update>
+
+  <select id="existsSpaceName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_workspace
+    WHERE status_cd = '00A'
+      AND space_name = #{spaceName}
+    <if test="spaceId != null">
+      AND space_id != #{spaceId}
+    </if>
+  </select>
+
+  <select id="selectWorkspacePage" resultType="com.iwhalecloud.bote.dto.workspace.WorkspaceDTO">
+    SELECT <include refid="spaceColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT COUNT(1) FROM bt_tenant b WHERE b.status_cd = '00A' AND b.space_id = a.space_id) AS "tenantCount",
+    (SELECT COUNT(1) FROM bt_organization_member c WHERE c.status_cd = '00A' AND c.space_id = a.space_id) AS "userCount"
+    FROM bt_workspace a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.space_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.userId != null">
+      AND EXISTS (SELECT 1 FROM bt_organization_member b
+                  JOIN bt_org_user_role r ON b.user_id = r.user_id AND b.space_id = r.space_id
+                  WHERE a.space_id = b.space_id
+                    AND b.status_cd = '00A'
+                    AND r.status_cd = '00A'
+                    AND r.org_role = 'admin'
+                    AND b.user_id = #{query.userId})
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getWorkspcaeIcon" resultType="java.lang.String">
+    SELECT space_icon FROM bt_workspace
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="selectSimpleWorkspaces" resultType="com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO">
+    SELECT space_id, space_name FROM bt_workspace
+    WHERE status_cd = '00A'
+  </select>
+
+  <select id="selectSimpleWorkspaceByUserId" resultType="com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO">
+    SELECT a.space_id, a.space_name, b.org_role AS "roleCode"
+    FROM bt_workspace a
+    LEFT JOIN bt_org_user_role b ON a.space_id = b.space_id
+    WHERE 1=1
+      AND a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND b.user_id = #{userId}
+    UNION ALL
+    SELECT a.space_id, a.space_name, null AS "roleCode"
+    FROM bt_workspace a
+    LEFT JOIN bt_tenant b ON a.space_id = b.space_id
+    WHERE 1=1
+      AND a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND EXISTS (SELECT 1 FROM bt_tenant_user c
+                  WHERE c.tenant_id = b.tenant_id
+                    AND c.status_cd = '00A'
+                    AND c.user_id = #{userId})
+  </select>
+
+  <select id="getVirtualTenantId" resultType="java.lang.Long">
+    SELECT space_tenant_id FROM bt_workspace WHERE space_id = #{spaceId} and status_cd = '00A'
+  </select>
+
+  <select id="existWorkSpaceByExtSpaceId" resultType="com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO">
+    SELECT space_id, space_name
+    FROM bt_workspace
+    WHERE ext_space_id = #{extSpaceId}
+    and status_cd = '00A'
+  </select>
+
+  <select id="existWorkspaceBySpaceName" resultType="com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO">
+    SELECT space_id, space_name
+    FROM bt_workspace
+    WHERE status_cd = '00A'
+      AND space_name = #{spaceName}
+  </select>
+
+  <select id="selectWorkspacesByIds" resultType="com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO">
+    SELECT space_id, space_name
+    FROM bt_workspace
+    WHERE status_cd = '00A'
+      AND space_id IN
+    <foreach item="spaceId" collection="spaceIds" open="(" separator="," close=")">
+      #{spaceId}
+    </foreach>
+  </select>
+
+  <select id="getSpaceIdByExtSpaceId" resultType="java.lang.Long">
+    SELECT space_id
+    FROM bt_workspace
+    WHERE ext_space_id = #{extSpaceId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="getExtSpaceIdBySpaceId" resultType="java.lang.String">
+    SELECT ext_space_id
+    FROM bt_workspace
+    WHERE space_id = #{spaceId}
+      AND status_cd = '00A'
+  </select>
+
+</mapper>

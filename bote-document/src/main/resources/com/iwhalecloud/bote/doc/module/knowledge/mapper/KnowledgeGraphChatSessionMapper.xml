@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeGraphChatSessionMapper">
+
+
+  <select id="findByUniqueKey" resultType="com.iwhalecloud.bote.doc.module.knowledge.entity.KnowledgeGraphSessionRelEntity">
+    SELECT id, bote_session_id, knowledge_base_id, kg_session_id, tenant_id, user_id, created_time, updated_time
+    FROM bt_knowledge_graph_session_rel
+    WHERE tenant_id = #{tenantId}
+      AND user_id = #{userId}
+      AND bote_session_id = #{boteSessionId}
+      AND knowledge_base_id = #{knowledgeBaseId}
+      AND status_cd = '00A'
+    LIMIT 1
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_knowledge_graph_session_rel (
+      id,
+      bote_session_id,
+      knowledge_base_id,
+      kg_session_id,
+      tenant_id,
+      user_id,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      status_cd
+    ) VALUES (
+      #{entity.id},
+      #{entity.boteSessionId},
+      #{entity.knowledgeBaseId},
+      #{entity.kgSessionId},
+      #{entity.tenantId},
+      #{entity.userId},
+      #{entity.creatorId},
+      #{entity.updatorId},
+      #{entity.createdTime},
+      #{entity.updatedTime},
+      #{entity.statusCd}
+    )
+  </insert>
+
+</mapper>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.person.mapper.UserHomepagePinMapper">
+  <!-- @formatter:off -->
+  <select id="selectByPinId" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserHomepagePinEntity">
+    SELECT pin_id, user_id, target_id, target_type, prev_pin_id,
+           creator_id, updator_id, created_time, updated_time, status_cd
+    FROM bt_dc_user_homepage_pin
+    WHERE pin_id = #{pinId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_user_homepage_pin (pin_id, user_id, target_id, target_type, prev_pin_id,
+                                        creator_id, updator_id, created_time, updated_time, status_cd, space_id)
+    VALUES (
+      #{pin.pinId},
+      #{pin.userId},
+      #{pin.targetId},
+      #{pin.targetType},
+      #{pin.prevPinId},
+      #{pin.creatorId},
+      #{pin.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{pin.statusCd},
+      #{pin.spaceId}
+    )
+  </insert>
+
+  <update id="update">
+    UPDATE bt_dc_user_homepage_pin
+    SET user_id = #{pin.userId},
+        target_id = #{pin.targetId},
+        target_type = #{pin.targetType},
+        prev_pin_id = #{pin.prevPinId},
+        updator_id = #{pin.updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        status_cd = #{pin.statusCd}
+    WHERE pin_id = #{pin.pinId}
+  </update>
+
+  <update id="deleteByPinId">
+    UPDATE bt_dc_user_homepage_pin
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE pin_id = #{pinId}
+  </update>
+
+</mapper>

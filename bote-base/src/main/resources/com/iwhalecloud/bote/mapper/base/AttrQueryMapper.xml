@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.AttrQueryMapper">
+
+  <select id="selectAttrValueByAttrCode" resultType="com.iwhalecloud.bote.dto.base.SimpleAttrDTO">
+    SELECT DISTINCT
+      b.attr_value_id,
+      b.attr_id,
+      b.attr_value,
+      b.attr_value_name,
+      b.attr_value_code,
+      b.attr_value_desc,
+      b.sortby,
+      b.is_required,
+      b.comp_type,
+      a.attr_nbr AS "attrCode",
+      a.attr_name
+    FROM bt_skill_attr_spec a
+    JOIN bt_skill_attr_value b ON b.attr_id = a.attr_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.attr_nbr = #{attrCode}
+      AND a.tenant_id = #{tenantId}
+    ORDER BY b.attr_id, b.sortby
+  </select>
+
+  <select id="selectAllAttrValue" resultType="com.iwhalecloud.bote.dto.base.SimpleAttrDTO">
+    SELECT DISTINCT
+      b.attr_value_id,
+      b.attr_id,
+      b.attr_value,
+      b.attr_value_name,
+      b.attr_value_code,
+      b.attr_value_desc,
+      b.sortby,
+      b.is_required,
+      b.comp_type,
+      a.attr_nbr AS "attrCode",
+      a.attr_name,
+      a.tenant_id
+    FROM bt_skill_attr_spec a
+    JOIN bt_skill_attr_value b ON b.attr_id = a.attr_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+    ORDER BY b.attr_id, b.sortby
+  </select>
+
+  <select id="selectAttrValueRelList" resultType="com.iwhalecloud.bote.dto.base.SimpleAttrValueRelDTO">
+    SELECT
+    r.tenant_id, r.a_attr_id, r.z_attr_id, r.a_attr_value_id, r.z_attr_value_id,
+    s.attr_nbr as z_attr_nbr, s.attr_name as z_attr_name,
+    v.attr_value_name as z_attr_value_name, v.attr_value as z_attr_value
+    FROM bt_skill_attr_value_rel r
+    LEFT JOIN bt_skill_attr_spec s on s.attr_id = r.z_attr_id and s.tenant_id = r.tenant_id
+    LEFT JOIN bt_skill_attr_value v on v.attr_value_id = r.z_attr_value_id and v.tenant_id = r.tenant_id
+    WHERE r.status_cd = '00A'
+    <if test="tenantId != null">
+      AND r.tenant_id = #{tenantId}
+    </if>
+    <if test="attrValueIds != null and attrValueIds.size() != 0">
+      AND r.a_attr_value_id IN (<foreach collection="attrValueIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+  </select>
+</mapper>

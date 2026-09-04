@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<!-- ch.qos.logback.core.rolling.RollingFileAppender 文件日志输出 -->  
+	<property name="LOG_PATH" value="/log/k8sapplication/" />
+    <property name="LOG_FILE" value="bote_service_292" />
+	<!-- ch.qos.logback.core.ConsoleAppender 控制台输出 -->  
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">  
+        <encoder>  
+            <pattern>[%-5level] [%d{yyyy-MM-dd} %d{HH:mm:ss.SSS}] [%thread] %logger{36} - %msg%n</pattern>  
+        </encoder>  
+    </appender>  
+    <!-- ch.qos.logback.core.rolling.RollingFileAppender 文件日志输出 -->  
+    <appender name="file"  
+        class="ch.qos.logback.core.rolling.RollingFileAppender">  
+        <File>${LOG_PATH}/${LOG_FILE}.log</File>  
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">  
+            <FileNamePattern>${LOG_PATH}/${LOG_FILE}-%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+            <maxFileSize>50MB</maxFileSize>
+            <MaxHistory>2</MaxHistory>
+            <totalSizeCap>1GB</totalSizeCap> 
+        </rollingPolicy>  
+        <layout class="ch.qos.logback.classic.PatternLayout">  
+            <pattern>[%-5level] [%d{yyyy-MM-dd} %d{HH:mm:ss.SSS}] [%thread] %logger{36} - %msg%n</pattern>  
+        </layout>  
+    </appender>  
+
+	
+	<appender name="async_file" class="ch.qos.logback.classic.AsyncAppender">
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>256</queueSize>
+        <appender-ref ref="file"/>
+    </appender>
+
+
+	<!-- 日志级别 -->
+	<root>
+
+		<level value="debug" />
+		<appender-ref ref="console" />  
+		<appender-ref ref="async_file" />
+	</root>
+</configuration> 

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.person.mapper.ShareMapper">
+  <!-- @formatter:off -->
+
+  <!-- 与我共享：只查询直接共享给当前用户的文档记录 (subject_id=当前用户ID and subject_type='USER') -->
+  <select id="selectSharedWithMe" resultType="com.iwhalecloud.bote.doc.module.person.dto.share.SharedWithMeDTO">
+    SELECT d.document_id,
+    d.document_name,
+    d.document_type,
+    d.content_source,
+    l.tenant_id,
+    l.space_id,
+    NULL AS "fileIcon",
+    l.library_id,
+    p.created_time AS "shareTime",
+    d.updated_time AS "lastModifiedTime",
+    p.permission_type AS "permissions",
+    p.granted_by AS "sharerUserId",
+    CASE
+    WHEN EXISTS (SELECT 1 FROM bt_dc_user_favorite uf WHERE uf.target_id = d.document_id AND uf.target_type = 'DOCUMENT' AND uf.user_id = #{userId} AND uf.status_cd = '00A')
+    THEN 1
+    ELSE 0
+    END AS "isFavorite",
+    CASE
+    WHEN EXISTS (SELECT 1 FROM bt_dc_user_homepage_pin uhp WHERE uhp.target_id = d.document_id AND uhp.target_type = 'DOCUMENT' AND uhp.user_id = #{userId} AND uhp.status_cd = '00A') THEN 1
+    ELSE 0
+    END AS "isPinned",
+     CASE
+             WHEN EXISTS (
+               SELECT 1
+               FROM bt_dc_document_library lib
+               WHERE lib.library_id = d.library_id
+                 AND lib.visibility_scope = 'PRIVATE'
+                 AND lib.is_builtin = 'T'
+                 AND lib.library_name = '我的文档'
+                 AND lib.status_cd = '00A'
+             ) THEN 'T'
+             ELSE 'F'
+           END AS "myDoc"
+    FROM bt_dc_document_permission p
+    JOIN bt_dc_document d ON p.document_id = d.document_id
+    JOIN bt_dc_document_library l ON d.library_id = l.library_id
+    WHERE p.status_cd = '00A'
+    AND d.status_cd = '00A'
+    <if test="tenantId != null and platform != 'portal'">
+      AND l.tenant_id = #{tenantId}
+      AND d.tenant_id = #{tenantId}
+    </if>
+    <if test="spaceId != null">
+      AND l.space_id = #{spaceId}
+      AND d.space_id = #{spaceId}
+    </if>
+    AND l.status_cd = '00A'
+    AND p.subject_type = 'USER'
+    AND p.subject_id = #{userId}
+    <if test="fileType != null and fileType != ''">
+      <choose>
+        <when test="fileType == 'WORD'">
+          AND d.document_type IN ('WORD', 'WORD_ONLINE')
+        </when>
+        <when test="fileType == 'EXCEL'">
+          AND d.document_type IN ('EXCEL', 'EXCEL_ONLINE')
+        </when>
+        <otherwise>
+          AND d.document_type = #{fileType}
+        </otherwise>
+      </choose>
+    </if>
+    <choose>
+      <when test="sortOrder == 'modifyTime'.toString() and sortBy == 'asc'.toString()">
+        ORDER BY d.updated_time ASC
+      </when>
+      <when test="sortOrder == 'modifyTime'.toString()">
+        ORDER BY d.updated_time DESC
+      </when>
+      <when test="sortBy == 'asc'.toString()">
+        ORDER BY p.created_time ASC
+      </when>
+      <otherwise>
+        ORDER BY p.created_time DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 查询指定文档的分享对象列表 -->
+  <select id="selectSharedTargets" resultType="com.iwhalecloud.bote.doc.module.person.dto.share.MyShareDTO">
+    SELECT p.subject_type AS "subjectType",
+    p.subject_id AS "subjectId",
+    p.permission_type AS "permissionType"
+    FROM bt_dc_document_permission p
+    WHERE p.status_cd = '00A'
+    AND p.document_id = #{documentId}
+    AND p.granted_by = #{userId}
+  </select>
+
+  <!-- 查询指定文档的分享对象列表（用于组装接口出参的 sharedTo） -->
+  <select id="selectSharedTargetsForDTO" resultType="com.iwhalecloud.bote.doc.module.person.dto.share.SharedTargetDTO">
+    SELECT p.subject_id AS "itemId",
+    p.permission_type AS "permission",
+    p.subject_type AS "type",
+    CONCAT('', p.subject_id) AS "itemName"
+    FROM bt_dc_document_permission p
+    WHERE p.status_cd = '00A'
+    AND p.document_id = #{documentId}
+    AND p.granted_by = #{userId}
+    ORDER BY p.created_time DESC
+  </select>
+
+  <!-- 我共享的文档 - 第一阶段查询（分页）：以document_id为维度进行分页去重 -->
+  <select id="selectMyShareDocuments" resultType="com.iwhalecloud.bote.doc.module.person.dto.share.MyShareDTO">
+    SELECT d.document_id,
+    d.document_name,
+    d.document_type,
+    d.content_source,
+    l.tenant_id,
+    l.space_id,
+    NULL AS "fileIcon",
+    l.library_id,
+    MAX(p.created_time) AS "shareTime",
+    d.updated_time AS "lastModifiedTime",
+    CASE
+    WHEN EXISTS (SELECT 1 FROM bt_dc_user_favorite uf WHERE uf.target_id = d.document_id AND uf.target_type = 'DOCUMENT' AND uf.user_id = #{userId} AND uf.status_cd = '00A')
+    THEN 1
+    ELSE 0
+    END AS "isFavorite",
+    CASE
+    WHEN EXISTS (SELECT 1 FROM bt_dc_user_homepage_pin uhp WHERE uhp.target_id = d.document_id AND uhp.target_type = 'DOCUMENT' AND uhp.user_id = #{userId} AND uhp.status_cd = '00A') THEN 1
+    ELSE 0
+    END AS "isPinned",
+    MAX(CASE
+      WHEN l.visibility_scope = 'PRIVATE' AND l.is_builtin = 'T' AND l.library_name = '我的文档' THEN 'T'
+      ELSE 'F'
+    END) AS "myDoc"
+    FROM bt_dc_document_permission p
+    JOIN bt_dc_document d ON p.document_id = d.document_id
+    JOIN bt_dc_document_library l ON d.library_id = l.library_id
+    WHERE p.status_cd = '00A'
+    AND d.status_cd = '00A'
+    AND l.status_cd = '00A'
+    <if test="tenantId != null and platform != 'portal'">
+      AND l.tenant_id = #{tenantId}
+      AND d.tenant_id = #{tenantId}
+    </if>
+    <if test="spaceId != null">
+      AND l.space_id = #{spaceId}
+      AND d.space_id = #{spaceId}
+    </if>
+    AND p.granted_by = #{userId}
+    <if test="fileType != null and fileType != ''">
+      <choose>
+        <when test="fileType == 'WORD'">
+          AND d.document_type IN ('WORD', 'WORD_ONLINE')
+        </when>
+        <when test="fileType == 'EXCEL'">
+          AND d.document_type IN ('EXCEL', 'EXCEL_ONLINE')
+        </when>
+        <otherwise>
+          AND d.document_type = #{fileType}
+        </otherwise>
+      </choose>
+    </if>
+    GROUP BY d.document_id, d.document_name, d.document_type, d.content_source, l.library_id, d.updated_time, l.tenant_id, d.tenant_id, l.space_id, d.space_id
+    <choose>
+      <when test="sortBy == 'asc' and sortOrder == 'modifyTime'">
+        ORDER BY d.updated_time ASC
+      </when>
+      <when test="sortBy == 'desc' and sortOrder == 'modifyTime'">
+        ORDER BY d.updated_time DESC
+      </when>
+      <when test="sortBy == 'asc' and sortOrder == 'shareTime'">
+        ORDER BY MAX(p.created_time) ASC
+      </when>
+      <otherwise>
+        ORDER BY MAX(p.created_time) DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 我共享的文档 - 第二阶段查询（不分页）：查询指定文档列表的所有授权记录 -->
+  <select id="selectPermissionsByDocumentIds" resultType="com.iwhalecloud.bote.doc.module.person.dto.share.MyShareDTO">
+    SELECT p.subject_id AS "subjectId",
+    p.subject_type AS "subjectType",
+    p.permission_type AS "permissionType",
+    p.document_id AS "documentId",
+    p.created_time AS "createdTime"
+    FROM bt_dc_document_permission p
+    WHERE p.status_cd = '00A'
+    AND p.granted_by = #{userId}
+    AND p.document_id IN
+    <foreach item="documentId" collection="documentIds" open="(" separator="," close=")">
+      #{documentId}
+    </foreach>
+    ORDER BY p.document_id, p.created_time DESC
+  </select>
+
+</mapper>
+
+

@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.organization.OrganizationMemberMapper">
+  <!-- @formatter:off -->
+
+  <!-- 基础字段映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    <id column="member_id" property="memberId" jdbcType="BIGINT"/>
+    <result column="user_id" property="userId" jdbcType="BIGINT"/>
+    <result column="org_id" property="orgId" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="member_role" property="memberRole" jdbcType="VARCHAR"/>
+    <result column="member_type" property="memberType" jdbcType="VARCHAR"/>
+    <result column="join_date" property="joinDate" jdbcType="DATE"/>
+    <result column="leave_date" property="leaveDate" jdbcType="DATE"/>
+    <result column="direct_manager_id" property="directManagerId" jdbcType="BIGINT"/>
+    <result column="status_cd" property="statusCd" jdbcType="VARCHAR"/>
+    <result column="permissions" property="permissions" jdbcType="VARCHAR"/>
+    <result column="ext_fields" property="extFields" jdbcType="VARCHAR"/>
+    <result column="creator_id" property="creatorId" jdbcType="BIGINT"/>
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+    <result column="updator_id" property="updatorId" jdbcType="BIGINT"/>
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 详细字段映射（包含用户和组织信息） -->
+  <resultMap id="DetailResultMap" type="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO" extends="BaseResultMap">
+    <!-- 用户信息 -->
+    <result column="user_name" property="userInfo.userName" jdbcType="VARCHAR"/>
+    <result column="real_name" property="userInfo.realName" jdbcType="VARCHAR"/>
+    <result column="email" property="userInfo.email" jdbcType="VARCHAR"/>
+    <result column="phone_no" property="userInfo.phoneNo" jdbcType="VARCHAR"/>
+    <result column="user_icon" property="userInfo.userIcon" jdbcType="VARCHAR"/>
+    <result column="user_state" property="userInfo.userState" jdbcType="VARCHAR"/>
+    <!-- 组织信息 -->
+    <result column="org_id" property="organizationInfo.orgId" jdbcType="BIGINT"/>
+    <result column="org_code" property="organizationInfo.orgCode" jdbcType="VARCHAR"/>
+    <result column="org_name" property="organizationInfo.orgName" jdbcType="VARCHAR"/>
+    <result column="org_type" property="organizationInfo.orgType" jdbcType="VARCHAR"/>
+    <result column="org_level" property="organizationInfo.orgLevel" jdbcType="INTEGER"/>
+    <result column="org_path" property="organizationInfo.orgPath" jdbcType="VARCHAR"/>
+    <!-- 直接上级信息 -->
+    <result column="manager_user_name" property="directManagerInfo.userName" jdbcType="VARCHAR"/>
+    <result column="manager_real_name" property="directManagerInfo.realName" jdbcType="VARCHAR"/>
+    <result column="manager_email" property="directManagerInfo.email" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <!-- 基础查询字段 -->
+  <sql id="Base_Column_List">
+    member_id, user_id, org_id, space_id, member_role, member_type, join_date, leave_date,
+    direct_manager_id, status_cd, permissions, ext_fields, creator_id, created_time, updator_id, updated_time
+  </sql>
+
+  <!-- 详细查询字段 -->
+  <sql id="Detail_Column_List">
+    om.member_id, om.user_id, om.org_id, om.space_id, om.member_role, om.member_type, om.join_date, om.leave_date,
+    om.direct_manager_id, om.status_cd, om.permissions, om.ext_fields, om.creator_id, om.created_time, om.updator_id, om.updated_time,
+    u.user_name, u.real_name, u.email, u.phone_no, u.user_icon, u.user_state,
+    o.org_id, o.org_code, o.org_name, o.org_type, o.org_level, o.org_path,
+    dm.user_name as manager_user_name, dm.real_name as manager_real_name, dm.email as manager_email
+  </sql>
+
+  <!-- 检查用户是否已是组织成员 -->
+  <select id="existsOrganizationMember" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_organization_member
+    WHERE space_id = #{spaceId}
+      AND org_id = #{orgId}
+      AND user_id = #{userId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 根据主键获取组织成员 -->
+  <select id="getOrganizationMember" resultMap="DetailResultMap">
+    SELECT <include refid="Detail_Column_List"/>
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_user dm ON om.direct_manager_id = dm.user_id
+    WHERE om.space_id = #{spaceId}
+      AND om.member_id = #{memberId}
+    AND om.status_cd = '00A'
+  </select>
+
+  <!-- 根据组织和用户获取成员信息 -->
+  <select id="getOrganizationMemberByOrgAndUser" resultMap="DetailResultMap">
+    SELECT <include refid="Detail_Column_List"/>
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_user dm ON om.direct_manager_id = dm.user_id
+    WHERE om.space_id = #{spaceId}
+    AND om.org_id = #{orgId}
+    AND om.user_id = #{userId}
+    AND om.status_cd = '00A'
+  </select>
+
+  <!-- 新增组织成员 -->
+  <insert id="insertOrganizationMember" parameterType="com.iwhalecloud.bote.entity.organization.OrganizationMemberEntity">
+    INSERT INTO bt_organization_member (
+    member_id, user_id, org_id, space_id, member_role, member_type, join_date, leave_date,
+    direct_manager_id, status_cd, permissions, ext_fields, creator_id, created_time
+    ) VALUES (
+    #{dto.memberId}, #{dto.userId}, #{dto.orgId}, #{dto.spaceId}, #{dto.memberRole}, #{dto.memberType}, #{dto.joinDate}, #{dto.leaveDate},
+    #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <!-- 批量新增组织成员 -->
+  <insert id="batchInsertOrganizationMembers">
+    INSERT INTO bt_organization_member (
+    member_id, user_id, org_id, space_id, member_role, member_type, join_date, leave_date,
+    direct_manager_id, status_cd, permissions, ext_fields, creator_id, created_time
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.memberId}, #{dto.userId}, #{dto.orgId}, #{dto.spaceId}, #{dto.memberRole}, #{dto.memberType}, #{dto.joinDate}, #{dto.leaveDate},
+      #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量新增组织成员 - Oracle版本 -->
+  <insert id="batchInsertOrganizationMembers" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_organization_member (
+      member_id, user_id, org_id, space_id, member_role, member_type, join_date, leave_date,
+      direct_manager_id, status_cd, permissions, ext_fields, creator_id, created_time
+      ) VALUES (
+      #{dto.memberId}, #{dto.userId}, #{dto.orgId}, #{dto.spaceId}, #{dto.memberRole}, #{dto.memberType}, #{dto.joinDate}, #{dto.leaveDate},
+      #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 修改组织成员 -->
+  <update id="updateOrganizationMember" parameterType="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    UPDATE bt_organization_member
+    SET
+    <if test="dto.orgId != null">
+      org_id = #{dto.orgId},
+    </if>
+    member_role = #{dto.memberRole},
+    member_type = #{dto.memberType},
+    join_date = #{dto.joinDate},
+    leave_date = #{dto.leaveDate},
+    direct_manager_id = #{dto.directManagerId},
+    status_cd = #{dto.statusCd},
+    permissions = #{dto.permissions},
+    ext_fields = #{dto.extFields},
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE member_id = #{dto.memberId}
+  </update>
+
+  <!-- 更新成员状态 -->
+  <update id="updateMemberStatus">
+    UPDATE bt_organization_member
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE member_id = #{memberId}
+  </update>
+
+  <!-- 删除组织成员 -->
+  <update id="deleteOrganizationMember">
+    UPDATE bt_organization_member
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE space_id = #{spaceId}
+    AND member_id = #{memberId}
+  </update>
+
+  <!-- 批量删除组织成员 -->
+  <update id="batchDeleteOrganizationMembers">
+    UPDATE bt_organization_member
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE space_id = #{spaceId}
+    AND member_id IN (<foreach item="item" collection="memberIds" separator=",">#{item}</foreach>)
+  </update>
+
+  <!-- 查询组织成员列表 -->
+  <select id="selectOrganizationMemberList" resultMap="DetailResultMap">
+    SELECT om.member_id, om.user_id, om.org_id, om.space_id, om.member_type, om.updated_time, om.created_time,
+           u.user_name, u.real_name, u.email, u.phone_no, o.org_name, o.org_type,
+           r.org_role AS member_role
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_org_user_role r ON om.user_id = r.user_id AND r.status_cd = '00A' AND om.space_id = r.space_id
+    WHERE om.status_cd = '00A'
+      AND u.status_cd = '00A'
+      AND om.space_id = #{query.spaceId}
+    <if test="query.orgId != null">
+      AND om.org_id = #{query.orgId}
+    </if>
+    <if test="query.realName != null and query.realName != ''">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.realName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY COALESCE(om.updated_time, om.created_time) DESC
+  </select>
+
+  <!-- 分页查询组织成员列表 -->
+  <select id="selectOrganizationMemberPage" resultMap="DetailResultMap">
+    SELECT <include refid="Detail_Column_List"/>
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_user dm ON om.direct_manager_id = dm.user_id
+    WHERE om.space_id = #{query.spaceId}
+    <if test="query.orgId != null">
+      AND om.org_id = #{query.orgId}
+    </if>
+    <if test="query.userId != null">
+      AND om.user_id = #{query.userId}
+    </if>
+    <if test="query.memberRole != null and query.memberRole != ''">
+      AND om.member_role = #{query.memberRole}
+    </if>
+    <if test="query.memberType != null and query.memberType != ''">
+      AND om.member_type = #{query.memberType}
+    </if>
+    <if test="query.statusCd != null and query.statusCd != ''">
+      AND om.status_cd = #{query.statusCd}
+    </if>
+    <if test="query.userName != null and query.userName != ''">
+      AND u.user_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.userName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.realName != null and query.realName != ''">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.realName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY om.created_time DESC
+  </select>
+
+  <!-- 查询用户所属的组织列表 -->
+  <select id="selectUserOrganizations" resultMap="DetailResultMap">
+    SELECT <include refid="Detail_Column_List"/>
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_user dm ON om.direct_manager_id = dm.user_id
+    WHERE om.space_id = #{spaceId}
+    AND om.user_id = #{userId}
+    AND om.status_cd = '00A'
+    AND o.status_cd = '00A'
+    ORDER BY om.created_time DESC
+  </select>
+
+  <!-- 批量查询用户所属的组织列表 -->
+  <select id="selectUserOrganizationsBatch" resultMap="DetailResultMap">
+    SELECT <include refid="Detail_Column_List"/>
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_user dm ON om.direct_manager_id = dm.user_id
+    WHERE om.user_id IN
+    <foreach collection="userIds" item="userId" open="(" separator="," close=")">
+      #{userId}
+    </foreach>
+    <if test="spaceId != null">
+      AND om.space_id = #{spaceId}
+    </if>
+    AND om.status_cd = '00A'
+    AND o.status_cd = '00A'
+    ORDER BY om.user_id, om.created_time DESC
+  </select>
+
+  <!-- 查询组织的管理员列表 -->
+  <select id="selectOrganizationAdmins" resultMap="DetailResultMap">
+    SELECT <include refid="Detail_Column_List"/>
+    FROM bt_organization_member om
+    LEFT JOIN bt_user u ON om.user_id = u.user_id
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    LEFT JOIN bt_user dm ON om.direct_manager_id = dm.user_id
+    WHERE om.tenant_id = #{tenantId}
+    AND om.org_id = #{orgId}
+    AND om.member_role = 'admin'
+    AND om.status_cd = '00A'
+    ORDER BY om.created_time ASC
+  </select>
+
+  <!-- 统计组织成员数量 -->
+  <select id="countOrganizationMembers" resultType="int">
+    SELECT COUNT(1)
+    FROM bt_organization_member
+    WHERE space_id = #{spaceId}
+      AND org_id = #{orgId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectOrgUserList" resultType="com.iwhalecloud.bote.dto.organization.OrganizationUserDTO">
+    SELECT om.user_id, u.real_name, u.user_icon
+    FROM bt_organization_member om
+    JOIN bt_user u ON om.user_id = u.user_id
+    WHERE om.status_cd = '00A'
+      AND u.status_cd = '00A'
+      AND om.space_id = #{spaceId}
+      AND om.org_id = #{orgId}
+    <if test="excludeRoleUser">
+      AND NOT EXISTS (SELECT 1 FROM bt_org_user_role r
+                      WHERE r.status_cd = '00A' AND r.user_id = om.user_id AND r.space_id = om.space_id)
+    </if>
+  </select>
+
+  <select id="countOrgUsers" resultType="int">
+    SELECT COUNT(1)
+    FROM bt_organization_member om
+    WHERE om.space_id = #{spaceId}
+      AND om.org_id = #{orgId}
+      AND om.status_cd = '00A'
+    <if test="excludeRoleUser">
+      AND NOT EXISTS (SELECT 1 FROM bt_org_user_role r
+      WHERE r.status_cd = '00A' AND r.user_id = om.user_id AND r.space_id = om.space_id)
+    </if>
+  </select>
+
+  <select id="selectTenantUserListForOrg" resultType="com.iwhalecloud.bote.dto.organization.OrganizationUserDTO">
+    SELECT a.user_id, u.real_name
+    FROM bt_tenant_user a
+    LEFT JOIN bt_user u ON a.user_id = u.user_id AND u.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND NOT EXISTS (
+      SELECT 1
+      FROM bt_organization_member om
+      WHERE om.user_id = a.user_id
+        AND om.status_cd = '00A'
+        AND om.tenant_id = #{tenantId}
+    )
+  </select>
+
+  <select id="batchSelectUserOrgInfoList" resultType="com.iwhalecloud.bote.dto.organization.OrganizationUserDTO">
+    SELECT om.user_id, o.org_id, o.org_name, o.org_path
+    FROM bt_organization_member om
+    LEFT JOIN bt_organization o ON o.org_id = om.org_id
+    WHERE om.status_cd = '00A'
+      AND o.status_cd = '00A'
+      AND om.space_id = #{spaceId}
+      AND om.user_id IN (<foreach collection="list" item="userId" separator=", ">#{userId}</foreach>)
+  </select>
+
+  <select id="selectOrgMemberBasicInfo" resultType="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    SELECT member_id, user_id, org_id, space_id, member_role, member_type
+    FROM bt_organization_member
+    WHERE space_id = #{spaceId}
+      AND member_id = #{memberId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="existUserOrgMember" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_organization_member
+    WHERE space_id = #{spaceId}
+      AND user_id = #{userId}
+      AND status_cd = '00A'
+  </select>
+
+  <update id="deleteUserAllOrgMember">
+    UPDATE bt_organization_member
+    SET status_cd = '00X',
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND user_id = #{userId}
+  </update>
+
+  <select id="selectMemberListByOrgId" resultType="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    SELECT om.member_id, om.user_id, om.org_id, om.space_id
+    FROM bt_organization_member om
+    WHERE om.status_cd = '00A'
+      AND om.space_id = #{spaceId}
+      AND om.org_id = #{orgId}
+  </select>
+
+  <select id="selectMemberListByOrgIds" resultType="com.iwhalecloud.bote.dto.organization.OrganizationMemberDTO">
+    SELECT om.member_id, om.user_id, om.org_id, om.space_id
+    FROM bt_organization_member om
+    WHERE om.status_cd = '00A'
+      AND om.space_id = #{spaceId}
+      AND om.org_id IN (<foreach collection="orgIds" item="orgId" separator=", ">#{orgId}</foreach>)
+  </select>
+
+  <select id="selectUserOrgByUserId" resultType="com.iwhalecloud.bote.dto.organization.OrganizationUserDTO">
+    SELECT om.user_id, o.org_id, o.org_path, o.org_level
+    FROM bt_organization_member om
+    LEFT JOIN bt_organization o ON om.org_id = o.org_id
+    WHERE om.status_cd = '00A'
+      AND o.status_cd = '00A'
+      AND om.user_id = #{userId}
+      AND om.space_id = #{spaceId}
+  </select>
+</mapper>

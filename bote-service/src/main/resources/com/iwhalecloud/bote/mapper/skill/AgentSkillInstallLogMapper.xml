@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.AgentSkillInstallLogMapper">
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.skill.AgentSkillInstallLogEntity">
+    <id column="id" property="id"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="user_id" property="userId"/>
+    <result column="bot_id" property="botId"/>
+    <result column="skill_id" property="skillId"/>
+    <result column="skill_name" property="skillName"/>
+    <result column="install_source" property="installSource"/>
+    <result column="install_time" property="installTime"/>
+  </resultMap>
+
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO bt_agent_skill_install_log (
+    id,tenant_id, user_id, bot_id, skill_id, skill_name, install_source, install_time
+    ) VALUES (
+    #{id},#{tenantId}, #{userId}, #{botId}, #{skillId}, #{skillName}, #{installSource},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <select id="countByTenantBotSkill" resultType="int">
+    SELECT COUNT(*)
+    FROM bt_agent_skill_install_log
+    WHERE tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+      AND skill_id = #{skillId}
+  </select>
+
+  <resultMap id="InstallLogVOMap" type="com.iwhalecloud.bote.dto.skill.SkillInstallLogVO">
+    <result column="id" property="id"/>
+    <result column="skill_id" property="skillId"/>
+    <result column="skill_code" property="skillCode"/>
+    <result column="skill_name" property="skillName"/>
+    <result column="bot_id" property="botId"/>
+    <result column="bot_name" property="botName"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="tenant_name" property="tenantName"/>
+    <result column="install_source" property="installSource"/>
+    <result column="user_id" property="userId"/>
+    <result column="user_name" property="userName"/>
+    <result column="install_time" property="installTime"/>
+  </resultMap>
+
+  <select id="selectInstallLogPage" resultMap="InstallLogVOMap">
+    SELECT
+    l.id,
+    l.skill_id,
+    l.skill_name,
+    s.skill_code,
+    l.bot_id,
+    b.bot_name,
+    l.tenant_id,
+    t.tenant_name,
+    l.install_source,
+    l.user_id,
+    COALESCE(u.real_name, u.user_name) AS user_name,
+    l.install_time
+    FROM bt_agent_skill_install_log l
+    LEFT JOIN bt_agent_skill_square s ON s.skill_id = l.skill_id
+    LEFT JOIN bt_bot b ON b.bot_id = l.bot_id
+    LEFT JOIN bt_tenant t ON t.tenant_id = l.tenant_id
+    LEFT JOIN bt_user u ON u.user_id = l.user_id
+    WHERE 1=1
+    <if test="skillId != null">
+      AND l.skill_id = #{skillId}
+    </if>
+    <if test="tenantId != null">
+      AND l.tenant_id = #{tenantId}
+    </if>
+    <if test="installSource != null and installSource != ''">
+      AND l.install_source = #{installSource}
+    </if>
+    <if test="startTime != null">
+      AND l.install_time &gt;= #{startTime}
+    </if>
+    <if test="endTime != null">
+      AND l.install_time &lt;= #{endTime}
+    </if>
+    <if test="keyword != null and keyword != ''">
+      AND (
+      l.skill_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR b.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY l.install_time DESC
+  </select>
+</mapper>

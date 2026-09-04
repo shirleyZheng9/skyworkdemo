@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.organization.OrganizationFieldConfigMapper">
+  <!-- @formatter:off -->
+
+  <!-- 基础字段映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.dto.organization.OrganizationFieldConfigDTO">
+    <id column="config_id" property="configId" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="field_key" property="fieldKey" jdbcType="VARCHAR"/>
+    <result column="field_name" property="fieldName" jdbcType="VARCHAR"/>
+    <result column="field_type" property="fieldType" jdbcType="VARCHAR"/>
+    <result column="field_options" property="fieldOptions" jdbcType="VARCHAR"/>
+    <result column="status_cd" property="statusCd" jdbcType="VARCHAR"/>
+    <result column="creator_id" property="creatorId" jdbcType="BIGINT"/>
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+    <result column="updator_id" property="updatorId" jdbcType="BIGINT"/>
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 基础查询字段 -->
+  <sql id="Base_Column_List">
+    config_id, space_id, field_key, field_name, field_type, field_options, status_cd,
+    creator_id, created_time, updator_id, updated_time
+  </sql>
+
+  <!-- 检查字段键名是否已存在 -->
+  <select id="existsFieldKey" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_organization_field_config
+    WHERE space_id = #{spaceId}
+      AND field_key = #{fieldKey}
+      <if test="configId != null">
+        AND config_id != #{configId}
+      </if>
+  </select>
+
+  <!-- 根据主键获取字段配置 -->
+  <select id="getFieldConfig" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization_field_config
+    WHERE space_id = #{spaceId}
+      AND config_id = #{configId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 根据字段键名获取字段配置 -->
+  <select id="getFieldConfigByKey" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization_field_config
+    WHERE space_id = #{spaceId}
+      AND field_key = #{fieldKey}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 新增字段配置 -->
+  <insert id="insertFieldConfig" parameterType="com.iwhalecloud.bote.entity.organization.OrganizationFieldConfigEntity">
+    INSERT INTO bt_organization_field_config (
+      config_id, space_id, field_key, field_name, field_type, field_options, status_cd, creator_id, created_time
+    ) VALUES (
+      #{dto.configId}, #{dto.spaceId}, #{dto.fieldKey}, #{dto.fieldName}, #{dto.fieldType}, #{dto.fieldOptions}, '00A', #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <!-- 修改字段配置 -->
+  <update id="updateFieldConfig" parameterType="com.iwhalecloud.bote.dto.organization.OrganizationFieldConfigDTO">
+    UPDATE bt_organization_field_config
+    SET field_key = #{dto.fieldKey},
+        field_name = #{dto.fieldName},
+        field_type = #{dto.fieldType},
+        field_options = #{dto.fieldOptions},
+        updator_id = #{dto.updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE config_id = #{dto.configId}
+  </update>
+
+  <!-- 逻辑删除字段配置 -->
+  <update id="deleteFieldConfig">
+    UPDATE bt_organization_field_config
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = CURRENT_TIMESTAMP
+    WHERE space_id = #{spaceId}
+      AND config_id = #{configId}
+      AND status_cd = '00A'
+  </update>
+
+  <!-- 查询租户的所有字段配置 -->
+  <select id="selectFieldConfigsBySpace" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization_field_config
+    WHERE space_id = #{spaceId}
+      <if test="isEnabled != null and isEnabled != ''">
+        AND status_cd = #{isEnabled}
+      </if>
+      <if test="isEnabled == null or isEnabled == ''">
+        AND status_cd = '00A'
+      </if>
+      <if test="searchContent != null and searchContent != ''">
+        AND (field_key LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR field_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      </if>
+    ORDER BY field_key ASC
+  </select>
+
+</mapper>

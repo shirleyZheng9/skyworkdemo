@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.ServiceMockManageMapper">
+
+  <sql id="serviceMockColumns">
+    a.rsp_id,
+    a.mock_name,
+    a.tenant_id,
+    a.service_id,
+    a.rsp_json,
+    a.condition_json,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <insert id="insertServiceMock">
+    INSERT INTO bt_skill_service_mock (
+    rsp_id,
+    mock_name,
+    tenant_id,
+    service_id,
+    rsp_json,
+    condition_json,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.rspId},
+    #{dto.mockName},
+    #{dto.tenantId},
+    #{dto.serviceId},
+    #{dto.rspJson},
+    #{dto.conditionJson},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertServiceMock">
+    INSERT INTO bt_skill_service_mock (
+    rsp_id,
+    mock_name,
+    tenant_id,
+    service_id,
+    rsp_json,
+    condition_json,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.rspId},
+    #{dto.mockName},
+    #{dto.tenantId},
+    #{dto.serviceId},
+    #{dto.rspJson},
+    #{dto.conditionJson},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertServiceMock" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_skill_service_mock (
+      rsp_id,
+      mock_name,
+      tenant_id,
+      service_id,
+      rsp_json,
+      condition_json,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.rspId},
+      #{dto.mockName},
+      #{dto.tenantId},
+      #{dto.serviceId},
+      #{dto.rspJson},
+      #{dto.conditionJson},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateServiceMock">
+    UPDATE bt_skill_service_mock
+    <set>
+    <if test="dto.checkFieldUpdateFlag('rspId')">
+      rsp_id = #{dto.rspId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('mockName')">
+      mock_name = #{dto.mockName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('serviceId')">
+      service_id = #{dto.serviceId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('rspJson')">
+      rsp_json = #{dto.rspJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('conditionJson')">
+      condition_json = #{dto.conditionJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('creatorId')">
+      creator_id = #{dto.creatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('updatorId')">
+      updator_id = #{dto.updatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE rsp_id = #{dto.rspId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectServiceMockList" resultType="com.iwhalecloud.bote.dto.skill.ServiceMockDTO">
+    SELECT
+    <include refid="serviceMockColumns"/>
+    FROM bt_skill_service_mock a
+    WHERE a.status_cd = '00A'
+      AND a.service_id = #{serviceId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSimpleServiceMockList" resultType="com.iwhalecloud.bote.dto.skill.ServiceMockDTO">
+    SELECT mock_name, condition_json, rsp_json
+    FROM bt_skill_service_mock
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id = #{serviceId}
+  </select>
+
+  <select id="selectSimpleServiceMockListByIds" resultType="com.iwhalecloud.bote.dto.skill.ServiceMockDTO">
+    SELECT service_id, mock_name, condition_json, rsp_json
+    FROM bt_skill_service_mock
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id IN (<foreach collection="serviceIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+</mapper>

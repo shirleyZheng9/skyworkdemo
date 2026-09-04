@@ -1,0 +1,16 @@
+# 默认的接口地址，公司大模型创新部开放的统一接口
+defaultApiUrl: https://dev.iwhalecloud.com/faas/serverless/gpt-api-gw/v1/chat/completions
+
+models:
+  gpt4:
+    model: gpt-4o-mini
+
+  # Qwen2.5-32B
+  qwen32B:
+    model: 通义千问-32B
+    functionCallMode: function
+
+  # Qwen2.5-72B-Chat
+  qwen72B:
+    model: 通义千问-72B
+    functionCallMode: function

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.AiMcpManageMapper">
+
+  <sql id="mcpColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.mcp_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <select id="getAiMcp" resultType="com.iwhalecloud.bote.dto.agent.AiMcpDTO">
+    SELECT
+    <include refid="mcpColumns"/>
+    FROM bt_ai_mcp a
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.bot_id = #{botId}
+      AND a.mcp_id = #{mcpId}
+      AND a.creator_id = #{userId}
+  </select>
+
+  <insert id="insertAiMcp">
+    INSERT INTO bt_ai_mcp (
+    id,
+    space_id,
+    bot_id,
+    mcp_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.mcpId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAiMcp">
+    UPDATE bt_ai_mcp
+    <set>
+    <if test="dto.checkFieldUpdateFlag('mcpId')">
+      mcp_id = #{dto.mcpId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <update id="deleteAiMcp">
+    UPDATE bt_ai_mcp
+    SET status_cd = '00X',
+        updator_id = #{updatorId}
+    WHERE id = #{id}
+  </update>
+
+  <select id="selectAiMcpServerPage" resultType="com.iwhalecloud.bote.dto.mcp.McpServerDTO">
+    SELECT a.server_id, a.server_name, a.server_desc, a.server_type, a.server_effect, a.server_icon,
+           a.catalog_item_id, a.created_time, a.updated_time, a.creator_id,a.tenant_id,
+           u.user_name AS "creatorCode",
+           CASE WHEN a.tenant_id = -1 THEN '平台' ELSE u.real_name END AS "creatorName",
+           CASE WHEN m.mcp_id IS NOT NULL THEN 1 ELSE 0 END AS enable
+    FROM bt_mcp_server a
+    LEFT JOIN bt_user u ON u.user_id = a.creator_id
+    LEFT JOIN bt_ai_mcp m ON a.server_id = m.mcp_id AND m.space_id = #{query.spaceId} AND m.bot_id = #{query.botId} AND m.creator_id = #{query.userId} AND m.status_cd = '00A'
+    WHERE 1=1
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.server_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <!-- enable: T=只查已启用(FROM bt_ai_mcp 有记录)，F=只查未启用，空=查全部 -->
+    <if test='query.enable == &quot;T&quot;'>
+      AND m.mcp_id IS NOT NULL
+    </if>
+    <if test='query.enable == &quot;F&quot;'>
+      AND m.mcp_id IS NULL
+    </if>
+    AND ((a.tenant_id = #{query.spaceId} AND a.creator_id = #{query.userId} AND a.data_from = '10A') OR (a.tenant_id=-1 and a.data_from IS NULL))
+    ORDER BY a.updated_time DESC
+  </select>
+</mapper>

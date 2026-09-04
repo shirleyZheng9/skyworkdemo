@@ -1,0 +1,41 @@
+{
+  "name": "二级聚智",
+  "code": "juzhi2",
+  "description": "对接中国移动的二级聚智平台（省内），通过聚智的工作流接口调用大模型",
+  "attrs": [
+    {
+      "type": "input",
+      "name": [
+        "protocolExt",
+        "assistantCode"
+      ],
+      "label": "智能体编码",
+      "formProps": {
+        "tooltip": "应用管理 -> 应用详情 -> 关联智能体 -> 智能体编码，比如 scene@1916788786043895808",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入智能体编码，比如 scene@1916788786043895808"
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "name": [
+        "protocolExt",
+        "startNodeId"
+      ],
+      "label": "开始节点 ID",
+      "formProps": {
+        "tooltip": "应用管理 -> 应用详情 -> 关联智能体 -> 协议，从请求示例中找到 USER_INPUT 上级对象的 key，比如 ad08486350",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入开始节点 ID, 比如 ad08486350"
+          }
+        ]
+      }
+    }
+  ]
+}

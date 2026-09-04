@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.AiModelManageMapper">
+
+  <sql id="modelColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.model_id,
+    a.model_type,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+     <if test="query.userId != null">
+      AND a.creator_id = #{query.userId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.modelType != null and query.modelType != ''">
+      AND a.model_type = #{query.modelType}
+    </if>
+  </sql>
+
+  <select id="getAiModel" resultType="com.iwhalecloud.bote.dto.agent.AiModelDTO">
+    SELECT
+    <include refid="modelColumns"/>, b.model_name
+    FROM bt_ai_model a
+    LEFT JOIN bt_library_large_model b ON a.model_id = b.model_id AND b.status_cd = '00A'
+    WHERE a.space_id = #{spaceId}
+      AND a.bot_id = #{botId}
+      AND a.creator_id = #{userId}
+      AND a.model_type = #{modelType}
+      AND a.status_cd = '00A'
+  </select>
+
+  <insert id="insertAiModel">
+    INSERT INTO bt_ai_model (
+    id,
+    space_id,
+    bot_id,
+    model_id,
+    model_type,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.modelId},
+    #{dto.modelType},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAiModel">
+    UPDATE bt_ai_model
+    <set>
+    <if test="dto.checkFieldUpdateFlag('modelId')">
+      model_id = #{dto.modelId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('modelType')">
+      model_type = #{dto.modelType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <select id="selectAiModelList" resultType="com.iwhalecloud.bote.dto.agent.AiModelDTO">
+    SELECT <include refid="modelColumns"/>,
+        b.model_name, b.model_icon
+    FROM bt_ai_model a
+    LEFT JOIN bt_library_large_model b ON a.model_id = b.model_id AND b.status_cd = '00A'
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+</mapper>

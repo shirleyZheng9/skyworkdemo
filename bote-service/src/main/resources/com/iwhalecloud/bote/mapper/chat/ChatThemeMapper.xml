@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.ChatThemeMapper">
+
+  <sql id="chatThemeColumns">
+    a.id,
+    a.theme_id,
+    a.reply_theme_id,
+    a.theme_name,
+    a.tenant_id,
+    a.bot_id,
+    a.theme_scope,
+    a.theme_json,
+    a.theme_icon,
+    a.theme_tag,
+    a.is_using,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.themeName != null and query.themeName != ''">
+      AND a.theme_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.themeName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.themeScope != null and query.themeScope != ''">
+      AND a.theme_scope = #{query.themeScope}
+    </if>
+    <if test="query.isUsing != null and query.isUsing != ''">
+      AND a.is_using = #{query.isUsing}
+    </if>
+  </sql>
+
+  <select id="getChatTheme" resultType="com.iwhalecloud.bote.dto.chat.ChatThemeDTO">
+    SELECT
+    <include refid="chatThemeColumns"/>
+    FROM bt_chat_theme a
+    WHERE a.status_cd = '00A'
+      AND a.bot_id = #{botId}
+      AND a.theme_id = #{themeId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertChatTheme">
+    INSERT INTO bt_chat_theme (
+    id,
+    theme_id,
+    reply_theme_id,
+    theme_name,
+    tenant_id,
+    bot_id,
+    theme_scope,
+    theme_json,
+    theme_icon,
+    theme_tag,
+    is_using,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.themeId},
+    #{dto.replyThemeId},
+    #{dto.themeName},
+    #{dto.tenantId},
+    #{dto.botId},
+    #{dto.themeScope},
+    #{dto.themeJson},
+    #{dto.themeIcon},
+    #{dto.themeTag},
+    #{dto.isUsing},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateChatTheme">
+    UPDATE bt_chat_theme
+    <set>
+      <if test="dto.themeId != null">
+        theme_id = #{dto.themeId},
+      </if>
+      <if test="dto.replyThemeId != null">
+        reply_theme_id = #{dto.replyThemeId},
+      </if>
+      <if test="dto.themeName != null and dto.themeName != ''">
+        theme_name = #{dto.themeName},
+      </if>
+      <if test="dto.tenantId != null">
+        tenant_id = #{dto.tenantId},
+      </if>
+      <if test="dto.botId != null">
+        bot_id = #{dto.botId},
+      </if>
+      <if test="dto.themeScope != null and dto.themeScope != ''">
+        theme_scope = #{dto.themeScope},
+      </if>
+      <if test="dto.themeJson != null and dto.themeJson != ''">
+        theme_json = #{dto.themeJson},
+      </if>
+      <if test="dto.themeIcon != null and dto.themeIcon != ''">
+        theme_json = #{dto.themeIcon},
+      </if>
+      <if test="dto.themeTag != null and dto.themeTag != ''">
+        theme_tag = #{dto.themeTag},
+      </if>
+      <if test="dto.isUsing != null and dto.isUsing != ''">
+        is_using = #{dto.isUsing},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != ''">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null and dto.remark != ''">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <update id="deleteChatTheme">
+    UPDATE bt_chat_theme
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND theme_id = #{themeId}
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectChatThemePage" resultType="com.iwhalecloud.bote.dto.chat.ChatThemeDTO">
+    SELECT
+    <include refid="chatThemeColumns"/>
+    FROM bt_chat_theme a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectChatThemeList" resultType="com.iwhalecloud.bote.dto.chat.ChatThemeDTO">
+    SELECT a.id, a.theme_id, a.theme_name, a.bot_id, a.theme_scope, a.theme_json, a.theme_icon, a.theme_tag, a.updated_time, a.is_using,
+        (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_chat_theme a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="updateThemeUsingStatus">
+    UPDATE bt_chat_theme
+    SET is_using = #{isUsing},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+      AND theme_id = #{themeId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="batchUpdateThemeNotUsing">
+    UPDATE bt_chat_theme
+    SET is_using = 'F',
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="getBotUsedTheme" resultType="com.iwhalecloud.bote.dto.chat.ChatThemeDTO">
+    SELECT
+    <include refid="chatThemeColumns"/>
+    FROM bt_chat_theme a
+    WHERE a.status_cd = '00A'
+      AND a.bot_id = #{botId}
+      AND a.tenant_id = #{tenantId}
+      AND a.is_using = 'T'
+  </select>
+
+  <select id="checkIsThemeUsed" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_chat_theme
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+      AND theme_id = #{themeId}
+      AND is_using = 'T'
+  </select>
+
+  <select id="getPlatformThemeJson" resultType="java.lang.String">
+    SELECT theme_json FROM bt_chat_theme
+    WHERE status_cd = '00A'
+      AND theme_id = #{themeId}
+      AND theme_scope = 'platform'
+  </select>
+
+  <select id="getDefaultPlatformTheme" resultType="com.iwhalecloud.bote.dto.chat.ChatThemeDTO">
+    SELECT
+    <include refid="chatThemeColumns"/>
+    FROM bt_chat_theme a
+    WHERE a.status_cd = '00A'
+      AND a.bot_id = -1
+      AND a.tenant_id = -1
+      AND a.theme_scope = 'platform'
+      AND a.remark = 'default'
+  </select>
+
+  <update id="updateThemeName">
+    UPDATE bt_chat_theme
+    SET theme_name = #{dto.themeName}
+    WHERE status_cd = '00A'
+      AND bot_id = #{dto.botId}
+      AND tenant_id = #{dto.tenantId}
+      AND theme_id = #{dto.themeId}
+  </update>
+
+  <select id="getThemeBasicInfo" resultType="com.iwhalecloud.bote.dto.chat.ChatThemeDTO">
+    SELECT id, theme_id, theme_name, bot_id, tenant_id
+    FROM bt_chat_theme
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND theme_id = #{themeId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+</mapper>

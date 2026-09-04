@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.EvaluatorMapper">
+  <!-- 结果映射 -->
+  <resultMap id="EvaluatorEntityMap" type="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorEntity">
+    <id column="id" property="id"/>
+    <result column="space_id" property="spaceId"/>
+    <result column="bt_evaluator_type" property="evaluatorType"/>
+    <result column="name" property="name"/>
+    <result column="description" property="description"/>
+    <result column="draft_submitted" property="draftSubmitted"/>
+    <result column="created_by" property="createdBy"/>
+    <result column="updated_by" property="updatedBy"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP"/>
+    <result column="latest_version" property="latestVersion"/>
+    <result column="catalog_item_id" property="catalogItemId" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 创建评估器 -->
+  <insert id="createEvaluator" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorEntity">
+    INSERT INTO bt_evaluator (
+    id, space_id, bt_evaluator_type, name, description, draft_submitted,
+    created_by, updated_by, created_at, updated_at, latest_version, catalog_item_id
+    ) VALUES (
+    #{evaluator.id}, #{evaluator.spaceId}, #{evaluator.evaluatorType}, #{evaluator.name}, #{evaluator.description},
+    COALESCE(#{evaluator.draftSubmitted}, true),
+    #{evaluator.createdBy}, #{evaluator.updatedBy}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{evaluator.latestVersion}, #{evaluator.catalogItemId}
+    )
+  </insert>
+
+  <insert id="createEvaluator" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.EvaluatorEntity" databaseId="oracle">
+    INSERT INTO bt_evaluator (
+    id, space_id, bt_evaluator_type, name, description, draft_submitted,
+    created_by, updated_by, created_at, updated_at, latest_version, catalog_item_id
+    ) VALUES (
+    #{evaluator.id}, #{evaluator.spaceId}, #{evaluator.evaluatorType}, #{evaluator.name}, #{evaluator.description},
+    <choose>
+      <when test="evaluator.draftSubmitted == null">1</when>
+      <when test="evaluator.draftSubmitted == true">1</when>
+      <otherwise>0</otherwise>
+    </choose>,
+    #{evaluator.createdBy}, #{evaluator.updatedBy}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{evaluator.latestVersion}, #{evaluator.catalogItemId}
+    )
+  </insert>
+
+  <!-- 根据ID获取评估器 -->
+  <select id="getEvaluatorById" resultMap="EvaluatorEntityMap">
+    SELECT * FROM bt_evaluator
+    WHERE id = #{id}
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 批量根据ID获取评估器 -->
+  <select id="batchGetEvaluatorById" resultMap="EvaluatorEntityMap">
+    SELECT * FROM bt_evaluator
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    <if test="includeDeleted == null or !includeDeleted">
+      AND deleted_at IS NULL
+    </if>
+  </select>
+
+  <!-- 更新评估器元信息 -->
+  <update id="updateEvaluatorMeta">
+    UPDATE bt_evaluator
+    SET
+    name = #{evaluator.name},
+    description = #{evaluator.description},
+    updated_by = #{evaluator.updatedBy},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <if test="evaluator.catalogItemId != null">
+      , catalog_item_id = #{evaluator.catalogItemId}
+    </if>
+    WHERE id = #{evaluator.id}
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 更新评估器草稿提交状态 -->
+  <update id="updateEvaluatorDraftSubmitted">
+    UPDATE bt_evaluator
+    SET
+    draft_submitted = #{draftSubmitted},
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{evaluatorId}
+    AND deleted_at IS NULL
+  </update>
+
+  <update id="updateEvaluatorDraftSubmitted" databaseId="oracle">
+    UPDATE bt_evaluator
+    SET
+    draft_submitted =
+      <choose>
+        <when test="draftSubmitted == null">0</when>
+        <when test="draftSubmitted == true">1</when>
+        <otherwise>0</otherwise>
+      </choose>,
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{evaluatorId}
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 批量删除评估器 -->
+  <update id="batchDeleteEvaluator">
+    UPDATE bt_evaluator
+    SET
+    deleted_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <!-- 分页查询评估器列表 -->
+  <select id="listEvaluator" resultMap="EvaluatorEntityMap">
+    SELECT * FROM bt_evaluator
+    WHERE (space_id = #{request.spaceId} OR space_id = -1)
+    <if test="request.searchName != null and request.searchName != ''">
+      AND name LIKE CONCAT('%', #{request.searchName}, '%')
+    </if>
+    <if test="request.catalogItemId != null and request.catalogItemId != ''">
+      AND catalog_item_id = #{request.catalogItemId}
+    </if>
+    <if test="request.withVersion == true">
+      AND latest_version is not null
+    </if>
+    <if test="request.creatorIds != null and request.creatorIds.size() > 0">
+      AND created_by IN
+      <foreach collection="request.creatorIds" item="creatorId" open="(" separator="," close=")">
+        #{creatorId}
+      </foreach>
+    </if>
+    <if test="request.evaluatorType != null and request.evaluatorType.size() > 0">
+      AND bt_evaluator_type IN
+      <foreach collection="request.evaluatorType" item="type" open="(" separator="," close=")">
+        #{type.value}
+      </foreach>
+    </if>
+    AND deleted_at IS NULL
+    <if test="request.orderBy != null and request.orderBy.size() > 0">
+      ORDER BY
+      <foreach collection="request.orderBy" item="order" separator=",">
+        <choose>
+          <when test="order.field == 'updated_at'">
+            updated_at
+          </when>
+          <when test="order.field == 'created_at'">
+            created_at
+          </when>
+          <when test="order.field == 'name'">
+            name
+          </when>
+          <otherwise>
+            created_at
+          </otherwise>
+        </choose>
+        <if test="order.isAsc == false or order.isAsc == null">
+          DESC
+        </if>
+      </foreach>
+    </if>
+  </select>
+
+  <!-- 检查名称是否存在 -->
+  <select id="checkNameExist" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence FROM bt_evaluator
+    WHERE space_id = #{spaceId}
+    AND name = #{name}
+    AND deleted_at IS NULL
+    <if test="evaluatorId != null and evaluatorId != 0">
+      AND id != #{evaluatorId}
+    </if>
+  </select>
+
+  <!-- 更新评估器最新版本 -->
+  <update id="updateEvaluatorLatestVersion">
+    UPDATE bt_evaluator
+    SET
+    draft_submitted = true,
+    latest_version = #{version},
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{evaluatorId}
+    AND deleted_at IS NULL
+  </update>
+
+  <update id="updateEvaluatorLatestVersion" databaseId="oracle">
+    UPDATE bt_evaluator
+    SET
+    draft_submitted = 1,
+    latest_version = #{version},
+    updated_by = #{userId},
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{evaluatorId}
+    AND deleted_at IS NULL
+  </update>
+</mapper>

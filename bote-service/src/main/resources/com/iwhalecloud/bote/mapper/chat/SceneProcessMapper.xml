@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.SceneProcessMapper">
+
+  <sql id="selectSceneProcess">
+    SELECT
+      a.session_id,
+      a.scene_id,
+      b.scene_name,
+      a.context_id,
+      a.bot_id,
+      a.tenant_id,
+      c.bot_name,
+      a.chat_status
+    FROM bt_chat_scene_process a
+    LEFT JOIN bt_bot_scene b ON a.scene_id = b.scene_id AND a.tenant_id = b.tenant_id
+    LEFT JOIN bt_bot c ON a.bot_id = c.bot_id AND a.tenant_id = c.tenant_id
+    WHERE a.session_id = #{sessionId}
+      AND b.status_cd = '00A'
+      AND b.scene_status = '1'
+      AND c.status_cd = '00A'
+  </sql>
+
+  <insert id="insertSceneProcess">
+    INSERT INTO bt_chat_scene_process (
+    id,
+    session_id,
+    tenant_id,
+    bot_id,
+    scene_id,
+    scene_name,
+    context_id,
+    chat_status,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.sessionId},
+    #{dto.tenantId},
+    #{dto.botId},
+    #{dto.sceneId},
+    #{dto.sceneName},
+    #{dto.contextId},
+    #{dto.chatStatus},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateChatSceneStatus">
+    UPDATE bt_chat_scene_process
+    SET chat_status = #{dto.chatStatus},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{dto.updatorId}
+    WHERE session_id = #{dto.sessionId}
+      AND context_id = #{dto.contextId}
+    <if test="dto.sceneId != null">
+      AND scene_id = #{dto.sceneId}
+    </if>
+  </update>
+
+  <update id="updateSceneProcess">
+    UPDATE bt_chat_scene_process
+    SET chat_status = #{chatStatus},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE context_id = #{contextId}
+      AND scene_id = #{sceneId}
+  </update>
+
+  <select id="selectLastRunningScene" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
+    <include refid="selectSceneProcess"/>
+    AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+               WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+                 AND b.scene_id = r.scene_id AND r.status_cd = '00A')
+    AND a.chat_status = '1'
+    ORDER BY a.created_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+  </select>
+
+  <select id="selectDefaultSceneBySessionId" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
+    SELECT
+    b.scene_id,
+    b.scene_name,
+    c.bot_id,
+    c.bot_name
+    FROM bt_bot_session a
+    LEFT JOIN bt_bot_scene b ON a.bot_tenant_id = b.tenant_id
+    LEFT JOIN bt_bot c ON a.bot_id = c.bot_id AND a.bot_tenant_id = c.tenant_id
+    WHERE a.session_id = #{sessionId}
+      AND b.scene_status = '1'
+      AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+                 WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+                   AND b.scene_id = r.scene_id AND r.status_cd = '00A' AND r.is_default = 'T')
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectSceneListBySessionId" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
+    SELECT
+      b.scene_id,
+      b.scene_name,
+      c.bot_id,
+      c.bot_name
+    FROM bt_bot_session a
+    LEFT JOIN bt_bot_scene b ON a.bot_tenant_id = b.tenant_id
+    LEFT JOIN bt_bot c ON a.bot_id = c.bot_id AND a.bot_tenant_id = c.tenant_id
+    WHERE a.session_id = #{sessionId}
+      AND b.scene_status = '1'
+      AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+                 WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+                   AND b.scene_id = r.scene_id AND r.status_cd = '00A')
+  </select>
+
+  <select id="selectRunningScene" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
+    <include refid="selectSceneProcess"/>
+    AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+               WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+                 AND b.scene_id = r.scene_id AND r.status_cd = '00A')
+    AND a.chat_status = '1'
+    ORDER BY a.created_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 5
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+  </select>
+
+  <select id="selectLastScene" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
+    <include refid="selectSceneProcess"/>
+    AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+               WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+                 AND b.scene_id = r.scene_id AND r.status_cd = '00A')
+    <if test="contextId != null and contextId != ''">
+      AND a.context_id = #{contextId}
+    </if>
+    ORDER BY a.created_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+  </select>
+
+  <select id="selectTop3Scene" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
+    SELECT
+    a.session_id,
+    a.scene_id,
+    b.scene_name,
+    a.context_id,
+    a.bot_id,
+    a.tenant_id,
+    c.bot_name
+    FROM bt_chat_scene_process a
+    LEFT JOIN bt_bot_scene b ON a.scene_id = b.scene_id AND a.tenant_id = b.tenant_id
+    LEFT JOIN bt_bot c ON a.bot_id = c.bot_id AND a.tenant_id = c.tenant_id
+    WHERE b.status_cd = '00A'
+      AND b.scene_status = '1'
+      AND c.status_cd = '00A'
+      AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+                 WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+                   AND b.scene_id = r.scene_id AND r.status_cd = '00A')
+    <if test="tenantId != null">
+      AND a.tenant_id = #{tenantId}
+    </if>
+    <if test="botId != null">
+      AND c.bot_id = #{botId}
+    </if>
+    ORDER BY a.created_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 3
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+  </select>
+
+  <select id="existsRunningScene" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_chat_scene_process a
+    WHERE status_cd = '00A'
+      AND chat_status = '1'
+      AND session_id = #{dto.sessionId}
+      AND tenant_id = #{dto.tenantId}
+      AND bot_id = #{dto.botId}
+      AND scene_id = #{dto.sceneId}
+      AND context_id = #{dto.contextId}
+  </select>
+</mapper>

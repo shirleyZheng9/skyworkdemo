@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.publish.ResourcePublishRecordMapper">
+
+  <sql id="resourcePublishRecordColumns">
+    a.record_id,
+    a.publish_channel,
+    a.resource_type,
+    a.resource_id,
+    a.ext_resource_id,
+    a.publish_status,
+    a.publish_params,
+    a.publish_msg,
+    a.callback_code,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.tenant_id,
+    a.last_access_time
+  </sql>
+
+  <insert id="insertResourcePublishRecord">
+    INSERT INTO bt_resource_publish_record (
+      record_id,
+      publish_channel,
+      resource_type,
+      resource_id,
+      ext_resource_id,
+      publish_status,
+      publish_params,
+      publish_msg,
+      callback_code,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      tenant_id,
+      last_access_time
+    ) VALUES (
+      #{dto.recordId},
+      #{dto.publishChannel},
+      #{dto.resourceType},
+      #{dto.resourceId},
+      #{dto.extResourceId},
+      #{dto.publishStatus},
+      #{dto.publishParams},
+      #{dto.publishMsg},
+      #{dto.callbackCode},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.tenantId},
+      #{dto.lastAccessTime}
+    )
+  </insert>
+
+  <select id="getRecordByResourceAndChannel" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT
+    <include refid="resourcePublishRecordColumns"/>
+    FROM bt_resource_publish_record a
+    WHERE a.resource_id = #{resourceId}
+    AND a.publish_channel = #{publishChannel}
+    AND a.tenant_id = #{tenantId}
+    AND a.status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="getRecordByExtResourceIdAndChannel" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT
+    <include refid="resourcePublishRecordColumns"/>
+    FROM bt_resource_publish_record a
+    WHERE a.callback_code = #{callbackCode}
+    AND a.publish_channel = #{publishChannel}
+    AND a.status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <update id="updateResourcePublishRecord">
+    UPDATE bt_resource_publish_record
+    SET ext_resource_id = #{dto.extResourceId},
+        publish_status = #{dto.publishStatus},
+        publish_params = #{dto.publishParams},
+        publish_msg = #{dto.publishMsg},
+        updator_id = #{dto.updatorId},
+        callback_code = #{dto.callbackCode},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE record_id = #{dto.recordId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteResourcePublishRecord">
+    UPDATE bt_resource_publish_record
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND record_id = #{recordId}
+  </update>
+
+  <select id="selectPublishRecordsByResourceId" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT a.record_id, a.publish_channel, a.publish_status, a.publish_params, a.callback_code,a.created_time,a.last_access_time,
+            (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_resource_publish_record a
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND resource_type = #{resourceType}
+      AND resource_id = #{resourceId}
+  </select>
+
+  <select id="getRecordByCallbackCode" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT
+    <include refid="resourcePublishRecordColumns"/>
+    FROM bt_resource_publish_record a
+    WHERE a.callback_code = #{callbackCode}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="getActivePublishRecords" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT
+    <include refid="resourcePublishRecordColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_resource_publish_record a
+    WHERE a.status_cd = '00A'
+      AND a.publish_status = 'S'
+      AND a.publish_channel in ('FEISHU','DINGTALK','WECLAWBOT')
+      AND a.callback_code IS NOT NULL
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectResourcePublishRecordPage" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT
+    <include refid="resourcePublishRecordColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    CASE
+      WHEN a.resource_type = 'MCP' THEN m.server_name
+      WHEN a.resource_type = 'AGENT' THEN s.scene_name
+      WHEN a.resource_type = 'TOOL' THEN f.flow_name
+      WHEN a.resource_type = 'BOT' THEN g.bot_name
+      ELSE NULL
+    END AS "resourceName"
+    FROM bt_resource_publish_record a
+    LEFT JOIN bt_mcp_server m ON a.resource_type = 'MCP' AND m.server_id = a.resource_id AND m.status_cd = '00A' AND m.tenant_id IN (a.tenant_id, -1)
+    LEFT JOIN bt_bot_scene s ON a.resource_type = 'AGENT' AND s.scene_id = a.resource_id AND s.status_cd = '00A' AND s.tenant_id = a.tenant_id
+    LEFT JOIN bt_skill_flow f ON a.resource_type = 'TOOL' AND f.flow_id = a.resource_id AND f.status_cd = '00A' AND f.tenant_id IN (a.tenant_id, -1)
+    LEFT JOIN bt_bot g ON a.resource_type = 'BOT' AND g.bot_id = a.resource_id AND g.status_cd = '00A' AND g.tenant_id IN (a.tenant_id, -1)
+    WHERE a.status_cd = '00A'
+    <if test="params.tenantId != null">
+      AND a.tenant_id = #{params.tenantId}
+    </if>
+    <if test="params.resourceType != null and params.resourceType != ''">
+      AND a.resource_type = #{params.resourceType}
+    </if>
+    <if test="params.publishChannel != null and params.publishChannel != ''">
+      AND a.publish_channel = #{params.publishChannel}
+    </if>
+    <if test="params.publishStatus != null and params.publishStatus != ''">
+      AND a.publish_status = #{params.publishStatus}
+    </if>
+    <if test="params.resourceName != null and params.resourceName != ''">
+      AND (
+        (a.resource_type = 'MCP' AND m.server_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{params.resourceName}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+        OR (a.resource_type = 'AGENT' AND s.scene_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{params.resourceName}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+        OR (a.resource_type = 'TOOL' AND f.flow_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{params.resourceName}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="updateLastAccessTime">
+    UPDATE bt_resource_publish_record
+    SET last_access_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE callback_code = #{callbackCode}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="updatePublishParams">
+    UPDATE bt_resource_publish_record
+    SET publish_params = #{publishParams},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE callback_code = #{callbackCode}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="selectById" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT
+    <include refid="resourcePublishRecordColumns"/>
+    FROM bt_resource_publish_record a
+    WHERE a.record_id = #{recordId}
+  </select>
+
+  <select id="selectRecordForAiAgent" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
+    SELECT record_id, callback_code, publish_status
+    FROM bt_resource_publish_record
+    WHERE status_cd = '00A'
+      AND resource_type = 'AGENT'
+      AND tenant_id = #{tenantId}
+      AND resource_id = #{botId}
+      AND publish_channel = #{publishChannel}
+      AND creator_id = #{creatorId}
+  </select>
+
+</mapper>

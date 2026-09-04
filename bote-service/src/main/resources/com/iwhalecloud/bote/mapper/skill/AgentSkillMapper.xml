@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.AgentSkillMapper">
+  <!-- @formatter:off -->
+  <insert id="insertAgentSkill">
+    INSERT INTO bt_agent_skill (
+      skill_id,
+      tenant_id,
+      bot_id,
+      skill_name,
+      skill_file_name,
+      skill_type,
+      skill_template_type,
+      skill_ext_json,
+      skill_code,
+      catalog_item_id,
+      file_info_id,
+      data_from,
+      skill_square_id,
+      skill_version,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark)
+    VALUES (
+      #{dto.skillId},
+      #{dto.tenantId},
+      #{dto.botId},
+      #{dto.skillName},
+      #{dto.skillFileName},
+      #{dto.skillType},
+      #{dto.skillTemplateType},
+      #{dto.skillExtJson},
+      #{dto.skillCode},
+      #{dto.catalogItemId},
+      #{dto.fileInfoId},
+      #{dto.dataFrom},
+      #{dto.skillSquareId},
+      #{dto.skillVersion},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark})
+  </insert>
+
+  <update id="updateAgentSkill">
+    UPDATE bt_agent_skill
+    SET
+    <if test="dto.checkFieldUpdateFlag('skillName')">
+      skill_name = #{dto.skillName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('skillCode')">
+      skill_code = #{dto.skillCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+      catalog_item_id = #{dto.catalogItemId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('fileInfoId')">
+      file_info_id = #{dto.fileInfoId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('skillVersion')">
+      skill_version = #{dto.skillVersion},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('skillFileName')">
+      skill_file_name = #{dto.skillFileName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('skillType')">
+      skill_type = #{dto.skillType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('skillTemplateType')">
+      skill_template_type = #{dto.skillTemplateType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('skillExtJson')">
+      skill_ext_json = #{dto.skillExtJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{dto.skillId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <delete id="deleteAgentSkill">
+      UPDATE bt_agent_skill
+      SET status_cd = '00X',
+          updator_id = #{updatorId},
+          updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      WHERE skill_id = #{skillId}
+        AND tenant_id = #{tenantId}
+  </delete>
+
+  <select id="existsSkillName" resultType="boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_agent_skill
+    WHERE status_cd = '00A'
+      AND skill_name = #{skillName}
+    <!--
+      唯一性规则：
+      - 平台：tenant_id = -1 + status + skill_code
+      - 租户：tenant_id = #{tenantId} + status + skill_code
+        当 dataFrom = '10A' 时，额外按创建人维度校验（creator_id）
+    -->
+    <if test="dataFrom == '10A'">
+      AND (
+        tenant_id = -1
+        OR (tenant_id = #{tenantId} AND data_from = '10A' AND creator_id = #{creatorId})
+      )
+    </if>
+    <if test="dataFrom == null or dataFrom == '' or dataFrom != '10A'">
+      AND tenant_id IN (#{tenantId}, -1)
+      AND (data_from is null or data_from = '')
+    </if>
+  </select>
+
+  <select id="selectAgentSkillById" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.catalog_item_id, a.file_info_id, a.data_from, a.created_time, a.status_cd, a.updated_time, a.creator_id, a.updator_id, a.remark,
+           b.file_id, c.file_name, c.file_size, a.skill_square_id, a.skill_version, a.skill_type, a.skill_template_type, a.skill_file_name, a.skill_ext_json
+    FROM bt_agent_skill a
+    LEFT JOIN bt_file_info b ON b.file_info_id = a.file_info_id AND b.tenant_id = a.tenant_id AND b.status_cd = '00A'
+    LEFT JOIN bt_file c ON c.file_id = b.file_id AND c.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.skill_id = #{skillId}
+      AND a.tenant_id in(#{tenantId}, -1)
+  </select>
+
+  <select id="selectAgentSkillPage" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.data_from, a.remark, a.catalog_item_id, a.updator_id, a.updated_time, a.file_info_id, a.skill_version,
+           a.skill_type, a.skill_template_type, a.skill_file_name, a.skill_ext_json,
+           CASE WHEN a.tenant_id = -1 THEN '平台' ELSE u.real_name END AS updator_name
+    FROM bt_agent_skill a
+    LEFT JOIN bt_user u ON u.user_id = a.updator_id
+    WHERE a.status_cd = '00A'
+      AND (a.data_from is NULL or a.data_from = '')
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    <if test="query.keyword != null and query.keyword != ''">
+      AND (
+        a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        a.skill_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSimpleAgentSkillById" resultType="com.iwhalecloud.bote.dto.skill.SimpleAgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.data_from, a.skill_version, b.file_id
+    FROM bt_agent_skill a
+    LEFT JOIN bt_file_info b ON b.file_info_id = a.file_info_id AND b.tenant_id = a.tenant_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id in(#{tenantId}, -1)
+      AND a.skill_id = #{skillId}
+  </select>
+
+  <select id="selectSimpleAgentSkillsByIds" resultType="com.iwhalecloud.bote.dto.skill.SimpleAgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.data_from, a.skill_version, b.file_id
+    FROM bt_agent_skill a
+    LEFT JOIN bt_file_info b ON b.file_info_id = a.file_info_id AND b.tenant_id = a.tenant_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id in(#{tenantId}, -1)
+      AND a.skill_id IN (<foreach collection="skillIds" item="skillId" separator=",">#{skillId}</foreach>)
+  </select>
+
+  <select id="selectByTenantBotSkillSquareId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.bot_id, a.skill_name, a.skill_code, a.catalog_item_id, a.file_info_id, a.data_from, a.skill_square_id, a.skill_version
+    FROM bt_agent_skill a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.skill_square_id = #{skillSquareId}
+    <choose>
+      <when test="installSource != 'develop'.toString()">
+        AND a.creator_id = #{creatorId}
+        AND a.data_from = '10A'
+      </when>
+      <otherwise>
+        AND (a.data_from IS NULL OR a.data_from = '')
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectInstalledSkillVersionForSquareBots" resultType="com.iwhalecloud.bote.dto.bot.SquareBotSkillRowDTO">
+    SELECT a.bot_id AS botId, a.skill_version AS skillVersion
+    FROM bt_agent_skill a
+    WHERE a.status_cd = '00A'
+      AND a.data_from = '10A'
+      AND a.tenant_id = #{tenantId}
+      AND a.skill_square_id = #{skillSquareId}
+      AND a.bot_id IN
+      <foreach collection="botIds" item="bid" open="(" separator="," close=")">
+        #{bid}
+      </foreach>
+  </select>
+
+  <select id="selectInstalledSkillSquareIdsByBot" resultType="long">
+    SELECT DISTINCT a.skill_square_id
+    FROM bt_agent_skill a
+    WHERE a.status_cd = '00A'
+      AND a.data_from = '10A'
+      AND a.tenant_id = #{tenantId}
+      AND a.bot_id = #{botId}
+      AND a.skill_square_id IS NOT NULL
+  </select>
+
+  <select id="selectUserSpaceCreatedSkillPage" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.remark AS skill_desc,
+           CASE WHEN b.online_status = 'T' THEN 1 ELSE 0 END AS published
+    FROM bt_agent_skill a
+    LEFT JOIN bt_agent_skill_square b ON b.skill_code = a.skill_code AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.data_from = '10A'
+      AND a.tenant_id = #{params.spaceId}
+      AND a.creator_id = #{params.userId}
+      AND a.skill_square_id IS NULL
+    <if test="params.keyword != null and params.keyword != ''">
+      AND a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{params.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="countUserSpaceCreatedSkills" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM bt_agent_skill a
+    WHERE a.status_cd = '00A'
+    <choose>
+      <when test="spaceId != null">
+        AND a.data_from = '10A'
+        AND a.tenant_id = #{spaceId}
+        AND a.creator_id = #{userId}
+        AND a.skill_square_id IS NULL
+      </when>
+      <otherwise>
+        AND a.tenant_id = #{tenantId}
+        AND (a.data_from IS NULL OR a.data_from = '')
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectUserSpaceInstalledSkillPage" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_square_id, a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.skill_version AS version,
+           b.skill_desc, b.skill_type
+    FROM bt_agent_skill a
+    LEFT JOIN bt_agent_skill_square b ON b.skill_id = a.skill_square_id
+    WHERE a.status_cd = '00A'
+      AND a.data_from = '10A'
+      AND a.tenant_id = #{params.spaceId}
+      AND a.creator_id = #{params.userId}
+      AND a.skill_square_id IS NOT NULL
+    <if test="params.skillType != null and params.skillType != '' and params.skillType != 'all'">
+      AND b.skill_type = #{params.skillType}
+    </if>
+    <if test="params.keyword != null and params.keyword != ''">
+      AND a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{params.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="countUserSpaceInstalledSkills" resultType="java.lang.Integer">
+    SELECT COUNT(DISTINCT a.skill_square_id)
+    FROM bt_agent_skill a
+    WHERE a.status_cd = '00A'
+    <choose>
+      <when test="spaceId != null">
+        AND a.data_from = '10A'
+        AND a.tenant_id = #{spaceId}
+        AND a.creator_id = #{userId}
+        AND a.skill_square_id IS NOT NULL
+      </when>
+      <otherwise>
+        AND a.tenant_id = #{tenantId}
+        AND (a.data_from IS NULL OR a.data_from = '')
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="countPlatformSkills" resultType="java.lang.Integer">
+    SELECT COUNT(DISTINCT a.skill_id)
+    FROM bt_agent_skill a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = '-1'
+      AND (a.data_from is NULL or a.data_from = '')
+  </select>
+
+  <update id="updateAgentSkillFileInfo">
+    UPDATE bt_agent_skill
+    SET file_info_id = #{fileInfoId},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{skillId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="updateAgentSkillFileName">
+    UPDATE bt_agent_skill
+    SET skill_file_name = #{skillFileName},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{skillId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="updateAgentSkillExtJson">
+    UPDATE bt_agent_skill
+    SET skill_ext_json = #{skillExtJson},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE skill_id = #{skillId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+</mapper>

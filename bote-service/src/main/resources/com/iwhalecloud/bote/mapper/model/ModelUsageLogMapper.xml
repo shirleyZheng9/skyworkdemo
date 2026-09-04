@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.model.ModelUsageLogMapper">
+  <!-- @formatter:off -->
+  <insert id="insert">
+    INSERT INTO bt_model_usage_log (
+      log_id,
+      tenant_id,
+      bot_id,
+      scene_id,
+      flow_id,
+      user_id,
+      session_id,
+      model_id,
+      input_token,
+      output_token,
+      start_time,
+      time_spent,
+      model_name,
+      request_json,
+      response_json,
+      trace_id,
+      source_from,
+      created_time
+    )
+    VALUES (
+      #{log.logId},
+      #{log.tenantId},
+      #{log.botId},
+      #{log.sceneId},
+      #{log.flowId},
+      #{log.userId},
+      #{log.sessionId},
+      #{log.modelId},
+      #{log.inputToken},
+      #{log.outputToken},
+      #{log.startTime},
+      #{log.timeSpent},
+      #{log.modelName},
+      #{log.requestJson},
+      #{log.responseJson},
+      #{log.traceId},
+      #{log.sourceFrom},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <select id="selectLogIdsForArchive" resultType="java.lang.Long">
+    SELECT log_id
+    FROM bt_model_usage_log
+    WHERE start_time &lt; #{maxDate}
+    ORDER BY start_time
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+  <insert id="archiveByLogIds">
+    INSERT INTO bt_model_usage_log_his (
+      log_id,
+      tenant_id,
+      bot_id,
+      scene_id,
+      flow_id,
+      user_id,
+      session_id,
+      model_id,
+      input_token,
+      output_token,
+      start_time,
+      time_spent,
+      model_name,
+      request_json,
+      response_json,
+      trace_id,
+      source_from,
+      created_time
+    )
+    SELECT
+      log_id,
+      tenant_id,
+      bot_id,
+      scene_id,
+      flow_id,
+      user_id,
+      session_id,
+      model_id,
+      input_token,
+      output_token,
+      start_time,
+      time_spent,
+      model_name,
+      request_json,
+      response_json,
+      trace_id,
+      source_from,
+      created_time
+    FROM bt_model_usage_log
+    WHERE log_id IN
+    <foreach collection="logIds" item="logId" open="(" separator="," close=")">
+      #{logId}
+    </foreach>
+  </insert>
+
+  <select id="selectLogListByLogIds" resultType="com.iwhalecloud.bote.entity.model.ModelUsageLogEntity">
+    SELECT
+      log_id,
+      tenant_id,
+      bot_id,
+      scene_id,
+      flow_id,
+      user_id,
+      session_id,
+      model_id,
+      input_token,
+      output_token,
+      start_time,
+      time_spent,
+      model_name,
+      request_json,
+      response_json,
+      trace_id,
+      source_from,
+      created_time
+    FROM bt_model_usage_log
+    WHERE log_id IN
+    <foreach collection="logIds" item="logId" open="(" separator="," close=")">
+      #{logId}
+    </foreach>
+  </select>
+
+  <insert id="batchInsertHistory">
+    INSERT INTO bt_model_usage_log_his (
+      log_id,
+      tenant_id,
+      bot_id,
+      scene_id,
+      flow_id,
+      user_id,
+      session_id,
+      model_id,
+      input_token,
+      output_token,
+      start_time,
+      time_spent,
+      model_name,
+      request_json,
+      response_json,
+      trace_id,
+      source_from,
+      created_time
+    )
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+        #{item.logId},
+        #{item.tenantId},
+        #{item.botId},
+        #{item.sceneId},
+        #{item.flowId},
+        #{item.userId},
+        #{item.sessionId},
+        #{item.modelId},
+        #{item.inputToken},
+        #{item.outputToken},
+        #{item.startTime},
+        #{item.timeSpent},
+        #{item.modelName},
+        #{item.requestJson},
+        #{item.responseJson},
+        #{item.traceId},
+        #{item.sourceFrom},
+        #{iitem.createdTime}
+      )
+    </foreach>
+  </insert>
+
+  <delete id="deleteByLogIds">
+    DELETE
+    FROM bt_model_usage_log
+    WHERE log_id IN
+    <foreach collection="logIds" item="logId" open="(" separator="," close=")">
+      #{logId}
+    </foreach>
+  </delete>
+
+  <delete id="clearHistoryByMaxDate" timeout="120">
+    DELETE
+    FROM bt_model_usage_log_his
+    WHERE log_id IN (
+      SELECT log_id
+      FROM bt_model_usage_log_his
+      WHERE start_time &lt; #{maxDate}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    )
+  </delete>
+
+  <delete id="clearHistoryByMaxDate" databaseId="mysql">
+    DELETE
+    FROM bt_model_usage_log_his
+    WHERE start_time &lt; #{maxDate}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </delete>
+</mapper>

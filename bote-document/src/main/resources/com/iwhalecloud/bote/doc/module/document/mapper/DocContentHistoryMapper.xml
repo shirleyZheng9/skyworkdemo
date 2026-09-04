@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocContentHistoryMapper">
+  <!-- @formatter:off -->
+  <select id="selectByVersionId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocContentHistoryEntity">
+    SELECT id, document_id, content, revision, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_doc_content_history
+    WHERE id = #{versionId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentIdAndRevision" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocContentHistoryEntity">
+    SELECT id, document_id, content, revision, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_doc_content_history
+    WHERE document_id = #{documentId}
+      AND revision = #{revision}
+      AND status_cd = '00A'
+  </select>
+  <!-- @formatter:on -->
+  <insert id="insert">
+    INSERT INTO bt_dc_doc_content_history (
+    id, document_id, content, revision, tenant_id, created_time, updated_time, status_cd,creator_id
+    ) VALUES (
+    #{version.id},
+    #{version.documentId},
+    #{version.content},
+    #{version.revision},
+    #{version.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{version.statusCd},
+    #{version.creatorId}
+    )
+  </insert>
+
+  <update id="update">
+    UPDATE bt_dc_doc_content_history
+    SET
+    content = #{version.content},
+    revision = #{version.revision},
+    tenant_id = #{version.tenantId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    status_cd = #{version.statusCd}
+    WHERE id = #{version.id}
+  </update>
+
+  <update id="deleteByVersionId">
+    UPDATE bt_dc_doc_content_history
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{versionId}
+  </update>
+
+  <select id="selectLastDocHistory" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocContentHistoryDTO">
+    SELECT id,
+           document_id,
+           content,
+           revision,
+           tenant_id,
+           created_time,
+           updated_time,
+           status_cd
+    FROM bt_dc_doc_content_history
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+    order by created_time desc
+  </select>
+
+  <select id="selectMinRevisionByDocumentId" resultType="java.lang.Long">
+    SELECT MIN(revision)
+    FROM (
+      SELECT revision
+      FROM bt_dc_doc_content_history
+      WHERE document_id = #{documentId}
+        AND status_cd = '00A'
+      ORDER BY created_time DESC
+      LIMIT 15
+    ) recent_versions
+  </select>
+
+  <update id="deleteByDocumentIdAndRevisionLessThan">
+    UPDATE bt_dc_doc_content_history
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND revision &lt; #{maxRevision}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="countByDocumentId" resultType="java.lang.Long">
+    SELECT COUNT(*)
+    FROM bt_dc_doc_content_history
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectRevisionsByDocumentIdAndRevisionLessThan" resultType="java.lang.Long">
+    SELECT revision
+    FROM bt_dc_doc_content_history
+    WHERE document_id = #{documentId}
+      AND revision &lt; #{maxRevision}
+      AND status_cd = '00A'
+    ORDER BY revision
+  </select>
+
+  <select id="getDocumentContentVersions" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocContentHistoryDTO">
+    SELECT
+      h.id,
+      h.document_id,
+      h.revision,
+      h.tenant_id,
+      h.created_time,
+      h.updated_time,
+      h.status_cd,
+      h.creator_id,
+      u.real_name AS userName
+    FROM bt_dc_doc_content_history h
+    LEFT JOIN bt_user u
+      ON u.user_id = h.creator_id
+    WHERE h.document_id = #{documentId}
+      AND h.status_cd = '00A'
+    ORDER BY h.created_time DESC
+  </select>
+  <select id="getDocumentContentVersion" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocContentHistoryDTO">
+     SELECT id,
+           document_id,
+           revision,
+           content,
+           tenant_id,
+           created_time,
+           updated_time,
+           status_cd,
+           creator_id
+    FROM bt_dc_doc_content_history
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+      AND id = #{id}
+  </select>
+</mapper>

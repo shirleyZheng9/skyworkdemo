@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.DataSyncBackupMapper">
+
+  <insert id="insertBackup">
+    INSERT INTO bt_data_sync_backup
+    (
+     backup_id,
+     tenant_id,
+     backup_type,
+     backup_name,
+     record_id,
+     backup_file_id,
+     backup_status,
+     remark,
+     status_cd,
+     creator_id,
+     created_time,
+     updator_id,
+     updated_time
+    )
+    VALUES
+    (
+     #{dto.backupId},
+     #{dto.tenantId},
+     #{dto.backupType},
+     #{dto.backupName},
+     #{dto.recordId},
+     #{dto.backupFileId},
+     #{dto.backupStatus},
+     #{dto.remark},
+     #{dto.statusCd},
+     #{dto.creatorId},
+     <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+     #{dto.updatorId},
+     <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <select id="getBackupById" resultType="com.iwhalecloud.bote.dto.datasync.DataSyncBackupDTO">
+    SELECT backup_id, tenant_id, backup_type, record_id, backup_file_id, remark, status_cd, creator_id, created_time, updator_id,
+           backup_status, updated_time, backup_name
+    FROM bt_data_sync_backup
+    WHERE backup_id = #{backupId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="queryBackupPage" resultType="com.iwhalecloud.bote.dto.datasync.DataSyncBackupDTO">
+    SELECT a.tenant_id,
+           a.backup_id,
+           a.record_id,
+           a.backup_file_id,
+           a.backup_name,
+           a.created_time,
+           a.backup_status,
+           a.creator_id,
+           u.user_name AS creatorName,
+           a.backup_type,
+           a.remark
+    FROM bt_data_sync_backup a
+    LEFT JOIN bt_user u ON a.creator_id = u.user_id
+    WHERE a.status_cd = '00A'
+      <if test="query.tenantId != null">
+        AND a.tenant_id = #{query.tenantId}
+      </if>
+      <if test="query.backupType != null and query.backupType != ''">
+        AND a.backup_type = #{query.backupType}
+      </if>
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND (f.file_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+             #{query.searchContent}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+         OR a.remark LIKE
+         <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+              #{query.searchContent}
+         <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+      </if>
+      <if test="query.startTime != null">
+        AND a.created_time <![CDATA[>=]]> #{query.startTime}
+      </if>
+      <if test="query.endTime != null">
+        AND a.created_time <![CDATA[<=]]> #{query.endTime}
+      </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <update id="updateBackupFileId">
+    UPDATE bt_data_sync_backup
+    SET
+    backup_file_id = #{backupFileId},
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE backup_id = #{backupId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="updateBackupStatus">
+    UPDATE bt_data_sync_backup
+    SET
+    backup_status = #{backupStatus},
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE backup_id = #{backupId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="updateBackupInfo">
+    UPDATE bt_data_sync_backup
+    SET
+    <if test="backupFileId != null">
+      backup_file_id = #{backupFileId},
+    </if>
+    <if test="backupStatus != null">
+      backup_status = #{backupStatus},
+    </if>
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE backup_id = #{backupId}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="queryBackupForClear" resultType="com.iwhalecloud.bote.entity.datasync.DataSyncBackupEntity">
+    SELECT backup_id, tenant_id, backup_type, record_id, backup_file_id, remark, status_cd, creator_id, created_time,
+           updator_id, updated_time
+    FROM bt_data_sync_backup
+    WHERE status_cd = '00A'
+      AND created_time <![CDATA[<]]> #{maxCreatedTime}
+  </select>
+
+  <update id="clearBackupByIds">
+    UPDATE bt_data_sync_backup
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE backup_id IN
+    <foreach collection="backupIds" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    AND status_cd = '00A'
+  </update>
+
+  <insert id="insertReturnLog">
+    INSERT INTO bt_data_sync_return_record(
+     return_id,
+     tenant_id,
+     backup_id,
+     return_file_id,
+     return_name,
+     record_id,
+     return_status,
+     remark,
+     status_cd,
+     creator_id,
+     created_time,
+     updator_id,
+     updated_time
+    )
+    VALUES
+    (
+     #{dto.returnId},
+     #{dto.tenantId},
+     #{dto.backupId},
+     #{dto.returnFileId},
+     #{dto.returnName},
+     #{dto.recordId},
+     #{dto.returnStatus},
+     #{dto.remark},
+     #{dto.statusCd},
+     #{dto.creatorId},
+     <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+     #{dto.updatorId},
+     <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+     )
+  </insert>
+
+  <select id="queryReturnLogPage" resultType="com.iwhalecloud.bote.dto.datasync.DataSyncReturnRecordDTO">
+    SELECT r.return_id,
+           r.backup_id,
+           r.return_file_id,
+           r.tenant_id,
+           r.return_name,
+           r.record_id,
+           r.return_status,
+           r.created_time,
+           r.creator_id,
+           u.user_name AS creatorName,
+           r.remark
+    FROM bt_data_sync_return_record r
+           LEFT JOIN bt_user u ON r.creator_id = u.user_id
+    WHERE r.status_cd = '00A'
+      <if test="query.tenantId != null">
+        AND r.tenant_id = #{query.tenantId}
+      </if>
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND (
+          r.return_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+           #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+           OR r.remark LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+           #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+      </if>
+      <if test="query.startTime != null">
+        AND r.created_time <![CDATA[>=]]> #{query.startTime}
+      </if>
+      <if test="query.endTime != null">
+        AND r.created_time <![CDATA[<=]]> #{query.endTime}
+      </if>
+    ORDER BY r.created_time DESC
+  </select>
+
+  <select id="getReturnRecordById" resultType="com.iwhalecloud.bote.dto.datasync.DataSyncReturnRecordDTO">
+    SELECT r.return_id,
+           r.backup_id,
+           r.return_file_id,
+           r.return_name,
+           r.record_id,
+           r.return_status,
+           r.created_time,
+           r.creator_id,
+           u.user_name,
+           r.remark
+    FROM bt_data_sync_return_record r
+           LEFT JOIN bt_user u ON r.creator_id = u.user_id
+    WHERE r.status_cd = '00A'
+      AND r.return_id = #{returnId}
+  </select>
+
+  <update id="updateReturnRecordStatus">
+    UPDATE bt_data_sync_return_record
+    SET return_status= #{status},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE return_id = #{returnId}
+      AND status_cd = '00A'
+  </update>
+</mapper>

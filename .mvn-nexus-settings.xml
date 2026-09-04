@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Nexus 浏览: http://10.11.112.42:8808/#browse/browse ；Maven 仓库 URL 见下方 url -->
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <profiles>
+    <profile>
+      <id>nexus-bote</id>
+      <repositories>
+        <repository>
+          <id>nexus-maven-public</id>
+          <url>http://10.11.112.42:8808/repository/maven-public</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>nexus-maven-public</id>
+          <url>http://10.11.112.42:8808/repository/maven-public</url>
+          <releases><enabled>true</enabled></releases>
+          <snapshots><enabled>true</enabled></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>nexus-bote</activeProfile>
+  </activeProfiles>
+  <mirrors>
+    <mirror>
+      <id>nexus-allow-http</id>
+      <mirrorOf>external:http:*</mirrorOf>
+      <name>内网 Nexus（HTTP），覆盖 Maven 3.8+ 对 HTTP 仓库的默认拦截</name>
+      <url>http://10.11.112.42:8808/repository/maven-public</url>
+    </mirror>
+    <mirror>
+      <id>nexus-central</id>
+      <mirrorOf>central</mirrorOf>
+      <url>http://10.11.112.42:8808/repository/maven-public</url>
+    </mirror>
+  </mirrors>
+</settings>

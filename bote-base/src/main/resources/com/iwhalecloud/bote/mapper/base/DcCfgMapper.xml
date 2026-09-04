@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.DcCfgMapper">
+
+  <select id="selectAllSwitches" resultType="com.iwhalecloud.bote.dto.base.DcCfgDTO">
+    SELECT b.param_code, b.param_val
+    FROM bt_dc_cfg a
+    JOIN bt_dc_param b on a.param_code = b.param_code AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.type = #{type}
+  </select>
+
+  <select id="selectAllParams" resultType="com.iwhalecloud.bote.dto.base.DcCfgDTO">
+    SELECT  a.config_id, a.param_code, a.remark, a.type, b.need_update, b.value_source, a.table_code, a.param_group_name, a.rel_param_codes, b.param_desc,
+            b.param_val, b.param_name, b.sub_type
+    FROM bt_dc_cfg a
+    LEFT JOIN bt_dc_param b on a.param_code = b.param_code AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+    <if test="type != null and type != ''">
+      AND a.type = #{type}
+    </if>
+    ORDER BY a.default_show DESC, a.sort DESC
+  </select>
+
+  <update id="updateParamValue">
+    UPDATE bt_dc_param
+    SET param_val = #{paramVal},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE param_code = #{paramCode}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="selectParamValueByParamCodes" resultType="com.iwhalecloud.bote.dto.base.DcCfgSimpleDTO">
+    SELECT param_desc, param_name, param_code, param_val, value_source, need_update, sub_type
+    FROM bt_dc_param
+    WHERE param_code IN
+    <foreach collection="paramCodes" item="paramCode" separator="," open="(" close=")">
+      #{paramCode}
+    </foreach>
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectAllSafeParams" resultType="com.iwhalecloud.bote.dto.base.DcCfgSafeDTO">
+    SELECT  a.config_id, a.sort, a.rel_param_codes, a.param_group_name, a.cfg_comp_type, a.cfg_comp_props, a.cfg_visible_expr, a.cfg_icon,
+            b.param_code, b.param_val, b.param_name, b.param_desc
+    FROM bt_dc_cfg a
+    LEFT JOIN bt_dc_param b on a.param_code = b.param_code AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.type = '0'
+    ORDER BY a.sort
+  </select>
+
+</mapper>

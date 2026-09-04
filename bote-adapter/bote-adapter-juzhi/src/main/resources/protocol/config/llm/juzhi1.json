@@ -1,0 +1,59 @@
+{
+  "name": "一级聚智",
+  "code": "juzhi1",
+  "description": "对接中国移动的一级聚智平台（集团），通过能开接口调用大模型",
+  "attrs": [
+    {
+      "type": "input",
+      "name": [
+        "protocolExt",
+        "funcCode"
+      ],
+      "label": "能力编码",
+      "formProps": {
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入能力编码"
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "name": [
+        "protocolExt",
+        "city"
+      ],
+      "label": "地市编码",
+      "formProps": {
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入地市编码"
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "name": [
+        "protocolExt",
+        "application"
+      ],
+      "label": "应用名称",
+      "formProps": {
+        "tooltip": "application",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入应用名称"
+          }
+        ]
+      }
+    },
+    "modelCode",
+    "temperature",
+    "contextLength"
+  ]
+}

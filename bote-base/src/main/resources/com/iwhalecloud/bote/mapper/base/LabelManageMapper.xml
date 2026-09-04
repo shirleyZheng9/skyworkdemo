@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.LabelManageMapper">
+  <sql id="labelColumns">
+    a.label_id,
+    a.label_name,
+    a.label_type,
+    a.label_color,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <select id="existsLabelName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_label
+    WHERE status_cd = '00A'
+      AND label_name = #{dto.labelName}
+      AND tenant_id in (#{dto.tenantId}, -1)
+    <if test="dto.labelId != null">
+      AND label_id != #{dto.labelId}
+    </if>
+  </select>
+
+  <select id="getLabel" resultType="com.iwhalecloud.bote.dto.base.LabelDTO">
+    SELECT
+    <include refid="labelColumns"/>
+    FROM bt_label a
+    WHERE label_id = #{id}
+      AND status_cd = '00A'
+      AND tenant_id in (#{tenantId}, -1)
+  </select>
+
+  <insert id="insertLabel">
+    INSERT INTO bt_label (
+    label_id,
+    label_name,
+    label_type,
+    label_color,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.labelId},
+    #{dto.labelName},
+    #{dto.labelType},
+    #{dto.labelColor},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateLabel">
+    UPDATE bt_label
+    <set>
+      <if test="dto.checkFieldUpdateFlag('labelName')">
+        label_name = #{dto.labelName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('labelType')">
+        label_type = #{dto.labelType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('labelColor')">
+        label_color = #{dto.labelColor},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE label_id = #{dto.labelId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteLabel">
+    UPDATE bt_label
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE label_id = #{labelId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectLabelList" resultType="com.iwhalecloud.bote.dto.base.LabelDTO">
+    SELECT
+    <include refid="labelColumns"/>
+    FROM bt_label a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id IN (#{query.tenantId}, -1)
+    <if test="query.labelType != null and query.labelType != ''">
+      AND a.label_type = #{query.labelType}
+    </if>
+    <if test="query.labelName != null and query.labelName != ''">
+      AND a.label_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.labelName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <insert id="batchInsertLabelObjectRel">
+    INSERT INTO bt_label_object_rel (
+    rel_id,
+    label_id,
+    object_id,
+    object_type,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.relId},
+      #{dto.labelId},
+      #{dto.objectId},
+      #{dto.objectType},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertLabelObjectRel" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_label_object_rel (
+      rel_id,
+      label_id,
+      object_id,
+      object_type,
+      tenant_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.relId},
+      #{dto.labelId},
+      #{dto.objectId},
+      #{dto.objectType},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateLabelObjectRel">
+    UPDATE bt_label_object_rel
+    <set>
+      <if test="dto.checkFieldUpdateFlag('labelId')">
+        label_id = #{dto.labelId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('objectId')">
+        object_id = #{dto.objectId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('objectType')">
+        object_type = #{dto.objectType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE rel_id = #{dto.relId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteLabelObjectRel">
+    UPDATE bt_label_object_rel
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE rel_id IN (<foreach collection="relIds" item="id" separator=", ">#{id}</foreach>)
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectLabelObjectRelList" resultType="com.iwhalecloud.bote.dto.base.LabelObjectRelDTO">
+    SELECT
+    a.rel_id,
+    a.label_id,
+    a.object_id,
+    a.object_type,
+    a.tenant_id,
+    b.label_name,
+    b.label_color,
+    b.remark,
+    b.tenant_id AS "labelTenantId"
+    FROM bt_label_object_rel a
+    LEFT JOIN bt_label b ON a.label_id = b.label_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.object_id IN (<foreach collection="objectIds" item="id" separator=", ">#{id}</foreach>)
+      AND a.object_type = #{objectType}
+      AND a.tenant_id = #{tenantId}
+      AND b.tenant_id in (#{tenantId}, -1)
+  </select>
+
+  <select id="selectLabelRelList" resultType="com.iwhalecloud.bote.dto.base.LabelObjectRelDTO">
+    SELECT
+    a.rel_id,
+    a.label_id,
+    a.object_id,
+    a.object_type,
+    a.tenant_id,
+    b.label_name,
+    b.label_color
+    FROM bt_label_object_rel a
+    LEFT JOIN bt_label b ON a.label_id = b.label_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.label_id IN (<foreach collection="labelIds" item="id" separator=", ">#{id}</foreach>)
+      AND b.label_type = #{labelType}
+      AND a.tenant_id = #{tenantId}
+  </select>
+</mapper>

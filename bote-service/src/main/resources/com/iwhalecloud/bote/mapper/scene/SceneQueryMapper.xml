@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.scene.SceneQueryMapper">
+  <!-- @formatter:off -->
+  <select id="selectPromptBySceneId" resultType="com.iwhalecloud.bote.dto.scene.SimpleScenePromptDTO">
+    SELECT prompt_id, prompt_type, scene_prompt
+    FROM bt_bot_scene_prompt
+    WHERE status_cd = '00A'
+      AND scene_id = #{sceneId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSkillsBySceneId" resultType="com.iwhalecloud.bote.dto.bot.BotSceneSkillDTO">
+    SELECT skill_type, skill_id, ext_skill_id, skill_name, skill_config_json, skill_json, CASE WHEN skill_json IS NOT NULL AND skill_json LIKE '%"tenantId":"-1"%' THEN 1 END AS platform
+    FROM bt_bot_scene_skill
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id = #{sceneId}
+  </select>
+
+  <select id="selectKnowledgeIdsBySceneId" resultType="java.lang.Long">
+    SELECT skill_id
+    FROM bt_bot_scene_skill
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id = #{sceneId}
+      AND skill_type = 'knowledgeChat'
+  </select>
+
+  <select id="selectKnowledgeSkillsBySceneId" resultType="com.iwhalecloud.bote.dto.bot.BotSceneSkillDTO">
+    SELECT skill_id, skill_json, ext_skill_id
+    FROM bt_bot_scene_skill
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id = #{sceneId}
+      AND skill_type = 'knowledgeChat'
+  </select>
+
+  <select id="selectKnowledgeSettingBySceneId" resultType="java.lang.String">
+    SELECT scene_graph_json
+    FROM bt_bot_scene
+    WHERE tenant_id = #{tenantId}
+      AND scene_id = #{sceneId}
+  </select>
+
+  <select id="selectSceneTypeAndBotIdBySceneId" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotSceneDTO">
+    SELECT scene_type, model_id, model_config_json
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND scene_id = #{sceneId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSceneTypeBySceneIds" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotSceneDTO">
+    SELECT scene_id, scene_type
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id IN (<foreach collection="sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+  </select>
+
+  <select id="selectDslBySceneId" resultType="com.iwhalecloud.bote.dto.scene.SimpleDslInfoDTO">
+    SELECT scene_name AS name, CASE WHEN scene_type = 'chatflow' THEN 1 ELSE 0 END AS chatflow, scene_dsl AS dsl_json
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND scene_id = #{sceneId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectRecommendedScenes" resultType="com.iwhalecloud.bote.dto.bot.RecommendedSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.prologue
+    FROM bt_bot_scene a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+      AND a.scene_status = #{query.sceneStatus}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND lower(a.scene_name) LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      lower(#{query.searchContent})
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    AND EXISTS (SELECT 1 FROM bt_bot_scene_rel r
+                WHERE a.scene_id = r.scene_id AND a.tenant_id = r.tenant_id AND r.status_cd = '00A'
+                  AND r.bot_id = #{query.botId})
+    AND NOT EXISTS(SELECT 1
+                   FROM bt_label b, bt_label_object_rel r
+                   WHERE b.label_id = r.label_id
+                     AND b.label_type = 'scene'
+                     AND b.label_name in (<foreach collection="query.excludeLabels" item="label" separator=", ">#{label}</foreach>)
+                     AND r.status_cd = '00A'
+                     AND r.object_id = a.scene_id
+                     AND r.tenant_id = a.tenant_id)
+  </select>
+
+  <select id="selectSceneBySceneId" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_type, a.scene_desc, a.prologue,
+           a.flow_step_json, a.model_id, a.model_config_json, a.long_term_memory_enabled,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_label b
+                          JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                          WHERE b.status_cd = '00A'
+                            AND b.label_type = 'scene'
+                            AND b.label_name = #{jumpLabelName}
+                            AND r.status_cd = '00A'
+                            AND r.tenant_id = a.tenant_id
+                            AND r.object_id = a.scene_id) THEN 1
+             ELSE 0
+             END AS jump_enabled,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_label b
+                                 JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                          WHERE b.status_cd = '00A'
+                            AND b.label_type = 'scene'
+                            AND b.label_name = #{autoStartLabelName}
+                            AND r.status_cd = '00A'
+                            AND r.tenant_id = a.tenant_id
+                            AND r.object_id = a.scene_id) THEN 1
+             ELSE 0
+             END AS auto_start_enabled,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_label b
+                                 JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                          WHERE b.status_cd = '00A'
+                            AND b.label_type = 'scene'
+                            AND b.label_name = #{confirmLabelName}
+                            AND r.status_cd = '00A'
+                            AND r.tenant_id = a.tenant_id
+                            AND r.object_id = a.scene_id) THEN 1
+             ELSE 0
+             END AS confirm_enabled
+    FROM bt_bot_scene a
+    WHERE a.scene_id = #{sceneId}
+      AND a.tenant_id = #{tenantId}
+      AND a.status_cd = '00A'
+    <if test="sceneStatus != null and sceneStatus != ''">
+      AND a.scene_status = #{sceneStatus}
+    </if>
+  </select>
+
+  <select id="selectScenesBySceneIds" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_type, a.scene_desc, a.prologue,
+           a.flow_step_json, a.model_id, a.model_config_json, a.long_term_memory_enabled,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_label b
+                          JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                          WHERE b.status_cd = '00A'
+                            AND b.label_type = 'scene'
+                            AND b.label_name = #{jumpLabelName}
+                            AND r.status_cd = '00A'
+                            AND r.tenant_id = a.tenant_id
+                            AND r.object_id = a.scene_id) THEN 1
+             ELSE 0
+             END AS jump_enabled,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_label b
+                                 JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                          WHERE b.status_cd = '00A'
+                            AND b.label_type = 'scene'
+                            AND b.label_name = #{autoStartLabelName}
+                            AND r.status_cd = '00A'
+                            AND r.tenant_id = a.tenant_id
+                            AND r.object_id = a.scene_id) THEN 1
+             ELSE 0
+             END AS auto_start_enabled,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_label b
+                                 JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                          WHERE b.status_cd = '00A'
+                            AND b.label_type = 'scene'
+                            AND b.label_name = #{confirmLabelName}
+                            AND r.status_cd = '00A'
+                            AND r.tenant_id = a.tenant_id
+                            AND r.object_id = a.scene_id) THEN 1
+             ELSE 0
+             END AS confirm_enabled
+    FROM bt_bot_scene a
+    WHERE a.scene_id IN (<foreach collection="sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+      AND a.tenant_id = #{tenantId}
+      AND a.status_cd = '00A'
+    <if test="sceneStatus != null and sceneStatus != ''">
+      AND a.scene_status = #{sceneStatus}
+    </if>
+  </select>
+
+
+  <select id="selectSceneIntentListByTenantId" resultType="com.iwhalecloud.bote.dto.bot.SceneIntentDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc
+    FROM bt_bot_scene a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.scene_status = '1'
+      AND NOT EXISTS (SELECT 1
+                      FROM bt_label b
+                      JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                      WHERE b.status_cd = '00A'
+                        AND b.label_type = 'scene'
+                        AND b.label_name IN (<foreach collection="excludeLabels" item="id" separator=", ">#{id}</foreach>)
+                        AND r.status_cd = '00A'
+                        AND r.tenant_id = a.tenant_id
+                        AND r.object_id = a.scene_id)
+  </select>
+
+  <select id="selectSceneListByBotId" resultType="com.iwhalecloud.bote.dto.bot.SceneIntentDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc
+    FROM bt_bot_scene a
+    LEFT JOIN bt_bot_scene_rel b ON a.scene_id = b.scene_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.scene_status = '1'
+      AND b.tenant_id = #{tenantId}
+      AND b.bot_id = #{botId}
+      AND NOT EXISTS (SELECT 1
+                      FROM bt_label c
+                      JOIN bt_label_object_rel r ON r.label_id = c.label_id
+                      WHERE c.status_cd = '00A'
+                        AND c.label_type = 'scene'
+                        AND c.label_name IN (<foreach collection="excludeLabels" item="id" separator=", ">#{id}</foreach>)
+                        AND r.status_cd = '00A'
+                        AND r.tenant_id = a.tenant_id
+                        AND r.object_id = a.scene_id)
+  </select>
+
+  <select id="selectSceneListByTenantId" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc, c.bot_id
+    FROM bt_bot_scene a
+    LEFT JOIN bt_bot_scene_rel r ON r.scene_id = a.scene_id AND r.tenant_id = a.tenant_id
+    LEFT JOIN bt_bot c ON c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
+    WHERE a.status_cd = '00A'
+      AND r.status_cd = '00A'
+      AND c.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.scene_status = '1'
+      AND NOT EXISTS (SELECT 1
+                      FROM bt_label b
+                             JOIN bt_label_object_rel r ON r.label_id = b.label_id
+                      WHERE b.status_cd = '00A'
+                        AND b.label_type = 'scene'
+                        AND b.label_name IN (<foreach collection="excludeLabels" item="id" separator=", ">#{id}</foreach>)
+                        AND r.status_cd = '00A'
+                        AND r.tenant_id = a.tenant_id
+                        AND r.object_id = a.scene_id)
+  </select>
+
+  <select id="selectSceneIcon" resultType="com.iwhalecloud.bote.entity.bot.BotSceneEntity">
+    <!-- 如果 select 只有一个字段，当字段值为空时会返回 null 而非空对象 -->
+    SELECT scene_id, scene_type, scene_icon
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id = #{sceneId}
+  </select>
+
+  <select id="selectSceneName" resultType="java.lang.String">
+    SELECT scene_name
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id = #{sceneId}
+  </select>
+
+  <select id="selectWorkspaceBySceneId" resultType="com.iwhalecloud.bote.dto.agent.SimpleAiWorkspaceDTO">
+    SELECT file_name, file_content
+    FROM bt_claw_workspace
+    WHERE status_cd = '00A'
+      AND scene_id = #{sceneId}
+      AND tenant_id = #{tenantId}
+      AND file_name IN (<foreach collection="fileNames" item="name" separator=",">#{name}</foreach>)
+  </select>
+
+  <select id="selectEnvVariableBySceneId" resultType="com.iwhalecloud.bote.dto.scene.SimpleClawEnvVariableDTO">
+    SELECT a.id, b.variable_code, c.variable_val
+    FROM bt_claw_env_variable a
+    LEFT JOIN bt_env_variable b ON a.variable_id = b.variable_id AND a.tenant_id = b.tenant_id
+    LEFT JOIN bt_env_variable_val c ON b.variable_id = c.variable_id AND b.tenant_id = c.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.scene_id = #{sceneId}
+      AND c.env_code = #{envCode}
+  </select>
+</mapper>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.oauth.OAuth2ClientRedirectUriMapper">
+
+  <sql id="redirectUriColumns">
+    id,
+    client_id,
+    redirect_uri,
+    description_info,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+  </sql>
+
+  <select id="selectByClientId" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO">
+    SELECT
+    <include refid="redirectUriColumns"/>
+    FROM bt_oauth2_client_redirect_uri
+    WHERE client_id = #{clientId}
+    AND status_cd = '00A'
+    ORDER BY created_time ASC
+  </select>
+
+
+
+  <select id="selectByRedirectUri" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO">
+    SELECT
+    <include refid="redirectUriColumns"/>
+    FROM bt_oauth2_client_redirect_uri
+    WHERE redirect_uri = #{redirectUri}
+    AND status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <insert id="insertOAuth2ClientRedirectUri" parameterType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO">
+    INSERT INTO bt_oauth2_client_redirect_uri (
+    id,
+    client_id,
+    redirect_uri,
+    description_info,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+    ) VALUES (
+    #{item.id},
+    #{clientId},
+    #{redirectUri},
+    #{descriptionInfo},
+    #{statusCd},
+    #{creatorId},
+    #{updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{remark}
+    )
+  </insert>
+
+  <insert id="batchInsertOAuth2ClientRedirectUri">
+    INSERT INTO bt_oauth2_client_redirect_uri (
+    id,
+    client_id,
+    redirect_uri,
+    description_info,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="item" index="index" separator=", ">
+    (
+    #{item.id},
+    #{item.clientId},
+    #{item.redirectUri},
+    #{item.descriptionInfo},
+    #{item.statusCd},
+    #{item.creatorId},
+    #{item.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{item.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertOAuth2ClientRedirectUri" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_oauth2_client_redirect_uri (
+      id,
+      client_id,
+      redirect_uri,
+      description_info,
+      status_cd,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      remark
+      ) VALUES
+      (
+      #{item.id},
+      #{item.clientId},
+      #{item.redirectUri},
+      #{item.descriptionInfo},
+      #{item.statusCd},
+      #{item.creatorId},
+      #{item.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateOAuth2ClientRedirectUri" parameterType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO">
+    UPDATE bt_oauth2_client_redirect_uri
+    <set>
+      <if test="redirectUri != null">
+        redirect_uri = #{redirectUri},
+      </if>
+      <if test="descriptionInfo != null">
+        description_info = #{descriptionInfo},
+      </if>
+      <if test="remark != null">
+        remark = #{remark},
+      </if>
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <update id="deleteByClientId">
+    UPDATE bt_oauth2_client_redirect_uri
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE client_id = #{clientId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteById">
+    UPDATE bt_oauth2_client_redirect_uri
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </update>
+
+</mapper>

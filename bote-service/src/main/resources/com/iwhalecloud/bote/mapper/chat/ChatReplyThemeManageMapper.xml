@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.ChatReplyThemeManageMapper">
+
+  <sql id="chatReplyThemeColumns">
+    a.reply_theme_id,
+    a.reply_theme_name,
+    a.reply_theme_code,
+    a.config_json,
+    a.tenant_id,
+    a.theme_json,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    AND tenant_id in (#{query.tenantId}, -1)
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.reply_theme_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.reply_theme_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <select id="existsChatReplyThemeCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_chat_reply_theme
+    WHERE status_cd = '00A'
+    AND reply_theme_code = #{dto.replyThemeCode}
+    AND tenant_id in (#{dto.tenantId}, -1)
+    <if test="dto.replyThemeId != null">
+      AND reply_theme_id != #{dto.replyThemeId}
+    </if>
+  </select>
+
+  <select id="getChatReplyTheme" resultType="com.iwhalecloud.bote.dto.chat.ChatReplyThemeDTO">
+    SELECT
+    <include refid="chatReplyThemeColumns"/>
+    FROM bt_chat_reply_theme a
+    WHERE reply_theme_id = #{id}
+    AND status_cd = '00A'
+    AND tenant_id in (#{tenantId}, -1)
+  </select>
+
+  <insert id="insertChatReplyTheme">
+    INSERT INTO bt_chat_reply_theme (
+    reply_theme_id,
+    reply_theme_name,
+    reply_theme_code,
+    config_json,
+    tenant_id,
+    theme_json,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.replyThemeId},
+    #{dto.replyThemeName},
+    #{dto.replyThemeCode},
+    #{dto.configJson},
+    #{dto.tenantId},
+    #{dto.themeJson},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateChatReplyTheme">
+    UPDATE bt_chat_reply_theme
+    <set>
+    <if test="dto.checkFieldUpdateFlag('replyThemeId')">
+      reply_theme_id = #{dto.replyThemeId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('replyThemeName')">
+      reply_theme_name = #{dto.replyThemeName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('replyThemeCode')">
+      reply_theme_code = #{dto.replyThemeCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('configJson')">
+      config_json = #{dto.configJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('tenantId')">
+      tenant_id = #{dto.tenantId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('themeJson')">
+      theme_json = #{dto.themeJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('creatorId')">
+      creator_id = #{dto.creatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('updatorId')">
+      updator_id = #{dto.updatorId},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+    </set>
+    WHERE reply_theme_id = #{dto.replyThemeId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteChatReplyTheme">
+    UPDATE bt_chat_reply_theme
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE reply_theme_id = #{replyThemeId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectChatReplyThemeList" resultType="com.iwhalecloud.bote.dto.chat.ChatReplyThemeDTO">
+    SELECT
+    <include refid="chatReplyThemeColumns"/>
+    FROM bt_chat_reply_theme a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectChatReplyThemePage" resultType="com.iwhalecloud.bote.dto.chat.ChatReplyThemeDTO">
+    SELECT
+    <include refid="chatReplyThemeColumns"/>, b.user_name AS updatorName
+    FROM bt_chat_reply_theme a
+    LEFT JOIN bt_user b ON a.updator_id = b.user_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+</mapper>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotUserExperienceManageMapper">
+  <sql id="botUserExperienceColumns">
+    a.experience_id,
+    a.bot_id,
+    a.content,
+    a.type,
+    a.scene_id,
+    a.title,
+    a.page_content,
+    a.page_template_json,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    CASE
+        WHEN (a.point_action IS NULL OR a.point_action = '') AND a.type = 'point'
+            THEN 'insertMessage'
+        ELSE a.point_action
+    END AS point_action,
+    a.open_link_type
+  </sql>
+
+  <insert id="insertBotUserExperience">
+    INSERT INTO bt_bot_user_experience (
+    experience_id,
+    bot_id,
+    content,
+    type,
+    scene_id,
+    title,
+    page_content,
+    page_template_json,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    point_action,
+    open_link_type
+    ) VALUES (
+    #{dto.experienceId},
+    #{dto.botId},
+    #{dto.content},
+    #{dto.type},
+    #{dto.sceneId},
+    #{dto.title},
+    #{dto.pageContent},
+    #{dto.pageTemplateJson},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark},
+    #{dto.pointAction},
+    #{dto.openLinkType}
+    )
+  </insert>
+
+  <update id="updateBotUserExperience">
+    UPDATE bt_bot_user_experience
+    <set>
+      <if test="dto.checkFieldUpdateFlag('botId')">
+        bot_id = #{dto.botId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('content')">
+        content = #{dto.content},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('type')">
+        type = #{dto.type},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneId')">
+        scene_id = #{dto.sceneId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('title')">
+        title = #{dto.title},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageContent')">
+        page_content = #{dto.pageContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageTemplateJson')">
+        page_template_json = #{dto.pageTemplateJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pointAction')">
+        point_action = #{dto.pointAction},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('openLinkType')">
+        open_link_type = #{dto.openLinkType},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE experience_id = #{dto.experienceId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getBotUserExperience" resultType="com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO">
+    SELECT
+    <include refid="botUserExperienceColumns"/>
+    FROM bt_bot_user_experience a
+    WHERE status_cd = '00A'
+      AND experience_id = #{experienceId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectBotUserExperience" resultType="com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO">
+    SELECT
+    <include refid="botUserExperienceColumns"/>,
+    (SELECT b.scene_name FROM bt_bot_scene b where a.scene_id = b.scene_id AND a.tenant_id = b.tenant_id) AS "sceneName",
+    (SELECT b.scene_status FROM bt_bot_scene b where a.scene_id = b.scene_id AND a.tenant_id = b.tenant_id) AS "sceneStatus"
+    FROM bt_bot_user_experience a
+    WHERE a.status_cd = '00A'
+    AND a.bot_id = #{query.botId}
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.type != null and query.type != ''">
+      AND a.type = #{query.type}
+    </if>
+    <if test="query.content != null and query.content != ''">
+      AND (a.content LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.content}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.title LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.content}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteBotUserExperience">
+    UPDATE bt_bot_user_experience
+    SET status_cd ='00X',
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{updatorId}
+    WHERE experience_id = #{experienceId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectBotUserExperiencePage" resultType="com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO">
+    SELECT
+    <include refid="botUserExperienceColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT b.scene_name FROM bt_bot_scene b where a.scene_id = b.scene_id AND a.tenant_id = b.tenant_id) AS "sceneName"
+    FROM bt_bot_user_experience a
+    WHERE a.status_cd = '00A'
+    AND a.bot_id = #{query.botId}
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.type != null and query.type != ''">
+      AND a.type = #{query.type}
+    </if>
+    <if test="query.content != null and query.content != ''">
+      AND (a.content LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.content}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.title LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.content}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getBotUserExperienceByType" resultType="com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO">
+    SELECT
+    <include refid="botUserExperienceColumns"/>
+    FROM bt_bot_user_experience a
+    WHERE a.status_cd = '00A'
+    AND a.type = #{query.type}
+    AND a.content = #{query.content}
+    AND a.bot_id = #{query.botId}
+    AND a.scene_id = #{query.sceneId}
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.experienceId != null">
+      AND a.experience_id != #{query.experienceId}
+    </if>
+  </select>
+
+  <select id="selectBotUserExperienceBySceneId" resultType="java.lang.String">
+    SELECT title
+    FROM bt_bot_user_experience
+    WHERE status_cd = '00A'
+    AND tenant_id = #{tenantId}
+    AND scene_id = #{sceneId}
+    AND bot_id = #{botId}
+    AND type = 'point'
+  </select>
+</mapper>

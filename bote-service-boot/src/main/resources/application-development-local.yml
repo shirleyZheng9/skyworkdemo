@@ -1,0 +1,27 @@
+logging:
+  level:
+    root: info
+    com.iwhalecloud.bote: debug
+    com.iwhalecloud.bote.llm.client.util.ModelHttpClient: trace
+    # 嵌套类需要加 "[]", 否则 Binder 解析时会自动去掉 "$": org.springframework.boot.context.logging.LoggingApplicationListener#setLogLevels
+    # https://stackoverflow.com/questions/58549705/setting-logging-levels-for-nested-classes-in-spring-boot-properties
+    com.iwhalecloud.bote.common.util.[HttpUtil$CustomRestTemplate]: info
+    com.iwhalecloud.bss.litchi: debug
+    com.iwhalecloud.bss.litchi.database.jdbc.LitchiJdbcTemplate: info
+    com.iwhalecloud.bote.doc.common.mybatis.parser.JsqlParserSupport: info
+    sun.rmi: info
+    org.apache.zookeeper: info
+    # 显示 MyBatis SQL 日志
+    mapper: debug
+    SqlLog: debug
+
+# 关闭 actuator 鉴权
+ftf.management.security.enabled: false
+
+# 天工 AI 网关 / 模型广场同步（额度管理）
+bote.tg.ai-gateway.base-url: https://ai-sit.artifex-cmcc.com.cn
+bote.tg.ai-gateway.quota-base-url: https://inner-api-ft.artifex-cmcc.com.cn
+bote.tg.ai-gateway.token: 
+bote.tg.ai-gateway.access-url: 
+bote.tg.ai-gateway.page-size: 100
+bote.tg.ai-gateway.sync-interval-seconds: 300

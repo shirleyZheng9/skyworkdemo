@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.AiSkillManageMapper">
+
+  <sql id="skillColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.skill_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <select id="getAiSkill" resultType="com.iwhalecloud.bote.dto.agent.AiSkillDTO">
+    SELECT
+    <include refid="skillColumns"/>
+    FROM bt_ai_skill a
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.bot_id = #{botId}
+      AND a.skill_id = #{skillId}
+      AND a.creator_id = #{userId}
+  </select>
+
+  <insert id="insertAiSkill">
+    INSERT INTO bt_ai_skill (
+    id,
+    space_id,
+    bot_id,
+    skill_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.skillId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAiSkill">
+    UPDATE bt_ai_skill
+    <set>
+    <if test="dto.checkFieldUpdateFlag('skillId')">
+      skill_id = #{dto.skillId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId},
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <update id="deleteAiSkill">
+    UPDATE bt_ai_skill
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <select id="selectAiAgentSkillPage" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.data_from, a.catalog_item_id, a.updator_id, a.updated_time,
+           COALESCE(a.remark, c.skill_desc) AS remark, a.skill_square_id,
+           CASE WHEN s.skill_id IS NOT NULL THEN 1 ELSE 0 END AS enable
+    FROM bt_agent_skill a
+    LEFT JOIN bt_ai_skill s ON a.skill_id = s.skill_id AND s.space_id = #{query.spaceId} AND s.bot_id = #{query.botId} AND s.creator_id = #{query.userId} AND s.status_cd = '00A'
+    LEFT JOIN bt_agent_skill_square c ON a.skill_square_id = c.skill_id
+    WHERE a.status_cd = '00A'
+      AND ((a.tenant_id = #{query.spaceId} AND a.creator_id = #{query.userId} AND a.data_from = '10A') OR (a.tenant_id=-1 AND a.data_from IS NULL))
+    <!-- enable: T=只查已启用(FROM bt_ai_skill 有记录)，F=只查未启用，空=查全部 -->
+    <if test='query.enable == &quot;T&quot;'>
+      AND s.skill_id IS NOT NULL
+    </if>
+    <if test='query.enable == &quot;F&quot;'>
+      AND s.skill_id IS NULL
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+        a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        a.skill_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectAiAgentSkillList" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDTO">
+    SELECT a.skill_id, a.tenant_id, a.skill_name, a.skill_code, a.data_from, a.remark, a.catalog_item_id, a.updator_id,
+           a.updated_time, a.skill_square_id, b.skill_desc,
+      CASE WHEN s.skill_id IS NOT NULL THEN 1 ELSE 0 END AS enable
+    FROM bt_agent_skill a
+    LEFT JOIN bt_ai_skill s ON a.skill_id = s.skill_id AND s.space_id = #{query.spaceId} AND s.bot_id = #{query.botId} AND s.creator_id = #{query.userId} AND s.status_cd = '00A'
+    LEFT JOIN bt_agent_skill_square b ON a.skill_square_id = b.skill_id
+    WHERE a.status_cd = '00A'
+      AND (a.tenant_id = #{query.spaceId} AND a.bot_id = #{query.botId} AND a.creator_id = #{query.userId} AND a.data_from = '10A')
+    <!-- enable: T=只查已启用(FROM bt_ai_skill 有记录)，F=只查未启用，空=查全部 -->
+    <if test="query.enable == 'T'.toString()">
+      AND s.skill_id IS NOT NULL
+    </if>
+    <if test="query.enable == 'F'.toString()">
+      AND s.skill_id IS NULL
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+      a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.skill_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectListBySkillId" resultType="com.iwhalecloud.bote.dto.agent.AiSkillDTO">
+    SELECT a.id, a.space_id, a.bot_id, a.skill_id, b.bot_name, b.bot_use
+    FROM bt_ai_skill a
+    LEFT JOIN bt_bot b ON a.bot_id = b.bot_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.skill_id = #{skillId}
+  </select>
+
+  <select id="selectListByBotId" resultType="com.iwhalecloud.bote.dto.agent.AiSkillDTO">
+    SELECT a.id, a.space_id, a.bot_id, a.skill_id, b.skill_name,
+           COALESCE(b.remark, c.skill_desc) AS skillDesc,
+           CASE WHEN b.skill_square_id IS NOT NULL THEN 0 ELSE 1 END AS isCreated
+    FROM bt_ai_skill a
+    JOIN bt_agent_skill b ON a.skill_id = b.skill_id AND b.tenant_id = a.space_id AND b.status_cd = '00A'
+    LEFT JOIN bt_agent_skill_square c ON b.skill_square_id = c.skill_id
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.bot_id = #{botId}
+  </select>
+
+  <insert id="batchInsertAiSkill">
+    INSERT INTO bt_ai_skill (
+    id,
+    space_id,
+    bot_id,
+    skill_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+      #{item.id},
+      #{item.spaceId},
+      #{item.botId},
+      #{item.skillId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.creatorId},
+      #{item.updatorId},
+      #{item.remark}
+      )
+    </foreach>
+  </insert>
+
+  <!-- Oracle 批量插入使用 -->
+  <insert id="batchInsertAiSkill" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="item" index="index" separator=" ">
+      INTO bt_ai_skill (
+      id,
+      space_id,
+      bot_id,
+      skill_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{item.id},
+      #{item.spaceId},
+      #{item.botId},
+      #{item.skillId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.creatorId},
+      #{item.updatorId},
+      #{item.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="batchUpdateAiSkillStatus">
+    UPDATE bt_ai_skill
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </update>
+
+  <select id="existAiSkill" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_ai_skill
+    WHERE status_cd = '00A'
+      AND bot_id IS NOT NULL
+      AND space_id = #{spaceId}
+      AND skill_id = #{skillId}
+      AND creator_id = #{userId}
+  </select>
+
+</mapper>

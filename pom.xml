@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>com.iwhalecloud.bss.litchi</groupId>
+    <artifactId>litchi-parent</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.iwhalecloud.bote</groupId>
+  <artifactId>bote</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0.0-SNAPSHOT</version>
+
+  <properties>
+    <!-- 博特 -->
+    <bote.version>1.0.0-SNAPSHOT</bote.version>
+    <bote.skills.version>1.0.0-SNAPSHOT</bote.skills.version>
+
+    <!-- https://github.com/knuddelsgmbh/jtokkit/releases -->
+    <jtokkit.version>1.1.0</jtokkit.version>
+    <!-- https://github.com/belerweb/pinyin4j -->
+    <pinyin4j.version>2.5.1</pinyin4j.version>
+    <!-- https://github.com/houbb/sensitive-word/blob/master/CHANGE_LOG.md -->
+    <sensitive-word.version>0.29.5</sensitive-word.version>
+    <!-- https://github.com/jwtk/jjwt/releases -->
+    <jjwt.version>0.13.0</jjwt.version>
+    <!-- https://github.com/victools/jsonschema-generator/releases -->
+    <jsonschema-generator.version>4.38.0</jsonschema-generator.version>
+    <!-- https://github.com/networknt/json-schema-validator/releases -->
+    <json-schema-validator.version>2.0.1</json-schema-validator.version>
+    <!-- https://github.com/vsch/flexmark-java -->
+    <!-- https://mvnrepository.com/artifact/com.vladsch.flexmark/flexmark -->
+    <flexmark-all.version>0.64.8</flexmark-all.version>
+    <!-- https://github.com/plutext/docx4j/blob/VERSION_11_5_9/CHANGELOG.md -->
+    <org.docx4j.version>11.5.12</org.docx4j.version>
+    <!-- https://xmlgraphics.apache.org/commons/ -->
+    <!-- flexmark-docx-converter, docx4j 都依赖 xmlgraphics -->
+    <xmlgraphics.version>2.11</xmlgraphics.version>
+    <!-- https://github.com/jhy/jsoup/releases -->
+    <jsoup.version>1.22.1</jsoup.version>
+    <!-- https://cxf.apache.org/download.html -->
+    <cxfjaxws.version>4.1.5</cxfjaxws.version>
+
+    <dingtalk.sdk.version>2.2.48</dingtalk.sdk.version>
+    <!-- https://github.com/a2aproject/a2a-java/releases -->
+    <a2a.sdk.version>0.3.3.Final</a2a.sdk.version>
+    <dingtalkstream.sdk.version>1.3.12</dingtalkstream.sdk.version>
+    <feishu.sdk.version>2.5.3</feishu.sdk.version>
+    <!-- https://github.com/a-schild/jave2/releases -->
+    <jave.version>3.5.0</jave.version>
+    <xfyun.version>3.0.9</xfyun.version>
+    <scratchpad.version>5.4.1</scratchpad.version>
+    <!-- https://github.com/zxing/zxing/releases -->
+    <zxing.version>3.5.4</zxing.version>
+    <!-- https://github.com/microsoft/playwright-java/releases -->
+    <playwright.version>1.59.0</playwright.version>
+    <!-- https://xmlgraphics.apache.org/batik/ -->
+    <batik.version>1.19</batik.version>
+    <!-- https://github.com/alibaba/OpenSandbox/releases?q=java%2Fsandbox -->
+    <opensandbox.version>1.0.10</opensandbox.version>
+    <!-- https://github.com/jmrozanec/cron-utils/releases -->
+    <cron-utils.version>9.2.1</cron-utils.version>
+  </properties>
+
+  <modules>
+    <module>bote-base</module>
+    <module>bote-llm-client</module>
+    <module>bote-adapter</module>
+    <module>bote-mcp</module>
+    <module>bote-document</module>
+    <module>bote-service</module>
+    <module>bote-service-boot</module>
+    <module>bote-optional-panwei</module>
+
+    <module>bote-loop</module>
+    <module>bote-document-boot</module>
+    <module>bote-sms</module>
+    <module>bote-sandbox</module>
+  </modules>
+
+  <dependencyManagement>
+    <dependencies>
+
+      <!-- 内部模块 -->
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-base</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-llm-client</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-adapter-juzhi</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-adapter-panzhi</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-sms-bill</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-adapter-dify</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-mcp</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-service</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-document</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-optional-panwei</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-loop-api</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-loop-client</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-loop-common</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-loop-prompt</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-loop-data</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-loop-evaluation</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.iwhalecloud.bote</groupId>
+        <artifactId>bote-sandbox</artifactId>
+        <version>${bote.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.iwhalecloud.bote.skills</groupId>
+        <artifactId>bote-skills</artifactId>
+        <version>${bote.skills.version}</version>
+      </dependency>
+
+      <!-- Alibaba OpenSandbox SDK -->
+      <dependency>
+        <groupId>com.alibaba.opensandbox</groupId>
+        <artifactId>sandbox</artifactId>
+        <version>${opensandbox.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.belerweb</groupId>
+        <artifactId>pinyin4j</artifactId>
+        <version>${pinyin4j.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.knuddels</groupId>
+        <artifactId>jtokkit</artifactId>
+        <version>${jtokkit.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt</artifactId>
+        <version>${jjwt.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.cronutils</groupId>
+        <artifactId>cron-utils</artifactId>
+        <version>${cron-utils.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.github.victools</groupId>
+        <artifactId>jsonschema-generator</artifactId>
+        <version>${jsonschema-generator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.victools</groupId>
+        <artifactId>jsonschema-module-jackson</artifactId>
+        <version>${jsonschema-generator.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.github.victools</groupId>
+        <artifactId>jsonschema-module-swagger-2</artifactId>
+        <version>${jsonschema-generator.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.networknt</groupId>
+        <artifactId>json-schema-validator</artifactId>
+        <version>${json-schema-validator.version}</version>
+      </dependency>
+
+      <!-- 敏感词过滤 -->
+      <dependency>
+        <groupId>com.github.houbb</groupId>
+        <artifactId>sensitive-word</artifactId>
+        <version>${sensitive-word.version}</version>
+        <exclusions>
+          <!-- 不需要使用内置敏感词库 -->
+          <exclusion>
+            <groupId>com.github.houbb</groupId>
+            <artifactId>sensitive-word-data</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.jsoup</groupId>
+        <artifactId>jsoup</artifactId>
+        <version>${jsoup.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.vladsch.flexmark</groupId>
+        <artifactId>flexmark-all</artifactId>
+        <version>${flexmark-all.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>com.vladsch.flexmark</groupId>
+        <artifactId>flexmark-docx-converter</artifactId>
+        <version>${flexmark-all.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-1.2-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.docx4j</groupId>
+        <artifactId>docx4j-JAXB-ReferenceImpl</artifactId>
+        <version>${org.docx4j.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>xmlgraphics-commons</artifactId>
+        <version>${xmlgraphics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.cxf</groupId>
+        <artifactId>cxf-spring-boot-starter-jaxws</artifactId>
+        <version>${cxfjaxws.version}</version>
+      </dependency>
+
+      <!-- 钉钉API对接 -->
+      <dependency>
+        <groupId>com.aliyun</groupId>
+        <artifactId>dingtalk</artifactId>
+        <version>${dingtalk.sdk.version}</version>
+      </dependency>
+      <!-- 钉钉API对接 -->
+      <dependency>
+        <groupId>com.dingtalk.open</groupId>
+        <artifactId>dingtalk-stream</artifactId>
+        <version>${dingtalkstream.sdk.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+      <!-- 飞书PI对接 -->
+      <dependency>
+        <groupId>com.larksuite.oapi</groupId>
+        <artifactId>oapi-sdk</artifactId>
+        <version>${feishu.sdk.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.a2asdk</groupId>
+        <artifactId>a2a-java-sdk-client</artifactId>
+        <version>${a2a.sdk.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.github.a2asdk</groupId>
+        <artifactId>a2a-java-sdk-transport-jsonrpc</artifactId>
+        <version>${a2a.sdk.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ws.schild</groupId>
+        <artifactId>jave-core</artifactId>
+        <version>${jave.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>ws.schild</groupId>
+        <artifactId>jave-nativebin-linux64</artifactId>
+        <version>${jave.version}</version>
+      </dependency>
+      <!-- 讯飞语音对接 -->
+      <dependency>
+        <groupId>cn.xfyun</groupId>
+        <artifactId>websdk-java-speech</artifactId>
+        <version>${xfyun.version}</version>
+      </dependency>
+      <!-- ZXing 二维码生成 -->
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>core</artifactId>
+        <version>${zxing.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.zxing</groupId>
+        <artifactId>javase</artifactId>
+        <version>${zxing.version}</version>
+      </dependency>
+      <!-- Playwright for web scraping -->
+      <dependency>
+        <groupId>com.microsoft.playwright</groupId>
+        <artifactId>playwright</artifactId>
+        <version>${playwright.version}</version>
+      </dependency>
+      <!-- Apache Batik：SVG 转 PNG（transcoder 负责解析/渲染，codec 提供 PNG 编码 WriteAdapter） -->
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-transcoder</artifactId>
+        <version>${batik.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.xmlgraphics</groupId>
+        <artifactId>batik-codec</artifactId>
+        <version>${batik.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>io.github.git-commit-id</groupId>
+          <artifactId>git-commit-id-maven-plugin</artifactId>
+          <version>${git-commit-id-maven-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>revision</goal>
+              </goals>
+              <phase>prepare-package</phase>
+            </execution>
+          </executions>
+          <configuration>
+            <verbose>true</verbose>
+            <offline>true</offline>
+            <dateFormat>yyyy-MM-dd HH:mm:ss</dateFormat>
+            <dateFormatTimeZone>Asia/Shanghai</dateFormatTimeZone>
+            <generateGitPropertiesFile>true</generateGitPropertiesFile>
+            <generateGitPropertiesFilename>${project.build.outputDirectory}/git-version/${project.artifactId}.properties</generateGitPropertiesFilename>
+            <failOnUnableToExtractRepoInfo>false</failOnUnableToExtractRepoInfo>
+            <failOnNoGitDirectory>false</failOnNoGitDirectory>
+
+            <includeOnlyProperties>
+              <includeOnlyProperty>git.branch</includeOnlyProperty>
+              <includeOnlyProperty>git.build.host</includeOnlyProperty>
+              <includeOnlyProperty>git.build.time</includeOnlyProperty>
+              <includeOnlyProperty>git.build.version</includeOnlyProperty>
+              <includeOnlyProperty>git.commit.id.abbrev</includeOnlyProperty>
+              <includeOnlyProperty>git.commit.time</includeOnlyProperty>
+            </includeOnlyProperties>
+          </configuration>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${versions-maven-plugin.version}</version>
+          <configuration>
+            <ruleSet combine.children="append">
+              <rule>
+                <groupId>org.apache.cxf</groupId>
+                <ignoreVersions>
+                  <!-- 4.2.0+ 依赖 Spring Boot 4 -->
+                  <ignoreVersion>
+                    <type>regex</type>
+                    <version>4.2.+</version>
+                  </ignoreVersion>
+                </ignoreVersions>
+              </rule>
+              <rule>
+                <groupId>com.github.victools</groupId>
+                <ignoreVersions>
+                  <!-- 5.x 依赖 Jackson 3 -->
+                  <ignoreVersion>
+                    <type>regex</type>
+                    <version>5.+</version>
+                  </ignoreVersion>
+                </ignoreVersions>
+              </rule>
+              <rule>
+                <groupId>com.networknt</groupId>
+                <artifactId>json-schema-validator</artifactId>
+                <ignoreVersions>
+                  <!-- 3.x 依赖 Jackson 3 -->
+                  <ignoreVersion>
+                    <type>regex</type>
+                    <version>3.+</version>
+                  </ignoreVersion>
+                </ignoreVersions>
+              </rule>
+            </ruleSet>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.12</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <!-- 1) prepare-agent：注入 jacoco agent 到 argLine，所有子模块继承 -->
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals><goal>prepare-agent</goal></goals>
+              </execution>
+              <!-- 2) report：每个模块生成 target/site/jacoco（权威报告）。
+                   绑定到 prepare-package（晚于 test 阶段），确保 surefire 先跑完写满 jacoco.exec，
+                   再生成报告；若绑定到 test 阶段会因插件声明顺序先于 surefire 而生成陈旧/空报告。 -->
+              <execution>
+                <id>report</id>
+                <phase>prepare-package</phase>
+                <goals><goal>report</goal></goals>
+              </execution>
+            </executions>
+            <configuration>
+              <!-- 排除薄类：DTO/常量/配置/异常等无逻辑或自动生成类。
+                   report 目标按「类文件路径」（com/foo/Bar.class，带 .class 后缀）匹配并决定报告/CSV 中是否出现。
+                   目录模式 **/dto/** 等对路径与运行时类名均能命中；文件名模式须带 .class 才会被 report 拦截。 -->
+              <excludes>
+                <exclude>**/dto/**</exclude>
+                <exclude>**/consts/**</exclude>
+                <exclude>**/config/**</exclude>
+                <exclude>**/exception/**</exclude>
+                <exclude>**/*Properties.class</exclude>
+                <exclude>**/package-info.class</exclude>
+              </excludes>
+            </configuration>
+          </plugin>
+
+          <!-- 3) surefire：拾取 prepare-agent 设置的 argLine；默认 *IT 由 failsafe 处理，test 阶段不跑 -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <argLine>@{argLine} -Xmx2048m</argLine>
+              <forkCount>1C</forkCount>
+              <reuseForks>true</reuseForks>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+</project>

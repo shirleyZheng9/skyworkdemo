@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.GuidanceCfgMapper">
+
+  <select id="existsBeginnerGuidanceCfg" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_guidance_cfg
+    WHERE status_cd = '00A'
+      AND guide_type = 'beginner_guide'
+  </select>
+
+  <select id="selectBeginnerGuidanceCfg" resultType="com.iwhalecloud.bote.dto.base.GuidanceCfgDTO">
+    SELECT id, name, code, text_icon, sub_title, sub_text, sortby, group_id
+    FROM bt_guidance_cfg
+    WHERE status_cd = '00A'
+      AND guide_type = 'beginner_guide'
+    ORDER BY sortby
+  </select>
+
+  <select id="selectStepGuidance" resultType="com.iwhalecloud.bote.dto.base.GuidanceCfgDTO">
+    SELECT id, name, code, sub_text, guide_type, sortby
+    FROM bt_guidance_cfg
+    WHERE status_cd = '00A'
+    AND guide_type IN (<foreach collection="typeList" item="guideType" separator=", ">#{guideType}</foreach>)
+    ORDER BY sortby
+  </select>
+
+</mapper>

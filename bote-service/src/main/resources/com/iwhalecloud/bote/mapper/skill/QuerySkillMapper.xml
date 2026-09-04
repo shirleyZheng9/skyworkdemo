@@ -1,0 +1,509 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.QuerySkillMapper">
+
+  <select id="selectSkillServiceList" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillServiceDTO">
+    SELECT
+    tenant_id,
+    service_id,
+    service_code,
+    service_name,
+    header_json,
+    path_json,
+    query_json,
+    body_json,
+    response_json
+    FROM bt_skill_service a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillServicePage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillServiceDTO">
+    SELECT
+    tenant_id,
+    service_id,
+    service_code,
+    service_name,
+    header_json,
+    path_json,
+    query_json,
+    body_json,
+    response_json
+    FROM bt_skill_service a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.service_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.service_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillService" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillServiceDTO">
+    SELECT
+    tenant_id,
+    service_id,
+    service_code,
+    service_name,
+    header_json,
+    path_json,
+    query_json,
+    body_json,
+    response_json
+    FROM bt_skill_service a
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id = #{serviceId}
+  </select>
+
+  <select id="selectSkillSqlList" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillSqlDTO">
+    SELECT
+    tenant_id,
+    service_id,
+    service_code,
+    service_name,
+    req_json,
+    resp_json
+    FROM bt_skill_sql a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillSqlPage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillSqlDTO">
+    SELECT
+    tenant_id,
+    service_id,
+    service_code,
+    service_name,
+    req_json,
+    resp_json
+    FROM bt_skill_sql a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.service_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.service_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillSql" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillSqlDTO">
+    SELECT
+    tenant_id,
+    service_id,
+    service_code,
+    service_name,
+    req_json,
+    resp_json
+    FROM bt_skill_sql
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id = #{serviceId}
+  </select>
+
+  <select id="selectSkillPluginPage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPluginDTO">
+    SELECT
+    tenant_id,
+    api_id,
+    api_code,
+    api_name,
+    req_json
+    FROM bt_skill_plugin a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.api_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.api_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillPlugin" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPluginDTO">
+    SELECT
+    tenant_id,
+    api_id,
+    api_code,
+    api_name,
+    req_json
+    FROM bt_skill_plugin
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      ANd api_id = #{apiId}
+  </select>
+
+  <select id="getPlugin" resultType="com.iwhalecloud.bote.dto.plugin.PluginDTO">
+    SELECT tenant_id, plugin_id, plugin_name, plugin_code
+    FROM bt_plugin
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND plugin_id = #{pluginId}
+  </select>
+
+  <select id="selectSkillFunctionList" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillFunctionDTO">
+    SELECT
+    tenant_id,
+    func_id,
+    func_code,
+    func_name,
+    req_json,
+    resp_json,
+    script_json
+    FROM bt_skill_function a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    <if test="query.scriptType != null and query.scriptType != ''">
+      AND a.func_type = #{query.scriptType}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillFunctionPage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillFunctionDTO">
+    SELECT
+    tenant_id,
+    func_id,
+    func_code,
+    func_name,
+    req_json,
+    resp_json
+    FROM bt_skill_function a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.func_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.func_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillFunction" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillFunctionDTO">
+    SELECT
+    tenant_id,
+    func_id,
+    func_code,
+    func_name,
+    req_json,
+    resp_json
+    FROM bt_skill_function
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND func_id = #{funcId}
+  </select>
+
+  <select id="selectSkillFlowList" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillFlowDTO">
+    SELECT
+    tenant_id,
+    flow_id,
+    flow_code,
+    flow_name,
+    flow_type
+    FROM bt_skill_flow a
+    WHERE a.status_cd = '00A'
+    <if test="query.flowType != null and query.flowType != ''">
+      AND a.flow_type = #{query.flowType}
+    </if>
+    <choose>
+      <!-- 安全围栏场景，约定可在博特资产租户下定义全局的 -->
+      <when test="query.isSecurity == 'T'.toString()">
+        AND a.tenant_id IN (#{query.tenantId}, 2)
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillFlowPage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillFlowDTO">
+    SELECT
+    tenant_id,
+    flow_id,
+    flow_code,
+    flow_name,
+    flow_type
+    FROM bt_skill_flow a
+    WHERE a.status_cd = '00A'
+    <if test="query.flowType != null and query.flowType != ''">
+      AND a.flow_type = #{query.flowType}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.flow_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.flow_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillFlow" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillFlowDTO">
+    SELECT
+    tenant_id,
+    flow_id,
+    flow_code,
+    flow_name
+    FROM bt_skill_flow
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND flow_id = #{flowId}
+  </select>
+
+  <select id="selectSkillPageList" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPageDTO">
+    SELECT
+    tenant_id,
+    page_id,
+    page_code,
+    page_name,
+    req_param_json,
+    page_source_type
+    FROM bt_skill_page a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillPagePage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPageDTO">
+    SELECT
+    tenant_id,
+    page_id,
+    page_code,
+    page_name,
+    req_param_json,
+    page_source_type
+    FROM bt_skill_page a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.page_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.page_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.pageSourceType != null and query.pageSourceType != ''">
+      AND a.page_source_type = #{query.pageSourceType}
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillPage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPageDTO">
+    SELECT
+    tenant_id,
+    page_id,
+    page_code,
+    page_name,
+    req_param_json,
+    page_source_type
+    FROM bt_skill_page a
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND page_id = #{pageId}
+  </select>
+
+  <select id="selectSkillPageFuncList" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPageFuncDTO">
+    SELECT
+    tenant_id,
+    page_func_id,
+    func_code,
+    func_name,
+    req_json
+    FROM bt_skill_page_func a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillPageFuncPage" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPageFuncDTO">
+    SELECT
+    tenant_id,
+    page_func_id,
+    func_code,
+    func_name,
+    req_json
+    FROM bt_skill_page_func a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.func_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.func_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getSkillPageFunc" resultType="com.iwhalecloud.bote.dto.skill.SimpleSkillPageFuncDTO">
+    SELECT
+    tenant_id,
+    page_func_id,
+    func_code,
+    func_name,
+    req_json
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_func_id = #{pageFuncId}
+  </select>
+
+  <select id="getAgentSkill" resultType="com.iwhalecloud.bote.dto.skill.SimpleAgentSkillDTO">
+    SELECT
+      tenant_id,
+      skill_id,
+      skill_code,
+      skill_name
+    FROM bt_agent_skill
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND skill_id = #{skillId}
+  </select>
+</mapper>

@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.library.mapper.DocumentLibraryMapper">
+  <!-- @formatter:off -->
+  <sql id="Base_Column_List">
+    id, library_id, library_name, library_icon, description, visibility_scope, owner_id, sort_order,
+    access_count, last_access_time, tenant_id, creator_id, created_time, status_cd, color, is_builtin, space_id, updated_time
+  </sql>
+
+  <select id="selectByLibrary" resultType="com.iwhalecloud.bote.doc.module.library.entity.DocumentLibraryEntity">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_dc_document_library
+    WHERE library_id = #{libraryId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByLibraryAndTenantId" resultType="com.iwhalecloud.bote.doc.module.library.entity.DocumentLibraryEntity">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_dc_document_library
+    WHERE library_id = #{libraryId}
+      <if test="tenantId != null and platform != 'portal'">
+        AND tenant_id = #{tenantId}
+      </if>
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByLibraryAndSpaceId" resultType="com.iwhalecloud.bote.doc.module.library.entity.DocumentLibraryEntity">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_dc_document_library
+    WHERE library_id = #{libraryId}
+      <if test="tenantId != null">
+        AND (tenant_id = #{tenantId} or is_builtin='T')
+      </if>
+      <if test="spaceId != null">
+        AND space_id = #{spaceId}
+      </if>
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectNameById" resultType="java.lang.String">
+    select library_name
+    from bt_dc_document_library
+    where library_id = #{libraryId}
+    and status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_document_library (
+      <include refid="Base_Column_List"/>
+    ) VALUES (
+      #{entity.id},
+      #{entity.libraryId},
+      #{entity.libraryName},
+      #{entity.libraryIcon},
+      #{entity.description},
+      #{entity.visibilityScope},
+      #{entity.ownerId},
+      #{entity.sortOrder},
+      #{entity.accessCount},
+      #{entity.lastAccessTime},
+      #{entity.tenantId},
+      #{entity.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.statusCd},
+      #{entity.color},
+      #{entity.isBuiltin},
+      #{entity.spaceId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey">
+    UPDATE bt_dc_document_library
+    SET library_name = #{entity.libraryName},
+        library_icon = #{entity.libraryIcon},
+        description = #{entity.description},
+        visibility_scope = #{entity.visibilityScope},
+        owner_id = #{entity.ownerId},
+        sort_order = #{entity.sortOrder},
+        access_count = #{entity.accessCount},
+        last_access_time = #{entity.lastAccessTime},
+        color = #{entity.color},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE library_id = #{entity.libraryId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_document_library
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE library_id = #{libraryId}
+      AND status_cd = '00A'
+  </update>
+
+  <!-- ===== 合入自 LibraryListMapper ===== -->
+  <select id="selectVisibleLibraries" resultType="com.iwhalecloud.bote.doc.module.library.dto.LibraryListDTO">
+    SELECT
+    l.library_id,
+    l.library_name,
+    l.description,
+    l.library_icon,
+    l.visibility_scope,
+    l.creator_id        AS "creatorUserId",
+    l.owner_id          AS "ownerUserId",
+    l.created_time,
+    l.updated_time,
+    l.last_access_time,
+    l.color,
+    l.space_id,
+    l.tenant_id,
+    COALESCE(m.member_count, 0) AS "memberCount",
+    COALESCE(docs.doc_count, 0) AS "documentCount",
+    -- 跨数据库兼容：用 1/0 代替 true/false
+    CASE WHEN me.permission_id IS NOT NULL THEN 1 ELSE 0 END AS "isSharedToMe",
+    me.granted_by AS "sharedByUserId",
+    CASE
+    WHEN me.permission_type IS NOT NULL THEN me.permission_type
+    <if test="param.orgIds != null and param.orgIds.size > 0">
+      WHEN orgp.permission_type IS NOT NULL THEN orgp.permission_type
+    </if>
+    WHEN l.owner_id = #{param.userId} THEN 'MANAGE'
+    WHEN l.visibility_scope = 'PUBLIC' THEN 'READ'
+    ELSE NULL
+    END AS "permissions"
+    FROM bt_dc_document_library l
+    LEFT JOIN (
+    SELECT lp.library_id, COUNT(DISTINCT lp.subject_id) AS member_count
+    FROM bt_dc_library_permission lp
+    WHERE lp.status_cd = #{param.statusCd}
+    GROUP BY lp.library_id
+    ) m ON m.library_id = l.library_id
+    LEFT JOIN (
+    SELECT d.library_id, COUNT(*) AS doc_count
+    FROM bt_dc_document d
+    WHERE d.status_cd = #{param.statusCd}
+    GROUP BY d.library_id
+    ) docs ON docs.library_id = l.library_id
+    LEFT JOIN bt_dc_library_permission me
+    ON me.library_id = l.library_id
+    AND me.status_cd = #{param.statusCd}
+    AND me.subject_type = 'USER'
+    AND me.subject_id = #{param.userId}
+    <if test="param.orgIds != null and param.orgIds.size > 0">
+      LEFT JOIN bt_dc_library_permission orgp
+      ON orgp.library_id = l.library_id
+      AND orgp.status_cd = #{param.statusCd}
+      AND orgp.subject_type = 'ORG'
+      AND orgp.subject_id IN
+      <foreach collection="param.orgIds" item="oid" open="(" separator="," close=")">#{oid}</foreach>
+    </if>
+    WHERE l.status_cd = #{param.statusCd}
+    and (l.is_builtin is null or (l.library_name != '我的文档' and l.is_builtin='T'))
+     <if test="param.tenantId != null">
+      AND l.tenant_id = #{param.tenantId}
+    </if>
+     <if test="param.spaceId != null">
+      AND l.space_id = #{param.spaceId}
+    </if>
+    AND (
+    l.visibility_scope = 'PUBLIC'
+    OR (
+    l.visibility_scope = 'MEMBERS'
+    AND (
+    l.owner_id = #{param.userId}
+    OR me.permission_id IS NOT NULL
+    <if test="param.orgIds != null and param.orgIds.size > 0">
+      OR orgp.permission_id IS NOT NULL
+    </if>
+    )
+    )
+    )
+    <if test="param.keywordLike != null and param.keywordLike != ''">
+      AND l.library_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{param.keywordLike}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <choose>
+      <when test="param.sortBy == 'updated_time' and param.sortOrder == 'asc'.toString()">
+        ORDER BY l.updated_time ASC
+      </when>
+      <when test="param.sortBy == 'updated_time'">
+        ORDER BY l.updated_time DESC
+      </when>
+      <when test="param.sortOrder == 'asc'.toString()">
+        ORDER BY l.created_time ASC
+      </when>
+      <otherwise>
+        ORDER BY l.created_time DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- ===== 超级管理员查询所有文档库 ===== -->
+  <select id="selectAllLibraries" resultType="com.iwhalecloud.bote.doc.module.library.dto.LibraryListDTO">
+    SELECT
+      l.library_id,
+      l.library_name,
+      l.description,
+      l.library_icon,
+      l.visibility_scope,
+      l.creator_id         AS "creatorUserId",
+      l.owner_id           AS "ownerUserId",
+      l.created_time,
+      l.updated_time,
+      l.last_access_time,
+      l.color,
+      l.space_id,
+      l.tenant_id,
+      COALESCE(m.member_count, 0) AS "memberCount",
+      COALESCE(docs.doc_count, 0) AS "documentCount",
+      -- Oracle 不支持 true/false 字面量，这里改为 0（MyBatis 可映射为 Boolean）
+      0 AS "isSharedToMe",
+      NULL AS "sharedByUserId",
+      'MANAGE' AS "permissions"
+    FROM bt_dc_document_library l
+    LEFT JOIN (
+      SELECT lp.library_id, COUNT(DISTINCT lp.subject_id) AS member_count
+      FROM bt_dc_library_permission lp
+      WHERE lp.status_cd = #{param.statusCd}
+      GROUP BY lp.library_id
+    ) m ON m.library_id = l.library_id
+    LEFT JOIN (
+      SELECT d.library_id, COUNT(*) AS doc_count
+      FROM bt_dc_document d
+      WHERE d.status_cd = #{param.statusCd}
+      GROUP BY d.library_id
+    ) docs ON docs.library_id = l.library_id
+    WHERE l.status_cd = #{param.statusCd}
+    and (l.is_builtin is null or (l.library_name != '我的文档' and l.is_builtin='T'))
+     <if test="param.spaceId != null">
+        AND l.space_id = #{param.spaceId}
+      </if>
+      <if test="param.tenantId != null">
+        AND l.tenant_id = #{param.tenantId}
+      </if>
+      <if test="param.keywordLike != null and param.keywordLike != ''">
+        AND l.library_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+            #{param.keywordLike}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+    <choose>
+      <when test="param.sortBy == 'updated_time' and param.sortOrder == 'asc'.toString()">
+        ORDER BY l.updated_time ASC
+      </when>
+      <when test="param.sortBy == 'updated_time'">
+        ORDER BY l.updated_time DESC
+      </when>
+      <when test="param.sortOrder == 'asc'.toString()">
+        ORDER BY l.created_time ASC
+      </when>
+      <otherwise>
+        ORDER BY l.created_time DESC
+      </otherwise>
+    </choose>
+  </select>
+
+
+  <!-- ===== 合入自 LibraryDetailMapper ===== -->
+  <select id="selectLibraryBase" resultType="com.iwhalecloud.bote.doc.module.library.dto.LibraryDetailDTO">
+    SELECT
+      l.library_id,
+      l.library_name,
+      l.description,
+      l.library_icon,
+      l.color,
+      l.visibility_scope,
+      l.creator_id        AS "creatorUserId",
+      l.created_time,
+      l.updated_time,
+      l.space_id,
+      l.tenant_id,
+      COALESCE(m.member_count, 0) AS "memberCount",
+      COALESCE(docs.doc_count, 0) AS "documentCount",
+      CASE
+        WHEN me.permission_type IS NOT NULL THEN me.permission_type
+        WHEN l.owner_id = #{userId} THEN 'MANAGE'
+        WHEN l.visibility_scope = 'PUBLIC' THEN 'READ'
+        ELSE NULL
+      END AS "permissions",
+      -- Oracle 不支持 true/false 字面量，改为 1/0（MyBatis 可映射为 Boolean）
+      CASE WHEN uf.target_id IS NOT NULL THEN 1 ELSE 0 END AS "isFavorite"
+    FROM bt_dc_document_library l
+    LEFT JOIN (
+      SELECT lp.library_id, COUNT(DISTINCT lp.subject_id) AS member_count
+      FROM bt_dc_library_permission lp
+      WHERE lp.status_cd = #{statusCd}
+      GROUP BY lp.library_id
+    ) m ON m.library_id = l.library_id
+    LEFT JOIN (
+      SELECT d.library_id, COUNT(*) AS doc_count
+      FROM bt_dc_document d
+      WHERE d.status_cd = #{statusCd}
+      GROUP BY d.library_id
+    ) docs ON docs.library_id = l.library_id
+    LEFT JOIN bt_dc_library_permission me
+      ON me.library_id = l.library_id
+     AND me.status_cd = #{statusCd}
+     AND me.subject_type = 'USER'
+     AND me.subject_id = #{userId}
+    LEFT JOIN bt_dc_user_favorite uf
+      ON uf.target_id = l.library_id
+     AND uf.target_type = 'LIBRARY'
+     AND uf.user_id = #{userId}
+     AND uf.status_cd = #{statusCd}
+    WHERE l.status_cd = #{statusCd}
+      AND l.library_id = #{libraryId}
+      <if test="tenantId != null">
+      AND l.tenant_id = #{tenantId}
+    </if>
+     <if test="spaceId != null">
+      AND l.space_id = #{spaceId}
+    </if>
+  </select>
+
+  <select id="selectLibraryMembers" resultType="com.iwhalecloud.bote.doc.module.library.dto.LibraryDetailDTO$MemberInfo">
+    SELECT
+      lp.subject_type,
+      lp.subject_id,
+      NULL              AS "avatar",
+      lp.permission_type,
+      lp.permission_id,
+      lp.granted_by,
+      lp.created_time   AS "grantedTime"
+    FROM bt_dc_library_permission lp
+    INNER JOIN bt_dc_document_library l ON l.library_id = lp.library_id AND l.space_id = #{spaceId}
+    WHERE lp.status_cd = #{statusCd}
+      AND lp.library_id = #{libraryId}
+      AND NOT (lp.subject_type = 'USER' AND lp.subject_id = (SELECT creator_id FROM bt_dc_document_library WHERE library_id = #{libraryId} AND status_cd = #{statusCd}))
+    ORDER BY lp.created_time DESC
+  </select>
+
+
+  <!-- 更新文档库基础信息 -->
+  <update id="updateLibraryInfo">
+    UPDATE bt_dc_document_library
+    SET library_name = #{libraryName},
+        description = #{description},
+        library_icon = #{libraryIcon},
+        color = #{color},
+        updator_id = #{updatorId},
+        updated_time = #{updatedTime}
+    WHERE library_id = #{libraryId}
+      AND space_id = #{spaceId}
+      AND status_cd = '00A'
+  </update>
+
+  <!-- 更新文档库可见范围 -->
+  <update id="updateLibraryVisibility">
+    UPDATE bt_dc_document_library
+    SET visibility_scope = #{visibilityScope},
+        updator_id = #{updatorId},
+        updated_time = #{updatedTime}
+    WHERE library_id = #{libraryId}
+      AND space_id = #{spaceId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="findUserPrivateLibraryId" resultType="java.lang.String">
+      select library_id
+        from bt_dc_document_library
+      where owner_id = #{userId}
+        and visibility_scope = 'PRIVATE'
+      and status_cd = '00A'
+      and is_builtin='T'
+      and space_id = #{spaceId}
+  </select>
+
+  <!-- 逻辑删除文档库（放入回收站） -->
+  <update id="rubbishByLibraryId">
+    UPDATE bt_dc_document_library
+    SET status_cd = '00R',
+        updator_id = #{optUserId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE library_id = #{libraryId}
+      AND space_id = #{spaceId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="queryByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.library.dto.DocumentLibraryDTO">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_dc_document_library
+    WHERE id = #{id}
+    <if test="tenantId != null">
+      AND tenant_id = #{tenantId}
+    </if>
+      AND status_cd = '00A'
+  </select>
+  <select id="findUserPrivateMyLibraryById" resultType="java.lang.String">
+      select library_id
+        from bt_dc_document_library
+      where owner_id = #{userId}
+        and visibility_scope = 'PRIVATE'
+        and is_builtin='T'
+      and status_cd = '00A'
+      and library_name='我的文档'
+      and space_id = #{spaceId}
+ </select>
+ <select id="queryLibraryByDocumentId" resultType="com.iwhalecloud.bote.doc.module.library.dto.DocumentLibraryDTO">
+ SELECT a.id, a.library_id, a.library_name, a.library_icon, a.description, a.visibility_scope, a.owner_id, a.sort_order,
+    a.access_count, a.last_access_time, a.tenant_id, a.creator_id, a.created_time, a.status_cd, a.color, a.is_builtin, a.space_id, a.updated_time
+    FROM bt_dc_document_library a ,bt_dc_document b
+    WHERE a.library_id = b.library_id
+      AND a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      and b.document_id = #{documentId}
+ </select>
+ <select id="existsLibraryName" resultType="boolean">
+  SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_dc_document_library
+    WHERE status_cd = '00A'
+      AND tenant_id = #{dto.tenantId}
+      AND library_name = #{dto.libraryName}
+    <if test="dto.libraryId != null">
+      AND library_id != #{dto.libraryId}
+    </if>
+ </select>
+</mapper>
+
+

@@ -1,0 +1,51 @@
+package com.iwhalecloud.bote.doc.module.document.entity;
+
+import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
+import com.iwhalecloud.bss.litchi.diffc.annotations.DiffId;
+import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
+import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Id;
+import java.util.Date;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+/**
+ * 文档库权限表
+ *
+ * @author yangran
+ * @since 2025-08-13
+ */
+@Getter
+@Setter
+@ToString(callSuper = true)
+@DiffNode(name = "bt_dc_library_permission")
+@Schema(hidden = true)
+public class LibraryPermissionEntity extends BaseEntity {
+  @Id
+  @DiffId
+  @Schema(description = "权限ID")
+  private Long permissionId;
+  @DiffField(name = "library_id")
+  @Schema(description = "文档库ID")
+  private String libraryId;
+  @DiffField(name = "subject_type")
+  @Schema(description = "主体类型：USER-用户，ORG-部门，ROLE-角色，GROUP-分组")
+  private String subjectType;
+  @DiffField(name = "subject_id")
+  @Schema(description = "主体ID（用户ID、部门ID、角色ID、分组ID）")
+  private Long subjectId;
+  @DiffField(name = "permission_type")
+  @Schema(description = "权限类型：MANAGE-可管理，EDIT-可编辑，READ-只读")
+  private String permissionType;
+  @DiffField(name = "granted_by")
+  @Schema(description = "授权人ID")
+  private Long grantedBy;
+  @DiffField(name = "expires_at")
+  @Schema(description = "权限过期时间")
+  private Date expiresAt;
+  @DiffField(name = "tenant_id")
+  @Schema(description = "租户ID")
+  private Long tenantId;
+}

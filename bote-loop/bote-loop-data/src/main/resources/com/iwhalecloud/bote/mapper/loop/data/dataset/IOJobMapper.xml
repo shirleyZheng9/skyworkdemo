@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.data.dataset.IOJobMapper">
+  <!-- 结果映射 -->
+  <resultMap id="IOJobResultMap" type="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetIOJobEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="app_id" property="appId" jdbcType="INTEGER"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="dataset_id" property="datasetId" jdbcType="BIGINT"/>
+    <result column="job_type" property="jobType" jdbcType="VARCHAR"/>
+    <result column="source_file" property="sourceFile" jdbcType="VARCHAR"/>
+    <result column="source_dataset" property="sourceDataset" jdbcType="VARCHAR"/>
+    <result column="target_file" property="targetFile" jdbcType="VARCHAR"/>
+    <result column="target_dataset" property="targetDataset" jdbcType="VARCHAR"/>
+    <result column="field_mappings" property="fieldMappings" jdbcType="VARCHAR"/>
+    <result column="option" property="option" jdbcType="VARCHAR"/>
+    <result column="status" property="status" jdbcType="VARCHAR"/>
+    <result column="progress_total" property="progressTotal" jdbcType="BIGINT"/>
+    <result column="progress_processed" property="progressProcessed" jdbcType="BIGINT"/>
+    <result column="progress_added" property="progressAdded" jdbcType="BIGINT"/>
+    <result column="sub_progresses" property="subProgresses" jdbcType="VARCHAR"/>
+    <result column="errors" property="errors" jdbcType="VARCHAR"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="started_at" property="startedAt" jdbcType="TIMESTAMP"/>
+    <result column="ended_at" property="endedAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , app_id, space_id, dataset_id, job_type, source_file, source_dataset, target_file,
+        target_dataset, field_mappings, option, status, progress_total, progress_processed,
+        progress_added, sub_progresses, errors, created_by, created_at, updated_by, updated_at,
+        started_at, ended_at
+  </sql>
+
+  <!-- 创建IO任务 -->
+  <insert id="createIOJob" parameterType="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetIOJobEntity" >
+    INSERT INTO bt_dataset_io_job (app_id, space_id, dataset_id, job_type, source_file, source_dataset, target_file,
+                                   target_dataset, field_mappings, option, status, progress_total, progress_processed,
+                                   progress_added, sub_progresses, errors, created_by, created_at, updated_by, updated_at,
+                                   started_at, ended_at)
+    VALUES (#{appId}, #{spaceId}, #{datasetId}, #{jobType}, #{sourceFile}, #{sourceDataset}, #{targetFile},
+            #{targetDataset}, #{fieldMappings}, #{option}, #{status}, #{progressTotal}, #{progressProcessed},
+            #{progressAdded}, #{subProgresses}, #{errors}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt},
+            #{startedAt}, #{endedAt})
+  </insert>
+
+  <!-- 获取IO任务 -->
+  <select id="getIOJob" resultMap="IOJobResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset_io_job
+    WHERE id = #{id}
+  </select>
+
+  <!-- 更新IO任务 -->
+  <update id="updateIOJob">
+    UPDATE bt_dataset_io_job
+    <set>
+      <if test="updates.updated_at != null">
+        updated_at = #{updates.updated_at},
+      </if>
+      <if test="updates.progress_processed != null">
+        progress_processed = #{updates.progress_processed},
+      </if>
+      <if test="updates.progress_added != null">
+        progress_added = #{updates.progress_added},
+      </if>
+      <if test="updates.started_at != null">
+        started_at = #{updates.started_at},
+      </if>
+      <if test="updates.ended_at != null">
+        ended_at = #{updates.ended_at},
+      </if>
+      <if test="updates.status != null">
+        status = #{updates.status},
+      </if>
+      <if test="updates.progress_total != null">
+        progress_total = #{updates.progress_total},
+      </if>
+      <if test="updates.errors != null">
+        errors = #{updates.errors},
+      </if>
+      <if test="updates.sub_progresses != null">
+        sub_progresses = #{updates.sub_progresses},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <!-- 更新IO任务（带乐观锁） -->
+  <update id="updateIOJobWithLock">
+    UPDATE bt_dataset_io_job
+    <set>
+      <if test="updates.updated_at != null">
+        updated_at = #{updates.updated_at},
+      </if>
+      <if test="updates.progress_processed != null">
+        progress_processed = #{updates.progress_processed},
+      </if>
+      <if test="updates.progress_added != null">
+        progress_added = #{updates.progress_added},
+      </if>
+      <if test="updates.started_at != null">
+        started_at = #{updates.started_at},
+      </if>
+      <if test="updates.ended_at != null">
+        ended_at = #{updates.ended_at},
+      </if>
+      <if test="updates.status != null">
+        status = #{updates.status},
+      </if>
+      <if test="updates.progress_total != null">
+        progress_total = #{updates.progress_total},
+      </if>
+      <if test="updates.errors != null">
+        errors = #{updates.errors},
+      </if>
+      <if test="updates.sub_progresses != null">
+        sub_progresses = #{updates.sub_progresses},
+      </if>
+    </set>
+    WHERE id = #{id}
+    <if test="preProcessed != null">
+      AND progress_processed = #{preProcessed}
+    </if>
+  </update>
+
+  <!-- 列表查询IO任务 -->
+  <select id="listIOJobs" resultMap="IOJobResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset_io_job
+    <where>
+      space_id = #{spaceId}
+      AND dataset_id = #{datasetId}
+      <if test="types != null and types.size() > 0">
+        AND job_type IN
+        <foreach collection="types" item="type" open="(" separator="," close=")">
+          #{type.value}
+        </foreach>
+      </if>
+      <if test="statuses != null and statuses.size() > 0">
+        AND status IN
+        <foreach collection="statuses" item="status" open="(" separator="," close=")">
+          #{status.value}
+        </foreach>
+      </if>
+    </where>
+    ORDER BY created_at DESC, id DESC
+  </select>
+</mapper>

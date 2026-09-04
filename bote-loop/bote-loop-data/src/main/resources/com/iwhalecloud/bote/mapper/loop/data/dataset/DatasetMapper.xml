@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.data.dataset.DatasetMapper">
+  <!-- 结果映射 -->
+  <resultMap id="DatasetResultMap" type="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="app_id" property="appId" jdbcType="INTEGER"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="schema_id" property="schemaId" jdbcType="BIGINT"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="description" property="description" jdbcType="VARCHAR"/>
+    <result column="category" property="category" jdbcType="VARCHAR"/>
+    <result column="biz_category" property="bizCategory" jdbcType="VARCHAR"/>
+    <result column="status" property="status" jdbcType="VARCHAR"/>
+    <result column="security_level" property="securityLevel" jdbcType="VARCHAR"/>
+    <result column="visibility" property="visibility" jdbcType="VARCHAR"/>
+    <result column="spec" property="spec" jdbcType="VARCHAR"/>
+    <result column="features" property="features" jdbcType="VARCHAR"/>
+    <result column="latest_version" property="latestVersion" jdbcType="VARCHAR"/>
+    <result column="next_version_num" property="nextVersionNum" jdbcType="BIGINT"/>
+    <result column="last_operation" property="lastOperation" jdbcType="VARCHAR"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="expired_at" property="expiredAt" jdbcType="TIMESTAMP"/>
+    <result column="catalog_item_id" property="catalogItemId" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , app_id, space_id, schema_id, name, description, category, biz_category, status,
+        security_level, visibility, spec, features, latest_version, next_version_num,
+        last_operation, created_by, created_at, updated_by, updated_at, deleted_at, expired_at, catalog_item_id
+  </sql>
+
+  <!-- 创建数据集 -->
+  <insert id="createDataset" parameterType="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetEntity" >
+    INSERT INTO bt_dataset (id, app_id, space_id, schema_id, name, description, category, biz_category, status,
+                            security_level, visibility, spec, features, latest_version, next_version_num,
+                            last_operation, created_by, created_at, updated_by, updated_at, deleted_at, expired_at, catalog_item_id)
+    VALUES (#{id}, #{appId}, #{spaceId}, #{schemaId}, #{name}, #{description}, #{category}, #{bizCategory}, #{status},
+            #{securityLevel}, #{visibility}, #{spec}, #{features}, #{latestVersion}, #{nextVersionNum},
+            #{lastOperation}, #{createdBy}, #{createdAt}, #{updatedBy}, #{updatedAt}, #{deletedAt}, #{expiredAt}, #{catalogItemId})
+  </insert>
+
+  <!-- 更新数据集 -->
+  <update id="patchDataset">
+    UPDATE bt_dataset
+    <set>
+      <if test="patch.name != null">
+        name = #{patch.name},
+      </if>
+      <if test="patch.schemaId != null">
+        schema_id = #{patch.schemaId},
+      </if>
+      <if test="patch.description != null">
+        description = #{patch.description},
+      </if>
+      <if test="patch.category != null">
+        category = #{patch.category},
+      </if>
+      <if test="patch.bizCategory != null">
+        biz_category = #{patch.bizCategory},
+      </if>
+      <if test="patch.status != null">
+        status = #{patch.status},
+      </if>
+      <if test="patch.securityLevel != null">
+        security_level = #{patch.securityLevel},
+      </if>
+      <if test="patch.visibility != null">
+        visibility = #{patch.visibility},
+      </if>
+      <if test="patch.spec != null">
+        spec = #{patch.spec},
+      </if>
+      <if test="patch.features != null">
+        features = #{patch.features},
+      </if>
+      <if test="patch.latestVersion != null">
+        latest_version = #{patch.latestVersion},
+      </if>
+      <if test="patch.nextVersionNum != null">
+        next_version_num = #{patch.nextVersionNum},
+      </if>
+      <if test="patch.lastOperation != null">
+        last_operation = #{patch.lastOperation},
+      </if>
+      <if test="patch.updatedBy != null">
+        updated_by = #{patch.updatedBy},
+      </if>
+      <if test="patch.updatedAt != null">
+        updated_at = #{patch.updatedAt},
+      </if>
+      <if test="patch.expiredAt != null">
+        expired_at = #{patch.expiredAt},
+      </if>
+      <if test="patch.catalogItemId != null">
+        catalog_item_id = #{patch.catalogItemId},
+      </if>
+    </set>
+    WHERE id = #{where.id} AND space_id = #{where.spaceId}
+  </update>
+
+  <!-- 删除数据集 -->
+  <update id="deleteDataset">
+    UPDATE bt_dataset
+    SET deleted_at = #{deletedAt},
+        status     = 'deleted'
+    WHERE id = #{datasetId}
+      AND space_id = #{spaceId}
+  </update>
+
+  <!-- 获取数据集 -->
+  <select id="getDataset" resultMap="DatasetResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset
+    WHERE space_id = #{spaceId} AND id = #{datasetId} AND status != 'deleted'
+  </select>
+
+  <!-- 批量获取数据集 -->
+  <select id="mGetDatasets" resultMap="DatasetResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset
+    WHERE space_id = #{spaceId}
+    AND id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    AND status != 'deleted'
+  </select>
+
+  <!-- 列表查询数据集 -->
+  <select id="listDatasets" resultMap="DatasetResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset
+    <where>
+      space_id = #{spaceId}
+      <if test="ids != null and ids.size() > 0">
+        AND id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+      </if>
+      <if test="category != null">
+        AND category = #{category.value}
+      </if>
+      <if test="catalogItemId != null">
+        AND catalog_item_id = #{catalogItemId}
+      </if>
+      <if test="createdBys != null and createdBys.size() > 0">
+        AND created_by IN
+        <foreach collection="createdBys" item="createdBy" open="(" separator="," close=")">
+          #{createdBy}
+        </foreach>
+      </if>
+      <if test="nameLike != null and nameLike != ''">
+        AND name LIKE CONCAT('%', #{nameLike}, '%')
+      </if>
+      <if test="bizCategorys != null and bizCategorys.size() > 0">
+        AND biz_category IN
+        <foreach collection="bizCategorys" item="bizCategory" open="(" separator="," close=")">
+          #{bizCategory}
+        </foreach>
+      </if>
+      AND status != 'deleted'
+    </where>
+    ORDER BY updated_at DESC, id DESC
+  </select>
+
+  <!-- 统计数据集数量 -->
+  <select id="countDatasets" resultType="java.lang.Long">
+    SELECT COUNT(*)
+    FROM bt_dataset
+    <where>
+      space_id = #{spaceId}
+      <if test="ids != null and ids.size() > 0">
+        AND id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+      </if>
+      <if test="category != null">
+        AND category = #{category.value}
+      </if>
+      <if test="createdBys != null and createdBys.size() > 0">
+        AND created_by IN
+        <foreach collection="createdBys" item="createdBy" open="(" separator="," close=")">
+          #{createdBy}
+        </foreach>
+      </if>
+      <if test="nameLike != null and nameLike != ''">
+        AND name LIKE CONCAT('%', #{nameLike}, '%')
+      </if>
+      <if test="bizCategorys != null and bizCategorys.size() > 0">
+        AND biz_category IN
+        <foreach collection="bizCategorys" item="bizCategory" open="(" separator="," close=")">
+          #{bizCategory}
+        </foreach>
+      </if>
+      AND status != 'deleted'
+    </where>
+  </select>
+</mapper>

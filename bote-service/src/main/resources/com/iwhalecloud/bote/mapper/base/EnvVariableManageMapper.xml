@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.EnvVariableManageMapper">
+  <sql id="variable">
+    a.variable_id,
+    a.tenant_id,
+    a.variable_code,
+    a.variable_name,
+    a.data_type,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.status_cd,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="variableVal">
+    variable_val_id,
+    variable_id,
+    tenant_id,
+    env_code,
+    variable_val,
+    creator_id,
+    created_time,
+    updator_id,
+    status_cd,
+    updated_time,
+    remark
+  </sql>
+
+  <insert id="insertEnvVariable">
+    INSERT INTO bt_env_variable (
+    variable_id,
+    tenant_id,
+    variable_code,
+    variable_name,
+    data_type,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    status_cd,
+    remark)
+    VALUES
+    (
+    #{dto.variableId},
+    #{dto.tenantId},
+    #{dto.variableCode},
+    #{dto.variableName},
+    #{dto.dataType},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.remark}
+    )
+  </insert>
+
+
+  <insert id="batchInsertVariableVal">
+    INSERT INTO bt_env_variable_val (
+    variable_val_id,
+    variable_id,
+    tenant_id,
+    env_code,
+    variable_val,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    status_cd,
+    remark)
+    VALUES
+    <foreach collection="list" item="item" separator=",">
+      (
+      #{item.variableValId},
+      #{item.variableId},
+      #{item.tenantId},
+      #{item.envCode},
+      #{item.variableVal},
+      #{item.creatorId},
+      #{item.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.statusCd},
+      #{item.remark}
+      )
+    </foreach>
+  </insert>
+
+
+  <insert id="batchInsertVariableVal" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="item" separator=" ">
+      INTO bt_env_variable_val (
+      variable_val_id,
+      variable_id,
+      tenant_id,
+      env_code,
+      variable_val,
+      creator_id,
+      created_time,
+      updated_time,
+      status_cd,
+      remark
+      )VALUES
+      (
+      #{item.variableValId},
+      #{item.variableId},
+      #{item.tenantId},
+      #{item.envCode},
+      #{item.variableVal},
+      #{item.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{item.statusCd},
+      #{item.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="existsEnvVariableCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_env_variable
+    WHERE status_cd = '00A'
+    AND variable_code = #{dto.variableCode}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.variableId != null">
+      AND variable_id != #{dto.variableId}
+    </if>
+  </select>
+
+  <update id="updateVariable">
+    UPDATE bt_env_variable
+    SET variable_code = #{dto.variableCode},
+    variable_name = #{dto.variableName},
+    data_type = #{dto.dataType},
+    updator_id = #{dto.updatorId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    remark = #{dto.remark}
+    WHERE variable_id = #{dto.variableId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateVariableVal">
+    UPDATE bt_env_variable_val
+    SET env_code = #{dto.envCode},
+    variable_val = #{dto.variableVal},
+    updator_id = #{dto.updatorId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    remark = #{dto.remark}
+    WHERE variable_id = #{dto.variableId}
+    AND variable_val_id = #{dto.variableValId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectEnvVariableList" resultType="com.iwhalecloud.bote.dto.base.EnvVariableDTO">
+    SELECT
+    <include refid="variable"/>
+    FROM bt_env_variable a
+    WHERE a.tenant_id = #{param.tenantId}
+    AND a.status_cd = '00A'
+    <if test="param.searchContent != null and param.searchContent != ''">
+      AND (
+      a.variable_name like
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{param.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.variable_code like
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{param.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </select>
+
+  <select id="selectEnvVariablePage" resultType="com.iwhalecloud.bote.dto.base.EnvVariableDTO">
+    SELECT
+    <include refid="variable"/>, b.user_name AS updatorName
+    FROM bt_env_variable a
+    LEFT JOIN bt_user b on b.user_id = a.updator_id
+    WHERE a.tenant_id = #{param.tenantId}
+    AND a.status_cd = '00A'
+    <if test="param.searchContent != null and param.searchContent != ''">
+      AND (
+      a.variable_name like
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{param.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.variable_code like
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{param.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="findEnvVariableById" resultType="com.iwhalecloud.bote.dto.base.EnvVariableDTO">
+    SELECT
+    <include refid="variable"/>
+    FROM bt_env_variable a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    AND a.variable_id = #{variableId}
+  </select>
+
+  <select id="selectVariableValByVariableId" resultType="com.iwhalecloud.bote.dto.base.EnvVariableValDTO">
+    SELECT
+    <include refid="variableVal"/>
+    FROM bt_env_variable_val
+    WHERE status_cd = '00A'
+    AND tenant_id = #{tenantId}
+    AND variable_id = #{variableId}
+  </select>
+
+  <select id="selectVariableValByVariableIds" resultType="com.iwhalecloud.bote.dto.base.EnvVariableValDTO">
+    SELECT
+    <include refid="variableVal"/>
+    FROM bt_env_variable_val
+    WHERE status_cd = '00A'
+    AND tenant_id = #{tenantId}
+    AND variable_id in (<foreach item="variableId" collection="variableIds" separator=",">#{variableId}</foreach>)
+  </select>
+
+  <update id="deleteEnvVariableById">
+    UPDATE bt_env_variable
+    SET
+    status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE variable_id = #{variableId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <update id="deleteEnvVariableValById">
+    UPDATE bt_env_variable_val
+    SET
+    status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE  tenant_id = #{tenantId}
+    AND variable_id = #{variableId}
+  </update>
+
+  <select id="selectListByTenantId" resultType="com.iwhalecloud.bote.dto.base.EnvVariableDTO">
+    SELECT variable_id, tenant_id, variable_code, variable_name, data_type
+    FROM bt_env_variable
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectEnvVariableValByCode" resultType="com.iwhalecloud.bote.dto.base.EnvVariableValDTO">
+    SELECT e.variable_id, e.data_type, v.variable_val
+    FROM bt_env_variable_val v
+    JOIN bt_env_variable e ON e.variable_id = v.variable_id
+    WHERE v.status_cd = '00A'
+      AND e.status_cd = '00A'
+      AND v.env_code = #{envCode}
+      AND e.tenant_id = #{tenantId}
+      AND e.variable_code = #{varCode}
+  </select>
+
+  <select id="selectEnvVariableIdsByCodes" resultType="java.lang.Long">
+    SELECT variable_id
+    FROM bt_env_variable
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND variable_code in (<foreach item="variableCode" collection="variableCodes" separator=",">#{variableCode}</foreach>)
+  </select>
+
+</mapper>

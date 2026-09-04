@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.UserManageMapper">
+
+  <sql id="userColumns">
+    a.user_id,
+    a.user_name,
+    a.real_name,
+    a.user_type,
+    a.default_tenant_id,
+    a.user_icon,
+    a.phone_no,
+    a.email,
+    a.password,
+    a.system_code,
+    a.ext_user_id,
+    a.create_tenant_id,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark,
+    a.is_locked,
+    a.login_fail_count,
+    a.user_state,
+    a.user_exp_date,
+    a.pwd_updated_time
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.userName != null and query.userName != ''">
+      AND (
+      a.user_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.real_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.systemCode != null and query.systemCode != ''">
+      AND a.system_code = #{query.systemCode}
+    </if>
+  </sql>
+  <select id="existsUserName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND system_code = #{systemCode}
+      AND user_name = #{userName}
+  </select>
+
+  <select id="getUser" resultType="com.iwhalecloud.bote.dto.portal.UserDTO">
+    SELECT
+    <include refid="userColumns"/>,
+    (SELECT t.tenant_name FROM bt_tenant t WHERE t.tenant_id = a.default_tenant_id) AS "defaultTenantName"
+    FROM bt_user a
+    WHERE a.user_id = #{id}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="selectUserDTOListByUserIds" resultType="com.iwhalecloud.bote.dto.portal.UserDTO">
+    SELECT
+    <include refid="userColumns"/>,
+    (SELECT t.tenant_name FROM bt_tenant t WHERE t.tenant_id = a.default_tenant_id) AS "defaultTenantName"
+    FROM bt_user a
+    WHERE a.user_id IN (<foreach collection="userIds" item="userId" separator=",">#{userId}</foreach>)
+    AND a.status_cd = '00A'
+  </select>
+
+  <!-- 多门户并发 syncUser 可能产生重复行；selectOne 要求 0/1 行，故固定取最小 user_id -->
+  <select id="getUserBySystemCodeAndExtUserId" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT <include refid="userColumns"/>
+    FROM bt_user a
+    WHERE a.status_cd = '00A'
+    AND a.system_code = #{systemCode}
+    AND a.ext_user_id = #{extUserId}
+    ORDER BY a.user_id ASC
+    LIMIT 1
+  </select>
+
+  <update id="updateUserPassword">
+    UPDATE bt_user
+    SET password = #{password},
+    updator_id = #{userId},
+    pwd_updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <insert id="insertUser">
+    INSERT INTO bt_user (
+    user_id,
+    user_name,
+    real_name,
+    user_type,
+    user_icon,
+    default_tenant_id,
+    phone_no,
+    email,
+    password,
+    system_code,
+    ext_user_id,
+    create_tenant_id,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark,
+    is_locked,
+    login_fail_count,
+    user_state,
+    user_exp_date,
+    pwd_updated_time
+    )
+    SELECT
+    #{dto.userId},
+    #{dto.userName},
+    #{dto.realName},
+    #{dto.userType},
+    #{dto.userIcon},
+    #{dto.defaultTenantId},
+    #{dto.phoneNo},
+    #{dto.email},
+    #{dto.password},
+    #{dto.systemCode},
+    #{dto.extUserId},
+    #{dto.createTenantId},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark},
+    #{dto.isLocked},
+    #{dto.loginFailCount},
+    #{dto.userState},
+    #{dto.userExpDate},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM bt_user
+      WHERE status_cd = '00A'
+        AND system_code = #{dto.systemCode}
+        AND (
+          user_name = #{dto.userName}
+          <if test="dto.extUserId != null and dto.extUserId != ''">
+          OR ext_user_id = #{dto.extUserId}
+          </if>
+        )
+    )
+  </insert>
+
+  <update id="updateUser">
+    UPDATE bt_user
+    <set>
+      <if test="dto.checkFieldUpdateFlag('userName')">
+        user_name = #{dto.userName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('realName')">
+        real_name = #{dto.realName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('userType')">
+        user_type = #{dto.userType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('phoneNo')">
+        phone_no = #{dto.phoneNo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('email')">
+        email = #{dto.email},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('password')">
+        password = #{dto.password},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('defaultTenantId')">
+        default_tenant_id = #{dto.defaultTenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('userIcon')">
+        user_icon = #{dto.userIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('systemCode')">
+        system_code = #{dto.systemCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('extUserId')">
+        ext_user_id = #{dto.extUserId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('createTenantId')">
+        create_tenant_id = #{dto.createTenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('userExpDate')">
+        user_exp_date = #{dto.userExpDate},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE user_id = #{dto.userId}
+  </update>
+
+  <update id="updateUserBasicInfo">
+    UPDATE bt_user
+    SET user_name = #{dto.userName},
+    real_name = #{dto.realName},
+    phone_no = #{dto.phoneNo},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{dto.userId}
+  </update>
+
+  <update id="deleteUser">
+    UPDATE bt_user
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <select id="selectUserPage" resultType="com.iwhalecloud.bote.dto.portal.SimpleUserDTO">
+    SELECT a.user_id, a.user_name, a.real_name, a.phone_no, a.email, a.remark, a.system_code, a.created_time, a.create_tenant_id,
+    a.is_locked, a.user_state, a.user_exp_date,
+    (SELECT b.user_role FROM bt_tenant_user b WHERE a.user_id = b.user_id AND b.tenant_id = #{tenantId} and b.status_cd = '00A') AS "userRole"
+    FROM bt_user a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.creatTenantId != null">
+      AND a.create_tenant_id = #{query.creatTenantId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectUserList" resultType="com.iwhalecloud.bote.dto.portal.SimpleUserDTO">
+    SELECT a.user_id, a.user_name, a.real_name, a.phone_no, a.email, a.remark, a.system_code, a.created_time
+    FROM bt_user a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectUserDTOList" resultType="com.iwhalecloud.bote.dto.portal.UserDTO">
+    SELECT
+    <include refid="userColumns"/>
+    FROM bt_user a
+    WHERE EXISTS (
+      SELECT 1
+      FROM bt_organization_member c
+      WHERE c.user_id = a.user_id
+        AND c.space_id = #{query.spaceId}
+        AND c.status_cd = '00A'
+    )
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getUserByCode" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT user_id, user_name, real_name, phone_no, email, password, default_tenant_id, user_icon,
+           is_locked, login_fail_count, user_state, user_exp_date, user_type, pwd_updated_time
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND system_code = #{systemCode}
+      AND user_name = #{userName}
+  </select>
+
+  <select id="getOneUserByCode" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT user_id, user_name, real_name, phone_no, email, password, default_tenant_id, user_icon,
+           is_locked, login_fail_count, user_state, user_exp_date, user_type, pwd_updated_time
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND system_code = #{systemCode}
+      AND user_name = #{userName}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <update id="updateTenantIdByUserId">
+    UPDATE bt_user
+    SET default_tenant_id = #{tenantId},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <select id="selectUserListByUserIds" resultType="com.iwhalecloud.bote.dto.portal.SimpleUserDTO">
+    SELECT a.user_id, a.user_name, a.real_name, a.phone_no, a.email, a.remark, a.system_code, a.created_time
+    FROM bt_user a
+    WHERE 1=1
+    AND a.status_cd = '00A'
+    AND a.default_tenant_id = #{defaultTenantId}
+    AND a.user_id IN (<foreach collection="userIds" item="userId" separator=",">#{userId}</foreach>)
+  </select>
+
+  <update id="deleteUserDefaultTenantId">
+    UPDATE bt_user
+    SET default_tenant_id = null,
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id IN (<foreach collection="userIds" item="userId" separator=",">#{userId}</foreach>)
+  </update>
+
+  <select id="countAllUser" resultType="java.lang.Long">
+    SELECT count(1) from bt_user a
+    WHERE 1 = 1
+      AND a.status_cd = '00A'
+  </select>
+
+
+  <insert id="batchInsertUsers">
+    INSERT INTO bt_user (
+    user_id,
+    user_name,
+    real_name,
+    user_type,
+    default_tenant_id,
+    phone_no,
+    email,
+    password,
+    system_code,
+    ext_user_id,
+    create_tenant_id,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark,
+    pwd_updated_time
+    ) VALUES
+    <foreach collection="list" item="user" separator=",">
+      (
+      #{user.userId},
+      #{user.userName},
+      #{user.realName},
+      #{user.userType},
+      #{user.defaultTenantId},
+      #{user.phoneNo},
+      #{user.email},
+      #{user.password},
+      #{user.systemCode},
+      #{user.extUserId},
+      #{user.createTenantId},
+      #{user.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{user.statusCd},
+      #{user.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{user.remark},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertUsers" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="user" separator=" ">
+      INTO bt_user (
+      user_id,
+      user_name,
+      real_name,
+      user_type,
+      default_tenant_id,
+      phone_no,
+      email,
+      password,
+      system_code,
+      ext_user_id,
+      create_tenant_id,
+      creator_id,
+      created_time,
+      status_cd,
+      updator_id,
+      updated_time,
+      remark,
+      pwd_updated_time
+      ) VALUES (
+      #{user.userId},
+      #{user.userName},
+      #{user.realName},
+      #{user.userType},
+      #{user.defaultTenantId},
+      #{user.phoneNo},
+      #{user.email},
+      #{user.password},
+      #{user.systemCode},
+      #{user.extUserId},
+      #{user.createTenantId},
+      #{user.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{user.statusCd},
+      #{user.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{user.remark},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <insert id="batchInsertTenantUsers">
+    INSERT INTO bt_tenant_user (
+    tenant_user_id,
+    tenant_id,
+    user_id,
+    user_role,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="tenantUser" separator=",">
+      (
+      #{tenantUser.tenantUserId},
+      #{tenantUser.tenantId},
+      #{tenantUser.userId},
+      #{tenantUser.userRole},
+      #{tenantUser.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      '00A',
+      #{tenantUser.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{tenantUser.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertTenantUsers" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="tenantUser" separator=" ">
+      INTO bt_tenant_user (
+      tenant_user_id,
+      tenant_id,
+      user_id,
+      user_role,
+      creator_id,
+      created_time,
+      status_cd,
+      updator_id,
+      updated_time,
+      remark
+      ) VALUES (
+      #{tenantUser.tenantUserId},
+      #{tenantUser.tenantId},
+      #{tenantUser.userId},
+      #{tenantUser.userRole},
+      #{tenantUser.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      '00A',
+      #{tenantUser.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{tenantUser.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="checkUserNamesExist" resultType="string">
+    SELECT user_name
+    FROM bt_user
+    WHERE user_name IN
+    <foreach item="userName" collection="userNames" open="(" separator="," close=")">
+      #{userName}
+    </foreach>
+    AND status_cd = '00A'
+  </select>
+
+  <select id="countForUserExpCheck" resultType="java.lang.Long">
+    SELECT count(1) FROM bt_user
+    WHERE status_cd = '00A'
+      AND user_state = 'A'
+      AND system_code = 'default'
+  </select>
+
+  <select id="selectPageForUserExpCheck" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT user_id, user_name FROM bt_user
+    WHERE status_cd = '00A'
+      AND user_state = 'A'
+      AND system_code = 'default'
+      AND user_id > #{lastUserId}
+    ORDER BY user_id
+  </select>
+
+  <update id="updateUserLoginFailCount">
+    UPDATE bt_user
+    SET login_fail_count = #{loginFailCount},
+    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <update id="updateUserLockState">
+    UPDATE bt_user
+    SET is_locked = #{isLocked},
+    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <update id="updateUserState">
+    UPDATE bt_user
+    SET user_state = #{userState},
+    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <select id="selectUserListByOrgId" resultType="com.iwhalecloud.bote.doc.common.model.PortalUserDTO">
+    SELECT u.user_id,
+           u.user_icon,
+           u.user_name AS "userCode",
+           CASE WHEN u.real_name IS NULL OR u.real_name = '' THEN u.user_name ELSE u.real_name END AS "userName",
+           o.org_id,
+           o.org_name,
+           o.org_level
+    FROM bt_user u
+           JOIN
+         bt_organization_member om ON u.user_id = om.user_id
+           JOIN
+         bt_organization o ON om.org_id = o.org_id
+    WHERE om.org_id = #{orgId}
+      AND om.status_cd = '00A'
+      AND o.status_cd = '00A'
+      AND u.status_cd = '00A'
+  </select>
+
+  <select id="selectUserIcon" resultType="java.lang.String">
+    SELECT user_icon
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+  </select>
+
+  <update id="deleteDefaultTenantId">
+    UPDATE bt_user
+    SET default_tenant_id = null,
+    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE default_tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="pageUserBasicInfo" resultType="com.iwhalecloud.bote.dto.portal.SimpleUserDTO">
+    SELECT a.user_id, a.user_name, a.real_name, a.system_code
+    FROM bt_user a
+    WHERE a.status_cd = '00A'
+    <include refid="batchQueryCondition"/>
+    <if test="query.excludeOrgId != null">
+      AND a.user_id NOT IN (SELECT om.user_id FROM bt_organization_member om
+                            WHERE om.status_cd = '00A' AND om.org_id = #{query.excludeOrgId})
+    </if>
+  </select>
+  <select id="getSimpleUserDTO" resultType="com.iwhalecloud.bote.dto.portal.SimpleUserDTO">
+   SELECT a.user_id, a.user_name, a.real_name, a.phone_no, a.email, a.remark, a.system_code, a.created_time
+    FROM bt_user a
+    WHERE 1=1
+    AND a.status_cd = '00A'
+    AND a.user_id = #{userId}
+  </select>
+
+  <select id="getSimpleUserList" resultType="com.iwhalecloud.bote.dto.portal.SimpleUserDTO">
+    SELECT user_id, user_name
+    FROM bt_user
+    WHERE status_cd = '00A'
+      AND user_id IN<foreach item="userId" collection="userIdList" open="(" separator="," close=")">#{userId}</foreach>
+  </select>
+
+</mapper>

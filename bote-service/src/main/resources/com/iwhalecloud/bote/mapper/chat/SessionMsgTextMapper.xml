@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @formatter:off -->
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.SessionMsgTextMapper">
+
+  <insert id="batchInsertSessionMsgText">
+    INSERT INTO bt_bot_session_msg_text (
+    msg_id,
+    msg_text,
+    memory_content,
+    download_type,
+    download_content,
+    content_type,
+    paragraph_group,
+    paragraph_sortby,
+    ext_params
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.msgId},
+      #{dto.msgText},
+      #{dto.memoryContent},
+      #{dto.downloadType},
+      #{dto.downloadContent},
+      #{dto.contentType},
+      #{dto.paragraphGroup},
+      #{dto.paragraphSortby},
+      #{dto.extParams}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSessionMsgText" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_bot_session_msg_text (
+      msg_id,
+      msg_text,
+      memory_content,
+      download_type,
+      download_content,
+      content_type,
+      paragraph_group,
+      paragraph_sortby,
+      ext_params
+      ) VALUES (
+      #{dto.msgId},
+      #{dto.msgText},
+      #{dto.memoryContent},
+      #{dto.downloadType},
+      #{dto.downloadContent},
+      #{dto.contentType},
+      #{dto.paragraphGroup},
+      #{dto.paragraphSortby},
+      #{dto.extParams}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateMemoryContent">
+    UPDATE bt_bot_session_msg_text
+    SET memory_content = #{memoryContent},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE msg_id = #{msgId}
+  </update>
+
+  <select id="selectDownloadInfoByMsgId" resultType="com.iwhalecloud.bote.dto.chat.ReplyDownloadInfoDTO">
+    SELECT b.download_type AS file_type,
+           CASE WHEN b.download_type IS NOT NULL THEN COALESCE(b.download_content, b.msg_text) END AS content,
+           b.paragraph_group,
+           b.paragraph_sortby,
+           a.transaction_id
+    FROM bt_bot_session_msg a
+    LEFT JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE b.msg_id = #{msgId}
+  </select>
+
+  <select id="selectParagraphReply" resultType="java.lang.String">
+    SELECT CASE WHEN b.download_type IS NOT NULL THEN COALESCE(b.download_content, b.msg_text) END AS content
+    FROM bt_bot_session_msg a
+    LEFT JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.transaction_id = #{transactionId}
+      AND b.paragraph_group = #{group}
+    ORDER BY b.paragraph_sortby
+  </select>
+</mapper>

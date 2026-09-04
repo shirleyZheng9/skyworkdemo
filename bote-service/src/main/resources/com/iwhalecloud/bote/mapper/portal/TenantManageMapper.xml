@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.TenantManageMapper">
+
+  <sql id="tenantColumns">
+    a.tenant_id,
+    a.tenant_code,
+    a.tenant_name,
+    a.tenant_use,
+    a.tenant_icon,
+    a.prologue,
+    a.question_setting_info,
+    a.bot_setting_info,
+    a.app_id,
+    a.system_type,
+    a.space_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="tenantUserColumns">
+    a.tenant_user_id,
+    a.user_id,
+    a.tenant_id,
+    a.user_role,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.tenant_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.tenant_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.userId != null">
+      AND EXISTS (SELECT 1 FROM bt_tenant_user b
+      WHERE a.tenant_id = b.tenant_id
+      AND b.status_cd = '00A'
+      AND b.user_id = #{query.userId})
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+  </sql>
+
+  <select id="existsTenantCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_tenant
+    WHERE status_cd = '00A'
+    AND tenant_code = #{dto.tenantCode}
+    <if test="dto.tenantId != null">
+      AND tenant_id != #{dto.tenantId}
+    </if>
+  </select>
+
+  <select id="getTenantByCodeAndName" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>
+    FROM bt_tenant a
+    WHERE tenant_code = #{code}
+    AND tenant_name = #{name}
+    AND status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="getTenantByExtTenantIdAndSpace" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>
+    FROM bt_tenant a
+    WHERE ext_tenant_id = #{extTenantId}
+    <if test="spaceId != null"> AND space_id = #{spaceId} </if>
+    AND status_cd IN ('00A', '00X')
+    ORDER BY (CASE status_cd WHEN '00A' THEN 0 ELSE 1 END)
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <update id="reactivateTenant">
+    UPDATE bt_tenant
+    SET status_cd = '00A',
+    tenant_name = #{tenantName},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+  </update>
+
+  <update id="updateTenantName">
+    UPDATE bt_tenant
+    SET tenant_name = #{tenantName},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+  </update>
+
+  <select id="getTenant" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>
+    FROM bt_tenant a
+    WHERE tenant_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="getTenantIcon" resultType="java.lang.String">
+    SELECT tenant_icon
+    FROM bt_tenant a
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insertTenant">
+    INSERT INTO bt_tenant (
+    tenant_id,
+    tenant_code,
+    tenant_name,
+    tenant_use,
+    tenant_icon,
+    prologue,
+    question_setting_info,
+    bot_setting_info,
+    app_id,
+    system_type,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    ext_tenant_id,
+    remark
+    ) VALUES (
+    #{dto.tenantId},
+    #{dto.tenantCode},
+    #{dto.tenantName},
+    #{dto.tenantUse},
+    #{dto.tenantIcon},
+    #{dto.prologue},
+    #{dto.questionSettingInfo},
+    #{dto.botSettingInfo},
+    #{dto.appId},
+    #{dto.systemType},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.extTenantId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateTenant">
+    UPDATE bt_tenant
+    <set>
+      <if test="dto.checkFieldUpdateFlag('tenantCode')">
+        tenant_code = #{dto.tenantCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantName')">
+        tenant_name = #{dto.tenantName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantUse')">
+        tenant_use = #{dto.tenantUse},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantIcon')">
+        tenant_icon = #{dto.tenantIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('prologue')">
+        prologue = #{dto.prologue},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('questionSettingInfo')">
+        question_setting_info = #{dto.questionSettingInfo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botSettingInfo')">
+        bot_setting_info = #{dto.botSettingInfo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('spaceId')">
+        space_id = #{dto.spaceId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('appId')">
+        app_id = #{dto.appId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('systemType')">
+        system_type = #{dto.systemType},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteTenant">
+    UPDATE bt_tenant
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectTenantPage" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT b.user_role FROM bt_tenant_user b WHERE a.tenant_id = b.tenant_id AND b.status_cd = '00A' AND b.user_id = #{query.userId}) AS "userRole"
+    FROM bt_tenant a
+    WHERE 1=1
+      AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.tenant_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.tenant_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="selectTenantList" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_tenant a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="getTenantUser" resultType="com.iwhalecloud.bote.dto.portal.TenantUserDTO">
+    SELECT
+    <include refid="tenantUserColumns"/>
+    FROM bt_tenant_user a
+    WHERE tenant_user_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertTenantUser">
+    INSERT INTO bt_tenant_user (
+    tenant_user_id,
+    user_id,
+    tenant_id,
+    user_role,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    )
+    SELECT
+    #{dto.tenantUserId},
+    #{dto.userId},
+    #{dto.tenantId},
+    #{dto.userRole},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM bt_tenant_user
+      WHERE status_cd = '00A'
+        AND tenant_id = #{dto.tenantId}
+        AND user_id = #{dto.userId}
+    )
+  </insert>
+
+  <insert id="insertTenantUser" databaseId="oracle">
+    INSERT INTO bt_tenant_user (
+    tenant_user_id,
+    user_id,
+    tenant_id,
+    user_role,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    )
+    SELECT
+    #{dto.tenantUserId},
+    #{dto.userId},
+    #{dto.tenantId},
+    #{dto.userRole},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    FROM dual
+    WHERE NOT EXISTS (
+      SELECT 1
+      FROM bt_tenant_user
+      WHERE status_cd = '00A'
+        AND tenant_id = #{dto.tenantId}
+        AND user_id = #{dto.userId}
+    )
+  </insert>
+
+  <insert id="batchInsertTenantUser">
+    INSERT INTO bt_tenant_user (
+    tenant_user_id,
+    user_id,
+    tenant_id,
+    user_role,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    )
+    VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.tenantUserId},
+      #{dto.userId},
+      #{dto.tenantId},
+      #{dto.userRole},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertTenantUser" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_tenant_user (
+      tenant_user_id,
+      user_id,
+      tenant_id,
+      user_role,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.tenantUserId},
+      #{dto.userId},
+      #{dto.tenantId},
+      #{dto.userRole},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateTenantUser">
+    UPDATE bt_tenant_user
+    <set>
+      <if test="dto.userId != null">
+        user_id = #{dto.userId},
+      </if>
+      <if test="dto.tenantId != null">
+        tenant_id = #{dto.tenantId},
+      </if>
+      <if test="dto.userRole != null and dto.userRole != ''">
+        user_role = #{dto.userRole},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != ''">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE tenant_user_id = #{dto.tenantUserId}
+  </update>
+
+  <update id="deleteTenantUser">
+    UPDATE bt_tenant_user
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+    AND user_id IN (<foreach collection="userIds" item="id" separator=",">#{id}</foreach>)
+  </update>
+
+  <update id="deleteTenantUserByUserId">
+    UPDATE bt_tenant_user
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+  </update>
+
+  <select id="selectTenantUserPage" resultType="com.iwhalecloud.bote.dto.portal.TenantUserDTO">
+    SELECT
+    <include refid="tenantUserColumns"/>,
+    u.user_name,
+    u.real_name,
+    u.system_code,
+    u.email,
+    u.phone_no,
+    u2.real_name AS updatorName,
+    CASE WHEN u.create_tenant_id = #{query.tenantId} THEN 1 ELSE 0 END AS "isBelongCurrentTenant"
+    FROM bt_tenant_user a
+    JOIN bt_user u ON a.user_id = u.user_id
+    LEFT JOIN bt_user u2 ON a.updator_id = u2.user_id
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (u.user_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectTenantUserList" resultType="com.iwhalecloud.bote.dto.portal.TenantUserDTO">
+    SELECT
+    <include refid="tenantUserColumns"/>
+    FROM bt_tenant_user a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id in (<foreach collection="tenantIds" item="tenantId" separator=",">#{tenantId}</foreach>)
+  </select>
+
+  <select id="selectTenantUserListByUserIds" resultType="com.iwhalecloud.bote.dto.portal.TenantUserDTO">
+    SELECT <include refid="tenantUserColumns"/>
+    FROM bt_tenant_user a
+    WHERE a.status_cd = '00A'
+    AND a.user_id in (<foreach collection="userIds" item="userId" separator=",">#{userId}</foreach>)
+  </select>
+
+  <select id="selectSimpleTenantsByUserId" resultType="com.iwhalecloud.bote.dto.portal.SimpleTenantDTO">
+    SELECT a.tenant_id, a.tenant_code, a.tenant_name, b.user_role, a.system_type,
+           c.space_id, c.space_name
+    FROM bt_tenant a
+    JOIN bt_tenant_user b ON a.tenant_id = b.tenant_id
+    LEFT JOIN bt_workspace c ON a.space_id = c.space_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND b.user_id = #{userId}
+    <if test="spaceId != null">
+      AND a.space_id = #{spaceId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSimpleTenants" resultType="com.iwhalecloud.bote.dto.portal.SimpleTenantDTO">
+    SELECT a.tenant_id, a.tenant_code, a.tenant_name, a.system_type,
+           b.space_id, b.space_name
+    FROM bt_tenant a
+    LEFT JOIN bt_workspace b ON a.space_id = b.space_id
+    WHERE a.status_cd = '00A'
+    and (a.system_type IS NULL OR a.system_type != 'workspace')
+    <if test="spaceId != null">
+      AND a.space_id = #{spaceId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectTenantPageByUserId" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT a.tenant_id, a.tenant_code, a.tenant_name, a.created_time, a.creator_id, b.user_role, b.tenant_user_id
+    FROM bt_tenant a
+           JOIN bt_tenant_user b ON a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND b.user_id = #{query.userId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="existsTenantUser" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_tenant_user
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND user_id = #{userId}
+  </select>
+
+  <select id="existsTenantByUserId" resultType="java.lang.Boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_tenant_user a
+    JOIN bt_tenant b ON a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.user_id = #{userId}
+  </select>
+
+  <select id="getUserRole" resultType="java.lang.String">
+    SELECT user_role
+    FROM bt_tenant_user
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND user_id = #{userId}
+  </select>
+
+  <select id="getTenantUserByTenantIdAndUserId" resultType="com.iwhalecloud.bote.dto.portal.TenantUserDTO">
+    SELECT
+    <include refid="tenantUserColumns"/>
+    FROM bt_tenant_user a
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND user_id = #{userId}
+  </select>
+
+  <select id="getTenantIdsBySpaceId" resultType="java.lang.Long">
+    SELECT tenant_id
+    FROM bt_tenant
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="queryTenantList" resultType="com.iwhalecloud.bote.dto.portal.SimpleTenantDTO">
+    SELECT tenant_id, tenant_code, tenant_name, system_type,space_id
+    FROM bt_tenant
+    WHERE status_cd = '00A'
+    and (system_type IS NULL OR system_type != 'workspace')
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="queryUserRole" resultType="java.lang.String">
+    SELECT a.user_role
+    FROM bt_tenant_user a
+    WHERE a.status_cd = '00A'
+      AND a.user_id = #{userId}
+    <if test="tenantId != null">
+      AND a.tenant_id = #{tenantId}
+    </if>
+      AND EXISTS (SELECT 1 FROM bt_tenant b WHERE a.tenant_id = b.tenant_id AND b.space_id = #{spaceId})
+  </select>
+
+  <select id="getSpaceIdByTenantId" resultType="java.lang.Long">
+    SELECT space_id
+    FROM bt_tenant
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+</mapper>

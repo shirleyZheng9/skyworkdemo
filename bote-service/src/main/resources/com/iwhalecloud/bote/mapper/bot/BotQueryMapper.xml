@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotQueryMapper">
+
+  <sql id="botColumns">
+    a.bot_id,
+    a.tenant_id,
+    a.bot_name,
+    a.bot_use,
+    a.prologue,
+    a.is_default,
+    a.bot_status,
+    a.model_id,
+    a.catalog_item_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.botIds != null and !query.botIds.isEmpty()">
+      AND a.bot_id IN (<foreach collection="query.botIds" item="id" separator=", ">#{id}</foreach>)
+    </if>
+    <if test="query.userId != null">
+      AND a.creator_id = #{query.userId}
+    </if>
+    <if test="query.memberId != null">
+      AND EXISTS (SELECT 1 FROM bt_tenant_user b WHERE b.tenant_id = a.tenant_id AND b.status_cd = '00A' AND b.user_id = #{query.memberId})
+    </if>
+    <if test="query.botStatus != null">
+      AND a.bot_status = #{query.botStatus}
+    </if>
+    <if test="query.status != null and !query.status.isEmpty()">
+      AND a.bot_status IN (<foreach collection="query.status" item="status" separator=",">#{status}</foreach>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND (a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>))
+    </if>
+  </sql>
+
+  <select id="getBot" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT a.bot_id,
+           a.tenant_id,
+           a.bot_name,
+           a.bot_use,
+           a.bot_status,
+           a.prologue,
+           a.bot_icon,
+           a.is_default,
+           a.model_id,
+           a.catalog_item_id,
+           a.page_base_info,
+           a.page_setting_info,
+           a.agent_strategy,
+           a.updated_time,
+           a.data_from,
+           a.creator_id
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.bot_id = #{botId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSimpleBot" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT bot_id, bot_name, bot_use, bot_status, tenant_id, updated_time, creator_id
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+  </select>
+
+  <select id="selectBotNameByBotId" resultType="java.lang.String">
+    SELECT bot_name
+    FROM bt_bot
+    WHERE status_cd = '00A'
+    AND tenant_id = #{tenantId}
+    AND bot_id = #{botId}
+  </select>
+
+  <select id="selectSimpleBots" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT bot_id, bot_name, bot_use, bot_status
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND bot_id IN (<foreach collection="botIds" item="botId" separator=",">#{botId}</foreach>)
+    <if test="botStatus != null and botStatus != ''">
+      AND bot_status = #{botStatus}
+    </if>
+  </select>
+
+  <select id="selectAgentStrategy" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    <!-- 如果 select 只有一个字段，当字段值为空时会返回 null 而非空对象 -->
+    SELECT bot_id, agent_strategy
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+  </select>
+
+  <select id="selectPageSettingInfo" resultType="java.lang.String">
+    SELECT page_setting_info
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+  </select>
+
+  <select id="existsBotById" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_bot
+    WHERE bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectBotIcon" resultType="com.iwhalecloud.bote.entity.bot.BotEntity">
+    <!-- 如果 select 只有一个字段，当字段值为空时会返回 null 而非空对象 -->
+    SELECT bot_id, bot_icon
+    FROM bt_bot
+    WHERE tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+  </select>
+
+  <select id="getDefaultBot" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT bot_id, bot_name
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND is_default = 'T'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="getFirstBot" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT bot_id, bot_name
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="existsBotFavor" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_bot_favor
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND user_id = #{userId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectBotUserExperience" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotUserExperienceDTO">
+    SELECT type, content FROM bt_bot_user_experience
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+      AND content IS NOT NULL
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="selectModelIdByBotId" resultType="java.lang.Long">
+    SELECT model_id
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+  </select>
+
+  <select id="selectBotPage" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT <include refid="botColumns"/>, a.agent_strategy,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    CASE WHEN EXISTS (SELECT 1 FROM bt_bot_auth b WHERE b.status_cd = '00A' AND b.bot_id = a.bot_id) THEN 'T' ELSE 'F' END AS "isPublish"
+    FROM bt_bot a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.published != null">
+      <choose>
+        <when test="query.published">
+          AND EXISTS (SELECT 1 FROM bt_bot_auth b WHERE b.status_cd = '00A' AND b.bot_id = a.bot_id)
+        </when>
+        <otherwise>
+          AND NOT EXISTS (SELECT 1 FROM bt_bot_auth b WHERE b.status_cd = '00A' AND b.bot_id = a.bot_id)
+        </otherwise>
+      </choose>
+    </if>
+    <if test="query.strategyType != null and query.strategyType != ''">
+      AND (a.agent_strategy LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.strategyType}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <if test="query.strategyTypeNone">
+          OR a.agent_strategy IS NULL
+        </if>
+      )
+    </if>
+    <if test="query.dataFrom == null or query.dataFrom == ''">
+      AND (a.data_from != '10A' OR a.data_from IS NULL)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="beyondQueryBotPage" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT DISTINCT <include refid="botColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    CASE WHEN EXISTS (SELECT 1 FROM bt_bot_auth b WHERE b.status_cd = '00A' AND b.bot_id = a.bot_id) THEN 'T' ELSE 'F' END AS "isPublish",
+    brpr.publish_status AS "beyondPublishStatus"
+    FROM bt_bot a
+    LEFT JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+      AND brpr.publish_channel = 'BEYOND'
+      AND brpr.resource_type = 'BOT'
+      AND brpr.status_cd = '00A'
+      AND brpr.tenant_id = #{query.tenantId}
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.botIds != null and !query.botIds.isEmpty()">
+      AND a.bot_id IN (<foreach collection="query.botIds" item="id" separator=", ">#{id}</foreach>)
+    </if>
+    <if test="query.userId != null">
+      AND a.creator_id = #{query.userId}
+    </if>
+    <if test="query.memberId != null">
+      AND EXISTS (SELECT 1 FROM bt_tenant_user b WHERE b.tenant_id = a.tenant_id AND b.status_cd = '00A' AND b.user_id = #{query.memberId})
+    </if>
+    <if test="query.botStatus != null and query.botStatus != ''">
+      AND a.bot_status = #{query.botStatus}
+    </if>
+    <if test="query.status != null and !query.status.isEmpty()">
+      AND a.bot_status IN (<foreach collection="query.status" item="status" separator=",">#{status}</foreach>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND (a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>))
+    </if>
+    <if test="query.beyondPublishStatus != null and query.beyondPublishStatus != ''">
+      AND brpr.publish_status = #{query.beyondPublishStatus}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="beyondQueryResourcePage" resultType="com.iwhalecloud.bote.dto.bot.BeyondResourceDTO">
+    SELECT * FROM (
+      <if test="query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('APPLICATION')">
+        -- 智能应用查询
+        SELECT DISTINCT
+          a.bot_id AS "resourceId",
+          a.bot_name AS "resourceName",
+          a.bot_use AS "resourceDesc",
+          a.bot_icon AS "avatar",
+          a.bot_status AS "resourceStatus",
+          a.bot_status AS "status",
+          a.tenant_id AS "tenantId",
+          'APPLICATION' AS "resourceType",
+          brpr.publish_status AS "authStatus",
+          a.updated_time AS "updateTime",
+          NULL AS "sceneType",
+          (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "createUserName",
+          a.created_time AS "createTime"
+        FROM bt_bot a
+        <choose>
+          <when test="query.ownershipType != null and query.ownershipType == '1'.toString">
+            INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+              AND brpr.publish_channel = 'BEYOND'
+              AND brpr.resource_type = 'BOT'
+              AND brpr.status_cd = '00A'
+              AND brpr.creator_id = #{userId}
+          </when>
+          <when test="query.ownershipType != null and query.ownershipType == '0'.toString">
+            INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+                AND brpr.publish_channel = 'BEYOND'
+                AND brpr.resource_type = 'BOT'
+                AND brpr.status_cd = '00A'
+                AND (brpr.creator_id IS NULL OR brpr.creator_id != #{userId})
+          </when>
+          <otherwise>
+            LEFT JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+              AND brpr.publish_channel = 'BEYOND'
+              AND brpr.resource_type = 'BOT'
+              AND brpr.status_cd = '00A'
+          </otherwise>
+        </choose>
+        WHERE a.status_cd = '00A'
+        <if test="query.keyword != null and query.keyword != ''">
+          AND (a.bot_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          OR a.bot_use LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+        </if>
+        <if test="query.status != null and !query.status.isEmpty()">
+          AND a.bot_status IN (<foreach collection="query.status" item="status" separator=",">#{status}</foreach>)
+        </if>
+        <if test="query.tenantId != null">
+          AND a.tenant_id = #{query.tenantId}
+        </if>
+      </if>
+      <if test="(query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('APPLICATION')) and (query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('AGENT'))">
+        UNION ALL
+      </if>
+      <if test="query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('AGENT')">
+        -- 智能体查询
+        SELECT DISTINCT
+          a.scene_id AS "resourceId",
+          a.scene_name AS "resourceName",
+          a.scene_desc AS "resourceDesc",
+          a.scene_icon AS "avatar",
+          a.scene_status AS "resourceStatus",
+          a.scene_status AS "status",
+          a.tenant_id AS "tenantId",
+          'AGENT' AS "resourceType",
+          brpr.publish_status AS "authStatus",
+          a.updated_time AS "updateTime",
+          a.scene_type AS "sceneType",
+          (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "createUserName",
+          a.created_time AS "createTime"
+        FROM bt_bot_scene a
+        <choose>
+          <when test="query.ownershipType != null and query.ownershipType == '1'.toString">
+            INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+              AND brpr.publish_channel = 'BEYOND'
+              AND brpr.resource_type = 'AGENT'
+              AND brpr.status_cd = '00A'
+              AND brpr.creator_id = #{userId}
+          </when>
+          <when test="query.ownershipType != null and query.ownershipType == '0'.toString">
+            INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+              AND brpr.publish_channel = 'BEYOND'
+              AND brpr.resource_type = 'AGENT'
+              AND brpr.status_cd = '00A'
+              AND (brpr.creator_id IS NULL OR brpr.creator_id != #{userId})
+          </when>
+          <otherwise>
+            LEFT JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+              AND brpr.publish_channel = 'BEYOND'
+              AND brpr.resource_type = 'AGENT'
+              AND brpr.status_cd = '00A'
+          </otherwise>
+        </choose>
+        WHERE a.status_cd = '00A'
+        <if test="query.keyword != null and query.keyword != ''">
+          AND (a.scene_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          OR a.scene_desc LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+        </if>
+        <if test="query.status != null and !query.status.isEmpty()">
+          AND a.scene_status IN (<foreach collection="query.status" item="status" separator=",">#{status}</foreach>)
+        </if>
+        <if test="query.tenantId != null">
+          AND a.tenant_id = #{query.tenantId}
+        </if>
+      </if>
+    ) combined_result
+    ORDER BY combined_result."updateTime" DESC
+  </select>
+
+  <select id="beyondGetTotalCountOnAllStatus" resultType="com.iwhalecloud.bote.dto.bot.BeyondResourceStatusCountDTO">
+    SELECT
+      COALESCE(SUM(CASE WHEN status = '0' THEN 1 ELSE 0 END), 0) AS "review",
+      COALESCE(SUM(CASE WHEN status = '1' THEN 1 ELSE 0 END), 0) AS "shelf",
+      COALESCE(SUM(CASE WHEN status = '2' THEN 1 ELSE 0 END), 0) AS "offShelf"
+    FROM (
+      <if test="query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('APPLICATION')">
+        -- 智能应用查询
+        SELECT
+          a.bot_status AS "status"
+        FROM bt_bot a
+        <if test="query.ownershipType != null">
+          <choose>
+            <when test="query.ownershipType == '1'.toString">
+              INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+                AND brpr.publish_channel = 'BEYOND'
+                AND brpr.resource_type = 'BOT'
+                AND brpr.status_cd = '00A'
+                AND brpr.creator_id = #{userId}
+            </when>
+            <when test="query.ownershipType == '0'.toString">
+              INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+                AND brpr.publish_channel = 'BEYOND'
+                AND brpr.resource_type = 'BOT'
+                AND brpr.status_cd = '00A'
+                AND (brpr.creator_id IS NULL OR brpr.creator_id != #{userId})
+            </when>
+          </choose>
+        </if>
+        WHERE a.status_cd = '00A'
+        <if test="query.keyword != null and query.keyword != ''">
+          AND (a.bot_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          OR a.bot_use LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+        </if>
+        <if test="query.tenantId != null">
+          AND a.tenant_id = #{query.tenantId}
+        </if>
+      </if>
+      <if test="(query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('APPLICATION')) and (query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('AGENT'))">
+        UNION ALL
+      </if>
+      <if test="query.resourceBizTypes == null or query.resourceBizTypes.isEmpty() or query.resourceBizTypes.contains('AGENT')">
+        -- 智能体查询
+        SELECT
+          a.scene_status AS "status"
+        FROM bt_bot_scene a
+        <if test="query.ownershipType != null">
+          <choose>
+            <when test="query.ownershipType == '1'.toString">
+              INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+                AND brpr.publish_channel = 'BEYOND'
+                AND brpr.resource_type = 'AGENT'
+                AND brpr.status_cd = '00A'
+                AND brpr.creator_id = #{userId}
+            </when>
+            <when test="query.ownershipType == '0'.toString">
+              INNER JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+                AND brpr.publish_channel = 'BEYOND'
+                AND brpr.resource_type = 'AGENT'
+                AND brpr.status_cd = '00A'
+                AND (brpr.creator_id IS NULL OR brpr.creator_id != #{userId})
+            </when>
+          </choose>
+        </if>
+        WHERE a.status_cd = '00A'
+        <if test="query.keyword != null and query.keyword != ''">
+          AND (a.scene_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          OR a.scene_desc LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          #{query.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          )
+        </if>
+        <if test="query.tenantId != null">
+          AND a.tenant_id = #{query.tenantId}
+        </if>
+      </if>
+    ) combined_result
+  </select>
+
+  <select id="beyondQueryBotPageForSeparated" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT DISTINCT <include refid="botColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    CASE WHEN EXISTS (SELECT 1 FROM bt_bot_auth b WHERE b.status_cd = '00A' AND b.bot_id = a.bot_id) THEN 'T' ELSE 'F' END AS "isPublish",
+    brpr.publish_status AS "beyondPublishStatus"
+    FROM bt_bot a
+    LEFT JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.bot_id
+      AND brpr.publish_channel = 'BEYOND'
+      AND brpr.resource_type = 'BOT'
+      AND brpr.status_cd = '00A'
+      AND brpr.tenant_id = #{query.tenantId}
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.name != null and query.name != ''">
+      AND a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.name}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.status != null and query.status != ''">
+      AND a.bot_status = #{query.status}
+    </if>
+    <if test="query.beyondPublishStatus != null and query.beyondPublishStatus != ''">
+      AND brpr.publish_status = #{query.beyondPublishStatus}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectBotList" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT <include refid="botColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_bot a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.dataFrom == null or query.dataFrom == ''">
+      AND (a.data_from != '10A' OR a.data_from IS NULL)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectCommonBotList" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT <include refid="botColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.bot_status = '1'
+      AND a.is_popular = 'T'
+      AND a.tenant_id = 2
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectUserBotList" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT * FROM (
+    SELECT <include refid="botColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_bot_session b
+    LEFT JOIN bt_bot a ON a.bot_id = b.bot_id AND a.tenant_id = b.bot_tenant_id
+    WHERE 1=1
+    <if test="query.memberId != null">
+      AND b.creator_id = #{query.memberId}
+    </if>
+    ORDER BY b.updated_time DESC) TMP
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 10
+  </select>
+
+  <select id="selectPopularBotList" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT * FROM (
+    SELECT <include refid="botColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_bot a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    AND a.is_popular = 'T'
+    ORDER BY a.updated_time DESC) TMP
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 4
+  </select>
+
+  <select id="selectBotListForIntent" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT a.bot_id,
+           a.tenant_id,
+           a.bot_name,
+           a.bot_use
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.bot_status = '1'
+  </select>
+
+  <select id="selectBotListBySceneId" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT a.bot_id,
+           a.tenant_id,
+           a.bot_name,
+           a.bot_use
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.bot_status = '1'
+      AND exists (SELECT 1 FROM bt_bot_scene_rel r
+                  WHERE a.tenant_id = r.tenant_id
+                    AND a.bot_id = r.bot_id
+                    AND r.status_cd = '00A'
+                    AND r.scene_id = #{sceneId})
+  </select>
+
+  <select id="selectBotListByIds" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT a.bot_id,
+           a.tenant_id,
+           a.bot_name,
+           a.bot_use,
+           a.bot_status,
+           a.data_from,
+           a.creator_id
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+    <if test="tenantId != null">
+      AND a.tenant_id = #{tenantId}
+    </if>
+      AND a.bot_id IN (<foreach collection="botIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectBaseBotList" resultType="com.iwhalecloud.bote.dto.bot.BaseBotDTO">
+    SELECT a.bot_id,
+           a.bot_name
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.bot_status = '1'
+  </select>
+
+  <select id="getBotPageSettingIcon" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT
+    bot_icon,
+    page_setting_icon
+    FROM bt_bot a
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectAiBotPage" resultType="com.iwhalecloud.bote.dto.bot.BaseBotDTO">
+    SELECT a.bot_id, a.bot_name, a.tenant_id, a.created_time,
+           t.tenant_name, u.user_name AS creator_name
+    FROM bt_bot a
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.tenant_id
+    LEFT JOIN bt_user u ON u.user_id = a.creator_id
+    WHERE a.status_cd = '00A'
+      AND a.bot_status = '1'
+    <choose>
+      <when test="params.tenantId != null">
+        AND a.tenant_id = #{params.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (SELECT tenant_id FROM bt_tenant WHERE status_cd = '00A' AND space_id = #{params.spaceId})
+      </otherwise>
+    </choose>
+    <if test="params.searchContent != null and params.searchContent != ''">
+      AND a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{params.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="params.filterRelated">
+      AND NOT EXISTS(SELECT 1 FROM bt_workbench_app_rel b
+        WHERE b.status_cd = '00A'
+        AND b.rel_app_id = a.bot_id
+        AND b.rel_app_type = 'aiBot'
+        AND b.space_id = #{params.spaceId}
+        <if test="params.selectedAiAppIds != null and params.selectedAiAppIds.size() > 0">
+        AND b.rel_app_id NOT IN (<foreach collection="params.selectedAiAppIds" item="selectedAppId" separator=", ">#{selectedAppId}</foreach> )
+        </if>
+        )
+    </if>
+    ORDER BY a.created_time DESC, a.bot_id DESC
+  </select>
+
+  <select id="selectBotListByIdsAndSpaceId" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT a.bot_id, a.tenant_id, a.bot_name, a.bot_use
+    FROM bt_bot a
+    JOIN bt_tenant t ON a.tenant_id = t.tenant_id
+    WHERE a.status_cd = '00A'
+      AND t.space_id = #{spaceId}
+      AND a.bot_id IN (<foreach collection="botIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPublishedAppPage" resultType="com.iwhalecloud.bote.dto.bot.PublishedAppDTO">
+    SELECT a.bot_id AS "botId",
+           a.tenant_id AS "tenantId",
+           a.bot_name AS "appName",
+           a.bot_use AS "appDesc"
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.bot_status = '1'
+    <if test="params.keyword != null and params.keyword != ''">
+      AND (a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{params.keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.bot_use LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{params.keyword}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectBoteClawList" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT a.bot_id, a.bot_name, a.tenant_id, a.bot_use, 'T' AS "isBoteClaw"
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.data_from = '10A'
+      AND a.tenant_id = #{params.spaceId}
+      AND a.creator_id = #{params.userId}
+    <if test="params.searchContent != null and params.searchContent != ''">
+      AND a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{params.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+  </select>
+
+  <select id="selectAllBoteClawId" resultType="java.lang.Long">
+    SELECT bot_id FROM bt_bot
+    WHERE status_cd = '00A'
+      AND data_from = '10A'
+  </select>
+
+  <select id="selectSquareBotDTOList" resultType="com.iwhalecloud.bote.dto.bot.SquareBotDTO">
+    SELECT
+      a.bot_id,
+      a.tenant_id,
+      a.bot_name,
+      a.bot_use,
+      a.created_time,
+      a.bot_status,
+      a.data_from
+    FROM bt_bot a
+    WHERE
+      a.status_cd = '00A'
+      AND ((a.tenant_id = #{tenantId}
+      AND a.creator_id = #{userId}
+      AND a.bot_status = '1'
+      AND a.data_from = '10A') OR a.bot_id='-1')
+      ORDER BY a.created_time
+  </select>
+
+  <select id="selectUserBoteCrawList" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT bot_id, bot_name, tenant_id, bot_use
+    FROM bt_bot
+    WHERE status_cd = '00A'
+      AND data_from = '10A'
+      AND tenant_id = #{spaceId}
+      AND creator_id = #{userId}
+  </select>
+
+  <select id="selectBoteClawPage" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT a.bot_id, a.bot_name, a.bot_use, a.bot_status, a.updated_time,
+        CASE WHEN EXISTS (SELECT 1 FROM bt_bot_auth b WHERE b.status_cd = '00A' AND b.bot_id = a.bot_id) THEN 'T' ELSE 'F' END AS "isPublish"
+    FROM bt_bot a
+    WHERE a.data_from = '10A'
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="searchBoteClaw" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
+    SELECT * FROM (
+      SELECT a.bot_id, a.bot_name, a.bot_use, a.tenant_id, 'T' AS isCreator
+      FROM bt_bot a
+      WHERE a.status_cd = '00A'
+        AND a.data_from = '10A'
+        AND a.tenant_id = #{query.tenantId}
+        AND a.creator_id = #{query.userId}
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND a.bot_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      UNION ALL
+      SELECT a.bot_id, MAX(b.bot_name) as bot_name, MAX(b.bot_use) as bot_use, MAX(a.owner_tenant_id) as tenant_id, 'F' AS isCreator
+      FROM bt_bot_auth a
+      JOIN bt_bot b on a.bot_id = b.bot_id and b.tenant_id = a.owner_tenant_id
+      WHERE a.status_cd = '00A'
+        AND b.status_cd = '00A'
+        AND b.bot_status = '1'
+        AND a.auth_status = 'T'
+        AND a.data_from = '10A'
+      <if test="!query.isAdmin">
+        AND a.auth_tenant_id IN (#{query.tenantId}, -1)
+        AND a.user_id IN (#{query.userId}, -1)
+        AND a.org_id IN (<foreach collection="query.orgIds" item="orgId" separator=","> #{orgId} </foreach>)
+      </if>
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND b.bot_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      GROUP BY a.bot_id
+    ) temp_result
+  </select>
+
+  <select id="getBoteClawSpacId" resultType="java.lang.Long">
+    SELECT tenant_id
+    FROM bt_bot a
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND data_from = '10A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+</mapper>

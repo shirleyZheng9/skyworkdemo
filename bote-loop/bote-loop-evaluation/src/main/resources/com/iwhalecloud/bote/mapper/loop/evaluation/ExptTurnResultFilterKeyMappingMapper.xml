@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnResultFilterKeyMappingMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultFilterKeyMappingEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="from_field" property="fromField" jdbcType="VARCHAR"/>
+    <result column="to_key" property="toKey" jdbcType="VARCHAR"/>
+    <result column="field_type" property="fieldType" jdbcType="INTEGER"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, from_field, to_key, field_type, created_at, deleted_at, created_by
+  </sql>
+
+  <!-- 根据实验ID获取过滤键映射 -->
+  <select id="getByExptId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_filter_key_map
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND deleted_at IS NULL
+  </select>
+
+  <!-- 插入过滤键映射 -->
+  <insert id="insert">
+    INSERT INTO bt_expt_filter_key_map (
+    id, space_id, expt_id, from_field, to_key, field_type, created_at, deleted_at, created_by
+    ) VALUES
+    <foreach collection="exptTurnResultFilterKeyMappings" item="mapping" separator=",">
+      (
+      #{mapping.id}, #{mapping.spaceId}, #{mapping.exptId}, #{mapping.fromField},
+      #{mapping.toKey}, #{mapping.fieldType}, #{mapping.createdAt}, #{mapping.deletedAt}, #{mapping.createdBy}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 更新单个过滤键映射 -->
+  <update id="updateOne">
+    UPDATE bt_expt_filter_key_map
+    SET to_key = #{mapping.toKey},
+        created_by = #{mapping.createdBy}
+    WHERE id = #{mapping.id}
+    AND space_id = #{mapping.spaceId}
+    AND expt_id = #{mapping.exptId}
+  </update>
+
+  <!-- 根据ID检查是否存在 -->
+  <select id="existsById" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_expt_filter_key_map
+    WHERE id = #{id}
+    AND space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND deleted_at IS NULL
+  </select>
+</mapper>

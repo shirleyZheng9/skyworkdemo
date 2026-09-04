@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.app.WebAppRecordMapper">
+
+  <sql id="columns">
+    a.record_id,
+    a.web_app_id,
+    a.user_id,
+    a.space_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertRecord">
+    INSERT INTO bt_web_app_record (
+    record_id,
+    web_app_id,
+    user_id,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.recordId},
+    #{dto.webAppId},
+    #{dto.userId},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateRecordTime">
+    UPDATE bt_web_app_record
+    SET updator_id = #{dto.userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND web_app_id = #{dto.webAppId}
+      AND user_id = #{dto.userId}
+  </update>
+
+  <update id="deleteByRecordId">
+    UPDATE bt_web_app_record
+    SET status_cd = '00X',
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND record_id = #{recordId}
+  </update>
+
+  <select id="selectList" resultType="com.iwhalecloud.bote.dto.app.WebAppRecordDTO">
+    SELECT a.record_id, a.web_app_id, a.space_id, w.app_name, w.open_type, w.access_url
+    FROM bt_web_app_record a
+    LEFT JOIN bt_web_app w ON w.web_app_id = a.web_app_id
+    WHERE a.status_cd = '00A'
+      AND w.status_cd = '00A'
+      AND a.user_id = #{params.userId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectPage" resultType="com.iwhalecloud.bote.dto.app.WebAppRecordDTO">
+    SELECT a.record_id, a.web_app_id, a.space_id, w.app_name, w.open_type, w.access_url
+    FROM bt_web_app_record a
+    LEFT JOIN bt_web_app w ON w.web_app_id = a.web_app_id
+    WHERE a.status_cd = '00A'
+      AND a.user_id = #{params.userId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="checkExists" resultType="java.lang.Boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_web_app_record
+    WHERE status_cd = '00A'
+      AND web_app_id = #{webAppId}
+      AND user_id = #{userId}
+  </select>
+
+</mapper>

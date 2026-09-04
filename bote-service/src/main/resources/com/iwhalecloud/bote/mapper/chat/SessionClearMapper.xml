@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.SessionClearMapper">
+  <!-- @formatter:off -->
+  <sql id="sessionColumns">
+    session_id,
+    tenant_id,
+    bot_id,
+    bot_tenant_id,
+    ext_system_id,
+    plat_bot_id,
+    space_id,
+    session_title,
+    prologue,
+    begin_time,
+    end_time,
+    is_test,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+  </sql>
+
+  <sql id="msgColumns">
+    msg_id,
+    session_id,
+    transaction_id,
+    scene_id,
+    bot_id,
+    plan_id,
+    context_id,
+    ref_msg_id,
+    msg_type,
+    role,
+    like_type,
+    begin_time,
+    end_time,
+    sort,
+    msg_status,
+    memorized,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+  </sql>
+
+  <sql id="msgTextColumns">
+    msg_id,
+    msg_text,
+    ext_params,
+    memory_content,
+    download_type,
+    download_content,
+    content_type,
+    paragraph_group,
+    paragraph_sortby
+  </sql>
+
+  <sql id="msgFileColumns">
+    rela_id,
+    msg_id,
+    session_id,
+    file_id
+  </sql>
+
+  <select id="selectSessionIdsForArchive" resultType="java.lang.Long">
+    SELECT session_id
+    FROM bt_bot_session
+    WHERE updated_time &lt; #{maxUpdatedTime}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+  <select id="selectHistorySessionIdsForClear" resultType="java.lang.Long">
+    SELECT session_id
+    FROM bt_bot_session_his
+    WHERE updated_time &lt; #{maxUpdatedTime}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+  <update id="archiveSession" timeout="120">
+    INSERT INTO bt_bot_session_his (<include refid="sessionColumns"/>)
+    SELECT <include refid="sessionColumns"/>
+    FROM bt_bot_session
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </update>
+
+  <update id="archiveMsg" timeout="120">
+    INSERT INTO bt_bot_session_msg_his (<include refid="msgColumns"/>)
+    SELECT <include refid="msgColumns"/>
+    FROM bt_bot_session_msg
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </update>
+
+  <update id="archiveMsgText" timeout="120">
+    INSERT INTO bt_bot_session_msg_text_his (<include refid="msgTextColumns"/>)
+    SELECT <include refid="msgTextColumns"/>
+    FROM bt_bot_session_msg_text
+    WHERE EXISTS (SELECT 1 FROM bt_bot_session_msg WHERE bt_bot_session_msg.msg_id = bt_bot_session_msg_text.msg_id AND session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>))
+  </update>
+
+  <update id="archiveMsgFile" timeout="120">
+    INSERT INTO bt_bot_session_msg_file_his (<include refid="msgFileColumns"/>)
+    SELECT <include refid="msgFileColumns"/>
+    FROM bt_bot_session_msg_file
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </update>
+
+  <select id="selectSessionList" resultType="com.iwhalecloud.bote.entity.chat.SessionEntity">
+    SELECT <include refid="sessionColumns"/>
+    FROM bt_bot_session
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </select>
+
+  <select id="selectMsgList" resultType="com.iwhalecloud.bote.entity.chat.SessionMsgEntity">
+    SELECT <include refid="msgColumns"/>
+    FROM bt_bot_session_msg
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </select>
+
+  <select id="selectMsgTextList" resultType="com.iwhalecloud.bote.entity.chat.SessionMsgTextEntity">
+    SELECT <include refid="msgTextColumns"/>
+    FROM bt_bot_session_msg_text
+    WHERE EXISTS (SELECT 1 FROM bt_bot_session_msg WHERE bt_bot_session_msg.msg_id = bt_bot_session_msg_text.msg_id AND session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>))
+  </select>
+
+  <select id="selectMsgFileList" resultType="com.iwhalecloud.bote.entity.chat.SessionMsgFileEntity">
+    SELECT <include refid="msgFileColumns"/>
+    FROM bt_bot_session_msg_file
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </select>
+
+  <insert id="batchInsertSessionHistory" timeout="120">
+    <!-- 不需要兼容 Oracle, Oracle 会使用 insert into select 方式插入数据 -->
+    INSERT INTO bt_bot_session_his (<include refid="sessionColumns"/>)
+    VALUES
+    <foreach collection="sessionList" item="session" separator=",">
+      (
+        #{session.sessionId},
+        #{session.tenantId},
+        #{session.botId},
+        #{session.botTenantId},
+        #{session.extSystemId},
+        #{session.platBotId},
+        #{session.spaceId},
+        #{session.sessionTitle},
+        #{session.prologue},
+        #{session.beginTime},
+        #{session.endTime},
+        #{session.isTest},
+        #{session.statusCd},
+        #{session.creatorId},
+        #{session.createdTime},
+        #{session.updatorId},
+        #{session.updatedTime},
+        #{session.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertMsgHistory" timeout="120">
+    <!-- 不需要兼容 Oracle, Oracle 会使用 insert into select 方式插入数据 -->
+    INSERT INTO bt_bot_session_msg_his (<include refid="msgColumns"/>)
+    VALUES
+    <foreach collection="msgList" item="msg" separator=",">
+      (
+        #{msg.msgId},
+        #{msg.sessionId},
+        #{msg.transactionId},
+        #{msg.sceneId},
+        #{msg.botId},
+        #{msg.planId},
+        #{msg.contextId},
+        #{msg.refMsgId},
+        #{msg.msgType},
+        #{msg.role},
+        #{msg.likeType},
+        #{msg.beginTime},
+        #{msg.endTime},
+        #{msg.sort},
+        #{msg.msgStatus},
+        #{msg.memorized},
+        #{msg.statusCd},
+        #{msg.creatorId},
+        #{msg.createdTime},
+        #{msg.updatorId},
+        #{msg.updatedTime},
+        #{msg.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertMsgTextHistory" timeout="120">
+    <!-- 不需要兼容 Oracle, Oracle 会使用 insert into select 方式插入数据 -->
+    INSERT INTO bt_bot_session_msg_text_his (<include refid="msgTextColumns"/>)
+    VALUES
+    <foreach collection="msgTextList" item="msg" separator=",">
+      (
+        #{msg.msgId},
+        #{msg.msgText},
+        #{msg.extParams},
+        #{msg.memoryContent},
+        #{msg.downloadType},
+        #{msg.downloadContent},
+        #{msg.contentType},
+        #{msg.paragraphGroup},
+        #{msg.paragraphSortby}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertMsgFileHistory" timeout="120">
+    <!-- 不需要兼容 Oracle, Oracle 会使用 insert into select 方式插入数据 -->
+    INSERT INTO bt_bot_session_msg_file_his (<include refid="msgFileColumns"/>)
+    VALUES
+    <foreach collection="msgFileList" item="msg" separator=",">
+      (
+        #{msg.relaId},
+        #{msg.msgId},
+        #{msg.sessionId},
+        #{msg.fileId}
+      )
+    </foreach>
+  </insert>
+
+  <select id="selectSessionIdsByBotId" resultType="java.lang.Long">
+    SELECT session_id
+    FROM bt_bot_session
+    WHERE status_cd = '00A'
+    <if test="tenantId != null">
+      AND tenant_id = #{tenantId}
+    </if>
+    <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+    <if test="botId != null">
+      AND bot_id = #{botId}
+    </if>
+    <if test="botTenantId != null">
+      AND bot_tenant_id = #{botTenantId}
+    </if>
+      AND creator_id = #{creatorId}
+  </select>
+
+  <delete id="deleteSessionBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </delete>
+
+  <delete id="deleteMsgBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>)
+  </delete>
+
+  <delete id="deleteMsgTextBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_text
+    WHERE msg_id IN (SELECT msg_id FROM bt_bot_session_msg WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>))
+  </delete>
+
+  <delete id="deleteMsgFileBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_file
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>)
+  </delete>
+
+  <delete id="deleteHistorySessionBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_his
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </delete>
+
+  <delete id="deleteHistoryMsgBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_his
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>)
+  </delete>
+
+  <delete id="deleteHistoryMsgTextBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_text_his
+    WHERE msg_id IN (SELECT msg_id FROM bt_bot_session_msg_his WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>))
+  </delete>
+
+  <delete id="deleteHistoryMsgFileBySessionIds" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_file_his
+    WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>)
+  </delete>
+
+  <update id="disableFilesByHistorySessionIds" timeout="120">
+    UPDATE bt_file
+    SET status_cd = '00D',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND file_id IN (SELECT file_id FROM bt_bot_session_msg_file_his WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>))
+  </update>
+
+  <delete id="deleteArchiveFailingSession" timeout="120">
+    DELETE
+    FROM bt_bot_session_his
+    WHERE EXISTS (SELECT 1 FROM bt_bot_session WHERE bt_bot_session.session_id = bt_bot_session_his.session_id)
+  </delete>
+
+  <delete id="deleteArchiveFailingMsg" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_his
+    WHERE EXISTS (SELECT 1 FROM bt_bot_session_msg WHERE bt_bot_session_msg.msg_id = bt_bot_session_msg_his.msg_id)
+  </delete>
+
+  <delete id="deleteArchiveFailingMsgText" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_text_his
+    WHERE EXISTS (SELECT 1 FROM bt_bot_session_msg_text WHERE bt_bot_session_msg_text.msg_id = bt_bot_session_msg_text_his.msg_id)
+  </delete>
+
+  <delete id="deleteArchiveFailingMsgFile" timeout="120">
+    DELETE
+    FROM bt_bot_session_msg_file_his
+    WHERE EXISTS (SELECT 1 FROM bt_bot_session_msg_file WHERE bt_bot_session_msg_file.rela_id = bt_bot_session_msg_file_his.rela_id)
+  </delete>
+
+  <delete id="deleteChatMessagesBySessionIds" timeout="120">
+    DELETE
+    FROM bt_chat_message
+    WHERE conversation_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
+  </delete>
+
+  <delete id="deleteChatMessagesBySessionId" timeout="120">
+    DELETE
+    FROM bt_chat_message
+    WHERE conversation_id = #{sessionId}
+      AND create_time &lt; #{maxCreateTime}
+  </delete>
+
+  <delete id="deleteChatMessages" timeout="120">
+    DELETE
+    FROM bt_chat_message
+    WHERE create_time &lt; #{maxCreateTime}
+  </delete>
+
+</mapper>

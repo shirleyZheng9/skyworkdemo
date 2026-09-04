@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotSceneManageMapper">
+
+  <sql id="sceneColumns">
+    a.scene_id,
+    a.scene_name,
+    a.scene_desc,
+    a.scene_type,
+    a.scene_graph_json,
+    a.scene_dsl,
+    a.catalog_item_id,
+    a.scene_status,
+    a.prologue,
+    a.scene_icon,
+    a.flow_step_json,
+    a.model_id,
+    a.model_config_json,
+    a.long_term_memory_enabled,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="existsSceneName" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+    AND scene_name = #{sceneName}
+    AND tenant_id = #{tenantId}
+    AND scene_type != 'a2a'
+    <if test="sceneId != null">
+      AND scene_id != #{sceneId}
+    </if>
+  </select>
+
+  <insert id="insertScene">
+    INSERT INTO bt_bot_scene (
+    scene_id,
+    scene_name,
+    scene_desc,
+    scene_type,
+    scene_graph_json,
+    scene_dsl,
+    catalog_item_id,
+    scene_status,
+    prologue,
+    scene_icon,
+    flow_step_json,
+    model_id,
+    model_config_json,
+    long_term_memory_enabled,
+    tenant_id,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    status_cd,
+    remark
+    ) VALUES
+    (
+    #{dto.sceneId},
+    #{dto.sceneName},
+    #{dto.sceneDesc},
+    #{dto.sceneType},
+    #{dto.sceneGraphJson},
+    #{dto.sceneDsl},
+    #{dto.catalogItemId},
+    #{dto.sceneStatus},
+    #{dto.prologue},
+    #{dto.sceneIcon},
+    #{dto.flowStepJson},
+    #{dto.modelId},
+    #{dto.modelConfigJson},
+    #{dto.longTermMemoryEnabled},
+    #{dto.tenantId},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateScene">
+    UPDATE bt_bot_scene
+    <set>
+      <if test="dto.checkFieldUpdateFlag('sceneName')">
+        scene_name = #{dto.sceneName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneDesc')">
+        scene_desc = #{dto.sceneDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneGraphJson')">
+        scene_graph_json = #{dto.sceneGraphJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneDsl')">
+        scene_dsl = #{dto.sceneDsl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneStatus')">
+        scene_status = #{dto.sceneStatus},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('prologue')">
+        prologue = #{dto.prologue},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneIcon')">
+        scene_icon = #{dto.sceneIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowStepJson')">
+        flow_step_json = #{dto.flowStepJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelId')">
+        model_id = #{dto.modelId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelConfigJson')">
+        model_config_json = #{dto.modelConfigJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('longTermMemoryEnabled')">
+        long_term_memory_enabled = #{dto.longTermMemoryEnabled},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE scene_id = #{dto.sceneId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateSceneBasicInfo">
+    UPDATE bt_bot_scene
+    SET
+    <if test="dto.checkFieldUpdateFlag('sceneName')">
+      scene_name = #{dto.sceneName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('sceneDesc')">
+      scene_desc = #{dto.sceneDesc},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+      catalog_item_id = #{dto.catalogItemId},
+    </if>
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE scene_id = #{dto.sceneId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteScene">
+    UPDATE bt_bot_scene
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE scene_id = #{sceneId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <update id="updateSceneStatus">
+    UPDATE bt_bot_scene
+    SET scene_status = #{sceneStatus},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{updatorId}
+    WHERE status_cd = '00A'
+    AND scene_id = #{sceneId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="getScene" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT <include refid="sceneColumns"/>
+    FROM bt_bot_scene a
+    WHERE a.status_cd = '00A'
+    AND a.scene_id = #{sceneId}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSimpleScene" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT scene_id, tenant_id, scene_name, scene_type
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND scene_id = #{sceneId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSceneBasicInfo" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT scene_id,
+           scene_name,
+           scene_desc,
+           scene_type,
+           catalog_item_id,
+           scene_status,
+           scene_icon,
+           prologue
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND scene_id = #{sceneId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectScenePage" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc, a.scene_type, a.scene_status,
+    a.catalog_item_id, a.created_time, a.updated_time, a.creator_id, a.updator_id, a.remark, a.prologue,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.user_icon FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorIcon"
+    FROM bt_bot_scene a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.sceneTypes != null and !query.sceneTypes.isEmpty()">
+      AND a.scene_type IN (<foreach collection="query.sceneTypes" item="sceneType" separator=",">#{sceneType}</foreach>)
+    </if>
+    <!-- 未显式指定类型时，忽略 A2A 类型 -->
+    <if test="query.sceneTypes == null or query.sceneTypes.isEmpty()">
+      AND a.scene_type != 'a2a'
+    </if>
+    <if test="query.sceneStatus != null and query.sceneStatus != ''">
+      AND a.scene_status = #{query.sceneStatus}
+    </if>
+    <if test="query.status != null and !query.status.isEmpty()">
+      AND a.scene_status IN (<foreach collection="query.status" item="sceneStatus" separator=",">#{sceneStatus}</foreach>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.labelIds != null and !query.labelIds.isEmpty()">
+      AND EXISTS (SELECT 1 FROM bt_label_object_rel r
+                  WHERE a.scene_id = r.object_id
+                    AND r.status_cd = '00A'
+                    AND r.tenant_id IN (-1, #{query.tenantId})
+                    AND r.label_id IN (<foreach collection="query.labelIds" item="labelId" separator=",">#{labelId}</foreach>))
+    </if>
+    AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="beyondQueryScenePage" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT DISTINCT a.scene_id, a.scene_name, a.scene_desc, a.scene_type, a.scene_status,
+    a.catalog_item_id, a.created_time, a.updated_time, a.creator_id, a.updator_id, a.remark, a.prologue,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    brpr.publish_status AS "beyondPublishStatus"
+    FROM bt_bot_scene a
+    LEFT JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+      AND brpr.publish_channel = 'BEYOND'
+      AND brpr.resource_type = 'BOT'
+      AND brpr.status_cd = '00A'
+      AND brpr.tenant_id = #{query.tenantId}
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.sceneStatus != null and query.sceneStatus != ''">
+      AND a.scene_status = #{query.sceneStatus}
+    </if>
+    <if test="query.status != null and !query.status.isEmpty()">
+      AND a.scene_status IN (<foreach collection="query.status" item="sceneStatus" separator=",">#{sceneStatus}</foreach>)
+    </if>
+    <if test="query.beyondPublishStatus != null and query.beyondPublishStatus != ''">
+      AND brpr.publish_status = #{query.beyondPublishStatus}
+    </if>
+    AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="beyondQueryScenePageForSeparated" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT DISTINCT a.scene_id, a.scene_name, a.scene_desc, a.scene_type, a.scene_status,
+    a.catalog_item_id, a.created_time, a.updated_time, a.creator_id, a.updator_id, a.remark, a.prologue,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    brpr.publish_status AS "beyondPublishStatus"
+    FROM bt_bot_scene a
+    LEFT JOIN bt_resource_publish_record brpr ON brpr.resource_id = a.scene_id
+      AND brpr.publish_channel = 'BEYOND'
+      AND brpr.resource_type = 'AGENT'
+      AND brpr.status_cd = '00A'
+      AND brpr.tenant_id = #{query.tenantId}
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.name != null and query.name != ''">
+      AND a.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.name}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.status != null and query.status != ''">
+      AND a.scene_status = #{query.status}
+    </if>
+    <if test="query.beyondPublishStatus != null and query.beyondPublishStatus != ''">
+      AND brpr.publish_status = #{query.beyondPublishStatus}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSceneList" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc, a.scene_type, a.scene_status,
+    a.catalog_item_id, a.created_time, a.updated_time, a.creator_id, a.updator_id, a.remark, a.prologue,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_bot_scene a
+    WHERE a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.sceneTypes != null and !query.sceneTypes.isEmpty()">
+      AND a.scene_type IN (<foreach collection="query.sceneTypes" item="sceneType" separator=",">#{sceneType}</foreach>)
+    </if>
+    <if test="query.sceneStatus != null and query.sceneStatus != ''">
+      AND a.scene_status = #{query.sceneStatus}
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <if test="query.botId != null">
+      AND EXISTS (SELECT 1 FROM bt_bot_scene_rel b
+      WHERE a.scene_id = b.scene_id
+      AND a.tenant_id = b.tenant_id
+      AND b.status_cd = '00A'
+      AND b.bot_id = #{query.botId})
+    </if>
+      AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="queryScenePageForBot" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc, a.scene_type, a.scene_status,
+    a.catalog_item_id, a.created_time, a.updated_time, a.creator_id, a.updator_id, a.remark, a.prologue,
+    b.skill_count, c.platform_name, c.platform_icon,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_bot_scene a
+    LEFT JOIN bt_a2a_agent b ON b.tenant_id = a.tenant_id AND b.agent_id = a.scene_id AND a.scene_type = 'a2a'
+    LEFT JOIN bt_a2a_platform c ON c.tenant_id = a.tenant_id AND c.platform_id = b.platform_id
+    WHERE a.status_cd = '00A'
+    AND NOT EXISTS(SELECT 1 FROM bt_bot_scene_rel r
+    WHERE a.scene_id = r.scene_id and a.tenant_id = r.tenant_id
+      AND r.status_cd = '00A' AND r.bot_id = #{query.botId})
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.sceneTypes != null and !query.sceneTypes.isEmpty()">
+      AND a.scene_type IN (<foreach collection="query.sceneTypes" item="sceneType" separator=",">#{sceneType}</foreach>)
+    </if>
+    <!-- 未显式指定类型时，忽略 A2A 类型 -->
+    <if test="query.sceneTypes == null or query.sceneTypes.isEmpty()">
+      AND a.scene_type != 'a2a'
+    </if>
+    <if test="query.status != null and !query.status.isEmpty()">
+      AND a.scene_status IN (<foreach collection="query.status" item="sceneStatus" separator=",">#{sceneStatus}</foreach>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.labelIds != null and !query.labelIds.isEmpty()">
+      AND EXISTS (SELECT 1 FROM bt_label_object_rel r
+                  WHERE a.scene_id = r.object_id
+                    AND r.status_cd = '00A'
+                    AND r.tenant_id IN (-1, #{query.tenantId})
+                    AND r.label_id IN (<foreach collection="query.labelIds" item="labelId" separator=",">#{labelId}</foreach>))
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="updateSceneUpdatedTime">
+    UPDATE bt_bot_scene
+    SET updated_time = #{dto.updatedTime}
+    WHERE scene_id = #{dto.sceneId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getScenesByIds" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT a.scene_id,
+           a.scene_name,
+           a.scene_desc,
+           a.scene_type,
+           a.tenant_id
+    FROM bt_bot_scene a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    AND a.scene_status = '1'
+    AND a.scene_id IN (<foreach collection="sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+  </select>
+
+  <select id="selectListBySceneIds" resultType="com.iwhalecloud.bote.dto.bot.BotSceneDTO">
+    SELECT scene_id, tenant_id, scene_name, scene_type, catalog_item_id
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND scene_id IN (<foreach collection="sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+  </select>
+
+  <update id="batchUpdateSceneStatus">
+    UPDATE bt_bot_scene
+    SET scene_status = #{dto.sceneStatus},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    WHERE status_cd = '00A'
+      AND tenant_id = #{dto.tenantId}
+      AND scene_id IN (<foreach collection="dto.sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+  </update>
+
+  <update id="batchUpdateSceneCatalogItemId">
+    UPDATE bt_bot_scene
+    SET catalog_item_id = #{dto.targetCatalogItemId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    WHERE status_cd = '00A'
+      AND tenant_id = #{dto.tenantId}
+      AND scene_id IN (<foreach collection="dto.sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+  </update>
+
+  <update id="batchDeleteScene">
+    UPDATE bt_bot_scene
+      SET status_cd = '00X',
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND tenant_id = #{dto.tenantId}
+      AND scene_id IN (<foreach collection="dto.sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)
+  </update>
+
+</mapper>

@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotManageMapper">
+
+  <sql id="botColumns">
+    a.bot_id,
+    a.tenant_id,
+    a.bot_name,
+    a.bot_use,
+    a.bot_icon,
+    a.prologue,
+    a.is_default,
+    a.bot_status,
+    a.model_id,
+    a.catalog_item_id,
+    a.page_base_info,
+    a.page_setting_info,
+    a.agent_strategy,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    a.data_from
+  </sql>
+
+  <select id="existsBotName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_bot
+    WHERE status_cd = '00A'
+    AND bot_name = #{dto.botName}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.botId != null">
+      AND bot_id != #{dto.botId}
+    </if>
+    <if test="dto.dataFrom != null and dto.dataFrom != ''">
+      AND data_from = #{dto.dataFrom}
+      AND updator_id = #{dto.updatorId}
+    </if>
+  </select>
+
+  <insert id="insertBot">
+    INSERT INTO bt_bot (
+    bot_id,
+    tenant_id,
+    bot_name,
+    bot_use,
+    bot_icon,
+    prologue,
+    is_default,
+    bot_status,
+    model_id,
+    catalog_item_id,
+    page_base_info,
+    page_setting_info,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    data_from
+    ) VALUES (
+    #{dto.botId},
+    #{dto.tenantId},
+    #{dto.botName},
+    #{dto.botUse},
+    #{dto.botIcon},
+    #{dto.prologue},
+    #{dto.isDefault},
+    #{dto.botStatus},
+    #{dto.modelId},
+    #{dto.catalogItemId},
+    #{dto.pageBaseInfo},
+    #{dto.pageSettingInfo},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark},
+    #{dto.dataFrom}
+    )
+  </insert>
+
+  <update id="updateBot">
+    UPDATE bt_bot
+    <set>
+      <if test="dto.checkFieldUpdateFlag('botName')">
+        bot_name = #{dto.botName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botUse')">
+        bot_use = #{dto.botUse},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botIcon')">
+        bot_icon = #{dto.botIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('prologue')">
+        prologue = #{dto.prologue},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isDefault')">
+        is_default = #{dto.isDefault},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botStatus')">
+        bot_status = #{dto.botStatus},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelId')">
+        model_id = #{dto.modelId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageBaseInfo')">
+        page_base_info = #{dto.pageBaseInfo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageSettingInfo')">
+        page_setting_info = #{dto.pageSettingInfo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE bot_id = #{dto.botId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateAgentStrategy">
+    UPDATE bt_bot
+    SET agent_strategy = #{dto.agentStrategy},
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bot_id = #{dto.botId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updatePageSettingInfo">
+    UPDATE bt_bot
+    SET page_setting_info = #{dto.pageSettingInfo},
+    <if test="dto.pageSettingIcon != null and dto.pageSettingIcon != ''">
+      page_setting_icon = #{dto.pageSettingIcon},
+    </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND bot_id = #{dto.botId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteBot">
+    UPDATE bt_bot
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="getBot" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
+    SELECT <include refid="botColumns"/>
+    FROM bt_bot a
+    WHERE a.status_cd = '00A'
+      AND a.bot_id = #{botId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <update id="updateBotStatus">
+    UPDATE bt_bot
+    SET bot_status = #{botStatus},
+    updator_id = #{updatorId},
+    <if test="isDefault != null and isDefault != ''">
+      is_default = #{isDefault},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <update id="clearDefaultBot">
+    UPDATE bt_bot
+    SET is_default = 'F',
+    updator_id = #{updatorId}
+    WHERE bot_id != #{botId}
+      AND tenant_id = #{tenantId}
+      AND is_default = 'T'
+  </update>
+
+  <update id="modifyBotUpdateTime">
+    UPDATE bt_bot
+    SET updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND bot_id = #{botId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <update id="modifyBotUpdateTimeBatch">
+    UPDATE bt_bot
+    SET updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND bot_id IN (<foreach collection="botIds" item="botId" separator=", ">#{botId}</foreach>)
+  </update>
+
+</mapper>

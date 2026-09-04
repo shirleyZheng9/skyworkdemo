@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.intent.IntentManageMapper">
+
+  <sql id="strategyColumns">
+    a.id,
+    a.tenant_id,
+    a.multi_bot_enabled,
+    a.embedding_enabled,
+    a.embedding_model_id,
+    a.embedding_score_threshold,
+    a.slm_enabled,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="getStrategy" resultType="com.iwhalecloud.bote.dto.intent.IntentStrategyDTO">
+    SELECT
+    <include refid="strategyColumns"/>
+    FROM bt_intention_strategy a
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insertStrategy">
+    INSERT INTO bt_intention_strategy (
+    id,
+    tenant_id,
+    multi_bot_enabled,
+    embedding_enabled,
+    embedding_model_id,
+    embedding_score_threshold,
+    slm_enabled,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.tenantId},
+    #{dto.multiBotEnabled},
+    #{dto.embeddingEnabled},
+    #{dto.embeddingModelId},
+    #{dto.embeddingScoreThreshold},
+    #{dto.slmEnabled},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateStrategy">
+    UPDATE bt_intention_strategy
+    <set>
+      <if test="dto.multiBotEnabled != null and dto.multiBotEnabled != ''">
+        multi_bot_enabled = #{dto.multiBotEnabled},
+      </if>
+      <if test="dto.embeddingEnabled != null and dto.embeddingEnabled != ''">
+        embedding_enabled = #{dto.embeddingEnabled},
+      </if>
+      <if test="dto.embeddingModelId != null">
+        embedding_model_id = #{dto.embeddingModelId},
+      </if>
+      <if test="dto.embeddingScoreThreshold != null and dto.embeddingScoreThreshold != ''">
+        embedding_score_threshold = #{dto.embeddingScoreThreshold},
+      </if>
+      <if test="dto.slmEnabled != null and dto.slmEnabled != ''">
+        slm_enabled = #{dto.slmEnabled},
+      </if>
+      <if test="dto.statusCd != null and dto.statusCd != ''">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null and dto.remark != ''">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId},
+    </set>
+    WHERE id = #{dto.id}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+</mapper>

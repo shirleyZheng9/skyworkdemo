@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.PublishManageMapper">
+
+  <sql id="recordColumns">
+    a.id,
+    a.publish_type,
+    a.publish_status,
+    a.start_time,
+    a.end_time,
+    a.spent_time,
+    a.failed_step_name,
+    a.fail_reason,
+    a.tenant_id,
+    a.obj_id,
+    a.input,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="stepColumns">
+    a.id,
+    a.publish_id,
+    a.step_index,
+    a.step_type,
+    a.step_name,
+    a.step_status,
+    a.start_time,
+    a.end_time,
+    a.spent_time,
+    a.fail_reason,
+    a.fail_stack,
+    a.input,
+    a.output_json,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <select id="existsRunningRecord" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_publish_record
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND publish_status = 1
+      AND publish_type = #{publishType}
+  </select>
+
+  <select id="getRecord" resultType="com.iwhalecloud.bote.dto.base.PublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>
+    FROM bt_publish_record a
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="getRecordByObjId" resultType="com.iwhalecloud.bote.dto.base.PublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>
+    FROM bt_publish_record a
+    WHERE obj_id = #{objId}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertRecord">
+    INSERT INTO bt_publish_record (
+    id,
+    publish_type,
+    publish_status,
+    start_time,
+    end_time,
+    spent_time,
+    failed_step_name,
+    fail_reason,
+    tenant_id,
+    obj_id,
+    input,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.publishType},
+    #{dto.publishStatus},
+    #{dto.startTime},
+    #{dto.endTime},
+    #{dto.spentTime},
+    #{dto.failedStepName},
+    #{dto.failReason},
+    #{dto.tenantId},
+    #{dto.objId},
+    #{dto.input},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertStep">
+    INSERT INTO bt_publish_step (
+    id,
+    publish_id,
+    step_index,
+    step_type,
+    step_name,
+    step_status,
+    start_time,
+    end_time,
+    spent_time,
+    fail_reason,
+    fail_stack,
+    input,
+    output_json,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.id},
+      #{dto.publishId},
+      #{dto.stepIndex},
+      #{dto.stepType},
+      #{dto.stepName},
+      #{dto.stepStatus},
+      #{dto.startTime},
+      #{dto.endTime},
+      #{dto.spentTime},
+      #{dto.failReason},
+      #{dto.failStack},
+      #{dto.input},
+      #{dto.outputJson},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertStep" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_publish_step (
+      id,
+      publish_id,
+      step_index,
+      step_type,
+      step_name,
+      step_status,
+      start_time,
+      end_time,
+      spent_time,
+      fail_reason,
+      fail_stack,
+      input,
+      output_json,
+      creator_id,
+      created_time,
+      status_cd,
+      updator_id,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.id},
+      #{dto.publishId},
+      #{dto.stepIndex},
+      #{dto.stepType},
+      #{dto.stepName},
+      #{dto.stepStatus},
+      #{dto.startTime},
+      #{dto.endTime},
+      #{dto.spentTime},
+      #{dto.failReason},
+      #{dto.failStack},
+      #{dto.input},
+      #{dto.outputJson},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="selectStepList" resultType="com.iwhalecloud.bote.dto.base.PublishStepDTO">
+    SELECT
+    <include refid="stepColumns"/>
+    FROM bt_publish_step a
+    WHERE publish_id = #{publishId}
+    ORDER BY step_index ASC
+  </select>
+
+  <update id="updateRecord">
+    UPDATE bt_publish_record SET publish_status = #{dto.publishStatus},
+    <if test="dto.failReason != null and dto.failReason != ''">
+      fail_reason = #{dto.failReason},
+    </if>
+    <if test="dto.failedStepName != null and dto.failedStepName != ''">
+      failed_step_name = #{dto.failedStepName},
+    </if>
+    <if test="dto.endTime != null">
+    end_time = #{dto.endTime},
+    </if>
+    <if test="dto.spentTime != null">
+    spent_time = #{dto.spentTime},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{dto.id}
+  </update>
+
+  <update id="updateRecordForRetry">
+    UPDATE bt_publish_record SET
+    publish_status = 0,
+    start_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    end_time = NULL,
+    spent_time = NULL,
+    failed_step_name = NULL,
+    fail_reason = NULL,
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateRecordStepForRetry">
+    UPDATE bt_publish_step SET
+    start_time = NULL,
+    end_time = NULL,
+    spent_time = NULL,
+    fail_reason = NULL,
+    fail_stack = NULL,
+    input = NULL,
+    output_json = NULL,
+    step_status = '0',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE publish_id = #{publishId}
+  </update>
+
+  <update id="updateStepStatus">
+    UPDATE bt_publish_step SET step_status = #{dto.stepStatus},
+    <if test="dto.failReason != null and dto.failReason != ''">
+      fail_reason = #{dto.failReason},
+    </if>
+    <if test="dto.startTime != null">
+      start_time = #{dto.startTime},
+    </if>
+    <if test="dto.endTime != null">
+      end_time = #{dto.endTime},
+    </if>
+    <if test="dto.spentTime != null">
+      spent_time = #{dto.spentTime},
+    </if>
+    <if test="dto.input != null and dto.input != ''">
+      input = #{dto.input},
+    </if>
+    <if test="dto.outputJson != null and dto.outputJson != ''">
+      output_json = #{dto.outputJson},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{dto.id}
+  </update>
+
+  <select id="selectRecordPage" resultType="com.iwhalecloud.bote.dto.base.PublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT b.output_json FROM bt_publish_step b WHERE b.publish_id = a.id AND b.step_type = '40') AS fileInfo
+    FROM bt_publish_record a
+    WHERE status_cd = '00A'
+    <if test="query.publishType != null and query.publishType != ''">
+      AND publish_type = #{query.publishType}
+    </if>
+    <if test="query.tenantId != null">
+      AND tenant_id = #{query.tenantId}
+    </if>
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="selectCopyRecordPage" resultType="com.iwhalecloud.bote.dto.base.PublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>,
+    a.obj_id AS "copyTenantId",
+    b.tenant_name  AS "copyTenantName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_publish_record a
+    LEFT JOIN bt_tenant b ON a.obj_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.publish_type = 'copy'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.userId != null">
+      AND a.creator_id = #{query.userId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND b.tenant_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectFinetuneRecordPage" resultType="com.iwhalecloud.bote.dto.model.FinetunePublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    b.id AS "modelId",
+    b.model_name AS "modelName",
+    b.model_icon AS "modelIcon",
+    b.use_type
+    FROM bt_publish_record a
+    LEFT JOIN bt_model_finetune b ON a.obj_id = b.id
+    WHERE a.status_cd = '00A'
+    <if test="query.publishType != null and query.publishType != ''">
+      AND a.publish_type = #{query.publishType}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectEvalRecordPage" resultType="com.iwhalecloud.bote.dto.model.EvalPublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    b.id AS "evalId",
+    c.model_name AS "modelName",
+    c.use_type,
+    b.status,
+    b.accuracy
+    FROM bt_publish_record a
+    LEFT JOIN bt_model_eval b ON a.obj_id = b.id
+    LEFT JOIN bt_model_finetune c ON b.model_id = c.id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+    <if test="query.publishType != null and query.publishType != ''">
+      AND a.publish_type = #{query.publishType}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.publishStatus != null">
+      AND a.publish_status = #{query.publishStatus}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND c.model_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="updateRecordForClear">
+    UPDATE bt_publish_record
+    SET publish_status = -1,
+        fail_reason = '中断',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE publish_status = 1
+      AND updated_time &lt; #{maxUpdatedTime}
+  </update>
+
+  <select id="selectOnlinePublishRecordWithRunning" resultType="com.iwhalecloud.bote.dto.base.PublishRecordDTO">
+    SELECT
+    <include refid="recordColumns"/>
+    FROM bt_publish_record a
+    WHERE publish_status = 1
+    AND publish_type = 'online'
+  </select>
+</mapper>

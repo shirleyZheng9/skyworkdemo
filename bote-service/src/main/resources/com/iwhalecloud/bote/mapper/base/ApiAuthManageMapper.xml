@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.ApiAuthManageMapper">
+
+  <sql id="apiAuthColumns">
+    a.auth_id,
+    a.token_exp_time,
+    a.signature,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.signature LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+  </sql>
+
+  <select id="getApiAuthByKey" resultType="com.iwhalecloud.bote.dto.base.SimpleApiAuthDTO">
+    SELECT token_exp_time AS exp_time, tenant_id, a.creator_id AS user_id, b.user_name, b.real_name
+    FROM bt_api_auth a
+    LEFT JOIN bt_user b ON b.user_id = a.creator_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.signature = #{signature}
+  </select>
+
+  <select id="getApiAuth" resultType="com.iwhalecloud.bote.dto.base.ApiAuthDTO">
+    SELECT
+    <include refid="apiAuthColumns"/>
+    FROM bt_api_auth a
+    WHERE auth_id = #{id}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertApiAuth">
+    INSERT INTO bt_api_auth (
+    auth_id,
+    token_exp_time,
+    signature,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.authId},
+    #{dto.tokenExpTime},
+    #{dto.signature},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateApiAuth">
+    UPDATE bt_api_auth
+    <set>
+      <if test="dto.tokenExpTime != null">
+        token_exp_time = #{dto.tokenExpTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE auth_id = #{dto.authId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteApiAuth">
+    UPDATE bt_api_auth
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE auth_id = #{authId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectApiAuthList" resultType="com.iwhalecloud.bote.dto.base.ApiAuthDTO">
+    SELECT
+    <include refid="apiAuthColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_api_auth a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+      ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectApiList" resultType="com.iwhalecloud.bote.dto.base.ApiDTO">
+    SELECT
+      a.api_id,
+      a.api_name,
+      a.api_desc,
+      a.api_detail,
+      a.relative_path,
+      a.req_method,
+      a.path_json,
+      a.query_json,
+      a.body_json,
+      a.response_json,
+      a.header_json,
+      a.example_json,
+      a.catalog_item_id,
+      a.is_sse,
+      (SELECT catalog_name FROM bt_catalog b WHERE a.catalog_item_id = b.catalog_id) AS "catalogName"
+    FROM bt_api a
+    WHERE a.status_cd = '00A'
+  </select>
+
+  <insert id="insertAppPublish">
+    INSERT INTO bt_app_publish (
+    publish_id,
+    tenant_id,
+    bot_id,
+    bot_ids,
+    mode_type,
+    token,
+    url,
+    is_new_session,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.publishId},
+    #{dto.tenantId},
+    #{dto.botId},
+    #{dto.botIds},
+    #{dto.modeType},
+    #{dto.token},
+    #{dto.url},
+    #{dto.isNewSession},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="deleteAppPublish">
+    UPDATE bt_app_publish
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE publish_id = #{publishId}
+  </update>
+
+  <select id="selectAppPublishList" resultType="com.iwhalecloud.bote.dto.base.AppPublishDTO">
+    SELECT
+    bap.publish_id,
+    bap.tenant_id,
+    bap.bot_id,
+    bap.bot_ids,
+    bap.mode_type,
+    bap.url,
+    bap.is_new_session,
+    bb.bot_name
+    FROM bt_app_publish bap
+    LEFT JOIN bt_bot bb ON bb.bot_id = bap.bot_id
+    AND BAP.tenant_id = bb.tenant_id AND  bb.status_cd = '00A'
+    WHERE bap.status_cd = '00A'
+    AND bap.tenant_id = #{tenantId}
+    <if test="botName != null and botName != ''">
+      AND bb.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{botName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="botId != null">
+      AND bap.bot_id = #{botId}
+    </if>
+    ORDER BY bap.created_time DESC
+  </select>
+</mapper>

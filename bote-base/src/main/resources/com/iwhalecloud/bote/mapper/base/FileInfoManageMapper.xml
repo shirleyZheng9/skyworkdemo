@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.FileInfoManageMapper">
+
+  <sql id="fileInfoColumns">
+    a.file_info_id,
+    a.file_id,
+    a.file_name,
+    a.tenant_id,
+    a.catalog_item_id,
+    a.busi_type,
+    a.busi_sub_type,
+    a.req_json,
+    a.remark,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.file_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <if test="query.fileIds != null and query.fileIds.size > 0">
+      AND a.file_id IN (<foreach collection="query.fileIds" item="fileId" separator=",">#{fileId}</foreach>)
+    </if>
+    <if test="query.fileInfoIds != null and query.fileInfoIds.size > 0">
+      AND a.file_info_id IN (<foreach collection="query.fileInfoIds" item="fileInfoId" separator=",">#{fileInfoId}</foreach>)
+    </if>
+    <if test="query.busiType != null and query.busiType != ''">
+      AND a.busi_type = #{query.busiType}
+    </if>
+    <if test="query.busiSubType != null and query.busiSubType != ''">
+      AND a.busi_sub_type = #{query.busiSubType}
+    </if>
+    <if test="query.fileTypes != null and query.fileTypes.size() > 0">
+      AND b.file_type IN (<foreach collection="query.fileTypes" item="fileType" separator=",">#{fileType}</foreach>)
+    </if>
+    <choose>
+      <when test="query.sort == 'asc'.toString()">
+        ORDER BY a.updated_time ASC
+      </when>
+      <otherwise>
+        ORDER BY a.updated_time DESC
+      </otherwise>
+    </choose>
+  </sql>
+
+  <select id="getFileInfo" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT
+    <include refid="fileInfoColumns"/>, b.file_type, b.file_size,b.store_type,b.file_path_in_server, b.file_name as originalFileName
+    FROM bt_file_info a
+    LEFT JOIN bt_file b ON a.file_id = b.file_id
+    WHERE a.file_info_id = #{id}
+    AND a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertFileInfo">
+    INSERT INTO bt_file_info (
+    file_info_id,
+    file_id,
+    file_name,
+    tenant_id,
+    catalog_item_id,
+    busi_type,
+    busi_sub_type,
+    req_json,
+    remark,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time
+    ) VALUES (
+    #{dto.fileInfoId},
+    #{dto.fileId},
+    #{dto.fileName},
+    #{dto.tenantId},
+    #{dto.catalogItemId},
+    #{dto.busiType},
+    #{dto.busiSubType},
+    #{dto.reqJson},
+    #{dto.remark},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <update id="updateFileInfo">
+    UPDATE bt_file_info
+    <set>
+      <if test="dto.checkFieldUpdateFlag('fileId')">
+        file_id = #{dto.fileId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('fileName')">
+        file_name = #{dto.fileName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('busiType')">
+        busi_type = #{dto.busiType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('busiSubType')">
+        busi_sub_type = #{dto.busiSubType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('reqJson')">
+        req_json = #{dto.reqJson},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE file_info_id = #{dto.fileInfoId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateFileIdByFileInfoId">
+    UPDATE bt_file_info
+    SET file_id = #{fileId},
+    file_name = #{fileName},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE file_info_id = #{fileInfoId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <update id="deleteFileInfo">
+    UPDATE bt_file_info
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE file_info_id = #{fileInfoId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectFileInfoList" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT
+    <include refid="fileInfoColumns"/>, b.file_size, b.file_type,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_file_info a
+    LEFT JOIN bt_file b ON a.file_id = b.file_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectFileInfoPage" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT
+    <include refid="fileInfoColumns"/>,  b.file_size, b.file_type,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_file_info a
+    LEFT JOIN bt_file b ON a.file_id = b.file_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="getFileInfoByName" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT <include refid="fileInfoColumns"/>
+    FROM bt_file_info a
+    WHERE status_cd = '00A'
+      AND file_name = #{fileName}
+      AND tenant_id = #{tenantId}
+      AND busi_type = #{busiType}
+  </select>
+
+  <select id="existsRelatedData" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_file_info a
+    WHERE file_info_id = #{fileInfoId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+    <choose>
+      <when test="busiType == 'document'.toString()">
+        AND exists (SELECT 1 FROM bt_document b, bt_knowledge_base c WHERE b.knowledge_id = c.knowledge_id
+                    AND b.tenant_id = c.tenant_id AND b.status_cd = '00A' AND c.status_cd = '00A'
+                    AND b.tenant_id = #{tenantId} AND a.file_info_id = b.file_info_id)
+      </when>
+      <when test="busiType == 'page'.toString()">
+        AND exists (SELECT 1 FROM bt_skill_page b WHERE a.file_info_id = b.file_info_id
+                                                    AND a.tenant_id = b.tenant_id AND b.status_cd = '00A')
+      </when>
+      <when test="busiType == 'chat'.toString()">
+        AND EXISTS (SELECT 1 FROM bt_tenant_setting_info b
+                    WHERE b.tenant_id = a.tenant_id
+                      AND b.status_cd = '00A'
+                      AND b.func_type = 'chat_plugins'
+                      AND b.setting_info LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{template}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      </when>
+      <otherwise>
+        AND 1=2
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="batchExistsRelatedData" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT a.file_info_id, a.busi_type, a.file_name
+    FROM bt_file_info a
+    WHERE a.file_info_id IN (<foreach collection="fileInfoIds" item="fileInfoId" separator=",">#{fileInfoId}</foreach>)
+      AND a.tenant_id = #{tenantId}
+      AND a.status_cd = '00A'
+    <choose>
+      <when test="busiType == 'document'.toString()">
+        AND exists (SELECT 1 FROM bt_document b, bt_knowledge_base c WHERE b.knowledge_id = c.knowledge_id
+                    AND b.tenant_id = c.tenant_id AND b.status_cd = '00A' AND c.status_cd = '00A'
+                    AND b.tenant_id = #{tenantId} AND a.file_info_id = b.file_info_id)
+      </when>
+      <when test="busiType == 'page'.toString()">
+        AND exists (SELECT 1 FROM bt_skill_page b WHERE a.file_info_id = b.file_info_id
+                                                    AND a.tenant_id = b.tenant_id AND b.status_cd = '00A')
+      </when>
+      <otherwise>
+        AND 1=2
+      </otherwise>
+    </choose>
+  </select>
+
+  <update id="updateFileName">
+    UPDATE bt_file_info
+    SET file_name = #{fileName},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE file_info_id = #{fileInfoId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="getFileInfoByFileIdAndTenantId" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT
+    <include refid="fileInfoColumns"/>, b.file_type, b.file_size, b.store_type, b.file_path_in_server, b.file_name as originalFileName
+    FROM bt_file_info a
+    LEFT JOIN bt_file b ON a.file_id = b.file_id
+    WHERE a.file_id = #{fileId}
+    AND a.tenant_id = #{tenantId}
+    AND a.status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+</mapper>

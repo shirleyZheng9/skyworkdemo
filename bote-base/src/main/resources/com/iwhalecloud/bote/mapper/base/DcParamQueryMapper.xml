@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.DcParamQueryMapper">
+
+  <select id="findDcParamByCode" resultType="com.iwhalecloud.bote.dto.base.SimpleDcParamDTO">
+    select param_code, param_val
+    FROM bt_dc_param
+    where status_cd = '00A'
+      and param_code = #{paramCode}
+  </select>
+
+  <select id="selectDcParam" resultType="com.iwhalecloud.bote.dto.base.SimpleDcParamDTO">
+    select param_code, param_val
+    FROM bt_dc_param
+    where status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.mysql_unlimited"/>
+  </select>
+
+</mapper>

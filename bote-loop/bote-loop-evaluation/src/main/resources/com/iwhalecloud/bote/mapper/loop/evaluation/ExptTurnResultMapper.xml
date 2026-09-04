@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnResultMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="expt_run_id" property="exptRunId" jdbcType="BIGINT"/>
+    <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+    <result column="turn_id" property="turnId" jdbcType="BIGINT"/>
+    <result column="turn_idx" property="turnIdx" jdbcType="INTEGER"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="trace_id" property="traceId" jdbcType="BIGINT"/>
+    <result column="log_id" property="logId" jdbcType="VARCHAR"/>
+    <result column="target_result_id" property="targetResultId" jdbcType="BIGINT"/>
+    <result column="err_msg" property="errMsg" jdbcType="BLOB"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, expt_run_id, item_id, turn_id, turn_idx, status,
+    trace_id, log_id, target_result_id, err_msg, created_at, updated_at, deleted_at
+  </sql>
+
+  <!-- 分页查询轮次结果 -->
+  <select id="listTurnResult" resultMap="BaseResultMap">
+    SELECT
+    bt_expt_turn_result.id, bt_expt_turn_result.space_id, bt_expt_turn_result.expt_id, bt_expt_turn_result.expt_run_id,
+    bt_expt_turn_result.item_id, bt_expt_turn_result.turn_id, bt_expt_turn_result.turn_idx, bt_expt_turn_result.status,
+    bt_expt_turn_result.trace_id, bt_expt_turn_result.log_id, bt_expt_turn_result.target_result_id, bt_expt_turn_result.err_msg,
+    bt_expt_turn_result.created_at, bt_expt_turn_result.updated_at, bt_expt_turn_result.deleted_at
+    FROM bt_expt_turn_result
+    INNER JOIN bt_expt_item_result ON bt_expt_turn_result.space_id = bt_expt_item_result.space_id
+    AND bt_expt_turn_result.expt_id = bt_expt_item_result.expt_id
+    AND bt_expt_turn_result.item_id = bt_expt_item_result.item_id
+    and bt_expt_item_result.expt_run_id = bt_expt_turn_result.expt_run_id
+    WHERE bt_expt_turn_result.space_id = #{spaceId}
+    AND bt_expt_turn_result.expt_id = #{exptId}
+    <if test="filter != null and filter.turnRunStateFilters != null and filter.turnRunStateFilters.size > 0">
+      <foreach collection="filter.turnRunStateFilters" item="statusFilter" separator=" ">
+        <if test="statusFilter != null and statusFilter.status != null and statusFilter.status.size > 0">
+          AND bt_expt_turn_result.status ${statusFilter.operator}
+          <foreach collection="statusFilter.status" item="statusItem" open="(" separator="," close=")">
+            #{statusItem.value}
+          </foreach>
+        </if>
+      </foreach>
+    </if>
+    <if test="filter != null and filter.itemRunStateFilters != null and filter.itemRunStateFilters.size > 0">
+      <foreach collection="filter.itemRunStateFilters" item="itemStatusFilter" separator=" ">
+        <if test="itemStatusFilter != null and itemStatusFilter.status != null and itemStatusFilter.status.size > 0">
+          AND bt_expt_item_result.status ${itemStatusFilter.operator}
+          <foreach collection="itemStatusFilter.status" item="statusItem" open="(" separator="," close=")">
+            #{statusItem.value}
+          </foreach>
+        </if>
+      </foreach>
+    </if>
+    <if test="filter != null and filter.scoreFilters != null and filter.scoreFilters.size > 0">
+      <foreach collection="filter.scoreFilters" item="scoreFilter" separator=" ">
+        AND EXISTS (
+        SELECT 1 FROM bt_expt_turn_eval_res_ref
+        INNER JOIN bt_evaluator_record ON bt_evaluator_record.id = bt_expt_turn_eval_res_ref.evaluator_result_id
+        WHERE bt_evaluator_record.evaluator_version_id = #{scoreFilter.evaluatorVersionId}
+        AND bt_evaluator_record.score ${scoreFilter.operator} #{scoreFilter.score}
+        AND bt_expt_turn_eval_res_ref.expt_turn_result_id = bt_expt_turn_result.id
+        )
+      </foreach>
+    </if>
+    ORDER BY bt_expt_item_result.item_idx
+    <choose>
+      <when test="desc != null and desc">
+        DESC
+      </when>
+      <otherwise>
+        ASC
+      </otherwise>
+    </choose>
+    , bt_expt_turn_result.turn_idx ASC
+  </select>
+
+  <!-- 根据数据项ID列表分页查询轮次结果 -->
+  <select id="listTurnResultByItemIds" resultMap="BaseResultMap">
+    SELECT
+    bt_expt_turn_result.id, bt_expt_turn_result.space_id, bt_expt_turn_result.expt_id, bt_expt_turn_result.expt_run_id,
+    bt_expt_turn_result.item_id, bt_expt_turn_result.turn_id, bt_expt_turn_result.turn_idx, bt_expt_turn_result.status,
+    bt_expt_turn_result.trace_id, bt_expt_turn_result.log_id, bt_expt_turn_result.target_result_id, bt_expt_turn_result.err_msg,
+    bt_expt_turn_result.created_at, bt_expt_turn_result.updated_at, bt_expt_turn_result.deleted_at
+    FROM bt_expt_turn_result
+    <if test="filter != null and (filter.itemRunStateFilters != null and filter.itemRunStateFilters.size > 0)">
+      INNER JOIN bt_expt_item_result ON bt_expt_turn_result.space_id = bt_expt_item_result.space_id
+      AND bt_expt_turn_result.expt_id = bt_expt_item_result.expt_id
+      AND bt_expt_turn_result.item_id = bt_expt_item_result.item_id
+      AND bt_expt_item_result.expt_run_id = bt_expt_turn_result.expt_run_id
+    </if>
+    WHERE bt_expt_turn_result.space_id = #{spaceId}
+    AND bt_expt_turn_result.expt_id = #{exptId}
+    <if test="itemIds != null and itemIds.size > 0">
+      AND bt_expt_turn_result.item_id IN
+      <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+        #{itemId}
+      </foreach>
+    </if>
+    <if test="filter != null and filter.itemRunStateFilters != null and filter.itemRunStateFilters.size > 0">
+      <foreach collection="filter.itemRunStateFilters" item="itemStatusFilter" separator=" ">
+        <if test="itemStatusFilter != null and itemStatusFilter.status != null and itemStatusFilter.status.size > 0">
+          AND bt_expt_item_result.status ${itemStatusFilter.operator}
+          <foreach collection="itemStatusFilter.status" item="statusItem" open="(" separator="," close=")">
+            #{statusItem.value}
+          </foreach>
+        </if>
+      </foreach>
+    </if>
+  </select>
+
+  <!-- 批量获取轮次结果 -->
+  <select id="batchGet" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    <if test="itemIds != null and itemIds.size > 0">
+      AND item_id IN
+      <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+        #{itemId}
+      </foreach>
+    </if>
+  </select>
+
+  <!-- 创建轮次评估器引用 -->
+  <insert id="createTurnEvaluatorRefs">
+    INSERT INTO bt_expt_turn_eval_res_ref (
+    id, space_id, expt_turn_result_id, evaluator_version_id, evaluator_result_id,
+    created_at, updated_at, deleted_at, expt_id
+    ) VALUES
+    <foreach collection="refs" item="ref" separator=",">
+      (
+      #{ref.id}, #{ref.spaceId}, #{ref.exptTurnResultId}, #{ref.evaluatorVersionId}, #{ref.evaluatorResultId},
+      #{ref.createdAt}, #{ref.updatedAt}, #{ref.deletedAt}, #{ref.exptId}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量创建轮次结果（如果不存在） -->
+  <insert id="batchCreateNx">
+    INSERT INTO bt_expt_turn_result (
+    id, space_id, expt_id, expt_run_id, item_id, turn_id, turn_idx, status,
+    trace_id, log_id, target_result_id, err_msg, created_at, updated_at, deleted_at
+    ) VALUES
+    <foreach collection="turnResults" item="result" separator=",">
+      (
+      #{result.id}, #{result.spaceId}, #{result.exptId}, #{result.exptRunId}, #{result.itemId},
+      #{result.turnId}, #{result.turnIdx}, #{result.status}, #{result.traceId}, #{result.logId},
+      #{result.targetResultId}, #{result.errMsg}, #{result.createdAt}, #{result.updatedAt}, #{result.deletedAt}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量创建轮次结果（如果不存在）- Oracle语法 -->
+  <insert id="batchCreateNx" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="turnResults" item="result" separator=" ">
+      INTO bt_expt_turn_result (
+      id, space_id, expt_id, expt_run_id, item_id, turn_id, turn_idx, status,
+      trace_id, log_id, target_result_id, err_msg, created_at, updated_at, deleted_at
+      ) VALUES (
+      #{result.id}, #{result.spaceId}, #{result.exptId}, #{result.exptRunId}, #{result.itemId},
+      #{result.turnId}, #{result.turnIdx}, #{result.status}, #{result.traceId}, #{result.logId},
+      #{result.targetResultId}, #{result.errMsg}, #{result.createdAt}, #{result.updatedAt}, #{result.deletedAt}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 获取数据项轮次结果 -->
+  <select id="getItemTurnResults" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND item_id = #{itemId}
+    <if test="exptRunId != null">
+      AND expt_run_id = #{exptRunId}
+    </if>
+  </select>
+
+  <!-- 保存单个轮次结果 -->
+  <update id="saveTurnResult">
+    UPDATE bt_expt_turn_result
+    <set>
+      <if test="result.turnIdx != null">
+        turn_idx = #{result.turnIdx},
+      </if>
+      <if test="result.status != null">
+        status = #{result.status},
+      </if>
+      <if test="result.traceId != null">
+        trace_id = #{result.traceId},
+      </if>
+      <if test="result.logId != null">
+        log_id = #{result.logId},
+      </if>
+      <if test="result.targetResultId != null">
+        target_result_id = #{result.targetResultId},
+      </if>
+      <if test="result.errMsg != null">
+        err_msg = #{result.errMsg},
+      </if>
+      <if test="result.updatedAt != null">
+        updated_at = #{result.updatedAt},
+      </if>
+    </set>
+    WHERE expt_id = #{result.exptId}
+    AND item_id = #{result.itemId}
+    AND turn_id = #{result.turnId}
+    AND expt_run_id = #{result.exptRunId}
+    AND deleted_at = 0
+  </update>
+
+  <!-- 扫描轮次结果 -->
+  <select id="scanTurnResults" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    <if test="status != null and status.size > 0">
+      AND status IN
+      <foreach collection="status" item="statusItem" open="(" separator="," close=")">
+        #{statusItem}
+      </foreach>
+    </if>
+    ORDER BY id ASC
+  </select>
+
+  <!-- 更新轮次结果 -->
+  <update id="updateTurnResults">
+    UPDATE bt_expt_turn_result
+    <set>
+      <foreach collection="ufields" index="key" item="value" separator=",">
+        ${key} = #{value}
+      </foreach>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND (item_id, turn_id) IN
+    <foreach collection="itemTurnIds" item="itemTurnId" open="(" separator="," close=")">
+      (#{itemTurnId.itemId}, #{itemTurnId.turnId})
+    </foreach>
+  </update>
+
+  <!-- 根据数据项ID更新轮次结果 -->
+  <update id="updateTurnResultsWithItemIds">
+    UPDATE bt_expt_turn_result
+    <set>
+      <foreach collection="ufields" index="key" item="value" separator=",">
+        ${key} = #{value}
+      </foreach>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </update>
+</mapper>

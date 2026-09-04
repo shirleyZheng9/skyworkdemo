@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillQueryMapper">
+  <!-- @formatter:off -->
+
+  <!-- 流程和参数一次查出来 -->
+  <resultMap id="flowWithParam" type="com.iwhalecloud.bote.dto.skill.SkillFlowDTO">
+    <id property="flowId" column="flow_id" />
+    <result property="flowName" column="flow_name" />
+    <result property="flowCode" column="flow_code" />
+    <association property="param" javaType="com.iwhalecloud.bote.dto.skill.SkillFlowParamDTO">
+      <result property="requestJson" column="request_json" />
+    </association>
+  </resultMap>
+
+  <select id="selectFlowsByIds" resultMap="flowWithParam">
+    SELECT a.flow_id, a.flow_name, a.flow_code, b.request_json
+    FROM bt_skill_flow a
+    LEFT JOIN bt_skill_flow_param b ON b.tenant_id = a.tenant_id AND b.flow_id = a.flow_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id IN (#{tenantId}, -1)
+      AND a.flow_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="existsChatflowByIds" resultType="boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+      AND flow_type = 'multiStep'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND flow_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectApiServicesByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT service_id, service_name, service_code, path_json, header_json, query_json, body_json
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSqlServicesByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillSqlDTO">
+    SELECT service_id, service_name, service_code, req_json
+    FROM bt_skill_sql
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectFunctionsByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillFunctionDTO">
+    SELECT func_id, func_name, func_code, req_json
+    FROM bt_skill_function
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPluginsByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT api_id, api_name, api_code, req_json
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND api_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPagesByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillPageDTO">
+    SELECT page_id, page_name, page_code, req_param_json
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND page_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPageFuncListByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT page_func_id, func_name, func_code, req_json
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectKnowledgeListByIds" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT knowledge_id, knowledge_name
+    FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+</mapper>

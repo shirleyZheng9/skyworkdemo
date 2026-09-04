@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.WorkbookContentHistoryMapper">
+  <!-- @formatter:off -->
+  <sql id="workbookContentHistoryColumns">
+    id, document_id, file_block_id, revision, creator_id, updator_id, created_time, updated_time, status_cd, tenant_id
+  </sql>
+  <sql id="workbookContentHistoryColumnsAliased">
+    h.id, h.document_id, h.file_block_id, h.revision, h.creator_id, h.updator_id, h.created_time, h.updated_time, h.status_cd, h.tenant_id
+  </sql>
+  <!-- @formatter:on -->
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentHistoryEntity">
+    SELECT
+    <include refid="workbookContentHistoryColumns"/>
+    FROM bt_dc_workbook_content_his
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+    ORDER BY revision DESC, created_time DESC
+  </select>
+
+  <select id="selectByDocumentIdAndRevision" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentHistoryEntity">
+    SELECT
+    <include refid="workbookContentHistoryColumns"/>
+    FROM bt_dc_workbook_content_his
+    WHERE document_id = #{documentId}
+    AND revision = #{revision}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="selectByMaxRevisionAndDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentHistoryEntity">
+    SELECT
+    <include refid="workbookContentHistoryColumns"/>
+    FROM bt_dc_workbook_content_his
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+    ORDER BY revision DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_workbook_content_his (
+    id, document_id, file_block_id, revision, creator_id, updator_id,
+    created_time, updated_time, status_cd, tenant_id
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.fileBlockId},
+    #{entity.revision},
+    #{entity.creatorId},
+    #{entity.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd},
+    #{entity.tenantId}
+    )
+  </insert>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_workbook_content_his
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="deleteByDocumentId">
+    UPDATE bt_dc_workbook_content_his
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+  </update>
+
+  <select id="selectMinRevisionByDocumentId" resultType="java.lang.Long">
+    SELECT MIN(revision)
+    FROM (
+      SELECT revision
+      FROM bt_dc_workbook_content_his
+      WHERE document_id = #{documentId}
+        AND status_cd = '00A'
+      ORDER BY created_time DESC
+      LIMIT 15
+    ) recent_versions
+  </select>
+
+  <update id="deleteByDocumentIdAndRevisionLessThan">
+    UPDATE bt_dc_workbook_content_his
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND revision &lt; #{maxRevision}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="countByDocumentId" resultType="java.lang.Long">
+    SELECT COUNT(*)
+    FROM bt_dc_workbook_content_his
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectRevisionsByDocumentIdAndRevisionLessThan" resultType="java.lang.Long">
+    SELECT revision
+    FROM bt_dc_workbook_content_his
+    WHERE document_id = #{documentId}
+      AND revision &lt; #{maxRevision}
+      AND status_cd = '00A'
+    ORDER BY revision
+  </select>
+
+  <select id="getWorkbookVersions" resultType="com.iwhalecloud.bote.doc.module.document.dto.WorkbookContentHistoryDTO">
+    SELECT
+      <include refid="workbookContentHistoryColumnsAliased"/>, u.real_name AS userName
+    FROM bt_dc_workbook_content_his h
+    LEFT JOIN bt_user u
+      ON u.user_id = h.creator_id
+    WHERE h.document_id = #{documentId}
+      AND h.status_cd = '00A'
+    ORDER BY h.created_time DESC
+  </select>
+
+  <select id="selectByVersionId" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentHistoryEntity">
+    SELECT
+      <include refid="workbookContentHistoryColumns"/>
+      FROM bt_dc_workbook_content_his
+      WHERE id = #{id}
+    AND status_cd = '00A'
+  </select>
+</mapper>

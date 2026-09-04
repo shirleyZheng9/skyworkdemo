@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.BtDcKbPermissionManageMapper">
+
+  <sql id="btDcKbPermissionColumns">
+    a.permission_id,
+    a.kb_id,
+    a.subject_type,
+    a.subject_id,
+    a.permission_type,
+    a.granted_by,
+    a.expires_at,
+    a.tenant_id,
+    a.creator_id,
+    a.updator_id,
+    a.created_time,
+    a.updated_time,
+    a.status_cd
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    AND a.kb_id=#{query.kbId}
+    <if test="query.subjectType != null and query.subjectType != ''">
+      AND a.subject_type = #{query.subjectType}
+    </if>
+    <if test="query.subjectId != null">
+      AND a.subject_id = #{query.subjectId}
+    </if>
+    <if test="query.permissionType != null and query.permissionType != ''">
+      AND a.permission_type = #{query.permissionType}
+    </if>
+  </sql>
+
+  <select id="existsBtDcKbPermissionCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_dc_kb_permission
+    WHERE status_cd = '00A'
+    AND code = #{dto.code}
+    <if test="dto.permissionId != null">
+      AND permission_id != #{dto.permissionId}
+    </if>
+  </select>
+
+  <select id="getBtDcKbPermission" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    SELECT
+    <include refid="btDcKbPermissionColumns"/>
+    FROM bt_dc_kb_permission a
+    WHERE permission_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertBtDcKbPermission">
+    INSERT INTO bt_dc_kb_permission (
+    permission_id,
+    kb_id,
+    subject_type,
+    subject_id,
+    permission_type,
+    granted_by,
+    expires_at,
+    <!--    tenant_id,-->
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES (
+    #{dto.permissionId},
+    #{dto.kbId},
+    #{dto.subjectType},
+    #{dto.subjectId},
+    #{dto.permissionType},
+    #{dto.grantedBy},
+    #{dto.expiresAt},
+    <!--    #{dto.tenantId},-->
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd}
+    )
+  </insert>
+
+  <insert id="batchInsertBtDcKbPermission">
+    INSERT INTO bt_dc_kb_permission (
+    permission_id,
+    kb_id,
+    subject_type,
+    subject_id,
+    permission_type,
+    granted_by,
+    expires_at,
+    <!--    tenant_id,-->
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.permissionId},
+      #{dto.kbId},
+      #{dto.subjectType},
+      #{dto.subjectId},
+      #{dto.permissionType},
+      #{dto.grantedBy},
+      #{dto.expiresAt},
+      <!--    #{dto.tenantId},-->
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertBtDcKbPermission" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_dc_kb_permission (
+      permission_id,
+      kb_id,
+      subject_type,
+      subject_id,
+      permission_type,
+      granted_by,
+      expires_at,
+      <!--      tenant_id,-->
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      status_cd
+      ) VALUES (
+      #{dto.permissionId},
+      #{dto.kbId},
+      #{dto.subjectType},
+      #{dto.subjectId},
+      #{dto.permissionType},
+      #{dto.grantedBy},
+      #{dto.expiresAt},
+      <!--      #{dto.tenantId},-->
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateBtDcKbPermission">
+    UPDATE bt_dc_kb_permission
+    <set>
+      <if test="dto.checkFieldUpdateFlag('subjectType')">
+        subject_type = #{dto.subjectType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('subjectId')">
+        subject_id = #{dto.subjectId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('permissionType')">
+        permission_type = #{dto.permissionType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('grantedBy')">
+        granted_by = #{dto.grantedBy},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('expiresAt')">
+        expires_at = #{dto.expiresAt},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantId')">
+        tenant_id = #{dto.tenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('creatorId')">
+        creator_id = #{dto.creatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+    </set>
+    WHERE permission_id = #{dto.permissionId}
+  </update>
+
+  <select id="selectBtDcKbPermissionList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    SELECT
+    <include refid="btDcKbPermissionColumns"/>
+    FROM bt_dc_kb_permission a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectBtDcKbPermissionPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    SELECT
+    <include refid="btDcKbPermissionColumns"/>
+    FROM bt_dc_kb_permission a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+  <delete id="deleteBtDcKbPermissionByKnowledgeId">
+    UPDATE bt_dc_kb_permission
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE kb_id = #{knowledgeId} AND status_cd = '00A'
+  </delete>
+  <select id="selectBtDcKbPermissionDTO" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    select
+    <include refid="btDcKbPermissionColumns"/>
+    from bt_dc_kb_permission a where a.status_cd ='00A' and a.kb_id = #{knowledgeId} and a.subject_type =#{subjectType} and a.subject_id =
+    #{subjectId}
+  </select>
+  <select id="selectBtDcKbPermissionDTOs" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    SELECT
+    <include refid="btDcKbPermissionColumns"/>
+    FROM bt_dc_kb_permission a
+    WHERE a.status_cd = '00A' AND a.kb_id=#{knowledgeId} AND a.subject_type='ORG' AND a.subject_id IN (<foreach collection="list" item="id"
+                                                                                                                separator=",">#{id}</foreach>)
+  </select>
+
+  <!-- 批量查询用户权限 -->
+  <select id="batchSelectUserPermissions" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    SELECT
+    <include refid="btDcKbPermissionColumns"/>
+    FROM bt_dc_kb_permission a
+    WHERE a.status_cd = '00A'
+    AND a.kb_id IN (<foreach collection="knowledgeIds" item="id" separator=",">#{id}</foreach>)
+    AND a.subject_type = 'USER'
+    AND a.subject_id = #{userId}
+  </select>
+
+  <!-- 批量查询部门权限 -->
+  <select id="batchSelectDeptPermissions" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
+    SELECT
+    <include refid="btDcKbPermissionColumns"/>
+    FROM bt_dc_kb_permission a
+    WHERE a.status_cd = '00A'
+    AND a.kb_id IN (<foreach collection="knowledgeIds" item="id" separator=",">#{id}</foreach>)
+    AND a.subject_type = 'ORG'
+    AND a.subject_id IN (<foreach collection="deptIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+  <delete id="deleteByPrimaryKey">
+    UPDATE bt_dc_kb_permission
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE permission_id = #{permissionId}
+  </delete>
+  <delete id="batchDeletePermissions">
+    UPDATE bt_dc_kb_permission
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE permission_id IN (<foreach collection="list" item="id" separator=",">#{id}</foreach>)
+  </delete>
+
+</mapper>

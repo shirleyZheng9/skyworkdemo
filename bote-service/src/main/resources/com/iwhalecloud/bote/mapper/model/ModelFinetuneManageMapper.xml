@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.model.ModelFinetuneManageMapper">
+  <sql id="finetuneColumns">
+    a.id,
+    a.tenant_id,
+    a.model_name,
+    a.model_icon,
+    a.use_type,
+    a.base_model_type,
+    a.base_model_sub_type,
+    a.num_train_epochs,
+    a.learning_rate,
+    a.batch_size,
+    a.eval_steps,
+    a.max_length,
+    a.weight_decay,
+    a.threshold,
+    a.corpus_info,
+    a.status,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.model_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.model_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.useType != null and query.useType != ''">
+      AND a.use_type = #{query.useType}
+    </if>
+    <choose>
+      <when test="query.status != null and query.status != ''">
+        AND a.status = #{query.status}
+      </when>
+      <otherwise>
+        AND a.status != '-1'
+      </otherwise>
+    </choose>
+    ORDER BY updated_time DESC
+  </sql>
+
+  <select id="existsFinetuneName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_model_finetune
+    WHERE status_cd = '00A'
+    AND model_name = #{dto.modelName}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.id != null">
+      AND id != #{dto.id}
+    </if>
+  </select>
+
+  <select id="getFinetune" resultType="com.iwhalecloud.bote.dto.model.ModelFinetuneDTO">
+    SELECT
+    <include refid="finetuneColumns"/>,
+    (SELECT f.file_id FROM bt_file_info f WHERE f.file_info_id = a.request_file_id AND f.tenant_id = a.tenant_id) AS "requestFileId",
+    (SELECT f.file_id FROM bt_file_info f WHERE f.file_info_id = a.response_file_id AND f.tenant_id = a.tenant_id) AS "responseFileId"
+    FROM bt_model_finetune a
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertFinetune">
+    INSERT INTO bt_model_finetune (
+    id,
+    tenant_id,
+    model_name,
+    model_icon,
+    request_file_id,
+    use_type,
+    base_model_type,
+    base_model_sub_type,
+    num_train_epochs,
+    learning_rate,
+    batch_size,
+    eval_steps,
+    max_length,
+    weight_decay,
+    threshold,
+    corpus_info,
+    status,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.tenantId},
+    #{dto.modelName},
+    #{dto.modelIcon},
+    #{dto.requestFileId},
+    #{dto.useType},
+    #{dto.baseModelType},
+    #{dto.baseModelSubType},
+    #{dto.numTrainEpochs},
+    #{dto.learningRate},
+    #{dto.batchSize},
+    #{dto.evalSteps},
+    #{dto.maxLength},
+    #{dto.weightDecay},
+    #{dto.threshold},
+    #{dto.corpusInfo},
+    #{dto.status},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateFinetune">
+    UPDATE bt_model_finetune
+    <set>
+      <if test="dto.checkFieldUpdateFlag('tenantId')">
+        tenant_id = #{dto.tenantId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelName')">
+        model_name = #{dto.modelName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelIcon')">
+        model_icon = #{dto.modelIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('useType')">
+        use_type = #{dto.useType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('baseModelType')">
+        base_model_type = #{dto.baseModelType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('baseModelSubType')">
+        base_model_sub_type = #{dto.baseModelSubType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('numTrainEpochs')">
+        num_train_epochs = #{dto.numTrainEpochs},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('learningRate')">
+        learning_rate = #{dto.learningRate},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('batchSize')">
+        batch_size = #{dto.batchSize},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('evalSteps')">
+        eval_steps = #{dto.evalSteps},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('maxLength')">
+        max_length = #{dto.maxLength},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('weightDecay')">
+        weight_decay = #{dto.weightDecay},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('threshold')">
+        threshold = #{dto.threshold},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('requestFileId')">
+        request_file_id = #{dto.requestFileId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('responseFileId')">
+        response_file_id = #{dto.responseFileId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('corpusInfo')">
+        corpus_info = #{dto.corpusInfo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('status')">
+        status = #{dto.status},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <update id="deleteFinetune">
+    UPDATE bt_model_finetune
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateFinetuneStatusByTenantId">
+    UPDATE bt_model_finetune
+    SET status = '0',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND status = '1'
+      AND use_type = 'intent'
+  </update>
+
+  <update id="updateFinetuneStatus">
+    UPDATE bt_model_finetune
+    SET status = #{status},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectFinetunePage" resultType="com.iwhalecloud.bote.dto.model.ModelFinetuneDTO">
+    SELECT
+    <include refid="finetuneColumns"/>,
+    (SELECT f.file_id FROM bt_file_info f WHERE f.file_info_id = a.request_file_id AND f.tenant_id = a.tenant_id) AS "requestFileId",
+    (SELECT f.file_id FROM bt_file_info f WHERE f.file_info_id = a.response_file_id AND f.tenant_id = a.tenant_id) AS "responseFileId"
+    FROM bt_model_finetune a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectFinetuneList" resultType="com.iwhalecloud.bote.dto.model.ModelFinetuneDTO">
+    SELECT
+    <include refid="finetuneColumns"/>,
+    (SELECT f.file_id FROM bt_file_info f WHERE f.file_info_id = a.request_file_id AND f.tenant_id = a.tenant_id) AS "requestFileId",
+    (SELECT f.file_id FROM bt_file_info f WHERE f.file_info_id = a.response_file_id AND f.tenant_id = a.tenant_id) AS "responseFileId"
+    FROM bt_model_finetune a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="getOnlineFinetune" resultType="com.iwhalecloud.bote.dto.model.SimpleIntentFinetuneDTO">
+    SELECT
+    a.tenant_id,
+    a.base_model_sub_type AS "baseModelName",
+    a.id AS "modelId",
+    a.max_length,
+    a.threshold
+    FROM bt_model_finetune a
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+    AND status = '1'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectOnlineFinetune" resultType="com.iwhalecloud.bote.dto.model.SimpleIntentFinetuneDTO">
+    SELECT
+      a.tenant_id,
+      a.base_model_sub_type AS "baseModelName",
+      a.id AS "modelId",
+      a.max_length,
+      a.threshold
+    FROM bt_model_finetune a
+    WHERE status_cd = '00A'
+      AND status = '1'
+  </select>
+
+  <select id="getEval" resultType="com.iwhalecloud.bote.dto.model.ModelEvalDTO">
+    SELECT id, tenant_id, model_id, request_file_id, status, accuracy
+    FROM bt_model_eval
+    WHERE id = #{id}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insertEval">
+    INSERT INTO bt_model_eval (
+    id,
+    tenant_id,
+    model_id,
+    request_file_id,
+    accuracy,
+    status,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.tenantId},
+    #{dto.modelId},
+    #{dto.requestFileId},
+    #{dto.accuracy},
+    #{dto.status},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="deleteEval">
+    UPDATE bt_model_eval
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="updateEvalResult">
+    UPDATE bt_model_eval
+    SET status = #{status},
+    accuracy = #{accuracy},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+</mapper>

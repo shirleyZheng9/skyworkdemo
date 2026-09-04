@@ -1,0 +1,445 @@
+{
+  "description": "根节点",
+  "type": "object",
+  "name": "root",
+  "children": [
+    {
+      "description": "编码",
+      "type": "string",
+      "name": "code",
+      "children": null
+    },
+    {
+      "description": "错误信息",
+      "type": "string",
+      "name": "msg",
+      "children": null
+    },
+    {
+      "description": "返回对象",
+      "type": "object",
+      "name": "data",
+      "children": [
+        {
+          "description": "字段信息列表",
+          "type": "array",
+          "name": "items",
+          "children": [
+            {
+              "description": "字段信息",
+              "type": "object",
+              "name": "item",
+              "children": [
+                {
+                  "description": "多维表格字段名称",
+                  "type": "string",
+                  "name": "fieldName",
+                  "children": null
+                },
+                {
+                  "description": "多维表格字段类型",
+                  "type": "string",
+                  "name": "type",
+                  "children": null
+                },
+                {
+                  "description": "字段的描述",
+                  "type": "string",
+                  "name": "description",
+                  "children": null
+                },
+                {
+                  "description": "是否是索引列",
+                  "type": "boolean",
+                  "name": "isPrimary",
+                  "children": null
+                },
+                {
+                  "description": "多维表格字段ID",
+                  "type": "string",
+                  "name": "fieldId",
+                  "children": null
+                },
+                {
+                  "description": "字段在界面上的展示类型",
+                  "type": "string",
+                  "name": "uiType",
+                  "children": null
+                },
+                {
+                  "description": "是否是隐藏字段",
+                  "name": "isHidden",
+                  "type": "boolean",
+                  "children": null
+                },
+                {
+                  "description": "字段属性",
+                  "type": "object",
+                  "name": "property",
+                  "children": [
+                    {
+                      "description": "单选、多选字段的选项信息列表",
+                      "type": "array",
+                      "name": "options",
+                      "children": [
+                        {
+                          "description": "单选、多选字段的选项信息",
+                          "type": "object",
+                          "name": "option",
+                          "children": [
+                            {
+                              "description": "选项名",
+                              "type": "string",
+                              "name": "name",
+                              "children": null
+                            },
+                            {
+                              "description": "选项ID，创建时不允许指定ID",
+                              "type": "string",
+                              "name": "id",
+                              "children": null
+                            },
+                            {
+                              "description": "选项颜色",
+                              "type": "integer",
+                              "name": "color",
+                              "children": null
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "description": "数字、公式字段的显示格式",
+                      "type": "string",
+                      "name": "formatter",
+                      "children": null
+                    },
+                    {
+                      "description": "日期、创建时间、最后更新时间字段的显示格式",
+                      "type": "string",
+                      "name": "dateFormatter",
+                      "children": null
+                    },
+                    {
+                      "description": "日期字段中新纪录自动填写创建时间",
+                      "type": "boolean",
+                      "name": "autoFill",
+                      "children": null
+                    },
+                    {
+                      "description": "人员字段中允许添加多个成员，单向关联、双向关联中允许添加多个记录",
+                      "type": "boolean",
+                      "name": "multiple",
+                      "children": null
+                    },
+                    {
+                      "description": "单向关联、双向关联字段中关联的数据表的ID",
+                      "type": "string",
+                      "name": "tableId",
+                      "children": null
+                    },
+                    {
+                      "description": "单向关联、双向关联字段中关联的数据表的名字",
+                      "type": "string",
+                      "name": "tableName",
+                      "children": null
+                    },
+                    {
+                      "description": "双向关联字段中关联的数据表中对应的双向关联字段的名字",
+                      "type": "string",
+                      "name": "backFieldName",
+                      "children": null
+                    },
+                    {
+                      "description": "自动编号类型",
+                      "type": "object",
+                      "name": "autoSerial",
+                      "children": [
+                        {
+                          "description": "自动编号类型",
+                          "type": "string",
+                          "name": "type",
+                          "children": null
+                        },
+                        {
+                          "description": "自动编号规则列表",
+                          "type": "array",
+                          "name": "options",
+                          "children": [
+                            {
+                              "description": "自动编号规则",
+                              "type": "object",
+                              "name": "option",
+                              "children": [
+                                {
+                                  "description": "自动编号的可选规则项类型",
+                                  "type": "string",
+                                  "name": "type",
+                                  "children": null
+                                },
+                                {
+                                  "description": "与自动编号的可选规则项类型相对应的取值",
+                                  "type": "string",
+                                  "name": "value",
+                                  "children": null
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "description": "公式字段的表达式",
+                      "name": "formulaExpression",
+                      "type": "string"
+                    },
+                    {
+                      "description": "地理位置输入方式",
+                      "type": "object",
+                      "name": "location",
+                      "children": [
+                        {
+                          "description": "地理位置输入限制",
+                          "type": "string",
+                          "name": "inputType",
+                          "children": null
+                        }
+                      ]
+                    },
+                    {
+                      "description": "字段支持的编辑模式",
+                      "type": "object",
+                      "name": "allowedEditModes",
+                      "children": [
+                        {
+                          "description": "是否允许手动录入",
+                          "type": "boolean",
+                          "name": "manual",
+                          "children": null
+                        },
+                        {
+                          "description": "是否允许移动端录入",
+                          "type": "boolean",
+                          "name": "scan",
+                          "children": null
+                        }
+                      ]
+                    },
+                    {
+                      "description": "进度、评分等字段的数据范围最小值",
+                      "type": "number",
+                      "name": "min",
+                      "children": null
+                    },
+                    {
+                      "description": "进度、评分等字段的数据范围最大值",
+                      "type": "number",
+                      "name": "max",
+                      "children": null
+                    },
+                    {
+                      "description": "进度等字段是否支持自定义范围",
+                      "type": "boolean",
+                      "name": "rangeCustomize",
+                      "children": null
+                    },
+                    {
+                      "description": "货币币种",
+                      "type": "string",
+                      "name": "currencyCode",
+                      "children": null
+                    },
+                    {
+                      "description": "评分字段的相关设置",
+                      "type": "object",
+                      "name": "rating",
+                      "children": [
+                        {
+                          "description": "评分字段的符号展示",
+                          "type": "string",
+                          "name": "symbol",
+                          "children": null
+                        }
+                      ]
+                    },
+                    {
+                      "description": "设置公式字段的数据类型",
+                      "type": "object",
+                      "name": "type",
+                      "children": [
+                        {
+                          "description": "公式字段对应的数据类型",
+                          "type": "integer",
+                          "name": "dataType",
+                          "children": null
+                        },
+                        {
+                          "description": "公式数据属性",
+                          "type": "object",
+                          "name": "uiProperty",
+                          "children": [
+                            {
+                              "description": "货币币种",
+                              "type": "string",
+                              "name": "currencyCode",
+                              "children": null
+                            },
+                            {
+                              "description": "数字、公式字段的显示格式",
+                              "type": "string",
+                              "name": "formatter",
+                              "children": null
+                            },
+                            {
+                              "description": "进度等字段是否支持自定义范围",
+                              "type": "boolean",
+                              "name": "rangeCustomize",
+                              "children": null
+                            },
+                            {
+                              "description": "进度、评分等字段的数据范围最小值",
+                              "type": "number",
+                              "name": "min",
+                              "children": null
+                            },
+                            {
+                              "description": "进度、评分等字段的数据范围最大值",
+                              "type": "number",
+                              "name": "max",
+                              "children": null
+                            },
+                            {
+                              "description": "日期、创建时间、最后更新时间字段的显示格式",
+                              "type": "object",
+                              "name": "dateFormatter",
+                              "children": null
+                            },
+                            {
+                              "description": "评分字段的相关设置",
+                              "type": "object",
+                              "name": "rating",
+                              "children": [
+                                {
+                                  "description": "评分字段的符号展示",
+                                  "type": "string",
+                                  "name": "symbol",
+                                  "children": null
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "description": "公式字段在界面上的展示类型",
+                          "type": "string",
+                          "name": "uiType",
+                          "children": null
+                        }
+                      ]
+                    },
+                    {
+                      "description": "查找条件",
+                      "type": "object",
+                      "name": "filterInfo",
+                      "children": [
+                        {
+                          "description": "引用表格",
+                          "name": "targetTable",
+                          "type": "object",
+                          "children": null
+                        },
+                        {
+                          "description": "",
+                          "name": "filterInfo",
+                          "type": "object",
+                          "children": [
+                            {
+                              "description": "多个筛选条件的关系",
+                              "type": "string",
+                              "name": "conjunction",
+                              "children": null
+                            },
+                            {
+                              "description": "筛选条件列表",
+                              "type": "array",
+                              "name": "conditions",
+                              "children": [
+                                {
+                                  "description": "筛选条件",
+                                  "type": "object",
+                                  "name": "condition",
+                                  "children": [
+                                    {
+                                      "description": "用于过滤的字段唯一ID",
+                                      "type": "string",
+                                      "name": "fieldId",
+                                      "children": null
+                                    },
+                                    {
+                                      "description": "过滤操作的类型",
+                                      "type": "string",
+                                      "name": "operator",
+                                      "children": null
+                                    },
+                                    {
+                                      "description": "筛选值",
+                                      "type": "string",
+                                      "name": "value",
+                                      "children": null
+                                    },
+                                    {
+                                      "description": "过滤条件的唯一ID",
+                                      "type": "string",
+                                      "name": "conditionId",
+                                      "children": null
+                                    },
+                                    {
+                                      "description": "用于过滤的字段类型",
+                                      "type": "integer",
+                                      "name": "fieldType",
+                                      "children": null
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "description": "分页标记，当has_more为true时，会同时返回新的page_token，否则不返回page_token",
+          "type": "string",
+          "name": "pageToken",
+          "children": null
+        },
+        {
+          "description": "总数",
+          "type": "integer",
+          "name": "total",
+          "children": null
+        },
+        {
+          "description": "是否有更多数据",
+          "type": "boolean",
+          "name": "hasMore",
+          "children": null
+        },
+        {
+          "description": "授权链接",
+          "type": "string",
+          "name": "authUrl",
+          "children": null
+        }
+      ]
+    }
+  ]
+}

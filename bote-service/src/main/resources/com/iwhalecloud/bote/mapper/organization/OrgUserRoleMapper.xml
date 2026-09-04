@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.organization.OrgUserRoleMapper">
+
+  <sql id="orgUserRoleColumns">
+    a.org_role_id,
+    a.user_id,
+    a.org_role,
+    a.space_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertOrgUserRoleBatch">
+    INSERT INTO bt_org_user_role (
+      org_role_id,
+      user_id,
+      org_role,
+      space_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES
+    <foreach collection="list" item="entity" index="index" separator=", ">
+    (
+      #{entity.orgRoleId},
+      #{entity.userId},
+      #{entity.orgRole},
+      #{entity.spaceId},
+      #{entity.statusCd},
+      #{entity.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="insertOrgUserRoleBatch" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="entity" index="index" separator=" ">
+    INTO bt_org_user_role (
+      org_role_id,
+      user_id,
+      org_role,
+      space_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES (
+      #{entity.orgRoleId},
+      #{entity.userId},
+      #{entity.orgRole},
+      #{entity.spaceId},
+      #{entity.statusCd},
+      #{entity.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="selectOrgUserRolePage" resultType="com.iwhalecloud.bote.dto.organization.OrgUserRoleDTO">
+    SELECT a.org_role_id, a.user_id, a.org_role, a.updated_time, u.user_name, u.real_name, u.phone_no
+    FROM bt_org_user_role a
+    JOIN bt_user u ON a.user_id = u.user_id
+    WHERE a.status_cd = '00A'
+      AND u.status_cd = '00A'
+      AND a.space_id = #{query.spaceId}
+    <if test="query.orgRole != null and query.orgRole != ''">
+      AND a.org_role = #{query.orgRole}
+    </if>
+    <if test="query.userName != null and query.userName != ''">
+      AND u.real_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectOrgUserRole" resultType="com.iwhalecloud.bote.dto.organization.OrgUserRoleDTO">
+    SELECT org_role_id, user_id, org_role
+    FROM bt_org_user_role
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND user_id = #{userId}
+  </select>
+
+  <select id="countOrgUserRole" resultType="java.lang.Integer">
+    SELECT count(1)
+    FROM bt_org_user_role a
+    JOIN bt_user u ON a.user_id = u.user_id
+    WHERE a.status_cd = '00A'
+      AND u.status_cd = '00A'
+      AND a.space_id = #{query.spaceId}
+      AND a.org_role = #{query.orgRole}
+  </select>
+
+  <select id="selectOrgUserRoleById" resultType="com.iwhalecloud.bote.dto.organization.OrgUserRoleDTO">
+    SELECT space_id, user_id, org_role
+    FROM bt_org_user_role
+    WHERE status_cd = '00A'
+      AND org_role_id = #{orgRoleId}
+  </select>
+
+  <update id="deleteOrgUserRoleById">
+    UPDATE bt_org_user_role
+    SET status_cd = '00X'
+    WHERE status_cd = '00A'
+      AND org_role_id = #{orgRoleId}
+  </update>
+
+  <update id="deleteBySpaceIdAndUserId">
+    UPDATE bt_org_user_role
+    SET status_cd = '00X',
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND user_id = #{userId}
+  </update>
+
+  <update id="batchDeleteOrgUserRole">
+    UPDATE bt_org_user_role
+    SET status_cd = '00X',
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND user_id IN (<foreach collection="userIds" item="userId" separator=", ">#{userId}</foreach>)
+  </update>
+
+  <select id="checkIsOrgAdmin" resultType="java.lang.Boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_org_user_role
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND user_id = #{userId}
+      AND org_role = 'admin'
+  </select>
+
+  <update id="updateUserOrgRole">
+    UPDATE bt_org_user_role
+    SET org_role = #{dto.orgRole},
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND space_id = #{dto.spaceId}
+      AND user_id = #{dto.userId}
+  </update>
+
+</mapper>

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.app.WorkbenchAppAuthMapper">
+
+  <sql id="columns">
+    a.auth_id,
+    a.workbench_app_id,
+    a.user_id,
+    a.org_id,
+    a.space_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertAppAuth">
+    INSERT INTO bt_workbench_app_auth (
+    auth_id,
+    workbench_app_id,
+    user_id,
+    org_id,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.authId},
+    #{dto.workbenchAppId},
+    #{dto.userId},
+    #{dto.orgId},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="insertAppAuthBatch">
+    INSERT INTO bt_workbench_app_auth (
+    auth_id,
+    workbench_app_id,
+    user_id,
+    org_id,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.authId},
+    #{dto.workbenchAppId},
+    #{dto.userId},
+    #{dto.orgId},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="insertAppAuthBatch" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_workbench_app_auth (
+      auth_id,
+      workbench_app_id,
+      user_id,
+      org_id,
+      space_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.authId},
+      #{dto.workbenchAppId},
+      #{dto.userId},
+      #{dto.orgId},
+      #{dto.spaceId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="deleteByWorkbenchAppId">
+    UPDATE bt_workbench_app_auth
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND workbench_app_id = #{workbenchAppId}
+      AND space_id = #{spaceId}
+  </update>
+
+  <select id="selectByUserId" resultType="com.iwhalecloud.bote.dto.app.WorkbenchAppAuthDTO">
+    SELECT auth_id, workbench_app_id
+    FROM bt_workbench_app_auth
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="selectByOrgId" resultType="com.iwhalecloud.bote.dto.app.WorkbenchAppAuthDTO">
+    SELECT auth_id, workbench_app_id
+    FROM bt_workbench_app_auth
+    WHERE status_cd = '00A'
+      AND org_id = #{orgId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="selectByWorkbenchAppId" resultType="com.iwhalecloud.bote.dto.organization.OrganizationUserDTO">
+    SELECT au.user_id, au.org_id,
+           (SELECT real_name FROM bt_user u WHERE u.user_id = au.user_id) AS realName,
+           (SELECT org_name FROM bt_organization o WHERE o.org_id = au.org_id AND o.space_id =#{spaceId}) AS orgName
+    FROM bt_workbench_app_auth au
+    WHERE au.status_cd = '00A'
+      AND au.workbench_app_id = #{workbenchAppId}
+      AND au.space_id = #{spaceId}
+  </select>
+
+</mapper>

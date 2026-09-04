@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.PlatSceneInfoManageMapper">
+
+  <sql id="PlatSceneInfoColumns">
+    a.plat_scene_id,
+    a.scene_id,
+    a.sort_order,
+    a.tenant_id,
+    a.created_time,
+    a.catalog_item_id,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="PlatSceneInfoWithSceneColumns">
+    a.plat_scene_id,
+    a.scene_id,
+    a.sort_order,
+    a.tenant_id,
+    a.created_time,
+    a.catalog_item_id,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    b.scene_name,
+    b.scene_desc,
+    b.scene_icon,
+    b.scene_status,
+    b.scene_type,
+    c.catalog_name,
+    u1.real_name as "updatorName",
+    u2.real_name as "creatorName"
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND b.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <if test="query.sceneStatus != null and query.sceneStatus != ''">
+      AND b.scene_status = #{query.sceneStatus}
+    </if>
+    <if test="query.sceneType != null and query.sceneType != ''">
+      AND b.scene_type = #{query.sceneType}
+    </if>
+  </sql>
+
+  <select id="existsPlatSceneInfo" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_plat_scene_info
+    WHERE status_cd = '00A'
+    AND scene_id = #{sceneId}
+    AND tenant_id = #{tenantId}
+    <if test="platSceneId != null">
+      AND plat_scene_id != #{platSceneId}
+    </if>
+  </select>
+
+  <!-- Oracle版本 - 查找已删除的模板智能体记录 -->
+  <select id="findDeletedPlatSceneInfo" resultType="com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO" databaseId="oracle">
+    SELECT * FROM (
+    SELECT
+    <include refid="PlatSceneInfoColumns"/>
+    FROM bt_plat_scene_info a
+    WHERE a.scene_id = #{sceneId}
+    AND a.tenant_id = #{tenantId}
+    AND a.status_cd = '00X'
+    ORDER BY a.updated_time DESC
+    ) WHERE ROWNUM = 1
+  </select>
+
+  <!-- PostgreSQL/MySQL版本 - 查找已删除的模板智能体记录 -->
+  <select id="findDeletedPlatSceneInfo" resultType="com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO">
+    SELECT
+    <include refid="PlatSceneInfoColumns"/>
+    FROM bt_plat_scene_info a
+    WHERE a.scene_id = #{sceneId}
+    AND a.tenant_id = #{tenantId}
+    AND a.status_cd = '00X'
+    ORDER BY a.updated_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <select id="getPlatSceneInfo" resultType="com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO">
+    SELECT
+    <include refid="PlatSceneInfoWithSceneColumns"/>
+    FROM bt_plat_scene_info a
+    LEFT JOIN bt_bot_scene b ON a.scene_id = b.scene_id AND 2 = b.tenant_id
+    LEFT JOIN bt_catalog c ON a.catalog_item_id = c.catalog_id and a.tenant_id =c.tenant_id
+    LEFT JOIN bt_user u1 ON a.updator_id = u1.user_id
+    LEFT JOIN bt_user u2 ON a.creator_id = u2.user_id
+    WHERE a.plat_scene_id = #{platSceneId}
+    AND a.tenant_id = #{tenantId}
+    AND a.status_cd = '00A'
+  </select>
+
+  <insert id="insertPlatSceneInfo">
+    INSERT INTO bt_plat_scene_info (
+    plat_scene_id,
+    scene_id,
+    sort_order,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark,
+    catalog_item_id
+    ) VALUES (
+    #{dto.platSceneId},
+    #{dto.sceneId},
+    #{dto.sortOrder},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark},
+    #{dto.catalogItemId}
+    )
+  </insert>
+
+  <update id="updatePlatSceneInfo">
+    UPDATE bt_plat_scene_info
+    <set>
+      <if test="dto.checkFieldUpdateFlag('sortOrder')">
+        sort_order = #{dto.sortOrder},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE plat_scene_id = #{dto.platSceneId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deletePlatSceneInfo">
+    UPDATE bt_plat_scene_info
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE plat_scene_id = #{platSceneId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectPlatSceneInfoPage" resultType="com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO">
+    SELECT
+    <include refid="PlatSceneInfoWithSceneColumns"/>
+    FROM bt_plat_scene_info a
+    LEFT JOIN bt_bot_scene b ON a.scene_id = b.scene_id AND 2 = b.tenant_id
+    LEFT JOIN bt_catalog c ON a.catalog_item_id = c.catalog_id and a.tenant_id =c.tenant_id
+    LEFT JOIN bt_user u1 ON a.updator_id = u1.user_id
+    LEFT JOIN bt_user u2 ON a.creator_id = u2.user_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC, a.sort_order DESC
+  </select>
+
+  <select id="selectPlatSceneInfoList" resultType="com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO">
+    SELECT
+    <include refid="PlatSceneInfoWithSceneColumns"/>
+    FROM bt_plat_scene_info a
+    LEFT JOIN bt_bot_scene b ON a.scene_id = b.scene_id AND 2 = b.tenant_id
+    LEFT JOIN bt_catalog c ON a.catalog_item_id = c.catalog_id
+    LEFT JOIN bt_user u1 ON a.updator_id = u1.user_id
+    LEFT JOIN bt_user u2 ON a.creator_id = u2.user_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.sort_order DESC, a.created_time DESC
+  </select>
+
+  <select id="selectAvailableScenes" resultType="com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO">
+    SELECT
+    b.scene_id,
+    b.scene_name,
+    b.scene_desc,
+    b.scene_icon,
+    b.scene_status,
+    b.catalog_item_id,
+    c.catalog_name
+    FROM bt_bot_scene b
+    LEFT JOIN bt_catalog c ON b.catalog_item_id = c.catalog_id
+    WHERE b.tenant_id = #{tenantId}
+    AND b.status_cd = '00A'
+    AND b.scene_status = '1'
+    AND NOT EXISTS (
+    SELECT 1 FROM bt_plat_scene_info st
+    WHERE st.scene_id = b.scene_id
+    AND st.tenant_id = b.tenant_id
+    AND st.status_cd = '00A'
+    )
+    <if test="searchContent != null and searchContent != ''">
+      AND b.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY b.created_time DESC
+  </select>
+
+  <select id="getMaxSortOrder" resultType="java.lang.Integer">
+    SELECT COALESCE(MAX(sort_order), 0)
+    FROM bt_plat_scene_info
+    WHERE status_cd = '00A'
+    AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSimpleScenePage" resultType="com.iwhalecloud.bote.dto.scene.SimpleSceneDTO">
+    SELECT a.scene_id, a.scene_name, a.scene_desc, a.scene_status, a.scene_type
+    FROM bt_bot_scene a
+    WHERE a.tenant_id = #{query.tenantId}
+    AND a.status_cd = '00A'
+    AND a.scene_status = '1'
+    AND a.scene_id != #{query.sceneId}
+    AND a.scene_type IN ('chatflow', 'scene', 'knowledge')
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.scene_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+</mapper>

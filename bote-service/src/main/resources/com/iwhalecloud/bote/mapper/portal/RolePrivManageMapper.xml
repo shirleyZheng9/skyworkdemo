@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.RolePrivManageMapper">
+
+  <sql id="rolePrivColumns">
+    a.rela_id,
+    a.priv_id,
+    a.role_code,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <insert id="batchInsertRolePriv">
+    INSERT INTO bt_role_priv (
+    rela_id,
+    priv_id,
+    role_code,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.relaId},
+    #{dto.privId},
+    #{dto.roleCode},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertRolePriv" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_role_priv (
+      rela_id,
+      priv_id,
+      role_code,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.relaId},
+      #{dto.privId},
+      #{dto.roleCode},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="deleteRolePriv">
+    UPDATE bt_role_priv
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE priv_id IN  (<foreach collection="privIds" item="privId" separator=",">#{privId}</foreach>)
+      AND role_code = #{roleCode}
+  </update>
+
+  <select id="selectRolePrivList" resultType="com.iwhalecloud.bote.dto.portal.SimpleRolePrivDTO">
+    SELECT
+    a.role_code,
+    a.priv_id,
+    b.priv_type,
+    b.priv_code,
+    b.priv_name,
+    b.priv_url
+    FROM bt_role_priv a
+    JOIN bt_priv b on a.priv_id = b.priv_id
+    WHERE a.status_cd = '00A'
+    <if test="roleCode != null and roleCode != ''">
+      AND a.role_code = #{roleCode}
+    </if>
+    <if test="privType != null and privType != ''">
+      AND b.priv_type = #{privType}
+    </if>
+  </select>
+
+  <select id="selectAllPrivList" resultType="com.iwhalecloud.bote.dto.portal.SimpleRolePrivDTO">
+    SELECT a.role_code, b.priv_type, b.priv_code, b.priv_url
+    FROM bt_role_priv a
+    JOIN bt_priv b on a.priv_id = b.priv_id
+    WHERE a.status_cd = '00A'
+    AND b.status_cd = '00A'
+  </select>
+
+  <select id="selectPrivIdsByRoleCode" resultType="java.lang.Long">
+    SELECT priv_id
+    FROM bt_role_priv
+    WHERE status_cd = '00A'
+      AND role_code = #{roleCode}
+  </select>
+</mapper>

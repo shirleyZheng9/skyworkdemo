@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.data.dataset.ItemMapper">
+  <!-- 结果映射 -->
+  <resultMap id="DatasetItemEntityMap" type="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetItemEntity">
+    <id column="id" property="id"/>
+    <result column="space_id" property="spaceId"/>
+    <result column="dataset_id" property="datasetId"/>
+    <result column="item_id" property="itemId"/>
+    <result column="item_key" property="itemKey"/>
+    <result column="schema_id" property="schemaId"/>
+    <result column="data" property="data"/>
+    <result column="repeated_data" property="repeatedData"/>
+    <result column="data_properties" property="dataProperties"/>
+    <result column="add_vn" property="addVn"/>
+    <result column="del_vn" property="delVn"/>
+    <result column="update_version" property="updateVersion"/>
+    <result column="created_by" property="createdBy"/>
+    <result column="created_at" property="createdAt"/>
+    <result column="updated_by" property="updatedBy"/>
+    <result column="updated_at" property="updatedAt"/>
+    <result column="deleted_at" property="deletedAt"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , space_id, dataset_id, item_id, item_key, schema_id, data, repeated_data,
+        data_properties, add_vn, del_vn, update_version, created_by, created_at,
+        updated_by, updated_at, deleted_at
+  </sql>
+
+  <!-- 基础表名 -->
+  <sql id="Base_Table_Name">
+    bt_dataset_item
+  </sql>
+
+  <!-- 根据条件统计项目数量 -->
+  <select id="countByCondition" parameterType="com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListItemsParams" resultType="java.lang.Long">
+    SELECT COUNT(1)
+    FROM
+    <include refid="Base_Table_Name"/>
+    <where>
+      <if test="spaceId != null and spaceId > 0">
+        AND space_id = #{spaceId}
+      </if>
+      <if test="datasetId != null and datasetId > 0">
+        AND dataset_id = #{datasetId}
+      </if>
+      <if test="itemKeys != null and itemKeys.size() > 0">
+        AND item_key IN
+        <foreach collection="itemKeys" item="itemKey" open="(" separator="," close=")">
+          #{itemKey}
+        </foreach>
+      </if>
+      <if test="itemIds != null and itemIds.size() > 0">
+        AND item_id IN
+        <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+          #{itemId}
+        </foreach>
+      </if>
+      <if test="addVnEq != null and addVnEq > 0">
+        AND add_vn = #{addVnEq}
+      </if>
+      <if test="delVnEq != null and delVnEq > 0">
+        AND del_vn = #{delVnEq}
+      </if>
+      <if test="addVnLte != null and addVnLte > 0">
+        AND add_vn &lt;= #{addVnLte}
+      </if>
+      <if test="delVnGt != null and delVnGt > 0">
+        AND del_vn > #{delVnGt}
+      </if>
+      <if test="itemIdGt != null and itemIdGt > 0">
+        AND item_id > #{itemIdGt}
+      </if>
+      AND deleted_at IS NULL
+    </where>
+  </select>
+
+  <!-- 批量插入项目 - MySQL/PostgreSQL -->
+  <insert id="batchInsertItems" parameterType="java.util.List">
+    INSERT INTO
+    <include refid="Base_Table_Name"/>
+    (id, space_id, dataset_id, item_id, item_key, schema_id, data, repeated_data,
+    data_properties, add_vn, del_vn, update_version, created_by, created_at,
+    updated_by, updated_at)
+    VALUES
+    <foreach collection="list" item="item" separator=", ">
+      (
+      #{item.id},
+      #{item.spaceId},
+      #{item.datasetId},
+      #{item.itemId},
+      #{item.itemKey},
+      #{item.schemaId},
+      #{item.data},
+      #{item.repeatedData},
+      #{item.dataProperties},
+      #{item.addVn},
+      #{item.delVn},
+      #{item.updateVersion},
+      #{item.createdBy},
+      #{item.createdAt},
+      #{item.updatedBy},
+      #{item.updatedAt}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量插入项目 - Oracle -->
+  <insert id="batchInsertItems" parameterType="java.util.List" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="item" index="index" separator=" ">
+      INTO
+      <include refid="Base_Table_Name"/>
+      (id, space_id, dataset_id, item_id, item_key, schema_id, data, repeated_data,
+      data_properties, add_vn, del_vn, update_version, created_by, created_at,
+      updated_by, updated_at)
+      VALUES (
+      #{item.id},
+      #{item.spaceId},
+      #{item.datasetId},
+      #{item.itemId},
+      #{item.itemKey},
+      #{item.schemaId},
+      #{item.data},
+      #{item.repeatedData},
+      #{item.dataProperties},
+      #{item.addVn},
+      #{item.delVn},
+      #{item.updateVersion},
+      #{item.createdBy},
+      #{item.createdAt},
+      #{item.updatedBy},
+      #{item.updatedAt}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 更新项目 -->
+  <update id="updateItem" parameterType="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetItemEntity">
+    UPDATE
+    <include refid="Base_Table_Name"/>
+    <set>
+      schema_id = #{schemaId},
+      data = #{data},
+      repeated_data = #{repeatedData},
+      data_properties = #{dataProperties},
+      add_vn = #{addVn},
+      del_vn = #{delVn},
+      update_version = update_version + 1,
+      updated_by = #{updatedBy},
+      updated_at = #{updatedAt}
+    </set>
+    WHERE item_id = #{itemId}
+    AND space_id = #{spaceId}
+    AND dataset_id = #{datasetId}
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 根据条件查询项目 -->
+  <select id="selectByCondition" parameterType="com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListItemsParams"
+          resultMap="DatasetItemEntityMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM
+    <include refid="Base_Table_Name"/>
+    <where>
+      <if test="spaceId != null and spaceId > 0">
+        AND space_id = #{spaceId}
+      </if>
+      <if test="datasetId != null and datasetId > 0">
+        AND dataset_id = #{datasetId}
+      </if>
+      <if test="itemKeys != null and itemKeys.size() > 0">
+        AND item_key IN
+        <foreach collection="itemKeys" item="itemKey" open="(" separator="," close=")">
+          #{itemKey}
+        </foreach>
+      </if>
+      <if test="itemIds != null and itemIds.size() > 0">
+        AND item_id IN
+        <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+          #{itemId}
+        </foreach>
+      </if>
+      <if test="addVnEq != null and addVnEq > 0">
+        AND add_vn = #{addVnEq}
+      </if>
+      <if test="delVnEq != null and delVnEq > 0">
+        AND del_vn = #{delVnEq}
+      </if>
+      <if test="addVnLte != null and addVnLte > 0">
+        AND add_vn &lt;= #{addVnLte}
+      </if>
+      <if test="delVnGt != null and delVnGt > 0">
+        AND del_vn > #{delVnGt}
+      </if>
+      <if test="itemIdGt != null and itemIdGt > 0">
+        AND item_id > #{itemIdGt}
+      </if>
+      AND deleted_at IS NULL
+    </where>
+    <if test="paginator != null">
+      <if test="paginator.orderBy != null and paginator.orderBy != ''">
+        ORDER BY ${paginator.orderBy}
+      </if>
+    </if>
+  </select>
+
+  <!-- 根据spaceId、id、addVn、delVn更新项目 -->
+  <update id="updateBySpaceIdAndIdAndAddVnAndDelVn" parameterType="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetItemEntity">
+    UPDATE
+    <include refid="Base_Table_Name"/>
+    <set>
+      <if test="schemaId != null">
+        schema_id = #{schemaId},
+      </if>
+      <if test="data != null">
+        data = #{data},
+      </if>
+      <if test="repeatedData != null">
+        repeated_data = #{repeatedData},
+      </if>
+      <if test="dataProperties != null">
+        data_properties = #{dataProperties},
+      </if>
+      <if test="addVn != null">
+        add_vn = #{addVn},
+      </if>
+      <if test="delVn != null">
+        del_vn = #{delVn},
+      </if>
+      <if test="updateVersion != null">
+        update_version = #{updateVersion},
+      </if>
+      <if test="updatedBy != null">
+        updated_by = #{updatedBy},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt}
+      </if>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND id = #{id}
+    AND add_vn = #{addVn}
+    AND del_vn = #{delVn}
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 根据spaceId和ids删除项目 -->
+  <update id="deleteBySpaceIdAndIds">
+    UPDATE
+    <include refid="Base_Table_Name"/>
+    SET deleted_at = #{deletedAt}
+    WHERE space_id = #{spaceId}
+    AND id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 根据spaceId和ids更新delVn -->
+  <update id="updateDelVnBySpaceIdAndIds">
+    UPDATE
+    <include refid="Base_Table_Name"/>
+    SET del_vn = #{delVN},
+    updated_at = NOW()
+    WHERE space_id = #{spaceId}
+    AND id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+    AND deleted_at IS NULL
+  </update>
+
+  <!-- 根据spaceId、datasetId和delVn查询项目用于清空 -->
+  <select id="selectBySpaceIdAndDatasetIdAndDelVnForClear" resultMap="DatasetItemEntityMap">
+    SELECT item_id, id, add_vn
+    FROM
+    <include refid="Base_Table_Name"/>
+    WHERE space_id = #{spaceId}
+    AND dataset_id = #{datasetId}
+    AND del_vn = #{delVN}
+    AND deleted_at IS NULL
+    ORDER BY id
+  </select>
+</mapper>

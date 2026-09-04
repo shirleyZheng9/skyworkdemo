@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.person.mapper.UserFavoriteMapper">
+  <!-- @formatter:off -->
+  <select id="selectByFavoriteId" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserFavoriteEntity">
+    SELECT favorite_id, user_id, target_id, target_type, is_favorite_pinned, favorite_pin_order,
+           creator_id, updator_id, created_time, updated_time, status_cd
+    FROM bt_dc_user_favorite
+    WHERE favorite_id = #{favoriteId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_user_favorite (favorite_id, user_id, target_id, target_type, is_favorite_pinned, favorite_pin_order,
+                                    creator_id, updator_id, created_time, updated_time, status_cd)
+    VALUES (
+      #{favorite.favoriteId},
+      #{favorite.userId},
+      #{favorite.targetId},
+      #{favorite.targetType},
+      #{favorite.isFavoritePinned},
+      #{favorite.favoritePinOrder},
+      #{favorite.creatorId},
+      #{favorite.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{favorite.statusCd}
+    )
+  </insert>
+
+  <update id="update">
+    UPDATE bt_dc_user_favorite
+    SET user_id = #{favorite.userId},
+        target_id = #{favorite.targetId},
+        target_type = #{favorite.targetType},
+        is_favorite_pinned = #{favorite.isFavoritePinned},
+        favorite_pin_order = #{favorite.favoritePinOrder},
+        updator_id = #{favorite.updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        status_cd = #{favorite.statusCd}
+    WHERE favorite_id = #{favorite.favoriteId}
+  </update>
+
+  <update id="deleteByFavoriteId">
+    UPDATE bt_dc_user_favorite
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE favorite_id = #{favoriteId}
+  </update>
+
+</mapper>

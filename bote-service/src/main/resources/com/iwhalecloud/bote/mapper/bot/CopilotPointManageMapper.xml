@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.CopilotPointManageMapper">
+
+  <sql id="pointColumns">
+    a.point_id,
+    a.point_name,
+    a.point_code,
+    a.scene_id,
+    a.bot_id,
+    a.request_json,
+    a.catalog_item_id,
+    a.is_new_session,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="existsPointCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_copilot_point
+    WHERE status_cd = '00A'
+      AND tenant_id = #{dto.tenantId}
+      AND point_code = #{dto.pointCode}
+    <if test="dto.pointId != null">
+      AND point_id != #{dto.pointId}
+    </if>
+  </select>
+
+  <select id="getPoint" resultType="com.iwhalecloud.bote.dto.bot.CopilotPointDTO">
+    SELECT
+    <include refid="pointColumns"/>
+    FROM bt_copilot_point a
+    WHERE point_id = #{id}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertPoint">
+    INSERT INTO bt_copilot_point (
+    point_id,
+    point_name,
+    point_code,
+    scene_id,
+    bot_id,
+    request_json,
+    catalog_item_id,
+    is_new_session,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.pointId},
+    #{dto.pointName},
+    #{dto.pointCode},
+    #{dto.sceneId},
+    #{dto.botId},
+    #{dto.requestJson},
+    #{dto.catalogItemId},
+    #{dto.isNewSession},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePoint">
+    UPDATE bt_copilot_point
+    <set>
+      <if test="dto.checkFieldUpdateFlag('pointName')">
+        point_name = #{dto.pointName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pointCode')">
+        point_code = #{dto.pointCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sceneId')">
+        scene_id = #{dto.sceneId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botId')">
+        bot_id = #{dto.botId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('requestJson')">
+        request_json = #{dto.requestJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isNewSession')">
+        is_new_session = #{dto.isNewSession},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE point_id = #{dto.pointId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deletePoint">
+    UPDATE bt_copilot_point
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE point_id = #{pointId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectPointPage" resultType="com.iwhalecloud.bote.dto.bot.CopilotPointDTO">
+    SELECT
+    <include refid="pointColumns"/>
+    FROM bt_copilot_point a
+    WHERE 1=1
+      AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.point_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.point_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+      AND a.tenant_id = #{query.tenantId}
+      ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectPointList" resultType="com.iwhalecloud.bote.dto.bot.CopilotPointDTO">
+    SELECT
+    <include refid="pointColumns"/>,
+    b.bot_name
+    FROM bt_copilot_point a
+    LEFT JOIN bt_bot b ON a.bot_id = b.bot_id AND a.tenant_id = b.tenant_id
+    WHERE 1=1
+      AND a.status_cd = '00A'
+      AND (a.bot_id IS NULL OR b.status_cd = '00A')
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.point_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.point_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+      AND a.tenant_id = #{query.tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="getPointByCode" resultType="com.iwhalecloud.bote.dto.bot.CopilotPointDTO">
+    SELECT a.point_id,
+           a.point_name,
+           a.point_code,
+           a.scene_id,
+           a.bot_id,
+           a.request_json,
+           a.is_new_session,
+           b.scene_name,
+           b.scene_status
+    FROM bt_copilot_point a
+    LEFT JOIN bt_bot_scene b ON b.scene_id = a.scene_id AND b.tenant_id = a.tenant_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.point_code = #{pointCode}
+  </select>
+</mapper>

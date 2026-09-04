@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.CacheConfigManageMapper">
+  <sql id="cacheConfigColumns">
+    c.cache_config_id,
+    c.group_code,
+    c.group_name,
+    c.view_desc,
+    c.cache_key,
+    c.cache_name,
+    c.refrensh_all_flag,
+    c.cache_key_prefix
+  </sql>
+
+  <select id="queryAllCacheConfig" resultType="com.iwhalecloud.bote.dto.base.CacheConfigDTO">
+    SELECT <include refid="cacheConfigColumns"/>
+    FROM bt_cache_cfg c
+    WHERE c.status_cd = '00A'
+    ORDER BY group_code, cache_config_id
+  </select>
+</mapper>

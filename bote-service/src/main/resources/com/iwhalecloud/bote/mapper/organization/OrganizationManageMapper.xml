@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.organization.OrganizationManageMapper">
+  <!-- @formatter:off -->
+
+  <!-- 基础字段映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.dto.organization.OrganizationDTO">
+    <id column="org_id" property="orgId" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR"/>
+    <result column="org_name" property="orgName" jdbcType="VARCHAR"/>
+    <result column="org_type" property="orgType" jdbcType="VARCHAR"/>
+    <result column="parent_org_id" property="parentOrgId" jdbcType="BIGINT"/>
+    <result column="org_level" property="orgLevel" jdbcType="INTEGER"/>
+    <result column="org_path" property="orgPath" jdbcType="VARCHAR"/>
+    <result column="org_description" property="orgDescription" jdbcType="VARCHAR"/>
+    <result column="status_cd" property="statusCd" jdbcType="VARCHAR"/>
+    <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+    <result column="ext_fields" property="extFields" jdbcType="VARCHAR"/>
+    <result column="creator_id" property="creatorId" jdbcType="BIGINT"/>
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+    <result column="updator_id" property="updatorId" jdbcType="BIGINT"/>
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 简单组织DTO映射 -->
+  <resultMap id="SimpleResultMap" type="com.iwhalecloud.bote.dto.organization.SimpleOrganizationDTO">
+    <id column="org_id" property="orgId" jdbcType="BIGINT"/>
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR"/>
+    <result column="org_name" property="orgName" jdbcType="VARCHAR"/>
+    <result column="org_type" property="orgType" jdbcType="VARCHAR"/>
+    <result column="parent_org_id" property="parentOrgId" jdbcType="BIGINT"/>
+    <result column="org_level" property="orgLevel" jdbcType="INTEGER"/>
+    <result column="org_path" property="orgPath" jdbcType="VARCHAR"/>
+    <result column="status_cd" property="statusCd" jdbcType="VARCHAR"/>
+    <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+  </resultMap>
+
+  <!-- 组织树节点DTO映射 -->
+  <resultMap id="TreeNodeResultMap" type="com.iwhalecloud.bote.dto.organization.OrganizationTreeNodeDTO">
+    <id column="org_id" property="orgId" jdbcType="BIGINT"/>
+    <result column="org_code" property="orgCode" jdbcType="VARCHAR"/>
+    <result column="org_name" property="orgName" jdbcType="VARCHAR"/>
+    <result column="org_type" property="orgType" jdbcType="VARCHAR"/>
+    <result column="parent_org_id" property="parentOrgId" jdbcType="BIGINT"/>
+    <result column="org_level" property="orgLevel" jdbcType="INTEGER"/>
+    <result column="org_path" property="orgPath" jdbcType="VARCHAR"/>
+    <result column="status_cd" property="statusCd" jdbcType="VARCHAR"/>
+    <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+    <result column="member_count" property="memberCount" jdbcType="INTEGER"/>
+    <result column="has_children" property="hasChildren" jdbcType="BOOLEAN"/>
+  </resultMap>
+
+  <!-- 基础查询字段 -->
+  <sql id="Base_Column_List">
+    org_id, space_id, org_code, org_name, org_type, parent_org_id, org_level, org_path,
+    org_description, status_cd, sort_order, ext_fields, creator_id, created_time, updator_id, updated_time
+  </sql>
+
+  <!-- 简单查询字段 -->
+  <sql id="Simple_Column_List">
+    org_id, org_code, org_name, org_type, parent_org_id, org_level, org_path, status_cd, sort_order
+  </sql>
+
+  <!-- 检查组织编码是否存在 -->
+  <select id="existsOrgCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+      AND org_code = #{orgCode}
+      AND status_cd = '00A'
+      <if test="orgId != null">
+        AND org_id != #{orgId}
+      </if>
+  </select>
+
+  <!-- 统计租户的根组织数量 -->
+  <select id="countRootOrganizations" resultType="int">
+    SELECT COUNT(1)
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+      AND parent_org_id IS NULL
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 根据主键获取组织 -->
+  <select id="getOrganization" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+      AND org_id = #{orgId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 根据组织编码获取组织 -->
+  <select id="getOrganizationByCode" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+      AND org_code = #{orgCode}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 根据主键批量获取组织 -->
+  <select id="getOrganizationBatchByIds" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+      AND status_cd = '00A'
+      AND org_id IN (<foreach item="item" collection="orgIdList" separator=",">#{item}</foreach>)
+  </select>
+
+  <!-- 新增组织 -->
+  <insert id="insertOrganization" parameterType="com.iwhalecloud.bote.entity.organization.OrganizationEntity">
+    INSERT INTO bt_organization (
+      org_id, space_id, org_code, org_name, org_type, parent_org_id, org_level, org_path,
+      org_description, status_cd, sort_order, ext_fields, creator_id, created_time
+    ) VALUES (
+      #{dto.orgId}, #{dto.spaceId}, #{dto.orgCode}, #{dto.orgName}, #{dto.orgType}, #{dto.parentOrgId}, #{dto.orgLevel}, #{dto.orgPath},
+      #{dto.orgDescription}, #{dto.statusCd}, #{dto.sortOrder}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <!-- 修改组织 -->
+  <update id="updateOrganization" parameterType="com.iwhalecloud.bote.dto.organization.OrganizationDTO">
+    UPDATE bt_organization
+    SET org_code = #{dto.orgCode},
+        org_name = #{dto.orgName},
+        org_type = #{dto.orgType},
+        parent_org_id = #{dto.parentOrgId},
+        org_level = #{dto.orgLevel},
+        org_path = #{dto.orgPath},
+        org_description = #{dto.orgDescription},
+        status_cd = #{dto.statusCd},
+        sort_order = #{dto.sortOrder},
+        ext_fields = #{dto.extFields},
+        updator_id = #{dto.updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE org_id = #{dto.orgId}
+  </update>
+
+  <!-- 更新组织层级和路径 -->
+  <update id="updateOrganizationLevel">
+    UPDATE bt_organization
+    SET org_level = #{orgLevel},
+        org_path = #{orgPath},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE org_id = #{orgId}
+  </update>
+
+  <!-- 更新组织状态 -->
+  <update id="updateOrganizationStatus">
+    UPDATE bt_organization
+    SET status_cd = #{statusCd},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE org_id = #{orgId}
+  </update>
+
+  <update id="updateRootOrgName">
+    UPDATE bt_organization
+    SET org_name = #{spaceName},
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE space_id = #{spaceId}
+      AND parent_org_id IS NULL
+      AND status_cd = '00A'
+  </update>
+
+  <!-- 查询组织列表 -->
+  <select id="selectOrganizationList" resultMap="SimpleResultMap">
+    SELECT <include refid="Simple_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{query.spaceId}
+    <if test="query.statusCd != null and query.statusCd != ''">
+      AND status_cd = #{query.statusCd}
+    </if>
+    <if test="query.orgType != null and query.orgType != ''">
+      AND org_type = #{query.orgType}
+    </if>
+    <if test="query.parentOrgId != null">
+      AND parent_org_id = #{query.parentOrgId}
+    </if>
+    <if test="query.orgName != null and query.orgName != ''">
+      AND org_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.orgName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.orgCode != null and query.orgCode != ''">
+      AND org_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.orgCode}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY sort_order ASC, org_id ASC
+  </select>
+
+  <!-- 分页查询组织列表 -->
+  <select id="selectOrganizationPage" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{query.spaceId}
+      <if test="query.statusCd != null and query.statusCd != ''">
+        AND status_cd = #{query.statusCd}
+      </if>
+      <if test="query.orgType != null and query.orgType != ''">
+        AND org_type = #{query.orgType}
+      </if>
+      <if test="query.parentOrgId != null">
+        AND parent_org_id = #{query.parentOrgId}
+      </if>
+      <if test="query.orgName != null and query.orgName != ''">
+        AND org_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.orgName}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      <if test="query.orgCode != null and query.orgCode != ''">
+        AND org_code LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.orgCode}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+    ORDER BY sort_order ASC, org_id ASC
+  </select>
+
+  <!-- 查询组织树结构 -->
+  <select id="selectOrganizationTree" resultMap="TreeNodeResultMap">
+    SELECT
+      o.org_id, o.org_code, o.org_name, o.org_type, o.parent_org_id, o.org_level, o.org_path, o.status_cd, o.sort_order,
+      COALESCE(m.member_count, 0) as member_count,
+      CASE WHEN EXISTS(SELECT 1 FROM bt_organization c WHERE c.parent_org_id = o.org_id) THEN 1 ELSE 0 END as has_children
+    FROM bt_organization o
+    LEFT JOIN (
+      SELECT org_id, COUNT(1) as member_count
+      FROM bt_organization_member
+      WHERE status_cd = '00A'
+      GROUP BY org_id
+    ) m ON o.org_id = m.org_id
+    WHERE o.space_id = #{spaceId}
+      <if test="rootOrgId != null">
+        AND (o.org_id = #{rootOrgId} OR o.org_path LIKE CONCAT((SELECT org_path FROM bt_organization WHERE org_id = #{rootOrgId}), '%'))
+      </if>
+      <if test="maxLevel != null">
+        AND o.org_level &lt;= #{maxLevel}
+      </if>
+      AND o.status_cd = '00A'
+    ORDER BY o.org_level ASC, o.sort_order ASC, o.org_id ASC
+  </select>
+
+  <!-- 按名称搜索查询组织树结构 -->
+  <select id="selectOrganizationTreeByName" resultMap="TreeNodeResultMap">
+    SELECT
+      o.org_id, o.org_code, o.org_name, o.org_type, o.parent_org_id, o.org_level, o.org_path, o.status_cd, o.sort_order,
+      COALESCE(m.member_count, 0) as member_count,
+      CASE WHEN EXISTS(SELECT 1 FROM bt_organization c WHERE c.parent_org_id = o.org_id) THEN 1 ELSE 0 END as has_children
+    FROM bt_organization o
+    LEFT JOIN (
+      SELECT org_id, COUNT(1) as member_count
+      FROM bt_organization_member
+      WHERE status_cd = '00A'
+      GROUP BY org_id
+    ) m ON o.org_id = m.org_id
+    WHERE o.space_id = #{spaceId}
+      <if test="orgName != null and orgName != ''">
+        AND o.org_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{orgName}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      <if test="rootOrgId != null">
+        AND (o.org_id = #{rootOrgId} OR o.org_path LIKE CONCAT((SELECT org_path FROM bt_organization WHERE org_id = #{rootOrgId}), '%'))
+      </if>
+      <if test="maxLevel != null">
+        AND o.org_level &lt;= #{maxLevel}
+      </if>
+      AND o.status_cd = '00A'
+    ORDER BY o.org_level ASC, o.sort_order ASC, o.org_id ASC
+  </select>
+
+  <!-- 根据组织ID列表查询组织树结构 -->
+  <select id="selectOrganizationTreeByIds" resultMap="TreeNodeResultMap">
+    SELECT
+      o.org_id, o.org_code, o.org_name, o.org_type, o.parent_org_id, o.org_level, o.org_path, o.status_cd, o.sort_order,
+      COALESCE(m.member_count, 0) as member_count,
+      CASE WHEN EXISTS(SELECT 1 FROM bt_organization c WHERE c.parent_org_id = o.org_id) THEN 1 ELSE 0 END as has_children
+    FROM bt_organization o
+    LEFT JOIN (
+      SELECT org_id, COUNT(1) as member_count
+      FROM bt_organization_member
+      WHERE status_cd = '00A'
+      GROUP BY org_id
+    ) m ON o.org_id = m.org_id
+    WHERE o.space_id = #{spaceId}
+      AND o.org_id IN (<foreach item="item" collection="orgIds" separator=",">#{item}</foreach>)
+      <if test="rootOrgId != null">
+        AND (o.org_id = #{rootOrgId} OR o.org_path LIKE CONCAT((SELECT org_path FROM bt_organization WHERE org_id = #{rootOrgId}), '%'))
+      </if>
+      <if test="maxLevel != null">
+        AND o.org_level &lt;= #{maxLevel}
+      </if>
+      AND o.status_cd = '00A'
+    ORDER BY o.org_level ASC, o.sort_order ASC, o.org_id ASC
+  </select>
+
+  <!-- 查询子组织列表 -->
+  <select id="selectChildOrganizations" resultMap="SimpleResultMap">
+    SELECT <include refid="Simple_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+      AND parent_org_id = #{parentOrgId}
+      AND status_cd = '00A'
+    ORDER BY sort_order ASC, org_id ASC
+  </select>
+
+  <!-- 统计组织成员数量 -->
+  <select id="selectOrganizationMemberCounts" resultType="com.iwhalecloud.bote.dto.organization.OrganizationDTO">
+    SELECT
+      o.org_id as orgId,
+      COALESCE(m.member_count, 0) as memberCount
+    FROM bt_organization o
+    LEFT JOIN (
+      SELECT org_id, COUNT(1) as member_count
+      FROM bt_organization_member
+      WHERE status_cd = '00A'
+        AND org_id IN (<foreach item="item" collection="orgIds" separator=",">#{item}</foreach>)
+      GROUP BY org_id
+    ) m ON o.org_id = m.org_id
+    WHERE o.space_id = #{spaceId}
+      AND o.org_id IN (<foreach item="item" collection="orgIds" separator=",">#{item}</foreach>)
+  </select>
+
+  <select id="selectSpaceRootOrg" resultType="com.iwhalecloud.bote.dto.organization.OrganizationDTO">
+    SELECT org_id, org_name
+    FROM bt_organization
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND parent_org_id IS NULL
+  </select>
+
+  <select id="getOrganizationBatchByPath" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM bt_organization
+    WHERE space_id = #{spaceId}
+    AND status_cd = '00A'
+    AND org_id IN (<foreach item="item" collection="orgIdList" separator=",">#{item}</foreach>)
+    order by org_level
+  </select>
+
+  <select id="getOrgBasicInfoByIds" resultType="com.iwhalecloud.bote.dto.organization.OrganizationDTO">
+    SELECT org_id, org_code, org_name
+    FROM bt_organization
+    WHERE status_cd = '00A'
+      AND org_id IN (<foreach item="item" collection="orgIdList" separator=",">#{item}</foreach>)
+  </select>
+
+</mapper>

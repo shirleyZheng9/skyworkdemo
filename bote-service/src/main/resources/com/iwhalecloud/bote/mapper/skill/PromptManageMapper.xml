@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.PromptManageMapper">
+  <sql id="promptColumns">
+    a.prompt_id,
+    a.tenant_id,
+    a.catalog_item_id,
+    a.prompt_content,
+    a.prompt_title,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="promptContentColumns">
+    b.content_id,
+    b.prompt_id,
+    b.tenant_id,
+    b.prompt_content,
+    b.model_id,
+    b.created_time,
+    b.status_cd,
+    b.updated_time,
+    b.creator_id,
+    b.updator_id,
+    b.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.modelId != null">
+      AND a.model_id = #{query.modelId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+      a.prompt_content LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.prompt_title LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.promptIds != null and query.promptIds.size() > 0">
+      AND a.prompt_id IN (<foreach collection="query.promptIds" item="promptId" separator=",">#{promptId}</foreach>)
+    </if>
+  </sql>
+
+  <insert id="insertPrompt">
+    INSERT INTO bt_prompt(
+    prompt_id,
+    tenant_id,
+    prompt_content,
+    prompt_title,
+    catalog_item_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    )
+    VALUES (
+    #{dto.promptId},
+    #{dto.tenantId},
+    #{dto.promptContent},
+    #{dto.promptTitle},
+    #{dto.catalogItemId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertPromptContent">
+    insert into bt_prompt_content (
+    content_id,
+    prompt_id,
+    tenant_id,
+    prompt_content,
+    model_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) values
+    <foreach collection="list" item="dto" index="index" separator=",">
+      (
+      #{dto.contentId},
+      #{dto.promptId},
+      #{dto.tenantId},
+      #{dto.promptContent},
+      #{dto.modelId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertPromptContent" databaseId="oracle">
+    insert all
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      into bt_prompt_content (
+      content_id,
+      prompt_id,
+      tenant_id,
+      prompt_content,
+      model_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) values (
+      #{dto.contentId},
+      #{dto.promptId},
+      #{dto.tenantId},
+      #{dto.promptContent},
+      #{dto.modelId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    select 1 from dual
+  </insert>
+
+  <update id="updatePromptContent">
+    UPDATE bt_prompt_content
+    <set>
+      <if test="dto.checkFieldUpdateFlag('promptContent')">
+        prompt_content = #{dto.promptContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptId')">
+        prompt_id = #{dto.promptId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelId')">
+        model_id = #{dto.modelId},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE content_id = #{dto.contentId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updatePrompt">
+    UPDATE bt_prompt
+    <set>
+      <if test="dto.checkFieldUpdateFlag('promptContent')">
+        prompt_content = #{dto.promptContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptTitle')">
+        prompt_title = #{dto.promptTitle},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE prompt_id = #{dto.promptId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="batchUpdatePromptContent">
+    UPDATE bt_prompt_content
+    <set>
+      <if test="dto.checkFieldUpdateFlag('promptContent')">
+        prompt_content = #{dto.promptContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptId')">
+        prompt_id = #{dto.promptId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelId')">
+        model_id = #{dto.modelId},
+      </if>
+      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE content_id = #{dto.contentId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getPrompt" resultType="com.iwhalecloud.bote.dto.skill.PromptDTO">
+    SELECT <include refid="promptColumns"/>
+    FROM bt_prompt a
+    WHERE a.status_cd = '00A'
+    AND a.prompt_id = #{id}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectPromptList" resultType="com.iwhalecloud.bote.dto.skill.PromptDTO">
+    SELECT
+    <include refid="promptColumns"/>
+    FROM bt_prompt a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    AND a.tenant_id IN (#{query.tenantId}, -1)
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectPromptPage" resultType="com.iwhalecloud.bote.dto.skill.PromptDTO">
+    SELECT
+    <include refid="promptColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_prompt a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.configFlag == 'F'.toString()">
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </when>
+      <otherwise>
+        AND a.tenant_id = #{query.tenantId}
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deletePrompt">
+    UPDATE bt_prompt
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE prompt_id = #{promptId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectPromptContentList" resultType="com.iwhalecloud.bote.dto.skill.PromptContentDTO">
+    SELECT <include refid="promptContentColumns"/>,
+    (SELECT m.model_name FROM bt_library_large_model m WHERE m.model_id = b.model_id and m.tenant_id in (#{tenantId}, -1)) as "modelName"
+    FROM bt_prompt_content b
+    WHERE b.status_cd = '00A'
+    AND b.tenant_id = #{tenantId}
+    <if test="promptIdList != null and promptIdList.size() > 0">
+      AND b.prompt_id in (<foreach collection="promptIdList" item="promptId" separator=","> #{promptId} </foreach>)
+    </if>
+    <if test="modelId != null">
+      AND b.model_id = #{modelId}
+    </if>
+  </select>
+
+  <select id="selectPromptContentByPromptIdAndModelId" resultType="java.lang.String">
+    select bpc.messages
+    from bt_prompt_commit bpc
+           join bt_prompt_basic bpb on bpc.prompt_id = bpb.id and bpb.latest_version = bpc.version
+    where bpb.id = #{promptId}
+      and bpb.space_id = #{tenantId}
+  </select>
+
+  <select id="selectPromptContent" resultType="java.lang.String">
+    SELECT COALESCE(b.prompt_content, a.prompt_content)
+    FROM bt_prompt a
+    LEFT JOIN bt_prompt_content b ON b.tenant_id = a.tenant_id AND b.prompt_id = a.prompt_id AND b.model_id = #{modelId} AND b.status_cd = '00A'
+    LEFT JOIN bt_catalog c ON a.catalog_item_id = c.catalog_id and a.tenant_id = c.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.prompt_title LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{title}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND c.catalog_name = #{catalogName}
+  </select>
+
+  <!-- 查询所有有效的提示词（用于数据迁移） -->
+  <select id="selectAllPromptsForMigration" resultType="com.iwhalecloud.bote.dto.skill.PromptDTO">
+    SELECT <include refid="promptColumns"/>
+    FROM bt_prompt a
+    WHERE a.status_cd = '00A'
+    ORDER BY a.prompt_id
+  </select>
+</mapper>

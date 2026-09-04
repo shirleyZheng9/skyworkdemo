@@ -1,0 +1,161 @@
+{
+  "description": "根节点",
+  "type": "object",
+  "name": "root",
+  "children": [
+    {
+      "description": "应用相关配置",
+      "type": "object",
+      "name": "app",
+      "children": [
+        {
+          "description": "应用标识",
+          "type": "string",
+          "name": "appid",
+          "children": null
+        },
+        {
+          "description": "应用令牌",
+          "type": "string",
+          "name": "token",
+          "children": null
+        },
+        {
+          "description": "集群标识",
+          "type": "string",
+          "name": "cluster",
+          "children": null
+        }
+      ]
+    },
+    {
+      "description": "用户相关配置",
+      "type": "object",
+      "name": "user",
+      "children": [
+        {
+          "description": "用户标识",
+          "type": "string",
+          "name": "uid",
+          "children": null
+        }
+      ]
+    },
+    {
+      "description": "音频相关配置",
+      "type": "object",
+      "name": "audio",
+      "children": [
+        {
+          "description": "音色类型",
+          "type": "string",
+          "name": "voiceType",
+          "children": null
+        },
+        {
+          "description": "音色情感",
+          "type": "string",
+          "name": "emotion",
+          "children": null
+        },
+        {
+          "description": "是否启用音色情感",
+          "type": "boolean",
+          "name": "enableEmotion",
+          "children": null
+        },
+        {
+          "description": "情绪值设置",
+          "type": "number",
+          "name": "emotionScale",
+          "children": null
+        },
+        {
+          "description": "音频编码格式 wav/pcm/ogg_opus/mp3，默认为 pcm 注意：wav 不支持流式",
+          "type": "string",
+          "name": "encoding",
+          "children": null
+        },
+        {
+          "description": "语速",
+          "type": "number",
+          "name": "speedRatio",
+          "children": null
+        },
+        {
+          "description": "音频采样率",
+          "type": "integer",
+          "name": "rate",
+          "children": null
+        },
+        {
+          "description": "音频比特率",
+          "type": "integer",
+          "name": "bitrate",
+          "children": null
+        },
+        {
+          "description": "明确语种，仅读指定语种的文本",
+          "type": "string",
+          "name": "explicitLanguage",
+          "children": null
+        },
+        {
+          "description": "参考语种，给模型提供参考的语种",
+          "type": "string",
+          "name": "contextLanguage",
+          "children": null
+        },
+        {
+          "description": "音量调节 [0.5,2]  默认为1，通常保留一位小数即可。0.5代表原音量0.5倍，2代表原音量2倍",
+          "type": "number",
+          "name": "loudnessRatio",
+          "children": null
+        }
+      ]
+    },
+    {
+      "description": "请求相关配置",
+      "type": "object",
+      "name": "request",
+      "children": [
+        {
+          "description": "合成语音的文本",
+          "type": "string",
+          "name": "text",
+          "children": null
+        },
+        {
+          "description": "模型版本",
+          "type": "string",
+          "name": "model",
+          "children": null
+        },
+        {
+          "description": "文本类型，使用 ssml 时需要指定，值为\"ssml\"",
+          "type": "string",
+          "name": "textTpe",
+          "children": null
+        },
+        {
+          "description": "句尾静音 设置该参数可在句尾增加静音时长，范围0~30000ms。启用该参数，必须在request下首先设置enable_trailing_silence_audio = true",
+          "type": "number",
+          "name": "silenceDuration",
+          "children": null
+        },
+        {
+          "description": "时间戳相关，传入1时表示启用，将返回TN后文本的时间戳",
+          "type": "string",
+          "name": "withTimestamp",
+          "children": null
+        },
+        {
+          "description": "额外参数",
+          "type": "string",
+          "name": "extraParam",
+          "children": null
+        }
+      ]
+    }
+  ]
+}

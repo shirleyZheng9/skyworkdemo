@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocumentExportSnapshotMapper">
+  <!-- @formatter:off -->
+  <sql id="documentExportSnapshotColumns">
+    id, document_id, revision, file_id, file_extension, file_size, creator_id, updator_id, created_time, updated_time, status_cd, tenant_id
+  </sql>
+  <!-- @formatter:on -->
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentExportSnapshotEntity">
+    SELECT
+    <include refid="documentExportSnapshotColumns"/>
+    FROM bt_dc_document_export_snap
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+    ORDER BY revision DESC, created_time DESC
+  </select>
+
+  <select id="selectByDocumentIdAndRevisionAndExtension" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentExportSnapshotEntity">
+    SELECT
+    <include refid="documentExportSnapshotColumns"/>
+    FROM (
+      SELECT
+      <include refid="documentExportSnapshotColumns"/>
+      FROM bt_dc_document_export_snap
+      WHERE document_id = #{documentId}
+      AND revision = #{revision}
+      AND file_extension = #{fileExtension}
+      AND status_cd = '00A'
+      ORDER BY created_time DESC
+    ) tmp_snapshot
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <select id="selectByFileId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentExportSnapshotEntity">
+    SELECT
+    <include refid="documentExportSnapshotColumns"/>
+    FROM bt_dc_document_export_snap
+    WHERE file_id = #{fileId}
+    AND status_cd = '00A'
+    ORDER BY revision DESC, created_time DESC
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_document_export_snap (
+    id, document_id, revision, file_id, file_extension, file_size,
+    creator_id, updator_id, created_time, updated_time, status_cd,tenant_id
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.revision},
+    #{entity.fileId},
+    #{entity.fileExtension},
+    #{entity.fileSize},
+    #{entity.creatorId},
+    #{entity.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd},
+    #{entity.tenantId}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey">
+    UPDATE bt_dc_document_export_snap
+    <set>
+      <if test="entity.checkFieldUpdateFlag('fileId')">
+        file_id = #{entity.fileId},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('fileExtension')">
+        file_extension = #{entity.fileExtension},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('fileSize')">
+        file_size = #{entity.fileSize},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('revision')">
+        revision = #{entity.revision},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{entity.updatorId},
+      </if>
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE id = #{entity.id}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_document_export_snap
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <update id="deleteByDocumentId">
+    UPDATE bt_dc_document_export_snap
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+  </update>
+
+  <select id="selectMinRevisionByDocumentId" resultType="java.lang.Long">
+    SELECT MIN(revision)
+    FROM (
+      SELECT revision
+      FROM bt_dc_document_export_snap
+      WHERE document_id = #{documentId}
+        AND status_cd = '00A'
+      ORDER BY created_time DESC
+      LIMIT 15
+    ) recent_versions
+  </select>
+
+  <select id="selectByDocumentIdAndRevisionLessThan" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentExportSnapshotEntity">
+    SELECT
+    <include refid="documentExportSnapshotColumns"/>
+    FROM bt_dc_document_export_snap
+    WHERE document_id = #{documentId}
+    AND revision &lt; #{maxRevision}
+    AND status_cd = '00A'
+  </select>
+
+  <update id="deleteByDocumentIdAndRevisionLessThan">
+    UPDATE bt_dc_document_export_snap
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND revision &lt; #{maxRevision}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="selectByDocumentIdAndRevisions" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentExportSnapshotEntity">
+    SELECT
+    <include refid="documentExportSnapshotColumns"/>
+    FROM bt_dc_document_export_snap
+    WHERE document_id = #{documentId}
+      AND revision IN
+      <foreach collection="revisions" item="revision" open="(" separator="," close=")">
+        #{revision}
+      </foreach>
+      AND status_cd = '00A'
+  </select>
+
+  <update id="deleteByDocumentIdAndRevisions">
+    UPDATE bt_dc_document_export_snap
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND revision IN
+      <foreach collection="revisions" item="revision" open="(" separator="," close=")">
+        #{revision}
+      </foreach>
+      AND status_cd = '00A'
+  </update>
+</mapper>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.WorkbookContentMapper">
+  <!-- @formatter:off -->
+  <sql id="workbookContentColumns">
+    id, document_id, content, revision, creator_id, updator_id, created_time, updated_time, status_cd, tenant_id
+  </sql>
+
+  <sql id="workbookContentColumnsWithUser">
+    a.id, a.document_id, a.content, a.revision, a.creator_id, a.updator_id,
+    a.created_time, a.updated_time, a.status_cd, a.tenant_id,
+    cu.real_name as "creatorName", uu.real_name as "updatorName"
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="tenantId != null">
+      AND a.tenant_id = #{tenantId}
+    </if>
+  </sql>
+  <!-- @formatter:on -->
+
+  <select id="selectByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentEntity">
+    SELECT
+    <include refid="workbookContentColumns"/>
+    FROM bt_dc_workbook_content
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentEntity">
+    SELECT
+    <include refid="workbookContentColumns"/>
+    FROM bt_dc_workbook_content
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentIdAndRevision" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentEntity">
+    SELECT
+    <include refid="workbookContentColumns"/>
+    FROM bt_dc_workbook_content
+    WHERE document_id = #{documentId}
+    AND revision = #{revision}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_workbook_content (
+    id, document_id, content, revision, creator_id, updator_id,
+    created_time, updated_time, status_cd
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.content},
+    #{entity.revision},
+    #{entity.creatorId},
+    #{entity.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey">
+    UPDATE bt_dc_workbook_content
+    <set>
+      <if test="entity.checkFieldUpdateFlag('content')">
+        content = #{entity.content},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('revision')">
+        revision = #{entity.revision},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{entity.updatorId},
+      </if>
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE id = #{entity.id}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="updateByDocumentId">
+    UPDATE bt_dc_workbook_content
+    <set>
+      <if test="entity.checkFieldUpdateFlag('content')">
+        content = #{entity.content},
+      </if>
+      <if test="entity.checkFieldUpdateFlag('revision')">
+        revision = revision + 1,
+      </if>
+      <if test="entity.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{entity.updatorId},
+      </if>
+      updated_time =
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE document_id = #{entity.documentId}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="selectLastRevision" resultType="java.lang.Long">
+    select revision
+    from bt_dc_workbook_content
+    where document_id = #{documentId}
+      and status_cd = '00A'
+  </select>
+</mapper>

@@ -1,0 +1,403 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.model.LargeModelManageMapper">
+
+  <sql id="modelColumns">
+    a.model_id,
+    a.model_code,
+    a.model_name,
+    a.model_type,
+    a.model_desc,
+    a.access_url,
+    a.access_key,
+    a.temperature,
+    a.max_tokens,
+    a.context_length,
+    a.function_call_mode,
+    a.streaming_function_call,
+    a.supports_vision,
+    a.ext_attr_json,
+    a.tenant_id,
+    a.product_type,
+    a.protocol_type,
+    a.model_icon,
+    a.is_public,
+    a.data_from,
+    a.is_enabled,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="existsLargeModelCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+      AND model_code = #{dto.modelCode}
+      AND tenant_id = #{dto.tenantId}
+    <if test="dto.modelId != null">
+      AND model_id != #{dto.modelId}
+    </if>
+  </select>
+
+  <select id="getLargeModel" resultType="com.iwhalecloud.bote.dto.model.LargeModelDTO">
+    SELECT
+    <include refid="modelColumns"/>
+    FROM bt_library_large_model a
+    WHERE model_id = #{id}
+      AND status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <!-- 网关同步用：含已软删(00X)，便于下架后再上架时原地恢复 -->
+  <select id="getLargeModelIgnoreStatus" resultType="com.iwhalecloud.bote.dto.model.LargeModelDTO">
+    SELECT
+    <include refid="modelColumns"/>
+    FROM bt_library_large_model a
+    WHERE model_id = #{id}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertLargeModel">
+    INSERT INTO bt_library_large_model (
+    model_id,
+    model_code,
+    model_name,
+    model_type,
+    model_desc,
+    access_url,
+    access_key,
+    temperature,
+    max_tokens,
+    context_length,
+    function_call_mode,
+    streaming_function_call,
+    supports_vision,
+    ext_attr_json,
+    tenant_id,
+    product_type,
+    protocol_type,
+    model_icon,
+    is_public,
+    data_from,
+    is_enabled,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.modelId},
+    #{dto.modelCode},
+    #{dto.modelName},
+    #{dto.modelType},
+    #{dto.modelDesc},
+    #{dto.accessUrl},
+    #{dto.accessKey},
+    #{dto.temperature},
+    #{dto.maxTokens},
+    #{dto.contextLength},
+    #{dto.functionCallMode},
+    #{dto.streamingFunctionCall},
+    #{dto.supportsVision},
+    #{dto.extAttrJson},
+    #{dto.tenantId},
+    #{dto.productType},
+    #{dto.protocolType},
+    #{dto.modelIcon},
+    #{dto.isPublic},
+    #{dto.dataFrom},
+    #{dto.isEnabled},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateLargeModel">
+    UPDATE bt_library_large_model
+    <set>
+      <if test="dto.checkFieldUpdateFlag('modelCode')">
+        model_code = #{dto.modelCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelName')">
+        model_name = #{dto.modelName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelType')">
+        model_type = #{dto.modelType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelDesc')">
+        model_desc = #{dto.modelDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('protocolType')">
+        protocol_type = #{dto.protocolType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('accessUrl')">
+        access_url = #{dto.accessUrl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('accessKey')">
+        access_key = #{dto.accessKey},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('temperature')">
+        temperature = #{dto.temperature},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('maxTokens')">
+        max_tokens = #{dto.maxTokens},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('contextLength')">
+        context_length = #{dto.contextLength},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('functionCallMode')">
+        function_call_mode = #{dto.functionCallMode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('streamingFunctionCall')">
+        streaming_function_call = #{dto.streamingFunctionCall},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('supportsVision')">
+        supports_vision = #{dto.supportsVision},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('extAttrJson')">
+        ext_attr_json = #{dto.extAttrJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('productType')">
+        product_type = #{dto.productType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('modelIcon')">
+        model_icon = #{dto.modelIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isPublic')">
+        is_public = #{dto.isPublic},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isEnabled')">
+        is_enabled = #{dto.isEnabled},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE model_id = #{dto.modelId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteLargeModel">
+    UPDATE bt_library_large_model
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE model_id = #{modelId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <sql id="fromGatewayTrue">
+    a.ext_attr_json IS NOT NULL
+    AND JSON_UNQUOTE(JSON_EXTRACT(a.ext_attr_json, '$.protocolExt.fromGateway')) = 'true'
+  </sql>
+  <sql id="fromGatewayNotTrue">
+    (
+      a.ext_attr_json IS NULL
+      OR JSON_EXTRACT(a.ext_attr_json, '$.protocolExt.fromGateway') IS NULL
+      OR JSON_UNQUOTE(JSON_EXTRACT(a.ext_attr_json, '$.protocolExt.fromGateway')) != 'true'
+    )
+  </sql>
+
+  <select id="selectLargeModelPage" resultType="com.iwhalecloud.bote.dto.model.LargeModelDTO">
+    SELECT
+    <include refid="modelColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    CASE
+      WHEN a.tenant_id = -1 THEN 'platform'
+      WHEN JSON_UNQUOTE(JSON_EXTRACT(a.ext_attr_json, '$.protocolExt.fromGateway')) = 'true' THEN 'gateway'
+      ELSE 'tenant'
+    END AS source_from
+    FROM bt_library_large_model a
+    WHERE a.status_cd = '00A'
+    AND a.data_from is null
+    <if test="query.modelNameOrCode != null and query.modelNameOrCode != ''">
+      AND (a.model_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.modelNameOrCode}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.model_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.modelNameOrCode}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.modelType != null and query.modelType != ''">
+      AND a.model_type = #{query.modelType}
+    </if>
+    <if test="query.productType != null and query.productType != ''">
+      AND a.product_type = #{query.productType}
+    </if>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString() or query.tenantId == -1">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+        AND <include refid="fromGatewayNotTrue"/>
+      </when>
+      <when test="query.sourceFrom == 'gateway'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+        AND <include refid="fromGatewayTrue"/>
+      </when>
+      <otherwise>
+        AND (a.tenant_id = #{query.tenantId} OR (a.tenant_id = -1 AND a.is_public = 'T'))
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectGatewayLargeModels" resultType="com.iwhalecloud.bote.dto.model.LargeModelDTO">
+    SELECT
+    <include refid="modelColumns"/>,
+    'gateway' AS source_from
+    FROM bt_library_large_model a
+    WHERE a.status_cd IN ('00A', '00X')
+      AND a.data_from IS NULL
+      AND a.tenant_id = #{tenantId}
+      AND <include refid="fromGatewayTrue"/>
+  </select>
+
+  <select id="selectLargeModelList" resultType="com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO">
+    SELECT model_id,
+           tenant_id,
+           model_code,
+           model_name,
+           model_type,
+           model_desc,
+           model_icon,
+           supports_vision
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+    <choose>
+      <when test="sourceFrom == 'platform'.toString() or tenantId == -1">
+        AND tenant_id = -1 AND is_public = 'T'
+      </when>
+      <when test="sourceFrom == 'tenant'.toString()">
+        AND tenant_id = #{tenantId}
+      </when>
+      <otherwise>
+        AND (tenant_id = #{tenantId} OR (tenant_id = -1 AND is_public = 'T'))
+      </otherwise>
+    </choose>
+    <if test="modelType != null and modelType != ''">
+      AND model_type = #{modelType}
+    </if>
+    AND data_from is null
+  </select>
+
+    <select id="selectAiLargeModelList" resultType="com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO">
+    SELECT a.model_id,
+           a.tenant_id,
+           a.model_code,
+           a.model_name,
+           a.model_type,
+           a.model_desc,
+           a.model_icon,
+           a.supports_vision,
+           CASE WHEN a.tenant_id = -1 THEN '平台' ELSE u.real_name END AS "creatorName"
+    FROM bt_library_large_model a
+    LEFT JOIN bt_user u ON u.user_id = a.creator_id
+    WHERE a.status_cd = '00A'
+    AND ((a.tenant_id = #{tenantId} AND a.creator_id = #{userId} AND a.data_from = '10A') OR (a.tenant_id = -1 AND a.is_public = 'T'))
+    <if test="modelType != null and modelType != ''">
+      AND a.model_type = #{modelType}
+    </if>
+
+  </select>
+
+  <select id="selectLargeModelById" resultType="com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO">
+    SELECT model_id,
+           tenant_id,
+           model_code,
+           model_name,
+           model_type,
+           model_desc,
+           protocol_type,
+           access_url,
+           access_key,
+           temperature,
+           max_tokens,
+           context_length,
+           function_call_mode,
+           streaming_function_call,
+           supports_vision,
+           ext_attr_json
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+      AND model_id = #{modelId}
+      AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="getLargeModelIcon" resultType="java.lang.String">
+    select model_icon  from bt_library_large_model where model_id =#{modelId} and tenant_id IN (#{tenantId}, -1) and status_cd ='00A'
+  </select>
+
+  <select id="selectPersonalLargeModelPage" resultType="com.iwhalecloud.bote.dto.model.LargeModelDTO">
+    SELECT <include refid="modelColumns"/>
+    FROM bt_library_large_model a
+    WHERE a.status_cd = '00A'
+      AND a.data_from = '10A'
+      AND a.model_type = 'llm'
+      AND a.creator_id = #{query.userId}
+    <if test="query.isEnabled != null and query.isEnabled != ''">
+      AND a.is_enabled = #{query.isEnabled}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.modelNameOrCode != null and query.modelNameOrCode != ''">
+      AND (a.model_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.modelNameOrCode}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.model_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.modelNameOrCode}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="updateLargeModelEnabledStatus">
+    UPDATE bt_library_large_model
+    SET is_enabled = #{enabled},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE model_id = #{modelId}
+      AND tenant_id = #{spaceId}
+  </update>
+
+  <select id="selectEnabledLargeModel" resultType="com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO">
+    SELECT model_id, model_code, model_name, model_type
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+      AND is_enabled = 'T'
+      AND data_from IS NULL
+      AND tenant_id = #{tenantId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectEnabledLargeModelIgnoreDataFrom" resultType="com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO">
+    SELECT model_id, model_code, model_name, model_type, model_desc, model_icon
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+    AND is_enabled = 'T'
+    AND tenant_id = #{tenantId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+</mapper>

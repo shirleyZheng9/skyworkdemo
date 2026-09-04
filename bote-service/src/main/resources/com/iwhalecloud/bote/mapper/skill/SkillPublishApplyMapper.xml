@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillPublishApplyMapper">
+
+  <sql id="skillPublishApplyColumns">
+    a.apply_id,
+    a.skill_id,
+    a.space_id,
+    a.apply_content,
+    a.audit_status,
+    a.audit_user_id,
+    a.audit_content,
+    a.status_cd,
+    a.created_time,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="selectSkillPublishApply" resultType="com.iwhalecloud.bote.dto.skill.SkillPublishApplyDTO">
+    SELECT
+    <include refid="skillPublishApplyColumns"/>
+    FROM bt_skill_publish_apply a
+    WHERE status_cd = '00A'
+      AND apply_id = #{applyId}
+  </select>
+
+  <insert id="insertSkillPublishApply">
+    INSERT INTO bt_skill_publish_apply (
+    apply_id,
+    skill_id,
+    space_id,
+    apply_content,
+    audit_status,
+    audit_user_id,
+    audit_content,
+    status_cd,
+    created_time,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.applyId},
+    #{dto.skillId},
+    #{dto.spaceId},
+    #{dto.applyContent},
+    #{dto.auditStatus},
+    #{dto.auditUserId},
+    #{dto.auditContent},
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillPublishApply">
+    UPDATE bt_skill_publish_apply
+    <set>
+      <if test="dto.checkFieldUpdateFlag('skillId')">
+        skill_id = #{dto.skillId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('spaceId')">
+        space_id = #{dto.spaceId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('applyContent')">
+        apply_content = #{dto.applyContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('auditStatus')">
+        audit_status = #{dto.auditStatus},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('auditUserId')">
+        audit_user_id = #{dto.auditUserId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('auditContent')">
+        audit_content = #{dto.auditContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE apply_id = #{dto.applyId}
+  </update>
+
+  <update id="deleteSkillPublishApply">
+    UPDATE bt_skill_publish_apply
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE apply_id = #{applyId}
+  </update>
+
+  <select id="selectSkillPublishApplyAuditPage" resultType="com.iwhalecloud.bote.dto.skill.SkillPublishApplyDTO">
+    SELECT <include refid="skillPublishApplyColumns"/>,
+        b.skill_name, b.file_info_id, b.remark AS "skillDesc", u1.real_name AS "creatorName", u2.real_name AS "auditUserName", c.space_name
+    FROM bt_skill_publish_apply a
+    JOIN bt_agent_skill b ON b.skill_id = a.skill_id AND b.status_cd = '00A'
+    LEFT JOIN bt_workspace c ON c.space_id = a.space_id
+    LEFT JOIN bt_user u1 ON u1.user_id = a.creator_id
+    LEFT JOIN bt_user u2 ON u2.user_id = a.audit_user_id
+    WHERE a.status_cd = '00A'
+    <if test="params.auditStatus != null">
+      AND a.audit_status = #{params.auditStatus}
+    </if>
+    <if test="params.searchContent != null and params.searchContent != ''">
+      AND b.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{params.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectUserSkillPublishApplyPage" resultType="com.iwhalecloud.bote.dto.skill.SkillPublishApplyDTO">
+    SELECT a.apply_id, a.skill_id, a.apply_content, a.created_time, a.space_id, a.audit_status, a.audit_content,
+           b.skill_name
+    FROM bt_skill_publish_apply a
+    JOIN bt_agent_skill b ON b.skill_id = a.skill_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.creator_id = #{params.creatorId}
+    <if test="params.auditStatus != null">
+      AND a.audit_status = #{params.auditStatus}
+    </if>
+    <if test="params.searchContent != null and params.searchContent != ''">
+      AND b.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{params.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <update id="updateAuditStatus">
+    UPDATE bt_skill_publish_apply
+    SET audit_status = #{auditStatus},
+        audit_user_id = #{auditUserId},
+        audit_content = #{auditContent},
+        updator_id = #{auditUserId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND apply_id = #{applyId}
+  </update>
+
+  <update id="invalidSkillOldApply">
+    UPDATE bt_skill_publish_apply
+    SET audit_status = -1,
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND audit_status = 0
+      AND space_id = #{spaceId}
+      AND skill_id = #{skillId}
+      AND apply_id &lt; #{applyId}
+  </update>
+
+</mapper>

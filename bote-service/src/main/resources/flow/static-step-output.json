@@ -1,0 +1,339 @@
+{
+  "llm": [
+    {
+      "name": "reasoning",
+      "description": "思考内容",
+      "type": "string"
+    },
+    {
+      "name": "text",
+      "description": "回复内容",
+      "type": "string"
+    }
+  ],
+  "llmSkill": [
+    {
+      "name": "text",
+      "description": "回复内容",
+      "type": "string"
+    }
+  ],
+  "agent": [
+    {
+      "name": "text",
+      "description": "回复内容",
+      "type": "string"
+    },
+    {
+      "name": "invokedTools",
+      "description": "调用的工具列表",
+      "type": "array",
+      "children": [
+        {
+          "name": "tool",
+          "description": "工具",
+          "type": "object",
+          "children": [
+            {
+              "name": "skillType",
+              "description": "技能类型",
+              "type": "string"
+            },
+            {
+              "name": "skillId",
+              "description": "技能 ID",
+              "type": "integer"
+            },
+            {
+              "name": "toolName",
+              "description": "工具名称",
+              "type": "string"
+            },
+            {
+              "name": "input",
+              "description": "入参",
+              "type": "object"
+            },
+            {
+              "name": "output",
+              "description": "出参",
+              "type": "any"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "a2a": [
+    {
+      "name": "taskState",
+      "description": "任务状态(submitted, working, input-required, auth-required, completed, canceled, failed, rejected, unknown)",
+      "type": "string"
+    },
+    {
+      "name": "authMessage",
+      "description": "鉴权消息",
+      "type": "string"
+    }
+  ],
+  "knowledgeRetrieval": [
+    {
+      "name": "text",
+      "description": "文本检索结果",
+      "type": "array",
+      "children": [
+        {
+          "name": "textItem",
+          "description": "单条文本检索结果",
+          "type": "object",
+          "children": [
+            {
+              "name": "score",
+              "description": "评分",
+              "type": "number"
+            },
+            {
+              "name": "docId",
+              "description": "文档 ID",
+              "type": "number"
+            },
+            {
+              "name": "docName",
+              "description": "文档名称",
+              "type": "string"
+            },
+            {
+              "name": "fileInfoId",
+              "description": "关联文档信息 ID",
+              "type": "number"
+            },
+            {
+              "name": "heading",
+              "description": "标题",
+              "type": "string"
+            },
+            {
+              "name": "content",
+              "description": "内容",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "image",
+      "description": "图片检索结果",
+      "type": "array",
+      "children": [
+        {
+          "name": "imageItem",
+          "description": "单条图片检索结果",
+          "type": "object",
+          "children": [
+            {
+              "name": "score",
+              "description": "评分",
+              "type": "number"
+            },
+            {
+              "name": "docId",
+              "description": "文档 ID",
+              "type": "number"
+            },
+            {
+              "name": "docName",
+              "description": "文档名称",
+              "type": "string"
+            },
+            {
+              "name": "fileInfoId",
+              "description": "关联文档信息 ID",
+              "type": "number"
+            },
+            {
+              "name": "heading",
+              "description": "标题",
+              "type": "string"
+            },
+            {
+              "name": "path",
+              "description": "图片路径",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "json",
+      "description": "检索结果 JSON 格式",
+      "type": "string"
+    }
+  ],
+  "questionClassifier": [
+    {
+      "name": "name",
+      "description": "分类名称",
+      "type": "string"
+    }
+  ],
+  "knowledgeChat": [
+    {
+      "name": "text",
+      "description": "回复内容",
+      "type": "string"
+    },
+    {
+      "name": "reasoning",
+      "description": "思考内容",
+      "type": "string"
+    },
+    {
+      "name": "references",
+      "description": "",
+      "type": "object",
+      "children": [
+        {
+          "name": "id",
+          "description": "文档 ID",
+          "type": "string"
+        },
+        {
+          "name": "type",
+          "description": "文档类型(doc, image)",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "description": "文档名称/图片名称",
+          "type": "string"
+        },
+        {
+          "name": "path",
+          "description": "图片路径",
+          "type": "string"
+        },
+        {
+          "name": "url",
+          "description": "查看链接",
+          "type": "string"
+        },
+        {
+          "name": "chunks",
+          "description": "文档块列表",
+          "type": "array",
+          "children": [
+            {
+              "name": "chunk",
+              "description": "文档块",
+              "type": "object",
+              "children": [
+                {
+                  "name": "chunkId",
+                  "description": "文档块 ID",
+                  "type": "string"
+                },
+                {
+                  "name": "id",
+                  "description": "文档 ID",
+                  "type": "string"
+                },
+                {
+                  "name": "name",
+                  "description": "文档块名称",
+                  "type": "string"
+                },
+                {
+                  "name": "rank",
+                  "description": "排序",
+                  "type": "string"
+                },
+                {
+                  "name": "score",
+                  "description": "分数",
+                  "type": "string"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "questions",
+      "description": "追问问题列表",
+      "type": "array",
+      "children": [
+        {
+          "name": "question",
+          "description": "追问问题",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "chatLogId",
+      "description": "对话日志 ID",
+      "type": "string"
+    }
+  ],
+  "slmRetrieval": [
+    {
+      "name": "label",
+      "description": "答案",
+      "type": "string"
+    },
+    {
+      "name": "score",
+      "description": "评分",
+      "type": "number"
+    },
+    {
+      "name": "message",
+      "description": "备注",
+      "type": "string"
+    }
+  ],
+  "mcpTool": [
+    {
+      "name": "isError",
+      "description": "是否错误(只有 true 表示错误，false 或空值都表示成功)",
+      "type": "boolean"
+    },
+    {
+      "name": "content",
+      "description": "内容列表",
+      "type": "array",
+      "children": [
+        {
+          "name": "item",
+          "description": "内容项",
+          "type": "object",
+          "children": [
+            {
+              "name": "type",
+              "description": "类型(text/image)",
+              "type": "string"
+            },
+            {
+              "name": "text",
+              "description": "文本内容",
+              "type": "string"
+            },
+            {
+              "name": "mimeType",
+              "description": "图片类型",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "description": "图片内容(base64)",
+              "type": "string"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.BtDcQaRecordManageMapper">
+
+  <sql id="btDcQaRecordColumns">
+    a.qa_id,
+    a.session_id,
+    a.chat_log_id,
+    a.question,
+    a.standard_question,
+    a.answer,
+    a.confidence_score,
+    a.response_time,
+    a.chunk_count,
+    a.user_feedback,
+    a.feedback_reason,
+    a.feedback_type,
+    a.feedback_time,
+    a.tenant_id,
+    a.bot_id,
+    a.creator_id,
+    a.created_time,
+    a.updated_time,
+    a.status_cd
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+  </sql>
+
+  <!-- QA记录与知识库的一对多关系映射 -->
+  <resultMap id="BtDcQaRecordWithKnowledgeMap" type="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordDTO">
+    <id property="qaId" column="qa_id"/>
+    <result property="sessionId" column="session_id"/>
+    <result property="chatLogId" column="chat_log_id"/>
+    <result property="question" column="question"/>
+    <result property="standardQuestion" column="standard_question"/>
+    <result property="answer" column="answer"/>
+    <result property="confidenceScore" column="confidence_score"/>
+    <result property="responseTime" column="response_time"/>
+    <result property="chunkCount" column="chunk_count"/>
+    <result property="userFeedback" column="user_feedback"/>
+    <result property="feedbackReason" column="feedback_reason"/>
+    <result property="feedbackType" column="feedback_type"/>
+    <result property="feedbackTime" column="feedback_time"/>
+    <result property="tenantId" column="tenant_id"/>
+    <result property="botId" column="bot_id"/>
+    <result property="creatorId" column="creator_id"/>
+    <result property="createdTime" column="created_time"/>
+    <result property="updatedTime" column="updated_time"/>
+    <result property="statusCd" column="status_cd"/>
+    <collection property="knowledges" ofType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecorddKnowledgeDTO">
+      <id property="knowledgeId" column="knowledge_id"/>
+      <result property="knowledgeName" column="knowledge_name"/>
+      <result property="topicId" column="topic_id"/>
+      <result property="tenantId" column="tenant_id"/>
+      <result property="knowledgeType" column="knowledge_type"/>
+    </collection>
+  </resultMap>
+
+  <select id="getBtDcQaRecord" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordDTO">
+    SELECT
+    <include refid="btDcQaRecordColumns"/>
+    FROM bt_dc_qa_record a
+    WHERE qa_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertBtDcQaRecord">
+    INSERT INTO bt_dc_qa_record (
+    qa_id,
+    session_id,
+    chat_log_id,
+    question,
+    standard_question,
+    answer,
+    confidence_score,
+    response_time,
+    chunk_count,
+    user_feedback,
+    feedback_reason,
+    feedback_type,
+    feedback_time,
+    tenant_id,
+    bot_id,
+    creator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES (
+    #{dto.qaId},
+    #{dto.sessionId},
+    #{dto.chatLogId},
+    #{dto.question},
+    #{dto.standardQuestion},
+    #{dto.answer},
+    #{dto.confidenceScore},
+    #{dto.responseTime},
+    #{dto.chunkCount},
+    #{dto.userFeedback},
+    #{dto.feedbackReason},
+    #{dto.feedbackType},
+    #{dto.feedbackTime},
+    #{dto.tenantId},
+    #{dto.botId},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd}
+    )
+  </insert>
+
+  <insert id="batchInsertBtDcQaRecord">
+    INSERT INTO bt_dc_qa_record (
+    qa_id,
+    session_id,
+    chat_log_id,
+    question,
+    standard_question,
+    answer,
+    confidence_score,
+    response_time,
+    chunk_count,
+    user_feedback,
+    feedback_reason,
+    feedback_type,
+    feedback_time,
+    tenant_id,
+    bot_id,
+    creator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.qaId},
+      #{dto.sessionId},
+      #{dto.chatLogId},
+      #{dto.question},
+      #{dto.standardQuestion},
+      #{dto.answer},
+      #{dto.confidenceScore},
+      #{dto.responseTime},
+      #{dto.chunkCount},
+      #{dto.userFeedback},
+      #{dto.feedbackReason},
+      #{dto.feedbackType},
+      #{dto.feedbackTime},
+      #{dto.tenantId},
+      #{dto.botId},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertBtDcQaRecord" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_dc_qa_record (
+      qa_id,
+      session_id,
+      chat_log_id,
+      question,
+      standard_question,
+      answer,
+      confidence_score,
+      response_time,
+      chunk_count,
+      user_feedback,
+      feedback_reason,
+      feedback_type,
+      feedback_time,
+      tenant_id,
+      bot_id,
+      creator_id,
+      created_time,
+      updated_time,
+      status_cd
+      ) VALUES (
+      #{dto.qaId},
+      #{dto.sessionId},
+      #{dto.chatLogId},
+      #{dto.question},
+      #{dto.standardQuestion},
+      #{dto.answer},
+      #{dto.confidenceScore},
+      #{dto.responseTime},
+      #{dto.chunkCount},
+      #{dto.userFeedback},
+      #{dto.feedbackReason},
+      #{dto.feedbackType},
+      #{dto.feedbackTime},
+      #{dto.tenantId},
+      #{dto.botId},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateBtDcQaRecord">
+    UPDATE bt_dc_qa_record
+    <set>
+    <if test="dto.checkFieldUpdateFlag('userFeedback')">
+        user_feedback = #{dto.userFeedback},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('feedbackReason')">
+        feedback_reason = #{dto.feedbackReason},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('feedbackTime')">
+        feedback_time = #{dto.feedbackTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('feedbackType')">
+        feedback_type = #{dto.feedbackType},
+      </if>
+      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+    </set>
+    WHERE session_id = #{dto.sessionId}
+  </update>
+
+  <update id="updateUserFeedback">
+    UPDATE bt_dc_qa_record
+    SET user_feedback = #{dto.userFeedback},
+    <if test="dto.userFeedback == 'DISLIKE'.toString()">
+      operate_state = '0',
+    </if>
+    feedback_time = #{dto.feedbackTime},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE session_id = #{dto.sessionId}
+  </update>
+
+  <select id="selectBtDcQaRecordPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordDTO">
+    SELECT
+      a.qa_id,
+      a.session_id,
+      a.chat_log_id,
+      a.question,
+      a.standard_question,
+      a.answer,
+      a.confidence_score,
+      a.response_time,
+      a.chunk_count,
+      a.user_feedback,
+      a.feedback_reason,
+      a.feedback_type,
+      a.feedback_time,
+      a.tenant_id,
+      a.bot_id,
+      a.creator_id,
+      a.created_time,
+      a.updated_time,
+      a.status_cd
+    FROM bt_dc_qa_record a
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    AND EXISTS (
+      SELECT 1
+      FROM bt_dc_qa_record_kb_rel b
+      JOIN bt_knowledge_base c ON c.knowledge_id = b.kb_id
+        AND c.status_cd = '00A'
+         <if test="query.tenantId != null">
+             AND c.tenant_id = #{query.tenantId}
+        </if>
+      WHERE b.qa_id = a.qa_id
+        AND b.status_cd = '00A'
+        <if test="query.spaceId != null">
+          AND c.space_id = #{query.spaceId}
+        </if>
+        <if test="query.knowledgeIds != null and !query.knowledgeIds.isEmpty()">
+          AND b.kb_id IN
+          (<foreach collection="query.knowledgeIds" item="id" separator=",">#{id}</foreach>)
+        </if>
+        <if test="query.superAdmin!= true">
+          AND (
+            c.owner_id = #{query.userId}
+            OR c.knowledge_id IN (
+              SELECT bp.kb_id
+              FROM bt_dc_kb_permission bp
+              WHERE bp.permission_type = 'MANAGE'
+                AND bp.status_cd = '00A'
+                AND (
+                  (bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+                  <if test="query.deptIds != null and query.deptIds.size() > 0">
+                    OR (bp.subject_type = 'ORG' AND bp.subject_id IN
+                    (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+                  </if>
+                )
+            )
+          )
+        </if>
+    )
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectKnowledgeByQaIds" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecorddKnowledgeDTO">
+    SELECT
+      rel.qa_id,
+      kb.knowledge_id,
+      kb.knowledge_name,
+      kb.topic_id,
+      kb.tenant_id,
+      kb.knowledge_type,
+      kb.color,
+      kb.knowledge_icon
+    FROM (
+      SELECT DISTINCT rel.qa_id, rel.kb_id, rel.tenant_id
+      FROM bt_dc_qa_record_kb_rel rel
+      WHERE rel.qa_id IN (<foreach collection="qaIds" item="qaId" separator=",">#{qaId}</foreach>)
+        AND rel.status_cd = '00A'
+    ) rel
+    JOIN bt_knowledge_base kb ON kb.knowledge_id = rel.kb_id
+      AND kb.status_cd = '00A'
+      AND kb.tenant_id = rel.tenant_id
+    <if test="query.superAdmin!= true">
+      WHERE (
+        kb.owner_id = #{query.userId}
+        OR kb.knowledge_id IN (
+          SELECT bp.kb_id
+          FROM bt_dc_kb_permission bp
+          WHERE bp.permission_type = 'MANAGE'
+            AND bp.status_cd = '00A'
+            AND (
+              (bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+              <if test="query.deptIds != null and query.deptIds.size() > 0">
+                OR (bp.subject_type = 'ORG' AND bp.subject_id IN
+                (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+              </if>
+            )
+        )
+      )
+    </if>
+    ORDER BY rel.qa_id, kb.knowledge_id
+  </select>
+  <select id="selectBtDcQaRecordList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleBtDcQaRecordDTO">
+  SELECT
+      DISTINCT
+      a.qa_id,
+      a.confidence_score,
+      a.chunk_count,
+      a.user_feedback,
+      a.created_time
+    FROM bt_dc_qa_record a,bt_dc_qa_record_kb_rel b
+    WHERE a.qa_id = b.qa_id
+    AND a.status_cd='00A'
+    <if test="query.startTime != null">
+        AND a.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+        AND a.created_time &lt;= #{query.endTime}
+    </if>
+    <if test="query.knowledgeIds != null and !query.knowledgeIds.isEmpty()">
+        AND b.kb_id IN(<foreach collection="query.knowledgeIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <!-- 统计查询：问答数、命中率、点赞数、踩数、问答人数、反馈原因不为空数 -->
+  <select id="selectBtDcQaRecordStatistics" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordStatisticsDTO">
+    SELECT
+      COUNT(DISTINCT a.qa_id) as questionsAndAnswersTotal,
+      CASE WHEN COUNT(DISTINCT a.qa_id) = 0 THEN 0.00 ELSE ROUND(AVG(a.confidence_score) * 100, 2) END as hitRate,
+      SUM(CASE WHEN a.user_feedback = 'LIKE' THEN 1 ELSE 0 END) as numberOfLikesTotal,
+      SUM(CASE WHEN a.user_feedback = 'DISLIKE' THEN 1 ELSE 0 END) as stepTotal,
+      COUNT(DISTINCT a.creator_id) as questionAnswerUserTotal,
+      <!-- 针对 Oracle 的 CLOB 比较做特殊处理，其他数据库保持原逻辑 -->
+      <choose>
+        <when test="_databaseId == 'oracle'">
+          COUNT(CASE WHEN a.user_feedback = 'DISLIKE' AND a.feedback_reason IS NOT NULL AND dbms_lob.getlength(a.feedback_reason) > 0 THEN 1 END) as feedbackReasonCount
+        </when>
+        <otherwise>
+          COUNT(CASE WHEN a.user_feedback = 'DISLIKE' AND a.feedback_reason IS NOT NULL AND a.feedback_reason != '' THEN 1 END) as feedbackReasonCount
+        </otherwise>
+      </choose>
+    FROM bt_dc_qa_record a, bt_dc_qa_record_kb_rel b, bt_knowledge_base c
+    LEFT JOIN bt_dc_kb_permission bp ON c.knowledge_id = bp.kb_id
+    AND bp.status_cd = '00A'
+    WHERE a.qa_id = b.qa_id AND c.knowledge_id = b.kb_id AND c.status_cd = '00A' and c.tenant_id = a.tenant_id
+    AND a.status_cd = '00A'
+    <if test="query.startTime != null">
+        AND a.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+        AND a.created_time &lt;= #{query.endTime}
+    </if>
+    <if test="query.tenantId != null">
+        AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+        AND c.space_id = #{query.spaceId}
+    </if>
+    <if test="query.knowledgeIds != null and !query.knowledgeIds.isEmpty()">
+        AND b.kb_id IN(<foreach collection="query.knowledgeIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+    <if test="query.superAdmin!= true">
+    AND (
+      c.owner_id = #{query.userId}
+      OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>
+      )
+    </if>
+  </select>
+
+  <!-- 按天统计查询 -->
+  <select id="selectBtDcQaRecordDailyStatistics" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordItemDto">
+    SELECT
+      <choose>
+        <when test="_databaseId == 'mysql'">
+          DATE_FORMAT(a.created_time, '%Y%m%d') as name,
+        </when>
+        <when test="_databaseId == 'oracle'">
+          TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+        </when>
+        <when test="_databaseId == 'postgresql'">
+          TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+        </when>
+        <otherwise>
+          TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+        </otherwise>
+      </choose>
+      COUNT(DISTINCT a.qa_id) as value
+    FROM bt_dc_qa_record a, bt_dc_qa_record_kb_rel b, bt_knowledge_base c
+    LEFT JOIN bt_dc_kb_permission bp ON c.knowledge_id = bp.kb_id
+    AND bp.status_cd = '00A'
+    WHERE a.qa_id = b.qa_id AND c.knowledge_id = b.kb_id AND c.status_cd = '00A' and c.tenant_id = a.tenant_id
+    AND a.status_cd = '00A'
+    <if test="query.startTime != null">
+        AND a.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+        AND a.created_time &lt;= #{query.endTime}
+    </if>
+     <if test="query.tenantId != null">
+        AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+        AND c.space_id = #{query.spaceId}
+    </if>
+    <if test="query.knowledgeIds != null and !query.knowledgeIds.isEmpty()">
+        AND b.kb_id IN(<foreach collection="query.knowledgeIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+    <if test="query.superAdmin!= true">
+    AND (
+      c.owner_id = #{query.userId}
+      OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>
+      )
+    </if>
+    GROUP BY
+      <choose>
+        <when test="_databaseId == 'mysql'">
+          DATE_FORMAT(a.created_time, '%Y%m%d')
+        </when>
+        <when test="_databaseId == 'oracle'">
+          TO_CHAR(a.created_time, 'YYYYMMDD')
+        </when>
+        <when test="_databaseId == 'postgresql'">
+          TO_CHAR(a.created_time, 'YYYYMMDD')
+        </when>
+        <otherwise>
+          TO_CHAR(a.created_time, 'YYYYMMDD')
+        </otherwise>
+      </choose>
+    ORDER BY name ASC
+  </select>
+
+  <!-- 按天统计问答人数 -->
+  <select id="selectBtDcQaRecordDailyQaPeoplesStatistics" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordItemDto">
+    SELECT
+      <choose>
+        <when test="_databaseId == 'mysql'">
+          DATE_FORMAT(a.created_time, '%Y%m%d') as name,
+        </when>
+        <when test="_databaseId == 'oracle'">
+          TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+        </when>
+        <when test="_databaseId == 'postgresql'">
+          TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+        </when>
+        <otherwise>
+          TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+        </otherwise>
+      </choose>
+      COUNT(DISTINCT a.creator_id) as value
+    FROM bt_dc_qa_record a, bt_dc_qa_record_kb_rel b, bt_knowledge_base c
+    LEFT JOIN bt_dc_kb_permission bp ON c.knowledge_id = bp.kb_id
+    AND bp.status_cd = '00A'
+    WHERE a.qa_id = b.qa_id AND c.knowledge_id = b.kb_id AND c.status_cd = '00A' and c.tenant_id = a.tenant_id
+    AND a.status_cd = '00A'
+     <if test="query.tenantId != null">
+        AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+        AND c.space_id = #{query.spaceId}
+    </if>
+    <if test="query.startTime != null">
+        AND a.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+        AND a.created_time &lt;= #{query.endTime}
+    </if>
+    <if test="query.knowledgeIds != null and !query.knowledgeIds.isEmpty()">
+        AND b.kb_id IN(<foreach collection="query.knowledgeIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+    <if test="query.superAdmin!= true">
+    AND (
+      c.owner_id = #{query.userId}
+      OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>
+      )
+    </if>
+    GROUP BY
+      <choose>
+        <when test="_databaseId == 'mysql'">
+          DATE_FORMAT(a.created_time, '%Y%m%d')
+        </when>
+        <when test="_databaseId == 'oracle'">
+          TO_CHAR(a.created_time, 'YYYYMMDD')
+        </when>
+        <when test="_databaseId == 'postgresql'">
+          TO_CHAR(a.created_time, 'YYYYMMDD')
+        </when>
+        <otherwise>
+          TO_CHAR(a.created_time, 'YYYYMMDD')
+        </otherwise>
+      </choose>
+    ORDER BY name ASC
+  </select>
+
+  <!-- 按天统计问答命中率 -->
+  <select id="selectBtDcQaRecordDailyHitRateStatistics" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordItemDto">
+    SELECT
+      temp.name,
+      <choose>
+        <when test="_databaseId == 'mysql'">
+          CASE
+            WHEN COUNT(DISTINCT temp.qa_id) = 0 THEN 0.00
+            ELSE ROUND(SUM(temp.confidence_score) / COUNT(DISTINCT temp.qa_id) * 100, 2)
+          END as value
+        </when>
+        <when test="_databaseId == 'oracle'">
+          CASE
+            WHEN COUNT(DISTINCT temp.qa_id) = 0 THEN 0.00
+            ELSE ROUND(SUM(temp.confidence_score) / COUNT(DISTINCT temp.qa_id) * 100, 2)
+          END as value
+        </when>
+        <when test="_databaseId == 'postgresql'">
+          CASE
+            WHEN COUNT(DISTINCT temp.qa_id) = 0 THEN 0.00
+            ELSE ROUND(CAST(SUM(temp.confidence_score) / COUNT(DISTINCT temp.qa_id) * 100 AS NUMERIC), 2)
+          END as value
+        </when>
+        <otherwise>
+          CASE
+            WHEN COUNT(DISTINCT temp.qa_id) = 0 THEN 0.00
+            ELSE ROUND(CAST(SUM(temp.confidence_score) / COUNT(DISTINCT temp.qa_id) * 100 AS NUMERIC), 2)
+          END as value
+        </otherwise>
+      </choose>
+    FROM (
+      SELECT DISTINCT
+        <choose>
+          <when test="_databaseId == 'mysql'">
+            DATE_FORMAT(a.created_time, '%Y%m%d') as name,
+          </when>
+          <when test="_databaseId == 'oracle'">
+            TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+          </when>
+          <when test="_databaseId == 'postgresql'">
+            TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+          </when>
+          <otherwise>
+            TO_CHAR(a.created_time, 'YYYYMMDD') as name,
+          </otherwise>
+        </choose>
+        a.qa_id,
+        <choose>
+          <when test="_databaseId == 'mysql'">
+            IFNULL(a.confidence_score, 0) as confidence_score
+          </when>
+          <when test="_databaseId == 'oracle'">
+            NVL(a.confidence_score, 0) as confidence_score
+          </when>
+          <when test="_databaseId == 'postgresql'">
+            COALESCE(a.confidence_score, 0) as confidence_score
+          </when>
+          <otherwise>
+            COALESCE(a.confidence_score, 0) as confidence_score
+          </otherwise>
+        </choose>
+      FROM bt_dc_qa_record a, bt_dc_qa_record_kb_rel b, bt_knowledge_base c
+      LEFT JOIN bt_dc_kb_permission bp ON c.knowledge_id = bp.kb_id
+      AND bp.status_cd = '00A'
+      WHERE a.qa_id = b.qa_id AND c.knowledge_id = b.kb_id AND c.status_cd = '00A'  and c.tenant_id = a.tenant_id
+      AND a.status_cd = '00A'
+       <if test="query.tenantId != null">
+        AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+        AND c.space_id = #{query.spaceId}
+    </if>
+      <if test="query.startTime != null">
+          AND a.created_time >= #{query.startTime}
+      </if>
+      <if test="query.endTime != null">
+          AND a.created_time &lt;= #{query.endTime}
+      </if>
+      <if test="query.knowledgeIds != null and !query.knowledgeIds.isEmpty()">
+          AND b.kb_id IN(<foreach collection="query.knowledgeIds" item="id" separator=",">#{id}</foreach>)
+      </if>
+
+      <if test="query.superAdmin!= true">
+      AND (
+        c.owner_id = #{query.userId}
+        OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+        <if test="query.deptIds != null and query.deptIds.size() > 0">
+          OR (bp.permission_type ='MANAGE' AND bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+        </if>
+        )
+      </if>
+    ) temp
+    GROUP BY temp.name
+    ORDER BY temp.name ASC
+  </select>
+  <update id="deleteBtDcQaRecord">
+    update bt_dc_qa_record set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
+  </update>
+  <select id="selectKnowledgeByQaId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleKnowledgeBaseDTO">
+    select a.knowledge_id ,a.owner_id ,a.visibility_scope  from bt_knowledge_base a ,bt_dc_qa_record_kb_rel b where a.tenant_id = #{tenantId} and a.knowledge_id = b.kb_id and a.status_cd ='00A' and b.qa_id = #{qaId}
+  </select>
+  <update id="updateBtDcQaRecordReason">
+      UPDATE bt_dc_qa_record
+    <set>
+      <if test="dto.checkFieldUpdateFlag('feedbackReason')">
+        feedback_reason = #{dto.feedbackReason},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('feedbackTime')">
+        feedback_time = #{dto.feedbackTime},
+      </if>
+      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE session_id = #{dto.sessionId}
+  </update>
+
+  <update id="updateStandardQuestionBySession">
+    UPDATE bt_dc_qa_record
+    SET standard_question = #{standardQuestion},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND session_id = #{sessionId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="updateStandardQuestionByQaId">
+    UPDATE bt_dc_qa_record
+    SET standard_question = #{standardQuestion},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE qa_id = #{qaId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="selectPendingForStandardQuestion" resultType="com.iwhalecloud.bote.doc.module.knowledge.semantic.dto.PendingKnowledgeQuestionDTO">
+    SELECT qa.qa_id,
+           qa.tenant_id,
+           qa.session_id,
+           qa.question
+    FROM bt_dc_qa_record qa
+    WHERE qa.status_cd = '00A'
+      AND qa.question IS NOT NULL
+      AND qa.session_id IS NOT NULL
+      AND (qa.standard_question IS NULL OR qa.standard_question = '')
+    ORDER BY qa.created_time ASC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+</mapper>

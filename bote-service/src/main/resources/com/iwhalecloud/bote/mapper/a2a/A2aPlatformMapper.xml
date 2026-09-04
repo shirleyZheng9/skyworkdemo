@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.a2a.A2aPlatformMapper">
+  <!-- @formatter:off -->
+  <select id="existsPlatformCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_a2a_platform
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND platform_code = #{platformCode}
+  </select>
+
+  <select id="existsAgentByPlatformId" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_a2a_agent
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND platform_id = #{platformId}
+  </select>
+
+  <select id="selectPlatform" resultType="com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO">
+    SELECT a.platform_id, a.platform_name, a.platform_code, a.platform_desc, a.platform_icon, a.publish_key,
+           a.auth_config_json, a.auth_ext_func_id, b.func_name AS auth_ext_func_name,
+           a.tenant_id, a.status_cd, a.creator_id, a.created_time, a.updator_id, a.updated_time, a.remark
+    FROM bt_a2a_platform a
+    LEFT JOIN bt_skill_function b ON b.func_id = a.auth_ext_func_id AND b.tenant_id IN (#{tenantId}, -1)
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.platform_id = #{platformId}
+  </select>
+
+  <select id="selectPlatformAuthConfig" resultType="com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO">
+    SELECT platform_id, auth_config_json, auth_ext_func_id
+    FROM bt_a2a_platform
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND platform_id = #{platformId}
+  </select>
+
+  <select id="selectPlatformByCode" resultType="com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO">
+    SELECT platform_id, platform_name, platform_code, publish_key
+    FROM bt_a2a_platform
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND platform_code = #{platformCode}
+  </select>
+
+  <select id="selectAuthExtFuncIdByPlatformId" resultType="java.lang.Long">
+    SELECT auth_ext_func_id
+    FROM bt_a2a_platform
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND platform_id = #{platformId}
+  </select>
+
+  <insert id="insertPlatform">
+    INSERT INTO bt_a2a_platform (
+      platform_id,
+      platform_name,
+      platform_code,
+      platform_desc,
+      platform_icon,
+      publish_key,
+      auth_config_json,
+      auth_ext_func_id,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES (
+      #{dto.platformId},
+      #{dto.platformName},
+      #{dto.platformCode},
+      #{dto.platformDesc},
+      #{dto.platformIcon},
+      #{dto.publishKey},
+      #{dto.authConfigJson},
+      #{dto.authExtFuncId},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePlatform">
+    UPDATE bt_a2a_platform
+    SET
+      <if test="dto.checkFieldUpdateFlag('platformName')">
+        platform_name = #{dto.platformName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('platformCode')">
+        platform_code = #{dto.platformCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('platformDesc')">
+        platform_desc = #{dto.platformDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('platformIcon')">
+        platform_icon = #{dto.platformIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('publishKey')">
+        publish_key = #{dto.publishKey},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('authConfigJson')">
+        auth_config_json = #{dto.authConfigJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('authExtFuncId')">
+        auth_ext_func_id = #{dto.authExtFuncId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{dto.tenantId}
+      AND platform_id = #{dto.platformId}
+  </update>
+
+  <update id="updatePublishKey">
+    UPDATE bt_a2a_platform
+    SET publish_key = #{publishKey},
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND platform_id = #{platformId}
+  </update>
+
+  <update id="deletePlatform">
+    UPDATE bt_a2a_platform
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND platform_id = #{platformId}
+  </update>
+
+  <select id="selectPlatformList" resultType="com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO">
+    SELECT platform_id, platform_name, platform_code, platform_icon
+    FROM bt_a2a_platform
+    WHERE status_cd = '00A'
+      AND tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+        platform_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        platform_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY updated_time DESC
+  </select>
+
+  <select id="selectPlatformPage" resultType="com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO">
+    SELECT a.platform_id, a.platform_name, a.platform_code, a.platform_desc, a.platform_icon, a.updated_time,
+           b.real_name AS updator_name
+    FROM bt_a2a_platform a
+    LEFT JOIN bt_user b ON b.user_id = a.updator_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+        a.platform_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        OR
+        a.platform_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+</mapper>

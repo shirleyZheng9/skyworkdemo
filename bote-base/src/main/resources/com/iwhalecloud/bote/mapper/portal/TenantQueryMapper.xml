@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.TenantQueryMapper">
+
+  <select id="getTenantCode" resultType="java.lang.String">
+    SELECT tenant_code
+    FROM bt_tenant a
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="getSimpleTenant" resultType="com.iwhalecloud.bote.dto.portal.SimpleTenantDTO">
+    SELECT tenant_id, tenant_code, tenant_name, system_type, space_id
+    FROM bt_tenant a
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="queryTenantList" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT tenant_id, tenant_code, tenant_name, system_type,space_id
+    FROM bt_tenant
+    WHERE status_cd = '00A'
+    and (system_type IS NULL OR system_type != 'workspace')
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="getSpaceId" resultType="java.lang.Long">
+    SELECT space_id FROM bt_tenant WHERE tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertTenant">
+    INSERT INTO bt_tenant (
+    tenant_id,
+    tenant_code,
+    tenant_name,
+    tenant_use,
+    tenant_icon,
+    prologue,
+    question_setting_info,
+    bot_setting_info,
+    app_id,
+    system_type,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.tenantId},
+    #{dto.tenantCode},
+    #{dto.tenantName},
+    #{dto.tenantUse},
+    #{dto.tenantIcon},
+    #{dto.prologue},
+    #{dto.questionSettingInfo},
+    #{dto.botSettingInfo},
+    #{dto.appId},
+    #{dto.systemType},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+  <select id="getSimpleTenants" resultType="com.iwhalecloud.bote.dto.portal.SimpleTenantDTO">
+  SELECT tenant_id, tenant_code, tenant_name, system_type, space_id
+    FROM bt_tenant a
+    WHERE tenant_id in
+    <foreach item="item" index="index" collection="tenantIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+      AND status_cd = '00A'
+  </select>
+
+  <select id="getTenantIdByExtTenantId" resultType="java.lang.Long">
+    SELECT tenant_id
+    FROM bt_tenant
+    WHERE ext_tenant_id = #{extTenantId}
+      AND status_cd = '00A'
+      AND space_id = #{spaceId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+</mapper>

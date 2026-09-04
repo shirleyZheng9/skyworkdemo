@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.prompt.PromptUserDraftMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.prompt.PromptUserDraftEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="prompt_id" property="promptId" jdbcType="BIGINT"/>
+    <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+    <result column="template_type" property="templateType" jdbcType="VARCHAR"/>
+    <result column="messages" property="messages" jdbcType="VARCHAR"/>
+    <result column="model_config" property="modelConfig" jdbcType="VARCHAR"/>
+    <result column="variable_defs" property="variableDefs" jdbcType="VARCHAR"/>
+    <result column="tools" property="tools" jdbcType="VARCHAR"/>
+    <result column="tool_call_config" property="toolCallConfig" jdbcType="VARCHAR"/>
+    <result column="base_version" property="baseVersion" jdbcType="VARCHAR"/>
+    <result column="is_draft_edited" property="isDraftEdited" jdbcType="SMALLINT"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , space_id, prompt_id, user_id, template_type, messages, model_config, variable_defs,
+    tools, tool_call_config, base_version, is_draft_edited, created_at, updated_at, deleted_at
+  </sql>
+
+  <!-- 插入记录 -->
+  <insert id="insert" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptUserDraftEntity">
+    INSERT INTO bt_prompt_user_draft (id, space_id, prompt_id, user_id, template_type, messages, model_config, variable_defs,
+                                      tools, tool_call_config, base_version, is_draft_edited, created_at, updated_at, deleted_at)
+    VALUES (#{id,jdbcType=BIGINT},
+            #{spaceId,jdbcType=BIGINT},
+            #{promptId,jdbcType=BIGINT},
+            #{userId,jdbcType=VARCHAR},
+            #{templateType,jdbcType=VARCHAR},
+            #{messages,jdbcType=VARCHAR},
+            #{modelConfig,jdbcType=VARCHAR},
+            #{variableDefs,jdbcType=VARCHAR},
+            #{tools,jdbcType=VARCHAR},
+            #{toolCallConfig,jdbcType=VARCHAR},
+            #{baseVersion,jdbcType=VARCHAR},
+            #{isDraftEdited,jdbcType=SMALLINT},
+            #{createdAt,jdbcType=TIMESTAMP},
+            #{updatedAt,jdbcType=TIMESTAMP},
+            #{deletedAt,jdbcType=BIGINT})
+  </insert>
+
+  <!-- 根据空间ID、PromptID和用户ID查询 -->
+  <select id="selectByPromptIdAndUserId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_user_draft
+    WHERE space_id = #{spaceId,jdbcType=BIGINT}
+      AND prompt_id = #{promptId,jdbcType=BIGINT}
+      AND user_id = #{userId,jdbcType=VARCHAR}
+      AND deleted_at = 0
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+     1
+  </select>
+
+  <!-- 根据ID查询 -->
+  <select id="selectById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_user_draft
+    WHERE id = #{draftId,jdbcType=BIGINT}
+    AND deleted_at = 0
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+     1
+  </select>
+
+  <!-- 根据条件对查询 -->
+  <select id="selectByPairs" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_user_draft
+    WHERE deleted_at = 0
+    AND (
+    <foreach collection="pairs" item="pair" separator=" OR ">
+      (prompt_id = #{pair.promptId,jdbcType=BIGINT} AND user_id = #{pair.userId,jdbcType=VARCHAR})
+    </foreach>
+    )
+  </select>
+
+  <!-- 根据ID更新 -->
+  <update id="updateById" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptUserDraftEntity">
+    UPDATE bt_prompt_user_draft
+    <set>
+        prompt_id = #{promptId,jdbcType=BIGINT},
+        user_id = #{userId,jdbcType=VARCHAR},
+        template_type = #{templateType,jdbcType=VARCHAR},
+        messages = #{messages,jdbcType=VARCHAR},
+        model_config = #{modelConfig,jdbcType=VARCHAR},
+        variable_defs = #{variableDefs,jdbcType=VARCHAR},
+        tools = #{tools,jdbcType=VARCHAR},
+        tool_call_config = #{toolCallConfig,jdbcType=VARCHAR},
+        base_version = #{baseVersion,jdbcType=VARCHAR},
+        is_draft_edited = #{isDraftEdited,jdbcType=SMALLINT},
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+    </set>
+    WHERE id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <update id="deleteById">
+    DELETE
+    FROM bt_prompt_user_draft
+    WHERE id = #{draftId,jdbcType=BIGINT}
+  </update>
+</mapper>

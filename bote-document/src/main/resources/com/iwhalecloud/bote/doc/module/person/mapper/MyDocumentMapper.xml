@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.person.mapper.MyDocumentMapper">
+  <select id="selectMyDocumentList" resultType="com.iwhalecloud.bote.doc.module.person.dto.MyDocumentDTO">
+    SELECT d.id, d.document_id, d.document_name, d.library_id, d.parent_id, d.document_type,
+    d.content_source, d.file_info_id,
+    d.revision, d.word_count, d.view_count, d.is_convert, d.is_builtin, d.builtin_type,
+    d.prev_document_id, d.tenant_id, d.creator_id, d.updator_id,
+    d.created_time, d.updated_time, d.status_cd,
+    d.document_id AS "documentCode",
+    CASE
+    WHEN EXISTS(select 1
+    from bt_dc_document leaf
+    where leaf.parent_id = d.document_id and d.status_cd = '00A') THEN 1
+    ELSE 0
+    END AS "has_children",
+    CASE
+    WHEN d.document_type = 'FOLDER' THEN 'folder'
+    WHEN d.document_type = 'WORD' THEN 'file-text'
+    WHEN d.document_type = 'EXCEL' THEN 'file-excel'
+    WHEN d.document_type = 'PDF' THEN 'file-pdf'
+    WHEN d.document_type = 'PPT' THEN 'file-powerpoint'
+    WHEN d.document_type = 'TXT' THEN 'file-text'
+    WHEN d.document_type = 'IMAGE' THEN 'file-image'
+    WHEN d.document_type = 'MD' THEN 'file-text'
+    WHEN d.document_type = 'KLB' THEN 'file-image'
+    WHEN d.document_type = 'FILE' THEN 'file'
+    ELSE 'file'
+    END AS "fileIcon",
+    d.creator_id AS "creator.userId",
+    CASE
+    WHEN EXISTS (SELECT 1 FROM bt_dc_user_favorite uf WHERE uf.target_id = d.document_id AND uf.target_type IN ('DOCUMENT', 'FOLDER') AND uf.status_cd = '00A')
+    THEN 1
+    ELSE 0
+    END AS "isFavorite",
+    CASE
+    WHEN EXISTS (SELECT 1 FROM bt_dc_user_homepage_pin uhp WHERE uhp.target_id = d.document_id AND uhp.target_type = 'DOCUMENT' AND uhp.status_cd =
+    '00A') THEN 1
+    ELSE 0
+    END AS "isPinned",
+    CASE
+    WHEN d.is_builtin = 'T' THEN 'EDIT'
+    ELSE 'MANAGE'
+    END AS "permissions"
+    FROM bt_dc_document d
+    WHERE d.status_cd = '00A'
+    AND d.library_id = #{queryParams.libraryId}
+     <if test="queryParams.spaceId != null">
+      AND d.space_id = #{queryParams.spaceId}
+    </if>
+     <if test="queryParams.tenantId != null">
+      AND (d.tenant_id = #{queryParams.tenantId} or (d.document_name ='我的文档' and d.is_builtin='T' and d.document_type ='ROOT'))
+    </if>
+    <if test="queryParams.keyword != null and queryParams.keyword != ''">
+      AND d.document_name LIKE CONCAT('%', #{queryParams.keyword}, '%')
+    </if>
+    <choose>
+      <when test="queryParams.sortBy == 'name'">
+        ORDER BY d.document_name
+        <if test="queryParams.sortOrder == 'desc'">DESC</if>
+        <if test="queryParams.sortOrder == 'asc'">ASC</if>
+      </when>
+      <otherwise>
+        ORDER BY d.updated_time
+        <if test="queryParams.sortOrder == 'desc'">DESC</if>
+        <if test="queryParams.sortOrder == 'asc'">ASC</if>
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="existsUserDocumentLibrary" resultType="string">
+    SELECT library_id
+    FROM bt_dc_document_library
+    WHERE owner_id = #{userId}
+    AND visibility_scope = 'PRIVATE'
+    AND status_cd = '00A'
+    AND is_builtin = 'T'
+    AND library_name = '我的文档'
+    <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <select id="existsBuiltinFolder" resultType="boolean">
+    SELECT CASE WHEN count(*) > 0 THEN 1 ELSE 0 END
+    FROM bt_dc_document
+    WHERE creator_id = #{userId}
+      AND is_builtin = 'T'
+      AND builtin_type = #{builtinType}
+      AND status_cd = '00A'
+      AND library_id = #{libraryId}
+       <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+  </select>
+
+</mapper>

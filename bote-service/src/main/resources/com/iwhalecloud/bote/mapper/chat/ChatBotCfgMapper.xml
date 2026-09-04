@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.ChatBotCfgMapper">
+
+  <sql id="cfgColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.bot_tenant_id,
+    a.user_id,
+    a.action_type,
+    a.creator_id,
+    a.created_time,
+    a.status_cd,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <select id="existsChatBotCfg" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_chat_bot_cfg a
+    WHERE status_cd = '00A'
+      AND space_id = #{dto.spaceId}
+      AND bot_id = #{dto.botId}
+      AND bot_tenant_id = #{dto.botTenantId}
+      AND user_id = #{dto.userId}
+      AND action_type = #{dto.actionType}
+  </select>
+
+  <insert id="insertChatBotCfg">
+    INSERT INTO bt_chat_bot_cfg (
+    id,
+    space_id,
+    bot_id,
+    bot_tenant_id,
+    user_id,
+    action_type,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.botTenantId},
+    #{dto.userId},
+    #{dto.actionType},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <delete id="deteleChatBotCfg">
+    DELETE FROM bt_chat_bot_cfg
+    WHERE space_id = #{dto.spaceId}
+      AND bot_id = #{dto.botId}
+    <if test="dto.botTenantId != null">
+      AND bot_tenant_id = #{dto.botTenantId}
+    </if>
+      AND user_id = #{dto.userId}
+      AND action_type = #{dto.actionType}
+  </delete>
+
+  <select id="selectBotCfgList" resultType="com.iwhalecloud.bote.dto.chat.ChatBotCfgDTO">
+    SELECT <include refid="cfgColumns"/>
+    FROM bt_chat_bot_cfg a
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.user_id = #{userId}
+  </select>
+</mapper>

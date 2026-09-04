@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillPluginManageMapper">
+
+  <sql id="pluginColumns">
+    a.api_id,
+    a.model_id,
+    a.api_code,
+    a.api_name,
+    a.req_json,
+    a.prompt_id,
+    a.prompt_content,
+    a.pre_script,
+    a.post_script,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.api_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.api_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+  </sql>
+
+  <select id="existsSkillPluginCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+      AND api_code = #{dto.apiCode}
+      AND tenant_id = #{dto.tenantId}
+    <if test="dto.apiId != null">
+      AND api_id != #{dto.apiId}
+    </if>
+  </select>
+
+  <select id="getSkillPlugin" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT
+    <include refid="pluginColumns"/>
+    FROM bt_skill_plugin a
+    WHERE api_id = #{id}
+      AND status_cd = '00A'
+      AND tenant_id in (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSimplePlugin" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT api_id, api_name, api_code, tenant_id, model_id, prompt_id, prompt_content, pre_script, post_script, req_json
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND api_id = #{id}
+  </select>
+
+  <select id="selectSimplePlugins" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT api_id, api_name, api_code, tenant_id, model_id, prompt_id, prompt_content, pre_script, post_script, req_json
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND api_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <insert id="insertSkillPlugin">
+    INSERT INTO bt_skill_plugin (
+    api_id,
+    model_id,
+    api_code,
+    api_name,
+    req_json,
+    prompt_id,
+    prompt_content,
+    pre_script,
+    post_script,
+    catalog_item_id,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.apiId},
+    #{dto.modelId},
+    #{dto.apiCode},
+    #{dto.apiName},
+    #{dto.reqJson},
+    #{dto.promptId},
+    #{dto.promptContent},
+    #{dto.preScript},
+    #{dto.postScript},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillPlugin">
+    UPDATE bt_skill_plugin
+    <set>
+      <if test="dto.checkFieldUpdateFlag('modelId')">
+        model_id = #{dto.modelId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('apiCode')">
+        api_code = #{dto.apiCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('apiName')">
+        api_name = #{dto.apiName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('reqJson')">
+        req_json = #{dto.reqJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptId')">
+        prompt_id = #{dto.promptId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptContent')">
+        prompt_content = #{dto.promptContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('preScript')">
+        pre_script = #{dto.preScript},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('postScript')">
+        post_script = #{dto.postScript},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE api_id = #{dto.apiId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteSkillPlugin">
+    UPDATE bt_skill_plugin
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE api_id = #{apiId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectSkillPluginList" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT
+    <include refid="pluginColumns"/>
+    FROM bt_skill_plugin a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillPluginPage" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT
+    <include refid="pluginColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_plugin a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+</mapper>

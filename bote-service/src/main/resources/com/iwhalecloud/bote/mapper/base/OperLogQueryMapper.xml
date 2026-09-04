@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.OperLogQueryMapper">
+
+  <select id="selectOperLogPage" resultType="com.iwhalecloud.bote.dto.base.OperLogDTO">
+    SELECT
+      log_id,
+      oper_class,
+      obj_id,
+      obj_desc,
+      oper_type,
+      oper_content,
+      app_id AS "tenantId",
+      oper_staff AS "updatorId",
+      oper_date AS "updatedTime",
+      (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.oper_staff) AS "updatorName"
+    FROM bt_oper_log a
+    WHERE 1=1
+    <if test="query.tenantId != null">
+      AND a.app_id = #{query.tenantId}
+    </if>
+    <if test="query.operClass != null and query.operClass != ''">
+      AND a.oper_class = #{query.operClass}
+    </if>
+    <if test="query.objId != null">
+      AND a.obj_id = #{query.objId}
+    </if>
+    <if test="query.operType != null and query.operType != ''">
+      AND a.oper_type = #{query.operType}
+    </if>
+    ORDER BY oper_date DESC
+  </select>
+
+  <select id="selectOperLogDetail" resultType="com.iwhalecloud.bote.dto.base.OperLogDetailDTO">
+    select
+      detail_id,
+      log_id,
+      oper_type,
+      oper_table_name,
+      oper_field_name,
+      obj_id,
+      old_value,
+      new_value
+    FROM bt_oper_detail_log
+    where log_id = #{logId}
+  </select>
+
+  <select id="getObjDescByLogId" resultType="java.lang.String">
+    SELECT obj_desc
+    FROM bt_oper_log
+    WHERE app_id = #{tenantId}
+      AND log_id = #{logId}
+  </select>
+
+  <select id="getOperLogDetail" resultType="com.iwhalecloud.bote.dto.base.OperLogDTO">
+    select
+      log_id,
+      oper_class,
+      obj_id,
+      obj_desc,
+      oper_type,
+      oper_content,
+      oper_staff,
+      oper_date AS updatedTime,
+      batch_id,
+      app_id
+    FROM bt_oper_log
+    where log_id = #{logId}
+    and app_id = #{tenantId}
+  </select>
+</mapper>

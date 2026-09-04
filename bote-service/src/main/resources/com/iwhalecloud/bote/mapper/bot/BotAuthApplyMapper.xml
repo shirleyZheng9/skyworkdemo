@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotAuthApplyMapper">
+
+  <sql id="BotPublishApplyColumns">
+    a.apply_id,
+    a.bot_id,
+    a.user_id,
+    a.tenant_id,
+    a.auth_type,
+    a.auth_tenant_ids,
+    a.auth_user_ids,
+    a.org_ids,
+    a.bot_icon,
+    a.bot_desc,
+    a.audit_status,
+    a.audit_user_id,
+    a.audit_content,
+    a.catalog_item_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark,
+    a.data_from
+  </sql>
+
+  <insert id="insertBotAuthApply">
+    INSERT INTO BT_BOT_AUTH_APPLY (
+    apply_id,
+    bot_id,
+    user_id,
+    tenant_id,
+    auth_type,
+    auth_tenant_ids,
+    auth_user_ids,
+    org_ids,
+    bot_icon,
+    bot_desc,
+    audit_status,
+    audit_user_id,
+    audit_content,
+    catalog_item_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark,
+    data_from
+    ) VALUES (
+    #{dto.applyId},
+    #{dto.botId},
+    #{dto.userId},
+    #{dto.tenantId},
+    #{dto.authType},
+    #{dto.authTenantIds},
+    #{dto.authUserIds},
+    #{dto.orgIds},
+    #{dto.botIcon},
+    #{dto.botDesc},
+    #{dto.auditStatus},
+    #{dto.auditUserId},
+    #{dto.auditContent},
+    #{dto.catalogItemId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark},
+    #{dto.dataFrom}
+    )
+  </insert>
+
+  <select id="selectBotApplyPage" resultType="com.iwhalecloud.bote.dto.bot.BotAuthApplyDTO">
+    SELECT a.apply_id, a.created_time, a.audit_status, a.bot_id,
+           b.bot_name, t.tenant_name, u1.user_name, u2.user_name AS audit_user_name
+    FROM BT_BOT_AUTH_APPLY a
+    LEFT JOIN bt_bot b ON a.bot_id = b.bot_id AND b.tenant_id = a.tenant_id
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.tenant_id
+    LEFT JOIN bt_user u1 ON a.user_id = u1.user_id
+    LEFT JOIN bt_user u2 ON a.audit_user_id = u2.user_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.auditStatus != null">
+      AND a.audit_status = #{query.auditStatus}
+    </if>
+    <if test="query.creatorId != null">
+      AND a.creator_id = #{query.creatorId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent !=''">
+      AND b.bot_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectBotAuditPage" resultType="com.iwhalecloud.bote.dto.bot.BotAuthApplyDTO">
+    SELECT a.apply_id, a.created_time, a.bot_desc, a.audit_status, a.bot_id, a.tenant_id,
+           b.bot_name, t.tenant_name, u1.user_name, u2.user_name AS audit_user_name,
+           CASE WHEN b.data_from = '10A' THEN 'T' ELSE 'F' END AS "isBoteClaw"
+    FROM BT_BOT_AUTH_APPLY a
+    LEFT JOIN bt_bot b ON a.bot_id = b.bot_id AND b.tenant_id = a.tenant_id
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.tenant_id
+    LEFT JOIN bt_user u1 ON a.user_id = u1.user_id
+    LEFT JOIN bt_user u2 ON a.audit_user_id = u2.user_id
+    WHERE a.status_cd = '00A'
+    <if test="query.auditStatus != null">
+      AND a.audit_status = #{query.auditStatus}
+    </if>
+    <if test="query.searchContent != null and query.searchContent !=''">
+      AND b.bot_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectByApplyId" resultType="com.iwhalecloud.bote.dto.bot.BotAuthApplyDTO">
+    SELECT <include refid="BotPublishApplyColumns"/>
+    FROM BT_BOT_AUTH_APPLY a
+    WHERE a.status_cd = '00A'
+      AND a.apply_id = #{applyId}
+  </select>
+
+  <select id="selectBasicInfoByApplyId" resultType="com.iwhalecloud.bote.dto.bot.BotAuthApplyDTO">
+    SELECT a.apply_id, a.bot_id, a.auth_type, a.auth_tenant_ids, a.auth_user_ids, a.org_ids, a.audit_status,
+           a.audit_content, a.catalog_item_id, c.catalog_name
+    FROM BT_BOT_AUTH_APPLY a
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id and c.tenant_id = -1
+    WHERE a.status_cd = '00A'
+      AND a.apply_id = #{applyId}
+  </select>
+
+  <select id="selectDetailByApplyId" resultType="com.iwhalecloud.bote.dto.bot.BotAuthApplyDTO">
+    SELECT a.apply_id, a.created_time, a.bot_desc, a.audit_status, a.audit_content, a.bot_id, a.tenant_id,
+           b.bot_name, t.tenant_name, u.user_name, c.catalog_name,
+           CASE WHEN b.data_from = '10A' THEN 'T' ELSE 'F' END AS "isBoteClaw"
+    FROM BT_BOT_AUTH_APPLY a
+    LEFT JOIN bt_bot b ON a.bot_id = b.bot_id AND b.tenant_id = a.tenant_id
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.tenant_id
+    LEFT JOIN bt_user u ON a.user_id = u.user_id
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id and c.tenant_id = -1
+    WHERE a.status_cd = '00A'
+      AND a.apply_id = #{applyId}
+  </select>
+
+  <update id="updateBotAuditStatus">
+    UPDATE BT_BOT_AUTH_APPLY
+    SET audit_status = #{params.auditStatus},
+        audit_content = #{params.auditContent},
+        audit_user_id = #{params.auditUserId},
+        updator_id = #{params.auditUserId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE apply_id = #{params.applyId}
+  </update>
+
+  <select id="countByAuthStatus" resultType="int">
+    SELECT COUNT(*)
+    FROM BT_BOT_AUTH_APPLY
+    WHERE status_cd = '00A'
+      AND audit_status = #{auditStatus}
+  </select>
+
+</mapper>

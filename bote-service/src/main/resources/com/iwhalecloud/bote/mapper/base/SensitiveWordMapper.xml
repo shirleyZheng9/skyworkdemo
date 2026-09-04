@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.SensitiveWordMapper">
+  <!-- @formatter:off -->
+  <insert id="insert">
+    INSERT INTO bt_sensitive_word (word_id, is_black, word_content, status_cd, creator_id, created_time, updator_id, updated_time, remark)
+    VALUES (
+              #{dto.wordId},
+              #{dto.isBlack},
+              #{dto.wordContent},
+              #{dto.statusCd},
+              #{dto.creatorId},
+              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+              #{dto.creatorId},
+              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+              #{dto.remark}
+           )
+  </insert>
+
+  <update id="update">
+    UPDATE bt_sensitive_word
+    SET
+    <if test="dto.checkFieldUpdateFlag('isBlack')">
+      is_black = #{dto.isBlack},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('wordContent')">
+      word_content = #{dto.wordContent},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE word_id = #{dto.wordId}
+  </update>
+
+  <update id="delete">
+    UPDATE bt_sensitive_word
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE word_id = #{wordId}
+  </update>
+
+  <select id="existsWord" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_sensitive_word
+    WHERE status_cd = '00A'
+      AND word_content = #{word}
+  </select>
+
+  <select id="selectById" resultType="com.iwhalecloud.bote.dto.base.SensitiveWordDTO">
+    SELECT word_id, is_black, word_content, remark
+    FROM bt_sensitive_word
+    WHERE status_cd = '00A'
+      AND word_id = #{wordId}
+  </select>
+
+  <select id="selectSensitiveWordPage" resultType="com.iwhalecloud.bote.dto.base.SensitiveWordDTO">
+    SELECT a.word_id, a.is_black, a.word_content, a.updator_id, a.updated_time, b.real_name AS updator_name
+    FROM bt_sensitive_word a
+    LEFT JOIN bt_user b ON b.user_id = a.updator_id
+    WHERE a.status_cd = '00A'
+    <if test="query.isBlack != null and query.isBlack != ''">
+      AND a.is_black = #{query.isBlack}
+    </if>
+    <if test="query.keyword != null and query.keyword != ''">
+      AND a.word_content LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectBlacklistWords" resultType="java.lang.String">
+    SELECT word_content
+    FROM bt_sensitive_word
+    WHERE status_cd = '00A'
+      AND is_black = 'T'
+  </select>
+
+  <select id="selectWhitelistWords" resultType="java.lang.String">
+    SELECT word_content
+    FROM bt_sensitive_word
+    WHERE status_cd = '00A'
+      AND is_black = 'F'
+  </select>
+
+</mapper>

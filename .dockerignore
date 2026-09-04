@@ -1,0 +1,12 @@
+# Ignore all
+*
+
+# Except these files（须包含 docker/**，否则仅 !docker/ 时子文件仍会被 * 排除）
+!docker/
+!docker/**
+!*Dockerfile*
+!bote-document-boot/docker
+!bote-service-boot/target/bote-service-boot.jar
+!bote-document-boot/target/bote-document-boot.jar
+
+!target/

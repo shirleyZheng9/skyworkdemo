@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.channel.AiChannelManagerMapper">
+
+  <sql id="aiChannelColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.channel_type,
+    a.is_enabled,
+    a.channel_json,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="getAiChannel" resultType="com.iwhalecloud.bote.dto.channel.AiChannelDTO">
+    SELECT
+    <include refid="aiChannelColumns"/>
+    FROM bt_ai_channel a
+    WHERE status_cd = '00A'
+      AND id = #{id}
+  </select>
+
+  <insert id="insertAiChannel">
+    INSERT INTO bt_ai_channel (
+    id,
+    space_id,
+    bot_id,
+    channel_type,
+    is_enabled,
+    channel_json,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.channelType},
+    #{dto.isEnabled},
+    #{dto.channelJson},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAiChannel">
+    UPDATE bt_ai_channel
+    <set>
+      <if test="dto.channelType != null and dto.channelType != ''">
+        channel_type = #{dto.channelType},
+      </if>
+      <if test="dto.isEnabled != null and dto.isEnabled != ''">
+        is_enabled = #{dto.isEnabled},
+      </if>
+      <if test="dto.channelJson != null and dto.channelJson != ''">
+        channel_json = #{dto.channelJson},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <if test="dto.updatorId != null">
+        updator_id = #{dto.updatorId},
+      </if>
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <select id="selectAiChannelList" resultType="com.iwhalecloud.bote.dto.channel.AiChannelDTO">
+    SELECT id, bot_id, channel_type, is_enabled, channel_json,created_time
+    FROM bt_ai_channel
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId} order by created_time asc
+  </select>
+
+  <select id="selectEnabledAiChannelList" resultType="com.iwhalecloud.bote.dto.channel.AiChannelDTO">
+    SELECT id, channel_type
+    FROM bt_ai_channel
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+      AND is_enabled = 'T'
+  </select>
+
+  <update id="deleteAiChannelsBySpaceBotUser">
+    UPDATE bt_ai_channel
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        updator_id = #{userId}
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+  </update>
+
+</mapper>

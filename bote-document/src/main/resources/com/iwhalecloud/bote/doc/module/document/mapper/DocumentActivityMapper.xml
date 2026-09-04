@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocumentActivityMapper">
+  <!-- @formatter:off -->
+  <sql id="documentActivityColumns">
+    activity_id, document_id, library_id, user_id, action_type, ip_address, user_agent,
+    creator_id, created_time, status_cd, tenant_id, old_document_name, target_library_id
+  </sql>
+  <!-- @formatter:on -->
+
+  <select id="selectByActivityId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentActivityEntity">
+    SELECT
+    <include refid="documentActivityColumns"/>
+    FROM bt_dc_document_activity dda
+    WHERE activity_id = #{activityId}
+    AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentActivityEntity">
+    SELECT
+    <include refid="documentActivityColumns"/>
+    FROM bt_dc_document_activity
+    WHERE document_id = #{documentId}
+    AND status_cd = '00A'
+    ORDER BY created_time DESC
+    <if test="limit != null">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+
+  <select id="selectByUserId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentActivityEntity">
+    SELECT
+    <include refid="documentActivityColumns"/>
+    FROM bt_dc_document_activity
+    WHERE user_id = #{userId}
+    AND status_cd = '00A'
+    <if test="startTime != null">
+      AND created_time >= #{startTime}
+    </if>
+    <if test="endTime != null">
+      <![CDATA[AND created_time <= #{endTime}]]>
+    </if>
+    ORDER BY created_time DESC
+    <if test="limit != null">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+
+  <select id="selectByLibraryId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentActivityEntity">
+    SELECT
+    <include refid="documentActivityColumns"/>
+    FROM bt_dc_document_activity
+    WHERE library_id = #{libraryId}
+    AND status_cd = '00A'
+    <if test="startTime != null">
+      AND created_time >= #{startTime}
+    </if>
+    <if test="endTime != null">
+      <![CDATA[AND created_time <= #{endTime}]]>
+    </if>
+    ORDER BY created_time DESC
+    <if test="limit != null">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+
+  <select id="selectByActionType" resultType="com.iwhalecloud.bote.doc.module.document.entity.DocumentActivityEntity">
+    SELECT
+    <include refid="documentActivityColumns"/>
+    FROM bt_dc_document_activity
+    WHERE action_type = #{actionType}
+    AND status_cd = '00A'
+    <if test="startTime != null">
+      AND created_time >= #{startTime}
+    </if>
+    <if test="endTime != null">
+      <![CDATA[AND created_time <= #{endTime}]]>
+    </if>
+    ORDER BY created_time DESC
+    <if test="limit != null">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+
+  <select id="countByDocumentIdAndActionType" resultType="java.lang.Long">
+    SELECT COUNT(1)
+    FROM bt_dc_document_activity
+    WHERE document_id = #{documentId}
+    AND action_type = #{actionType}
+    AND status_cd = '00A'
+    <if test="startTime != null">
+      AND created_time >= #{startTime}
+    </if>
+    <if test="endTime != null">
+      <![CDATA[AND created_time <= #{endTime}]]>
+    </if>
+  </select>
+
+  <select id="countByCondition" resultType="java.lang.Long">
+    SELECT COUNT(1)
+    FROM bt_dc_document_activity
+    WHERE status_cd = '00A'
+    <if test="documentId != null and documentId != ''">
+      AND document_id = #{documentId}
+    </if>
+    <if test="libraryId != null and libraryId != ''">
+      AND library_id = #{libraryId}
+    </if>
+    <if test="userId != null">
+      AND user_id = #{userId}
+    </if>
+    <if test="actionType != null and actionType != ''">
+      AND action_type = #{actionType}
+    </if>
+    <if test="startTime != null">
+      AND created_time >= #{startTime}
+    </if>
+    <if test="endTime != null">
+      <![CDATA[AND created_time <= #{endTime}]]>
+    </if>
+  </select>
+  <!-- @formatter:on -->
+
+  <insert id="insert">
+    INSERT INTO bt_dc_document_activity (activity_id, document_id, library_id, user_id, action_type, ip_address, user_agent,
+                                         creator_id, created_time, status_cd, tenant_id, old_document_name, target_library_id)
+    VALUES (#{documentActivity.activityId}, #{documentActivity.documentId}, #{documentActivity.libraryId},
+            #{documentActivity.userId}, #{documentActivity.actionType}, #{documentActivity.ipAddress},
+            #{documentActivity.userAgent}, #{documentActivity.creatorId}, #{documentActivity.createdTime},
+            #{documentActivity.statusCd}, #{documentActivity.tenantId}, #{documentActivity.oldDocumentName}, #{documentActivity.targetLibraryId})
+  </insert>
+
+  <select id="selectActivityPage" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentActivityDTO">
+    SELECT
+    bdda.activity_id, bdda.document_id, bdda.library_id, bdda.user_id, bdda.action_type, bdda.ip_address, bdda.user_agent,
+    bdda.creator_id, bdda.created_time, bdda.status_cd, bdda.tenant_id,
+    bdd.document_name,
+    bdd.document_type,
+    bddl.library_name,
+    bdda.old_document_name,
+    bdda.target_library_id,
+    bddlt.library_name  as target_library_name,
+    case when bdd.status_cd = '00A' then 0 else 1 end as document_deleted,
+    case when bddlt.status_cd = '00A' then 0 else 1 end as target_library_deleted
+    FROM bt_dc_document_activity bdda
+    left join bt_dc_document bdd on bdd.document_id = bdda.document_id
+    left join bt_dc_document_library bddl on bddl.library_id = bdda.library_id and bddl.status_cd = '00A'
+    left join bt_dc_document_library bddlt on bddlt.library_id = bdda.target_library_id
+    WHERE bdda.status_cd = '00A'
+    <if test="queryParams.documentId != null and queryParams.documentId != ''">
+      AND bdda.document_id = #{queryParams.documentId}
+    </if>
+    <if test="queryParams.libraryId != null and queryParams.libraryId != ''">
+      AND bdda.library_id = #{queryParams.libraryId}
+    </if>
+    <if test="queryParams.userId != null">
+      AND bdda.user_id = #{queryParams.userId}
+    </if>
+    <if test="queryParams.actionType != null and queryParams.actionType != ''">
+      AND bdda.action_type = #{queryParams.actionType}
+    </if>
+    <if test="queryParams.actionType == null or queryParams.actionType == ''">
+      AND bdda.action_type != 'VIEW'
+    </if>
+    <if test="queryParams.startTime != null">
+      AND bdda.created_time >= #{queryParams.startTime}
+    </if>
+    <if test="queryParams.endTime != null">
+      <![CDATA[AND bdda.created_time <= #{queryParams.endTime}]]>
+    </if>
+    <if test="queryParams.tenantId != null">
+      AND bdda.tenant_id = #{queryParams.tenantId}
+    </if>
+    ORDER BY bdda.created_time DESC
+  </select>
+
+  <select id="selectUpdatedDocumentIdsByTimeRange" resultType="java.lang.String">
+    SELECT DISTINCT document_id
+    FROM bt_dc_document_activity
+    WHERE status_cd = '00A'
+      AND created_time >= #{startTime}
+      AND created_time &lt; #{endTime}
+  </select>
+</mapper>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<included>
+  <include resource="logback/litchi/logback-docker-base.xml"/>
+
+  <!-- MyBatis Log -->
+  <logger name="mapper" level="${SQL_LEVEL}" additivity="false">
+    <appender-ref ref="SQL_LOG"/>
+  </logger>
+  <logger name="mapper.app" level="${SQL_LEVEL}" additivity="false">
+    <appender-ref ref="SQL_LOG"/>
+  </logger>
+  <logger name="mapper.erm" level="${SQL_LEVEL}" additivity="false">
+    <appender-ref ref="SQL_LOG"/>
+  </logger>
+  <logger name="org.springframework.jdbc.core.JdbcTemplate" level="${ROOT_LEVEL}" additivity="false">
+    <appender-ref ref="SQL_LOG"/>
+  </logger>
+  <logger name="com.iwhalecloud.bss.litchi.database.jdbc.LitchiJdbcTemplate" level="${ROOT_LEVEL}" additivity="false">
+    <appender-ref ref="SQL_LOG"/>
+  </logger>
+  <logger name="org.apache.ibatis.session.AutoMappingUnknownColumnBehavior" level="${SQL_LEVEL}" additivity="false">
+    <appender-ref ref="SQL_LOG"/>
+  </logger>
+
+  <!-- Application log -->
+  <logger name="com.iwhalecloud.bote" level="${BUSI_LEVEL}"/>
+  <logger name="com.iwhalecloud.bss.litchi" level="${BUSI_LEVEL}"/>
+
+  <!-- 减少一些无用的日志  -->
+  <logger name="com.ctg.itrdc" level="WARN"/>
+  <logger name="INTERACTION" level="WARN"/>
+  <logger name="org.apache.cxf" level="INFO"/>
+  <logger name="org.apache.zookeeper.ClientCnxn" level="WARN"/>
+  <logger name="com.alibaba.nacos" level="WARN"/>
+  <logger name="com.iwhalecloud.bss.litchi.database.transaction.MultiDataSourceTransactionManager" level="WARN"/>
+  <logger name="com.iwhalecloud.bote.doc.common.mybatis.parser.JsqlParserSupport" level="WARN"/>
+</included>

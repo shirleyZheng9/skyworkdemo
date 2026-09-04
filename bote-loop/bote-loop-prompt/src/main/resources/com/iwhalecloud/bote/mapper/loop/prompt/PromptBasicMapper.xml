@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.prompt.PromptBasicMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.prompt.PromptBasicEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="prompt_key" property="promptKey" jdbcType="VARCHAR"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="description" property="description" jdbcType="VARCHAR"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+    <result column="commit_status" property="commitStatus" jdbcType="SMALLINT"/>
+    <result column="latest_version" property="latestVersion" jdbcType="VARCHAR"/>
+    <result column="latest_commit_time" property="latestCommitTime" jdbcType="TIMESTAMP"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="catalog_item_id" property="catalogItemId" jdbcType="BIGINT"/>
+    <result column="prompt_type" property="promptType" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id, space_id, prompt_key, name, description, created_by, updated_by, commit_status, latest_version, latest_commit_time, created_at, updated_at, deleted_at, catalog_item_id, prompt_type
+  </sql>
+
+  <!-- 插入记录 -->
+  <insert id="insert" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptBasicEntity" >
+    INSERT INTO bt_prompt_basic (id, space_id, prompt_key, name, created_by, updated_by, commit_status, latest_version, latest_commit_time, created_at, updated_at, deleted_at, catalog_item_id, description, prompt_type)
+    VALUES (#{id,jdbcType=BIGINT},
+            #{spaceId,jdbcType=BIGINT},
+            #{promptKey,jdbcType=VARCHAR},
+            #{name,jdbcType=VARCHAR},
+            #{createdBy,jdbcType=VARCHAR},
+            #{updatedBy,jdbcType=VARCHAR},
+            #{commitStatus,jdbcType=SMALLINT},
+            #{latestVersion,jdbcType=VARCHAR},
+            #{latestCommitTime,jdbcType=TIMESTAMP},
+            #{createdAt,jdbcType=TIMESTAMP},
+            #{updatedAt,jdbcType=TIMESTAMP},
+            #{deletedAt,jdbcType=BIGINT},
+            #{catalogItemId,jdbcType=BIGINT},
+            #{description,jdbcType=VARCHAR},
+            #{promptType,jdbcType=VARCHAR})
+  </insert>
+
+  <!-- 根据ID和空间ID删除 -->
+  <delete id="deleteById">
+    DELETE
+    FROM bt_prompt_basic
+    WHERE id = #{promptId,jdbcType=BIGINT}
+      AND space_id = #{spaceId,jdbcType=BIGINT}
+  </delete>
+
+  <!-- 根据ID和空间ID查询 -->
+  <select id="selectById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_basic
+    WHERE id = #{promptId,jdbcType=BIGINT}
+      AND space_id = #{spaceId,jdbcType=BIGINT}
+    <if test="lock">
+      FOR UPDATE
+    </if>
+  </select>
+
+  <!-- 根据空间ID和ID列表批量查询 -->
+  <select id="selectByIds" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_basic
+    WHERE space_id = #{spaceId,jdbcType=BIGINT}
+      AND id IN
+    <foreach collection="promptIds" item="promptId" open="(" separator="," close=")">
+      #{promptId,jdbcType=BIGINT}
+    </foreach>
+  </select>
+
+  <!-- 根据PromptKey列表查询 -->
+  <select id="selectByPromptKeys" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_basic
+    WHERE space_id = #{spaceId,jdbcType=BIGINT}
+    AND prompt_key IN
+    <foreach collection="promptKeys" item="promptKey" open="(" separator="," close=")">
+      #{promptKey,jdbcType=VARCHAR}
+    </foreach>
+  </select>
+  <!-- 根据PromptKey列表查询 -->
+  <select id="existsPromptKey" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_prompt_basic
+    WHERE space_id = #{spaceId,jdbcType=BIGINT}
+      AND prompt_key = #{promptKey,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据PromptName列表查询 -->
+  <select id="existsPromptName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_prompt_basic
+    WHERE space_id = #{spaceId,jdbcType=BIGINT}
+      AND name = #{promptName,jdbcType=VARCHAR}
+  </select>
+  <!-- 根据条件查询 -->
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_basic
+    <where>
+      space_id = #{spaceId,jdbcType=BIGINT}
+      <if test="createdBys != null and createdBys.size() > 0">
+        AND created_by IN
+        <foreach collection="createdBys" item="createdBy" open="(" separator="," close=")">
+          #{createdBy,jdbcType=VARCHAR}
+        </foreach>
+      </if>
+      <if test="keyWord != null and keyWord != ''">
+        AND (prompt_key LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%')
+        OR name LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%'))
+      </if>
+      <if test="catalogItemId != null and catalogItemId != ''">
+        AND catalog_item_id = #{catalogItemId,jdbcType=BIGINT}
+      </if>
+      <if test="committedOnly">
+        <choose>
+          <when test="_databaseId == 'oracle'">
+            AND latest_version IS NOT NULL
+          </when>
+          <otherwise>
+            AND latest_version != ''
+          </otherwise>
+        </choose>
+      </if>
+      <if test="promptType != null and promptType != ''">
+        AND prompt_type = #{promptType,jdbcType=VARCHAR}
+      </if>
+    </where>
+    <choose>
+      <when test="orderBy == 1">
+        ORDER BY id
+      </when>
+      <when test="orderBy == 2">
+        ORDER BY created_at
+      </when>
+      <when test="orderBy == 3">
+        ORDER BY latest_commit_time
+      </when>
+      <when test="orderBy == 4">
+        ORDER BY updated_at
+      </when>
+      <otherwise>
+        ORDER BY id
+      </otherwise>
+    </choose>
+    <if test="asc">
+      ASC
+    </if>
+    <if test="!asc">
+      DESC
+    </if>
+  </select>
+
+  <!-- 根据条件统计数量 -->
+  <select id="countByCondition" resultType="long">
+    SELECT COUNT(*)
+    FROM bt_prompt_basic
+    <where>
+      space_id = #{spaceId,jdbcType=BIGINT}
+      <if test="createdBys != null and createdBys.size() > 0">
+        AND created_by IN
+        <foreach collection="createdBys" item="createdBy" open="(" separator="," close=")">
+          #{createdBy,jdbcType=VARCHAR}
+        </foreach>
+      </if>
+      <if test="keyWord != null and keyWord != ''">
+        AND (prompt_key LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%')
+        OR name LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%'))
+      </if>
+      <if test="catalogItemId != null and catalogItemId != ''">
+        AND catalog_item_id = #{catalogItemId,jdbcType=BIGINT}
+      </if>
+      <if test="committedOnly">
+        <choose>
+          <when test="_databaseId == 'oracle'">
+            AND latest_version IS NOT NULL
+          </when>
+          <otherwise>
+            AND latest_version != ''
+          </otherwise>
+        </choose>
+      </if>
+      <if test="promptType != null and promptType != ''">
+        AND prompt_type = #{promptType,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+
+  <!-- 根据ID和空间ID更新 -->
+  <update id="updateById">
+    UPDATE bt_prompt_basic
+    <set>
+      <if test="updatePromptBasicPO.spaceId != null">
+        space_id = #{updatePromptBasicPO.spaceId,jdbcType=BIGINT},
+      </if>
+      <if test="updatePromptBasicPO.promptKey != null">
+        prompt_key = #{updatePromptBasicPO.promptKey,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePromptBasicPO.name != null">
+        name = #{updatePromptBasicPO.name,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePromptBasicPO.description != null">
+        description = #{updatePromptBasicPO.description,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePromptBasicPO.createdBy != null">
+        created_by = #{updatePromptBasicPO.createdBy,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePromptBasicPO.latestVersion != null">
+        latest_version = #{updatePromptBasicPO.latestVersion,jdbcType=VARCHAR},
+      </if>
+      <if test="updatePromptBasicPO.latestCommitTime != null">
+        latest_commit_time = #{updatePromptBasicPO.latestCommitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePromptBasicPO.updatedAt != null">
+        updated_at = #{updatePromptBasicPO.updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatePromptBasicPO.catalogItemId != null">
+        catalog_item_id = #{updatePromptBasicPO.catalogItemId,jdbcType=BIGINT},
+      </if>
+      <if test="updatePromptBasicPO.promptType != null">
+        prompt_type = #{updatePromptBasicPO.promptType,jdbcType=VARCHAR},
+      </if>
+    </set>
+    WHERE id = #{promptId,jdbcType=BIGINT}
+      AND space_id = #{spaceId,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.dashboard.ModelUsageAggregationMapper">
+
+  <!--
+    锁定模型汇总任务的唯一检查点。
+    检查点锁与汇总写入位于同一事务，可以串行化多节点任务，避免重复消费同一游标区间。
+  -->
+  <select id="selectCheckpointForUpdate"
+          resultType="com.iwhalecloud.bote.dto.dashboard.ModelUsageAggregationCheckpointDTO">
+    SELECT task_code, statistics_start_time, last_created_time, last_log_id
+    FROM bt_dashboard_aggregation_checkpoint
+    WHERE task_code = #{taskCode}
+    FOR UPDATE
+  </select>
+
+  <!--
+    安全兜底检查点：如果部署遗漏初始化 DML，则以第一次任务执行时间作为统计起点。
+    不能默认从最早日志开始，因为产品口径明确为“自功能上线日起累计”。
+  -->
+  <insert id="insertCheckpoint">
+    INSERT INTO bt_dashboard_aggregation_checkpoint (
+      task_code, statistics_start_time, last_created_time, last_log_id, created_time, updated_time
+    ) VALUES (
+      #{taskCode}, #{startTime}, #{startTime}, 0,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <resultMap id="modelUsageLogIncrementResultMap"
+             type="com.iwhalecloud.bote.dto.dashboard.ModelUsageLogIncrementDTO">
+    <result property="logId" column="log_id"/>
+    <result property="tenantId" column="tenant_id"/>
+    <result property="modelId" column="model_id"/>
+    <result property="modelName" column="model_name"/>
+    <result property="productType" column="product_type"/>
+    <result property="createdTime" column="created_time"/>
+  </resultMap>
+
+  <resultMap id="modelUsageStatusCandidateResultMap"
+             type="com.iwhalecloud.bote.dto.dashboard.ModelUsageStatusCandidateDTO">
+    <result property="tenantId" column="tenant_id"/>
+    <result property="modelId" column="model_id"/>
+    <result property="modelStatus" column="model_status"/>
+    <result property="modelSource" column="model_source"/>
+    <result property="productType" column="product_type"/>
+  </resultMap>
+
+  <!--
+    增量日志读取规则：
+    1. 同时查询当前表和历史表，避免日志归档后尚未汇总而漏计；
+    2. UNION 按完整轻量字段去重，规避归档“先复制、后删除”期间同一日志存在两份；
+    3. 使用 (created_time, log_id) 复合游标，解决同一秒内多条日志的稳定翻页问题；
+    4. 显式排除 created_time 为空的异常日志；空入库时间无法参与时间游标排序，也不能安全推进检查点；
+    5. created_time 小于 cutoffTime，给异步入库留出安全窗口；
+    6. 不读取 request_json、response_json 等大字段，降低数据库网络与应用内存开销。
+  -->
+  <select id="selectPendingLogs" resultMap="modelUsageLogIncrementResultMap">
+    SELECT source_log.log_id,
+           source_log.tenant_id,
+           source_log.model_id,
+           source_log.model_name,
+           COALESCE(NULLIF(own_model.product_type, ''), NULLIF(platform_model.product_type, '')) AS product_type,
+           source_log.created_time
+    FROM (
+      SELECT log_id, tenant_id, model_id, model_name, created_time
+      FROM bt_model_usage_log
+      WHERE created_time IS NOT NULL
+        AND created_time &gt;= #{statisticsStartTime}
+        AND created_time &lt; #{cutoffTime}
+        AND (created_time &gt; #{lastCreatedTime}
+          OR (created_time = #{lastCreatedTime} AND log_id &gt; #{lastLogId}))
+      UNION
+      SELECT log_id, tenant_id, model_id, model_name, created_time
+      FROM bt_model_usage_log_his
+      WHERE created_time IS NOT NULL
+        AND created_time &gt;= #{statisticsStartTime}
+        AND created_time &lt; #{cutoffTime}
+        AND (created_time &gt; #{lastCreatedTime}
+          OR (created_time = #{lastCreatedTime} AND log_id &gt; #{lastLogId}))
+    ) source_log
+    LEFT JOIN bt_library_large_model own_model
+    ON own_model.model_id = source_log.model_id
+    AND source_log.tenant_id &lt;&gt; -1
+    AND own_model.tenant_id = source_log.tenant_id
+    AND own_model.status_cd = '00A'
+    LEFT JOIN bt_library_large_model platform_model
+    ON platform_model.model_id = source_log.model_id
+    AND platform_model.tenant_id = -1
+    AND platform_model.status_cd = '00A'
+    ORDER BY source_log.created_time, source_log.log_id
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+  <!--
+    累加已有模型。名称使用最近一批的非空快照；
+    主键 (tenant_id, model_id) 保证不同租户互不影响。
+  -->
+  <update id="incrementTotal">
+    UPDATE bt_dashboard_model_usage_total
+    SET invoke_count = invoke_count + #{increment},
+        model_name = COALESCE(#{modelName}, model_name),
+        product_type = COALESCE(#{productType}, product_type),
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND model_id = #{modelId}
+  </update>
+
+  <!-- 首次观察到某租户使用某模型时，创建一行独立汇总记录。 -->
+  <insert id="insertTotal">
+    INSERT INTO bt_dashboard_model_usage_total (
+      tenant_id, model_id, model_name, product_type, invoke_count, created_time, updated_time
+    ) VALUES (
+      #{tenantId}, #{modelId}, #{modelName}, #{productType}, #{increment},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <!-- 仅在本批汇总写入成功后推进游标；事务回滚时该更新也同步回滚。 -->
+  <update id="updateCheckpoint">
+    UPDATE bt_dashboard_aggregation_checkpoint
+    SET last_created_time = #{lastCreatedTime},
+        last_log_id = #{lastLogId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE task_code = #{taskCode}
+  </update>
+
+  <!--
+    模型状态及来源校准：
+    1. 本看板只关注模型记录状态 status_cd，不关注 is_enabled 调用开关；
+       即使模型调用开关关闭，只要 status_cd = 00A，模型状态仍按有效处理；
+    2. 状态映射如下：
+       - status_cd = 00A -> ACTIVE；
+       - status_cd = 00D -> DISABLED；
+       - status_cd = 00W -> WAITING；
+       - status_cd = 00X 或模型记录不存在 -> DELETED；
+       - 其他未识别状态 -> UNKNOWN；
+    3. CASE 必须先判断 ACTIVE，再判断其他状态。如果租户记录和平台记录具有相同 model_id，
+       只要其中仍有一条 status_cd = 00A 的有效配置，模型综合状态就应为 ACTIVE；
+    4. 来源与状态独立保存：租户模型为 CUSTOM，tenant_id = -1 的平台模型为 PLATFORM；
+       如果租户与平台存在同一 model_id，优先选择当前有效配置对应的来源；
+    5. 状态变化只更新快照，不删除该模型的历史累计次数；
+    6. 按 last_status_check_time 从旧到新取固定数量，利用复合索引循环校准，
+       避免每五分钟全表扫描；MySQL 升序排序时 NULL 在前，新插入记录会优先检查。
+  -->
+  <select id="selectStatusCandidates"
+          resultMap="modelUsageStatusCandidateResultMap">
+    SELECT s.tenant_id,
+           s.model_id,
+           CASE
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model m
+             WHERE m.model_id = s.model_id
+               AND m.status_cd = '00A'
+               AND m.tenant_id IN (s.tenant_id, -1)
+           ) THEN 'ACTIVE'
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model disabled_model
+             WHERE disabled_model.model_id = s.model_id
+               AND disabled_model.tenant_id IN (s.tenant_id, -1)
+               AND disabled_model.status_cd = '00D'
+           ) THEN 'DISABLED'
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model waiting_model
+             WHERE waiting_model.model_id = s.model_id
+               AND waiting_model.tenant_id IN (s.tenant_id, -1)
+               AND waiting_model.status_cd = '00W'
+           ) THEN 'WAITING'
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model deleted_model
+             WHERE deleted_model.model_id = s.model_id
+               AND deleted_model.tenant_id IN (s.tenant_id, -1)
+               AND deleted_model.status_cd = '00X'
+           ) THEN 'DELETED'
+           WHEN NOT EXISTS (
+             SELECT 1 FROM bt_library_large_model existing_model
+             WHERE existing_model.model_id = s.model_id
+               AND existing_model.tenant_id IN (s.tenant_id, -1)
+           ) THEN 'DELETED'
+           ELSE 'UNKNOWN' END AS model_status,
+           CASE
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model own_model
+             WHERE own_model.model_id = s.model_id
+               AND s.tenant_id &lt;&gt; -1
+               AND own_model.tenant_id = s.tenant_id
+               AND own_model.status_cd = '00A'
+           ) THEN 'CUSTOM'
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model platform_model
+             WHERE platform_model.model_id = s.model_id
+               AND platform_model.tenant_id = -1
+               AND platform_model.status_cd = '00A'
+           ) THEN 'PLATFORM'
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model own_record
+             WHERE own_record.model_id = s.model_id
+               AND s.tenant_id &lt;&gt; -1
+               AND own_record.tenant_id = s.tenant_id
+           ) THEN 'CUSTOM'
+           WHEN EXISTS (
+             SELECT 1 FROM bt_library_large_model platform_record
+             WHERE platform_record.model_id = s.model_id
+               AND platform_record.tenant_id = -1
+           ) THEN 'PLATFORM'
+           ELSE 'UNKNOWN' END AS model_source,
+           COALESCE(
+             (SELECT NULLIF(own_product.product_type, '')
+              FROM bt_library_large_model own_product
+              WHERE own_product.model_id = s.model_id
+                AND s.tenant_id &lt;&gt; -1
+                AND own_product.tenant_id = s.tenant_id
+                AND own_product.status_cd = '00A'
+              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1),
+             (SELECT NULLIF(platform_product.product_type, '')
+              FROM bt_library_large_model platform_product
+              WHERE platform_product.model_id = s.model_id
+                AND platform_product.tenant_id = -1
+                AND platform_product.status_cd = '00A'
+              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+           ) AS product_type
+    FROM bt_dashboard_model_usage_total s
+    ORDER BY s.last_status_check_time, s.tenant_id, s.model_id
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+  <!--
+    保存模型当前状态快照。该状态用于运营排查；查询接口仍动态检查模型主表，
+    从而消除定时校准间隔内的短暂不一致。
+  -->
+  <update id="updateModelStatus">
+    UPDATE bt_dashboard_model_usage_total
+    SET model_status = #{modelStatus},
+        model_source = #{modelSource},
+        product_type = #{productType},
+        last_status_check_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND model_id = #{modelId}
+  </update>
+</mapper>

@@ -1,0 +1,796 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.person.mapper.HomepageMapper">
+  <!-- @formatter:off -->
+
+  <!-- 查询置顶文档列表 -->
+  <select id="selectPinnedDocuments" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.PinnedDocumentDTO">
+    SELECT * FROM (
+    SELECT p.pin_id,
+    p.prev_pin_id,
+    d.document_id,
+    d.content_source,
+    d.document_name,
+    d.document_type,
+    d.tenant_id,
+    d.library_id,
+    p.creator_id AS "creatorUserId",
+    p.created_time AS "pinTime",
+    'EDIT' AS "permissions",
+    d.space_id,
+    CASE
+    WHEN EXISTS (
+    SELECT 1
+    FROM bt_dc_document_library lib
+    WHERE lib.library_id = d.library_id
+    AND lib.visibility_scope = 'PRIVATE'
+    AND lib.is_builtin = 'T'
+    AND lib.library_name = '我的文档'
+    AND lib.status_cd = '00A'
+    ) THEN 'T'
+    ELSE 'F'
+    END AS "myDoc"
+    FROM bt_dc_user_homepage_pin p
+    JOIN bt_dc_document d ON p.target_id = d.document_id
+    WHERE p.user_id = #{userId}
+    AND p.space_id = #{spaceId}
+    AND p.tenant_id = #{tenantId}
+    AND p.target_type = 'DOCUMENT'
+    AND p.status_cd = '00A'
+    AND d.status_cd = '00A'
+    AND d.space_id = #{spaceId}
+    ORDER BY CASE WHEN p.prev_pin_id IS NULL THEN 0 ELSE 1 END DESC, p.created_time ASC
+    ) tmp
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 5
+  </select>
+
+  <!-- 查询置顶文档库列表 -->
+  <select id="selectPinnedLibraries" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.PinnedLibraryDTO">
+    SELECT * FROM (
+    SELECT p.pin_id,
+    p.prev_pin_id,
+    l.library_id,
+    l.library_name,
+    l.library_icon,
+    l.color,
+    l.tenant_id,
+    l.description,
+    l.visibility_scope,
+    l.space_id,
+    (SELECT COUNT(*) FROM bt_dc_document WHERE library_id = l.library_id AND status_cd = #{statusCd}) AS "documentCount",
+    (SELECT MAX(d.updated_time) FROM bt_dc_document d WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}) AS "lastUpdateTime",
+    (SELECT d.updator_id FROM bt_dc_document d
+    WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
+    AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS "lastUpdaterUserId",
+    p.created_time AS "pinTime"
+    FROM bt_dc_user_homepage_pin p
+    JOIN bt_dc_document_library l ON p.target_id = l.library_id
+    WHERE p.user_id = #{userId}
+    AND p.space_id = #{spaceId}
+    AND p.tenant_id = #{tenantId}
+    AND p.target_type = 'LIBRARY'
+    AND p.status_cd = #{statusCd}
+    AND l.space_id = #{spaceId}
+    AND l.status_cd = #{statusCd}
+    ORDER BY CASE WHEN p.prev_pin_id IS NULL THEN 0 ELSE 1 END DESC, p.created_time ASC
+    ) tmp
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 5
+  </select>
+
+  <!-- 查询置顶知识库列表 -->
+  <select id="selectPinnedKnowledge" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.PinnedKnowledgeDTO">
+    SELECT p.pin_id,
+           p.prev_pin_id,
+           k.knowledge_id AS "kbId",
+           k.knowledge_name AS "kbName",
+           k.knowledge_desc AS "description",
+           k.color,
+           k.tenant_id,
+           k.kb_code,
+           k.knowledge_icon,
+           k.knowledge_type AS "kbType",
+           k.space_id,
+           k.tenant_id,
+           (SELECT COUNT(*) FROM bt_dc_document WHERE knowledge_id = k.knowledge_id AND status_cd = #{statusCd}) AS "documentCount",
+           p.created_time AS "pinTime",
+           'EDIT' AS "permissions"
+    FROM bt_dc_user_homepage_pin p
+    JOIN bt_knowledge_base k ON p.target_id = k.kb_code
+    WHERE p.user_id = #{userId}
+      AND p.space_id = #{spaceId}
+      AND p.tenant_id = #{tenantId}
+      AND p.target_type = 'KNOWLEDGE'
+      AND k.status_cd = #{statusCd}
+      AND k.space_id = #{spaceId}
+      AND p.status_cd = #{statusCd}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 5
+  </select>
+
+  <!-- 检查是否存在置顶记录 -->
+  <select id="findPinRecord" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserHomepagePinEntity">
+    SELECT pin_id, user_id, target_id, target_type, prev_pin_id, status_cd, creator_id, updator_id, created_time, updated_time, tenant_id
+    FROM bt_dc_user_homepage_pin
+    WHERE user_id = #{userId}
+      AND target_id = #{targetId}
+      AND target_type = #{targetType}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+      <if test="spaceId != null">
+        AND space_id = #{spaceId}
+      </if>
+  </select>
+
+  <!-- 统计置顶记录数量 -->
+  <select id="countPinRecords" resultType="int">
+    SELECT COUNT(*)
+    FROM bt_dc_user_homepage_pin
+    WHERE user_id = #{userId}
+      AND target_type = #{targetType}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 查询最后一个置顶记录ID -->
+  <select id="selectLastPinId" resultType="java.lang.Long">
+    SELECT pin_id
+    FROM bt_dc_user_homepage_pin
+    WHERE user_id = #{userId}
+      AND target_type = #{targetType}
+      AND status_cd = '00A'
+    ORDER BY created_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <!-- 插入置顶记录 -->
+  <insert id="insertPinRecord" useGeneratedKeys="true" keyProperty="pinId">
+    INSERT INTO bt_dc_user_homepage_pin (user_id, target_id, target_type, prev_pin_id, status_cd, creator_id, created_time, updated_time)
+    VALUES (#{userId}, #{targetId}, #{targetType}, NULL, '00A', #{userId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>)
+  </insert>
+
+  <!-- 检查置顶记录是否存在 -->
+  <select id="existsPinRecordById" resultType="boolean">
+    SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+    FROM bt_dc_user_homepage_pin
+    WHERE pin_id = #{pinId}
+      AND user_id = #{userId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 删除置顶记录 -->
+  <update id="deletePinRecord">
+    UPDATE bt_dc_user_homepage_pin
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE pin_id = #{pinId}
+  </update>
+
+  <!-- 更新置顶排序 -->
+  <update id="updatePinOrder">
+    UPDATE bt_dc_user_homepage_pin
+    SET prev_pin_id = #{prevPinId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE pin_id = #{pinId}
+  </update>
+
+  <!-- 获取当前置顶项的前驱ID -->
+  <select id="getCurrentPrevPinId" resultType="java.lang.Long">
+    SELECT COALESCE(prev_pin_id, 0)
+    FROM bt_dc_user_homepage_pin
+    WHERE pin_id = #{pinId}
+      AND user_id = #{userId}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 更新被移动节点的后继节点的前驱指针 -->
+  <update id="updatePrevPinIdForMovedNode">
+    UPDATE bt_dc_user_homepage_pin
+    SET prev_pin_id = #{newPrevPinId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE prev_pin_id = #{pinId}
+      AND user_id = #{userId}
+      AND status_cd = '00A'
+  </update>
+
+  <!-- 更新目标位置的前驱指针 -->
+  <update id="updatePrevPinIdForTargetPosition">
+    UPDATE bt_dc_user_homepage_pin
+    SET prev_pin_id = #{newPrevPinId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      <if test="prevPinId != null and prevPinId != ''">
+        AND prev_pin_id = #{prevPinId}
+      </if>
+      <if test="prevPinId == null">
+        AND prev_pin_id IS NULL
+      </if>
+      AND user_id = #{userId}
+  </update>
+
+  <!-- 批量更新同类型置顶项的前驱指针 -->
+  <update id="updatePrevPinIdForNewHead">
+    UPDATE bt_dc_user_homepage_pin
+    SET prev_pin_id = #{newPinId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE user_id = #{userId}
+      AND target_type = #{targetType}
+      AND prev_pin_id IS NULL
+      AND status_cd = '00A'
+      AND pin_id != #{newPinId}
+  </update>
+
+  <!-- 重新激活置顶记录 -->
+  <update id="reactivatePinRecord">
+    UPDATE bt_dc_user_homepage_pin
+    SET status_cd = '00A',
+        prev_pin_id = NULL,
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE pin_id = #{pinId}
+      AND user_id = #{userId}
+  </update>
+
+  <!-- 查询常用文档库列表 -->
+  <select id="selectFrequentLibraries" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.FrequentLibraryDTO">
+    SELECT l.library_id,
+           l.library_name,
+           (SELECT MAX(da.created_time) FROM bt_dc_document_activity da
+            WHERE da.library_id = l.library_id
+            AND da.status_cd = '00A'
+            AND da.action_type IN ('CREATE', 'EDIT', 'UPLOAD')) AS lastUpdateTime,
+           (SELECT COUNT(*) FROM bt_dc_document WHERE library_id = l.library_id AND status_cd = #{statusCd}) AS documentCount,
+           (SELECT d.updator_id FROM bt_dc_document d
+            WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
+            AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
+            <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS lastUpdaterUserId,
+           (SELECT COUNT(*) FROM bt_dc_document_activity da
+            WHERE da.library_id = l.library_id
+            AND da.user_id = #{userId}
+            AND da.status_cd = '00A') AS accessCount,
+           (SELECT COALESCE(MAX(da.created_time), l.created_time) FROM bt_dc_document_activity da
+            WHERE da.library_id = l.library_id
+            AND da.user_id = #{userId}
+            AND da.status_cd = '00A') AS lastAccessTime,
+            l.color, l.library_icon,l.tenant_id,l.space_id,l.created_time
+    FROM bt_dc_document_library l
+    WHERE l.status_cd = #{statusCd}
+    <if test="tenantId != null">
+      AND l.tenant_id = #{tenantId}
+    </if>
+    <if test="spaceId != null">
+      AND l.space_id = #{spaceId}
+    </if>
+      AND EXISTS (
+        SELECT 1 FROM bt_dc_document_activity da
+        WHERE da.library_id = l.library_id
+        AND da.user_id = #{userId}
+        AND da.status_cd = '00A'
+      )
+    ORDER BY accessCount desc, lastAccessTime desc
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 7
+  </select>
+
+  <!-- Oracle 方言：使用子查询 + ROWNUM 处理分页，避免 ORDER BY 后直接追加 ROWNUM 造成 ORA-00933 -->
+  <select id="selectFrequentLibraries" databaseId="oracle" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.FrequentLibraryDTO">
+    SELECT *
+    FROM (
+      SELECT l.library_id,
+             l.library_name,
+             (SELECT MAX(da.created_time) FROM bt_dc_document_activity da
+              WHERE da.library_id = l.library_id
+              AND da.status_cd = '00A'
+              AND da.action_type IN ('CREATE', 'EDIT', 'UPLOAD')) AS "lastUpdateTime",
+             (SELECT COUNT(*) FROM bt_dc_document WHERE library_id = l.library_id AND status_cd = #{statusCd}) AS "documentCount",
+             (SELECT d.updator_id FROM bt_dc_document d
+              WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
+              AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
+              AND ROWNUM &lt;= 1) AS "lastUpdaterUserId",
+             (SELECT COUNT(*) FROM bt_dc_document_activity da
+              WHERE da.library_id = l.library_id
+              AND da.user_id = #{userId}
+              AND da.status_cd = '00A') AS "accessCount",
+             (SELECT COALESCE(MAX(da.created_time), l.created_time) FROM bt_dc_document_activity da
+              WHERE da.library_id = l.library_id
+              AND da.user_id = #{userId}
+              AND da.status_cd = '00A') AS "lastAccessTime",
+              l.color, l.library_icon, l.tenant_id, l.space_id, l.created_time
+      FROM bt_dc_document_library l
+      WHERE l.status_cd = #{statusCd}
+      <if test="tenantId != null">
+        AND l.tenant_id = #{tenantId}
+      </if>
+      <if test="spaceId != null">
+        AND l.space_id = #{spaceId}
+      </if>
+        AND EXISTS (
+          SELECT 1 FROM bt_dc_document_activity da
+          WHERE da.library_id = l.library_id
+          AND da.user_id = #{userId}
+          AND da.status_cd = '00A'
+        )
+      ORDER BY "accessCount" desc, "lastAccessTime" desc
+    ) t
+    WHERE ROWNUM &lt;= 7
+  </select>
+
+  <!-- 查询"[我的文档]库"信息 -->
+  <select id="selectMyDocumentsLibrary" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.FrequentLibraryDTO">
+    SELECT l.library_id,
+           l.library_name,
+           l.space_id,
+           l.tenant_id,
+           (SELECT MAX(da.created_time) FROM bt_dc_document_activity da
+            WHERE da.library_id = l.library_id
+            AND da.status_cd = '00A'
+            AND da.action_type IN ('CREATE', 'EDIT', 'UPLOAD')) AS "lastUpdateTime",
+           (SELECT COUNT(*) FROM bt_dc_document WHERE library_id = l.library_id AND status_cd = #{statusCd}) AS "documentCount",
+           l.access_count,
+           (SELECT d.updator_id FROM bt_dc_document d
+            WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
+            AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
+            <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS "lastUpdaterUserId",
+           (SELECT COUNT(*) FROM bt_dc_document_activity da
+            WHERE da.library_id = l.library_id
+            AND da.user_id = #{userId}
+            AND da.status_cd = '00A') AS "accessCount",
+           (SELECT COALESCE(MAX(da.created_time), l.created_time) FROM bt_dc_document_activity da
+            WHERE da.library_id = l.library_id
+            AND da.user_id = #{userId}
+            AND da.status_cd = '00A') AS "lastAccessTime",
+    l.color, l.library_icon,l.created_time
+    FROM bt_dc_document_library l
+    WHERE l.status_cd = #{statusCd}
+      AND l.library_name = '我的文档'
+      AND l.owner_id = #{userId}
+      AND l.space_id = #{spaceId}
+      AND l.is_builtin = 'T'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <!-- 查询最近访问文件列表 -->
+  <select id="selectRecentFiles" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.RecentFileDTO">
+    SELECT d.document_id,
+           d.document_name,
+           d.content_source,
+           d.document_type,
+           l.tenant_id,
+           l.space_id,
+          CASE
+            WHEN d.document_type = 'FOLDER' THEN 'folder'
+            WHEN d.document_type = 'WORD' THEN 'file-text'
+            WHEN d.document_type = 'EXCEL' THEN 'file-excel'
+            WHEN d.document_type = 'PDF' THEN 'file-pdf'
+            WHEN d.document_type = 'PPT' THEN 'file-powerpoint'
+            WHEN d.document_type = 'TXT' THEN 'file-text'
+            WHEN d.document_type = 'IMAGE' THEN 'file-image'
+            WHEN d.document_type = 'MD' THEN 'file-text'
+            WHEN d.document_type = 'KLB' THEN 'file-image'
+            WHEN d.document_type = 'FILE' THEN 'file'
+          ELSE 'file'
+          END AS "fileIcon",
+           l.library_name AS "libraryPath",
+           l.library_id,
+           d.creator_id AS "creatorUserId",
+           da.created_time AS "lastOpenTime",
+           d.updated_time AS "lastModifiedTime",
+          -- 跨数据库兼容：用 1/0 代替 true/false
+          CASE WHEN f.target_id IS NOT NULL THEN 1 ELSE 0 END AS "isFavorite",
+           CASE
+             WHEN EXISTS (
+               SELECT 1
+               FROM bt_dc_document_library lib
+               WHERE lib.library_id = d.library_id
+                 AND lib.visibility_scope = 'PRIVATE'
+                 AND lib.is_builtin = 'T'
+                 AND lib.library_name = '我的文档'
+                 AND lib.status_cd = '00A'
+             ) THEN 'T'
+             ELSE 'F'
+           END AS "myDoc"
+    FROM bt_dc_document_activity da
+    JOIN bt_dc_document d ON da.document_id = d.document_id
+    JOIN bt_dc_document_library l ON d.library_id = l.library_id
+    LEFT JOIN bt_dc_user_favorite f ON d.document_id = f.target_id AND f.status_cd = '00A' AND f.target_type = 'DOCUMENT'
+      AND f.user_id = #{queryParams.userId} and f.tenant_id = #{queryParams.tenantId}
+      AND f.status_cd = '00A'
+    WHERE da.user_id = #{queryParams.userId}
+      AND da.status_cd = '00A'
+      AND da.action_type= 'VIEW'
+      AND d.status_cd = '00A'
+      AND l.status_cd = '00A'
+    <if test="queryParams.tenantId != null and queryParams.platform != 'portal'">
+      AND l.tenant_id = #{queryParams.tenantId}
+      AND da.tenant_id = #{queryParams.tenantId}
+    </if>
+    <if test="queryParams.spaceId != null">
+      AND l.space_id = #{queryParams.spaceId}
+    </if>
+      AND da.created_time = (
+        SELECT MAX(da2.created_time)
+        FROM bt_dc_document_activity da2
+        WHERE da2.document_id = da.document_id
+          AND da2.user_id = #{queryParams.userId}
+          AND da2.status_cd = '00A'
+          AND da2.action_type = 'VIEW'
+      )
+    <if test="queryParams.fileType != null and queryParams.fileType != ''">
+      <choose>
+        <when test="queryParams.fileType == 'WORD'">
+          AND d.document_type IN ('WORD', 'WORD_ONLINE')
+        </when>
+        <when test="queryParams.fileType == 'EXCEL'">
+          AND d.document_type IN ('EXCEL', 'EXCEL_ONLINE')
+        </when>
+        <otherwise>
+          AND d.document_type = #{queryParams.fileType}
+        </otherwise>
+      </choose>
+    </if>
+    <if test="queryParams.creatorFilter != null and queryParams.creatorFilter != ''">
+      <choose>
+        <when test="queryParams.creatorFilter == 'me'">
+          AND d.creator_id = #{queryParams.userId}
+        </when>
+        <when test="queryParams.creatorFilter == 'others'">
+          AND d.creator_id != #{queryParams.userId}
+        </when>
+      </choose>
+    </if>
+    <choose>
+      <when test="queryParams.sortBy == 'lastModified'">
+        <choose>
+          <when test="queryParams.sortOrder == 'ASC'">
+            ORDER BY d.updated_time ASC
+          </when>
+          <otherwise>
+            ORDER BY d.updated_time DESC
+          </otherwise>
+        </choose>
+      </when>
+      <otherwise>
+        <choose>
+          <when test="queryParams.sortOrder == 'ASC'">
+            ORDER BY da.created_time ASC
+          </when>
+          <otherwise>
+            ORDER BY da.created_time DESC
+          </otherwise>
+        </choose>
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 删除最近访问文件记录 -->
+  <update id="deleteRecentFileRecord">
+    UPDATE bt_dc_document_activity
+    SET status_cd = '00X'
+    WHERE user_id = #{userId}
+      AND document_id = #{documentId}
+      AND status_cd = '00A'
+  </update>
+
+  <!-- 搜索文档-->
+  <select id="searchDocumentsWithoutPaging" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.SearchDocumentDTO">
+    SELECT
+      tmp_docs.document_id,
+      tmp_docs.document_name,
+      tmp_docs.document_type,
+      tmp_docs.content_source,
+      tmp_docs.creator_id,
+      tmp_docs.created_time,
+      tmp_docs.updated_time,
+      tmp_docs.library_name,
+      tmp_docs.library_id,
+      tmp_docs.space_id,
+      tmp_docs.tenant_id,
+      tmp_docs.myDoc,
+      tmp_docs.lastModifiedTime
+    FROM (
+      SELECT d.document_id,
+        d.document_name,
+        d.document_type,
+        d.content_source,
+        d.creator_id,
+        d.created_time,
+        d.updated_time,
+        l.library_name,
+        l.library_id,
+        d.space_id,
+        d.tenant_id,
+         CASE
+           WHEN EXISTS (
+             SELECT 1
+             FROM bt_dc_document_library lib
+             WHERE lib.library_id = d.library_id
+               AND lib.visibility_scope = 'PRIVATE'
+               AND lib.is_builtin = 'T'
+               AND lib.library_name = '我的文档'
+               AND lib.status_cd = '00A'
+           ) THEN 'T'
+           ELSE 'F'
+         END AS myDoc,
+         d.updated_time AS lastModifiedTime
+      FROM bt_dc_document d
+      JOIN bt_dc_document_library l ON d.library_id = l.library_id
+      WHERE d.status_cd = '00A'
+      AND d.document_type not in('FOLDER','ROOT')
+      AND l.status_cd = '00A'
+      and d.document_type != 'ROOT'
+      AND d.document_name LIKE
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+              #{queryParams.keyword}
+          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <if test="queryParams.type != null and queryParams.type != ''">
+        AND d.document_type = #{queryParams.type}
+      </if>
+      <if test="queryParams.libraryId != null and queryParams.libraryId != ''">
+        AND d.library_id = #{queryParams.libraryId}
+      </if>
+       <if test="queryParams.spaceId != null">
+        AND d.space_id = #{queryParams.spaceId}
+      </if>
+      <if test="queryParams.tenantId != null">
+        AND d.tenant_id = #{queryParams.tenantId}
+      </if>
+      ORDER BY d.updated_time DESC
+    ) tmp_docs
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 200
+  </select>
+
+  <!-- 批量查询置顶记录，用于重排序操作 -->
+  <select id="selectPinRecordsForReorder" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserHomepagePinEntity">
+    SELECT pin_id, user_id, target_id, target_type, prev_pin_id,
+           status_cd, creator_id, updator_id, created_time, updated_time, tenant_id
+    FROM bt_dc_user_homepage_pin
+    WHERE user_id = #{userId}
+      AND status_cd = '00A'
+      AND (pin_id IN (#{pinId}, #{prevPinId})
+           OR prev_pin_id IN (#{pinId}, #{prevPinId})
+           OR prev_pin_id IS NULL)
+  </select>
+
+  <!-- 查询指定用户和类型的有效置顶记录 -->
+  <select id="selectActivePinsByUserAndType" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserHomepagePinEntity">
+    SELECT pin_id, user_id, target_id, target_type, prev_pin_id,
+           status_cd, creator_id, updator_id, created_time, updated_time, tenant_id
+    FROM bt_dc_user_homepage_pin
+    WHERE user_id = #{userId}
+      AND target_type = #{targetType}
+      AND tenant_id = #{tenantId}
+      <if test="spaceId != null">
+        AND space_id = #{spaceId}
+      </if>
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 查询租户下指定资源的所有有效置顶记录 -->
+  <select id="selectActivePinsByTenantAndResource" resultType="com.iwhalecloud.bote.doc.module.person.entity.UserHomepagePinEntity">
+    SELECT pin_id, user_id, target_id, target_type, prev_pin_id,
+           status_cd, creator_id, updator_id, created_time, updated_time, tenant_id
+    FROM bt_dc_user_homepage_pin
+    WHERE tenant_id = #{tenantId}
+      <if test="spaceId != null">
+        AND space_id = #{spaceId}
+      </if>
+      AND target_id = #{targetId}
+      AND target_type = #{targetType}
+      AND status_cd = '00A'
+  </select>
+
+  <!-- 租户维度批量更新链表关系 -->
+  <!-- 将租户下所有prevPinId为目标节点的记录的prevPinId更新为目标节点的prevPinId -->
+  <!-- 默认版本（PostgreSQL）：使用 UPDATE ... FROM 语法 -->
+  <update id="updatePrevPinIdsForTenantUnpin">
+    UPDATE bt_dc_user_homepage_pin p1
+    SET prev_pin_id = (
+      SELECT p2.prev_pin_id
+      FROM bt_dc_user_homepage_pin p2
+      WHERE p2.tenant_id = #{tenantId}
+        AND p2.target_id = #{targetId}
+        AND p2.target_type = #{targetType}
+        AND p2.status_cd = '00A'
+        AND p2.pin_id = p1.prev_pin_id
+        AND p2.creator_id = p1.creator_id
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    ),
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE p1.tenant_id = #{tenantId}
+      AND p1.status_cd = '00A'
+      AND p1.prev_pin_id IN (
+        SELECT pin_id
+        FROM bt_dc_user_homepage_pin
+        WHERE tenant_id = #{tenantId}
+          AND target_id = #{targetId}
+          AND target_type = #{targetType}
+          AND status_cd = '00A'
+      )
+  </update>
+
+  <!-- MySQL 版本：不支持在 UPDATE 子查询中直接引用更新表，使用 JOIN 语法绕过限制 -->
+  <update id="updatePrevPinIdsForTenantUnpin" databaseId="mysql">
+    UPDATE bt_dc_user_homepage_pin p1
+    JOIN (
+      SELECT p1_inner.pin_id,
+             p2.prev_pin_id AS new_prev_pin_id
+      FROM bt_dc_user_homepage_pin p1_inner
+      JOIN bt_dc_user_homepage_pin p2
+        ON p2.pin_id = p1_inner.prev_pin_id
+        AND p2.creator_id = p1_inner.creator_id
+      WHERE p1_inner.tenant_id = #{tenantId}
+        AND p1_inner.status_cd = '00A'
+        AND p2.tenant_id = #{tenantId}
+        AND p2.target_id = #{targetId}
+        AND p2.target_type = #{targetType}
+        AND p2.status_cd = '00A'
+    ) AS derived ON p1.pin_id = derived.pin_id
+    SET p1.prev_pin_id = derived.new_prev_pin_id,
+        p1.updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE p1.tenant_id = #{tenantId}
+      AND p1.status_cd = '00A'
+  </update>
+
+  <!-- Oracle 版本：使用 MERGE 语句 -->
+  <update id="updatePrevPinIdsForTenantUnpin" databaseId="oracle">
+    MERGE INTO bt_dc_user_homepage_pin p1
+    USING (
+      SELECT p1_inner.pin_id,
+             p2.prev_pin_id AS new_prev_pin_id
+      FROM bt_dc_user_homepage_pin p1_inner
+      JOIN bt_dc_user_homepage_pin p2
+        ON p2.pin_id = p1_inner.prev_pin_id
+        AND p2.creator_id = p1_inner.creator_id
+      WHERE p1_inner.tenant_id = #{tenantId}
+        AND p1_inner.status_cd = '00A'
+        AND p2.tenant_id = #{tenantId}
+        AND p2.target_id = #{targetId}
+        AND p2.target_type = #{targetType}
+        AND p2.status_cd = '00A'
+    ) derived ON (p1.pin_id = derived.pin_id)
+    WHEN MATCHED THEN
+      UPDATE SET p1.prev_pin_id = derived.new_prev_pin_id,
+                 p1.updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      WHERE p1.tenant_id = #{tenantId}
+        AND p1.status_cd = '00A'
+  </update>
+
+  <!-- 租户维度批量更新置顶记录状态为无效 -->
+  <update id="updatePinStatusToInvalidByTenant">
+    UPDATE bt_dc_user_homepage_pin
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND target_id = #{targetId}
+      AND target_type = #{targetType}
+      AND status_cd = '00A'
+  </update>
+
+  <!-- 查询最近浏览活动记录 -->
+  <select id="selectLastViewActivities" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.DocumentActivityDTO">
+    SELECT
+      da.document_id,
+      da.user_id,
+      da.action_type,
+      da.created_time
+    FROM bt_dc_document_activity da
+    INNER JOIN (
+      SELECT
+        document_id,
+        MAX(created_time) as max_time
+      FROM bt_dc_document_activity
+      WHERE document_id IN
+      <foreach collection="documentIds" item="documentId" open="(" separator="," close=")">
+        #{documentId}
+      </foreach>
+        AND action_type = 'VIEW'
+        AND status_cd = '00A'
+      GROUP BY document_id
+    ) latest ON da.document_id = latest.document_id
+      AND da.created_time = latest.max_time
+    WHERE da.action_type = 'VIEW'
+      AND da.status_cd = '00A'
+  </select>
+
+  <!-- 查询最近编辑活动记录 -->
+  <select id="selectLastEditActivities" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.DocumentActivityDTO">
+    SELECT
+      da.document_id,
+      da.user_id,
+      da.action_type,
+      da.created_time
+    FROM bt_dc_document_activity da
+    INNER JOIN (
+      SELECT
+        document_id,
+        MAX(created_time) as max_time
+      FROM bt_dc_document_activity
+      WHERE document_id IN
+      <foreach collection="documentIds" item="documentId" open="(" separator="," close=")">
+        #{documentId}
+      </foreach>
+        AND action_type = 'EDIT'
+        AND status_cd = '00A'
+      GROUP BY document_id
+    ) latest ON da.document_id = latest.document_id
+      AND da.created_time = latest.max_time
+    WHERE da.action_type = 'EDIT'
+      AND da.status_cd = '00A'
+  </select>
+
+  <!-- 查询最近操作的文档 -->
+  <select id="selectRecentOperationDocuments" resultType="com.iwhalecloud.bote.doc.module.person.dto.homepage.SearchDocumentDTO">
+    SELECT DISTINCT tmp_docs.document_id,
+           tmp_docs.document_name,
+           tmp_docs.document_type,
+           tmp_docs.content_source,
+           tmp_docs.creator_id,
+           tmp_docs.created_time,
+           tmp_docs.updated_time,
+           tmp_docs.library_name,
+           tmp_docs.library_id,
+           tmp_docs.space_id,
+           tmp_docs.tenant_id,
+           tmp_docs.myDoc,
+           tmp_docs.lastModifiedTime
+    FROM (
+      SELECT DISTINCT d.document_id,
+             d.document_name,
+             d.document_type,
+             d.content_source,
+             d.creator_id,
+             d.created_time,
+             d.updated_time,
+             l.library_name,
+             l.library_id,
+             d.space_id,
+             d.tenant_id,
+             CASE
+               WHEN EXISTS (
+                 SELECT 1
+                 FROM bt_dc_document_library lib
+                 WHERE lib.library_id = d.library_id
+                   AND lib.visibility_scope = 'PRIVATE'
+                   AND lib.is_builtin = 'T'
+                   AND lib.library_name = '我的文档'
+                   AND lib.status_cd = '00A'
+               ) THEN 'T'
+               ELSE 'F'
+             END AS myDoc,
+             COALESCE(da.created_time, d.updated_time) AS lastModifiedTime
+      FROM bt_dc_document d
+      JOIN bt_dc_document_library l ON d.library_id = l.library_id
+      LEFT JOIN (
+        SELECT document_id, MAX(created_time) as created_time
+        FROM bt_dc_document_activity
+        WHERE user_id = #{userId}
+          AND action_type in ('VIEW', 'EDIT')
+          AND status_cd = '00A'
+        GROUP BY document_id
+      ) da ON d.document_id = da.document_id
+      WHERE d.status_cd = '00A'
+        AND d.document_type not in('FOLDER','ROOT')
+        AND l.status_cd = '00A'
+        AND (
+          da.document_id IS NOT NULL
+          OR d.creator_id = #{userId}
+        )
+      <if test="type != null and type != ''">
+        AND d.document_type = #{type}
+      </if>
+      <if test="libraryId != null and libraryId != ''">
+        AND d.library_id = #{libraryId}
+      </if>
+       <if test="spaceId != null">
+        AND d.space_id = #{spaceId}
+      </if>
+      <if test="tenantId != null">
+        AND d.tenant_id = #{tenantId}
+      </if>
+      ORDER BY lastModifiedTime DESC
+    ) tmp_docs
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 200
+  </select>
+
+</mapper>

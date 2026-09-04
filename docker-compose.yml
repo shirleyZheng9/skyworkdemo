@@ -1,0 +1,22 @@
+# 本地/测试编排：镜像需已构建或可从仓库拉取。
+# 本地构建示例（在项目根目录）：
+#   mvn -pl bote-service-boot -am package -DskipTests
+#   export BUILDX_NO_DEFAULT_ATTESTATIONS=1
+#   docker build -f docker/Dockerfile -t registry.cm-iov.com:5000/tgaip/boteservice:2.9.2 --build-arg VERSION=v2.9.2 .
+#
+# 启动：docker compose up -d
+# 日志：docker compose logs -f boteservice
+#
+# 若出现 ZSMART_HOME not exist：请用本仓库最新 docker/Dockerfile 重新构建镜像（镜像内需含 /opt/ZSMART_HOME）。
+# 若出现 license 文件不存在：可在挂载的 coreConfig.properties 中设 bote.license.enabled=false（须本仓 jar 构建的镜像）；或挂载 bote.lic。也可用环境变量 BOTE_LICENSE_ENABLED=false。
+
+services:
+  boteservice:
+    image: registry.cm-iov.com:5000/tgaip/boteservice:2.9.10
+    platform: linux/amd64
+    container_name: boteservice
+    ports:
+      - "18080:8080"
+    volumes:
+      - ./config/coreConfig.properties:/opt/ZSMART_HOME/etc/coreConfig.properties
+      - ./config/logback.xml:/opt/config/logback.xml

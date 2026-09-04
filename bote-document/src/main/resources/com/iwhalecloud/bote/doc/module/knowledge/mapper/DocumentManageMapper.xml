@@ -1,0 +1,619 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.DocumentManageMapper">
+
+  <sql id="documentColumns">
+    a.document_id,
+    a.knowledge_id,
+    a.file_info_id,
+    a.ext_system_id,
+    a.data_from,
+    a.doc_name,
+    a.error_message,
+    a.parse_started_time,
+    a.extract_started_time,
+    a.process_completed_at,
+    a.doc_status,
+    a.document_type,
+    a.dc_document_id,
+    a.tenant_id,
+    a.space_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.has_update
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND  a.doc_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.docStatus != null and query.docStatus != ''">
+      AND  a.doc_status = #{query.docStatus}
+    </if>
+    <if test="query.hasUpdate != null and query.hasUpdate != ''">
+      AND  a.has_update = #{query.hasUpdate}
+    </if>
+    <if test="query.dcDocumentType != null and query.dcDocumentType != ''">
+      AND  d.document_type = #{query.dcDocumentType}
+    </if>
+    <if test="query.dcDocumentTypes != null and query.dcDocumentTypes.size() > 0">
+      AND d.document_type IN
+      (<foreach collection="query.dcDocumentTypes" item="type" index="index" separator=",">#{type}</foreach>)
+    </if>
+    <if test="query.knowledgeId != null">
+      AND a.knowledge_id = #{query.knowledgeId}
+    </if>
+    <if test="query.documentIds != null and query.documentIds.size() > 0">
+      AND a.document_id IN
+      (<foreach collection="query.documentIds" item="documentId" index="index" separator=",">
+      #{documentId}
+    </foreach>)
+    </if>
+    <if test="query.docStatuss != null and query.docStatuss.size() > 0">
+      AND a.doc_status IN
+      (<foreach collection="query.docStatuss" item="docStatus" index="index" separator=",">
+      #{docStatus}
+    </foreach>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND b.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.extSystemId != null">
+      AND a.ext_system_id = #{query.extSystemId}
+    </if>
+    <choose>
+      <when test="query.sort == 'desc'.toString()">
+        ORDER BY a.created_time DESC
+      </when>
+      <otherwise>
+        ORDER BY a.created_time ASC
+      </otherwise>
+    </choose>
+  </sql>
+
+  <select id="getDocument" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT
+    <include refid="documentColumns"/>, c.file_path_in_server AS file_path,c.file_id,
+    d.knowledge_type, d.tenant_id, d.topic_id,d.knowledge_id,d.owner_id,e.document_name,e.status_cd as document_status,e.document_type as dc_document_type,e.library_id,e.content_source
+    FROM bt_document a
+    LEFT JOIN bt_file_info b ON b.file_info_id = a.file_info_id AND b.tenant_id = a.tenant_id
+    LEFT JOIN bt_file c on c.file_id = b.file_id
+    LEFT JOIN bt_knowledge_base d on d.knowledge_id = a.knowledge_id AND d.tenant_id = a.tenant_id
+    LEFT JOIN bt_dc_document e ON a.dc_document_id = e.document_id AND e.status_cd = '00A'
+    WHERE a.document_id = #{id}
+    AND a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertDocument">
+    INSERT INTO bt_document (
+    document_id,
+    knowledge_id,
+    file_info_id,
+    file_id,
+    ext_system_id,
+    data_from,
+    doc_name,
+    dc_document_id,
+    error_message,
+    parse_started_time,
+    extract_started_time,
+    process_completed_at,
+    doc_status,
+    tenant_id,
+    space_id,
+    file_size,
+    document_type,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time
+    ) VALUES (
+    #{dto.documentId},
+    #{dto.knowledgeId},
+    #{dto.fileInfoId},
+    #{dto.fileId},
+    #{dto.extSystemId},
+    #{dto.dataFrom},
+    #{dto.docName},
+    #{dto.dcDocumentId},
+    #{dto.errorMessage},
+    #{dto.parseStartedTime},
+    #{dto.extractStartedTime},
+    #{dto.processCompletedAt},
+    #{dto.docStatus},
+    #{dto.tenantId},
+    #{dto.spaceId},
+    #{dto.fileSize},
+    #{dto.documentType},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <insert id="batchInsertDocument">
+    INSERT INTO bt_document (
+    document_id,
+    knowledge_id,
+    file_info_id,
+    file_id,
+    ext_system_id,
+    data_from,
+    doc_name,
+    dc_document_id,
+    error_message,
+    parse_started_time,
+    extract_started_time,
+    process_completed_at,
+    doc_status,
+    tenant_id,
+    space_id,
+    file_size,
+    document_type,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.documentId},
+      #{dto.knowledgeId},
+      #{dto.fileInfoId},
+      #{dto.fileId},
+      #{dto.extSystemId},
+      #{dto.dataFrom},
+      #{dto.docName},
+      #{dto.dcDocumentId},
+      #{dto.errorMessage},
+      #{dto.parseStartedTime},
+      #{dto.extractStartedTime},
+      #{dto.processCompletedAt},
+      #{dto.docStatus},
+      #{dto.tenantId},
+      #{dto.spaceId},
+      #{dto.fileSize},
+      #{dto.documentType},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertDocument" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_document (
+      document_id,
+      knowledge_id,
+      file_info_id,
+      ext_system_id,
+      data_from,
+      doc_name,
+      dc_document_id,
+      error_message,
+      parse_started_time,
+      extract_started_time,
+      process_completed_at,
+      doc_status,
+      tenant_id,
+      space_id,
+      file_size,
+      document_type,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time
+      ) VALUES (
+      #{dto.documentId},
+      #{dto.knowledgeId},
+      #{dto.fileInfoId},
+      #{dto.extSystemId},
+      #{dto.dataFrom},
+      #{dto.docName},
+      #{dto.dcDocumentId},
+      #{dto.errorMessage},
+      #{dto.parseStartedTime},
+      #{dto.extractStartedTime},
+      #{dto.processCompletedAt},
+      #{dto.docStatus},
+      #{dto.tenantId},
+      #{dto.spaceId},
+      #{dto.fileSize},
+      #{dto.documentType},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateDocument">
+    UPDATE bt_document
+    <set>
+      <if test="dto.checkFieldUpdateFlag('knowledgeId')">
+        knowledge_id = #{dto.knowledgeId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('fileInfoId')">
+        file_info_id = #{dto.fileInfoId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('extSystemId')">
+        ext_system_id = #{dto.extSystemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dataFrom')">
+        data_from = #{dto.dataFrom},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('docName')">
+        doc_name = #{dto.docName},
+      </if>
+       <if test="dto.checkFieldUpdateFlag('fileSize')">
+        file_size = #{dto.fileSize},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('parseStartedTime')">
+        parse_started_time = #{dto.parseStartedTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('extractStartedTime')">
+        extract_started_time = #{dto.extractStartedTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('processCompletedAt')">
+        process_completed_at = #{dto.processCompletedAt},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('docStatus')">
+        doc_status = #{dto.docStatus},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('errorMessage')">
+        error_message = #{dto.errorMessage},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('hasUpdate')">
+        has_update = #{dto.hasUpdate},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('documentType')">
+        document_type = #{dto.documentType},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE document_id = #{dto.documentId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteDocument">
+    UPDATE bt_document
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="countDocuments" resultType="java.lang.Integer">
+    SELECT COUNT(*)
+    FROM bt_document
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id = #{knowledgeId}
+  </select>
+
+  <select id="selectDocumentList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT
+    <include refid="documentColumns"/>, a.file_size, c.file_path_in_server as file_path, c.file_id, b.catalog_item_id,
+    d.knowledge_type,e.document_type as dc_document_type,e.document_name,e.status_cd as document_status,d.topic_id
+    FROM bt_document a
+    LEFT JOIN bt_file_info b ON b.file_info_id = a.file_info_id AND b.tenant_id = a.tenant_id
+    LEFT JOIN bt_file c ON c.file_id = b.file_id
+    LEFT JOIN bt_knowledge_base d on d.knowledge_id = a.knowledge_id AND d.tenant_id = a.tenant_id
+    LEFT JOIN bt_dc_document e ON a.dc_document_id = e.document_id AND e.status_cd = '00A'
+    WHERE 1=1
+    <if test="query.catalogItemId != null">
+      AND b.catalog_item_id = #{query.catalogItemId}
+    </if>
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectDocumentPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT
+    <include refid="documentColumns"/>, a.file_size, c.file_id,d.document_type as dc_document_type,d.content_source,d.library_id,d.status_cd as document_status,
+     CASE
+       WHEN EXISTS (
+         SELECT 1
+         FROM bt_dc_document_library lib
+         WHERE lib.library_id = d.library_id
+           AND lib.visibility_scope = 'PRIVATE'
+           AND lib.is_builtin = 'T'
+           AND lib.library_name = '我的文档'
+           AND lib.status_cd = '00A'
+       ) THEN 'T'
+       ELSE 'F'
+     END AS "myDoc"
+    FROM bt_document a
+    LEFT JOIN bt_file_info b ON b.file_info_id = a.file_info_id AND b.tenant_id = a.tenant_id
+    LEFT JOIN bt_file c ON c.file_id = b.file_id
+    LEFT JOIN bt_dc_document d ON a.dc_document_id = d.document_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <update id="updateDocStatusAndProcessTime">
+    UPDATE bt_document
+    SET doc_status = #{doc.status},
+    error_message = #{doc.errorMessage},
+    <if test="doc.parseStartedTime != null">
+      parse_started_time = #{doc.parseStartedTime},
+    </if>
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{doc.docId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <update id="updateDocStatusByKnowledgeId">
+    UPDATE bt_document
+    SET doc_status = #{docStatus},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    parse_started_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE knowledge_id = #{knowledgeId}
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </update>
+
+  <select id="selectAnalyzingDocumentsOfDocChain" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT b.tenant_id, b.topic_id, a.document_id, a.doc_status, a.ext_system_id,b.space_id
+    FROM bt_document a
+    JOIN bt_knowledge_base b ON a.knowledge_id = b.knowledge_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.doc_status = '10B'
+      AND a.ext_system_id IS NOT NULL
+      AND a.updated_time &gt; #{minUpdatedTime}
+      AND b.status_cd = '00A'
+      AND b.knowledge_type = 'docChain'
+      AND b.topic_id IS NOT NULL
+  </select>
+
+  <select id="selectDocumentsByFileInfoId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT <include refid="documentColumns"/>, b.knowledge_type, c.file_id, d.file_path_in_server AS file_path,
+      c.file_name, b.topic_id
+    FROM bt_document a
+    JOIN bt_knowledge_base b ON a.knowledge_id = b.knowledge_id AND a.tenant_id = b.tenant_id
+    JOIN bt_file_info c ON a.file_info_id = c.file_info_id AND a.tenant_id = c.tenant_id
+    JOIN bt_file d ON d.file_id = c.file_id
+    WHERE a.status_cd = '00A'
+    AND a.file_info_id = #{fileInfoId}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectDocumentForClear" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT a.tenant_id, a.document_id, a.ext_system_id, b.knowledge_id, b.topic_id, a.file_info_id, c.file_id,b.space_id
+    FROM bt_document a
+    JOIN bt_knowledge_base b ON a.knowledge_id = b.knowledge_id AND a.tenant_id = b.tenant_id
+    LEFT JOIN bt_file_info c ON a.file_info_id = c.file_info_id AND a.tenant_id = c.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND b.is_temporary = 'T'
+      AND a.ext_system_id IS NOT NULL
+      AND b.topic_id IS NOT NULL
+      AND #{date} > a.created_time
+  </select>
+
+  <select id="queryDocumentListByCondition" resultType="map">
+    SELECT *
+    FROM bt_document_content a
+    WHERE a.document_id = #{documentId,jdbcType=NUMERIC}
+    AND a.tenant_id = #{tenantId,jdbcType=NUMERIC}
+    AND status_cd = '00A'
+
+    <!-- 动态筛选其他字段 -->
+    <if test="params != null">
+      AND
+      <foreach collection="params" item="value" index="key" separator=" AND ">
+        <if test="key != 'document_id' and key != 'tenant_id'">
+          ${key} = #{value}
+        </if>
+      </foreach>
+    </if>
+    limit 100
+  </select>
+
+  <update id="updateDocumentContentByContentId">
+    UPDATE bt_document_content
+    <set>
+      <!-- 遍历 content Map 动态设置需要更新的字段 -->
+      <foreach collection="content" item="value" index="key" separator=",">
+        ${key} = #{value}
+      </foreach>
+    </set>
+    WHERE document_id = #{documentId}
+    AND tenant_id = #{tenantId}
+    AND content_id = #{contentId}
+    AND status_cd = '00A'
+  </update>
+
+  <insert id="insertDocumentContentByContentId">
+    INSERT INTO bt_document_content
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <!-- 固定字段 -->
+      content_id,
+      tenant_id,
+      document_id,
+      status_cd,
+      <!-- 遍历 content Map 获取所有 key（即其他字段名） -->
+      <foreach collection="content" item="value" index="key" separator=",">
+        ${key}
+      </foreach>
+    </trim>
+    VALUES
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <!-- 固定字段值 -->
+      #{contentId},
+      #{tenantId},
+      #{documentId},
+      '00A',
+      <!-- 遍历 content Map 获取所有 value（即其他字段值） -->
+      <foreach collection="content" item="value" separator=",">
+        #{value}
+      </foreach>
+    </trim>
+  </insert>
+  <select id="selectDocumentListBydcDocCodes" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT
+    <include refid="documentColumns"/>,b.document_name
+    FROM bt_document a left join bt_dc_document b on b.document_id=a.dc_document_id and b.status_cd='00A' WHERE a.tenant_id = #{tenantId} and a.status_cd = '00A' and a.knowledge_id = #{knowledgeId} and a.dc_document_id IN (<foreach
+    collection="list" item="id" index="index" separator=",">#{id}</foreach>)
+  </select>
+  <select id="selectSimpleDocumentList" resultType="com.iwhalecloud.bote.dto.knowledge.SimpleDocumentDTO">
+    SELECT
+      a.document_id,
+      a.doc_name,
+      a.file_info_id,
+      a.ext_system_id,
+      b.document_id AS "dcDocumentId",
+      b.library_id
+    FROM bt_document a
+    LEFT JOIN bt_dc_document b ON a.dc_document_id = b.document_id and a.tenant_id = b.tenant_id and b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.knowledge_id = #{knowledgeId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+  <select id="checkDocument" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_document
+    WHERE status_cd = '00A'
+      AND knowledge_id = #{knowledgeId}
+      AND tenant_id = #{tenantId}
+      AND (dc_document_id = #{dcDocumentId} OR doc_name=#{documentName})
+  </select>
+  <update id="updateDocumentExtSystemId">
+    update bt_document set updator_id = #{updatorId},doc_status = #{docStatus},ext_system_id=null,updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+    AND tenant_id = #{tenantId}
+  </update>
+  <select id="selectSimpleLibDocumentDTOByKnowledgeIds"
+          resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleLibDocumentDTO">
+    SELECT DISTINCT bkb.knowledge_id,
+    bd.ext_system_id,
+    bd.document_id,
+    bdd.document_id AS dc_document_id,
+    bdd.library_id
+    FROM bt_knowledge_base bkb
+     JOIN bt_document bd ON bkb.knowledge_id = bd.knowledge_id AND bd.status_cd = '00A' AND bd.doc_status = '10D' AND bd.ext_system_id is not null
+	  LEFT JOIN bt_dc_document bdd ON bd.dc_document_id = bdd.document_id AND bdd.status_cd = '00A'
+    WHERE bkb.tenant_id = #{tenantId}
+    AND bkb.status_cd = '00A'
+    AND bkb.knowledge_id IN (<foreach collection="knowledgeIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+  <select id="selectDocumentListBydcId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DoKbIDAndDocIdDTO">
+    SELECT knowledge_id,ext_system_id,document_id,space_id FROM bt_document WHERE tenant_id = #{tenantId} AND ext_system_id IN(<foreach collection="docIds"
+                                                                                                                               item="id"
+                                                                                                                               separator=",">
+    #{id}</foreach>) AND knowledge_id IN(<foreach collection="knowledgeIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+  <select id="selectDocumentListByDcDcumentId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    select <include refid="documentColumns"/>,b.document_name,c.topic_id,c.knowledge_type
+    from bt_document a
+    left join bt_dc_document b
+    on b.document_id=a.dc_document_id and b.status_cd='00A'
+    left join bt_knowledge_base c
+    on c.knowledge_id=a.knowledge_id and c.status_cd='00A' and c.tenant_id=#{tenantId}
+    where a.dc_document_id =#{dcDocumentId} and a.tenant_id=#{tenantId} and a.status_cd='00A'
+  </select>
+
+  <select id="selectFileInfoForDocumentNodeCreation" resultType="com.iwhalecloud.bote.dto.base.FileInfoDTO">
+    SELECT a.file_info_id, a.tenant_id, a.file_name, a.creator_id,a.catalog_item_id
+    FROM bt_file_info a
+         LEFT JOIN bt_dc_document b ON a.file_info_id = b.file_info_id and a.tenant_id = b.tenant_id
+    WHERE a.busi_type = 'document'
+      AND a.status_cd = '00A'
+      AND b.file_info_id IS NULL
+  </select>
+
+  <select id="selectPublicLibraryByTenantId" resultType="com.iwhalecloud.bote.doc.module.library.entity.DocumentLibraryEntity">
+    SELECT library_id
+    FROM bt_dc_document_library
+    WHERE tenant_id = #{tenantId}
+      AND library_name = #{libraryName}
+      AND visibility_scope = #{visibilityScope}
+      AND status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+  <update id="updateDocumentHasUpdate">
+    update bt_document set doc_name=#{docName},has_update='1',updator_id = #{currentLoginUserId},updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+    AND tenant_id = #{tenantId}
+  </update>
+  <select id="selectDocumentListByDocumentIds" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DoKbIDAndDocIdDTO">
+  SELECT knowledge_id,ext_system_id,document_id FROM bt_document WHERE tenant_id = #{tenantId} AND document_id IN(<foreach collection="dcDocumentIds"
+                                                                                                                               item="id"
+                                                                                                                               separator=",">
+    #{id}</foreach>)
+  </select>
+
+  <update id="updateDcDocumentIdByFileInfoId">
+    UPDATE bt_document
+    SET dc_document_id = (
+      SELECT b.document_id
+      FROM bt_dc_document b
+      WHERE b.file_info_id = bt_document.file_info_id
+        AND b.status_cd = '00A'
+        AND b.file_info_id = #{fileInfoId}
+      ORDER BY b.created_time DESC
+      LIMIT 1
+      )
+    WHERE status_cd = '00A'
+      AND file_info_id = #{fileInfoId}
+  </update>
+
+  <select id="selectSimpleDocumentByKnowledgeIds" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO">
+    SELECT a.knowledge_id,
+    a.ext_system_id,
+    a.document_id,
+    a.doc_name
+    FROM bt_document a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.knowledge_id IN (<foreach collection="knowledgeIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+  <update id="updateDocumentDcDocumentId">
+    update bt_document set dc_document_id =#{dcDocumentId} where status_cd ='00A' and file_info_id = #{fileInfoId} and tenant_id = #{tenantId} and dc_document_id is null;
+  </update>
+
+  <update id="deleteDocuments">
+   UPDATE bt_document
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id in (<foreach collection="documentIds" item="id" separator=",">#{id}</foreach>)
+    AND tenant_id = #{tenantId}
+  </update>
+</mapper>

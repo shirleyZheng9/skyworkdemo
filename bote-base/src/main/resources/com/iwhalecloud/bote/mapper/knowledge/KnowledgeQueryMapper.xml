@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.knowledge.KnowledgeQueryMapper">
+
+  <select id="selectSimpleKnowledgeById" resultType="com.iwhalecloud.bote.dto.knowledge.SimpleKnowledgeDTO">
+    SELECT
+    knowledge_id,
+    knowledge_name,
+    knowledge_type,
+    topic_id,
+    knowledge_strategy,
+    ext_config_json,
+    visibility_scope,
+    owner_id,
+    is_exist,
+    catalog_item_id,
+    kb_code,
+    space_id,
+    tenant_id
+    FROM bt_knowledge_base
+    WHERE status_cd ='00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id = #{knowledgeId}
+  </select>
+
+  <select id="selectSimpleKnowledgeByIds" resultType="com.iwhalecloud.bote.dto.knowledge.SimpleKnowledgeDTO">
+    SELECT
+    knowledge_id,
+    knowledge_name,
+    knowledge_type,
+    topic_id,
+    knowledge_strategy,
+    ext_config_json,
+    visibility_scope,
+    owner_id,
+    is_exist,
+    catalog_item_id,
+    kb_code,
+    space_id,
+    tenant_id
+    FROM bt_knowledge_base
+    WHERE status_cd ='00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id IN (<foreach collection="knowledgeIds" item="knowledgeId" separator=",">#{knowledgeId}</foreach>)
+  </select>
+
+  <select id="selectSimpleDocumentById" resultType="com.iwhalecloud.bote.dto.knowledge.SimpleDocumentDTO">
+    SELECT
+    a.document_id,
+    a.doc_name,
+    a.file_info_id,
+    a.ext_system_id,
+    b.document_id AS "dcDocumentId",
+    b.library_id
+    FROM bt_document a
+    LEFT JOIN bt_dc_document b ON a.dc_document_id = b.document_id and a.tenant_id = b.tenant_id and b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.knowledge_id = #{knowledgeId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSimpleDocumentByIds" resultType="com.iwhalecloud.bote.dto.knowledge.SimpleDocumentDTO">
+    SELECT
+    a.knowledge_id,
+    a.document_id,
+    a.doc_name,
+    a.file_info_id,
+    a.ext_system_id,
+    b.document_id AS "dcDocumentId",
+    b.library_id
+    FROM bt_document a
+    LEFT JOIN bt_dc_document b ON a.dc_document_id = b.document_id and a.tenant_id = b.tenant_id and b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.knowledge_id IN (<foreach collection="knowledgeIds" item="knowledgeId" separator=",">#{knowledgeId}</foreach>)
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+</mapper>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.generator.FlowAiQueryMapper">
+  <!-- @formatter:off -->
+
+  <!-- 流程和参数一次查出来 -->
+  <resultMap id="flowWithParam" type="com.iwhalecloud.bote.dto.skill.SkillFlowDTO">
+    <id property="flowId" column="flow_id" />
+    <result property="flowName" column="flow_name" />
+    <result property="flowType" column="flow_type" />
+    <result property="flowDesc" column="flow_desc" />
+    <association property="param" javaType="com.iwhalecloud.bote.dto.skill.SkillFlowParamDTO">
+      <result property="requestJson" column="request_json" />
+      <result property="variableJson" column="variable_json" />
+      <result property="responseJson" column="response_json" />
+    </association>
+  </resultMap>
+
+  <select id="selectFlowsByIds" resultMap="flowWithParam">
+    SELECT a.flow_id, a.flow_name, a.flow_type, a.flow_desc, b.request_json,
+           CASE WHEN a.flow_type = 'multiStep' THEN b.variable_json END AS variable_json,
+           CASE WHEN a.flow_type != 'multiStep' THEN b.response_json END AS response_json
+    FROM bt_skill_flow a
+    LEFT JOIN bt_skill_flow_param b ON b.tenant_id = a.tenant_id AND b.flow_id = a.flow_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id IN (#{tenantId}, -1)
+      AND a.flow_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectFlowInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT flow_id AS skill_id, flow_name AS skill_name, flow_code AS skill_code
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND flow_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+
+  <select id="selectFlowById" resultMap="flowWithParam">
+    SELECT a.flow_id, a.flow_name, a.flow_type,
+    CASE WHEN a.flow_type = 'multiStep' THEN b.variable_json END AS variable_json,
+    CASE WHEN a.flow_type != 'multiStep' THEN b.response_json END AS response_json
+    FROM bt_skill_flow a
+    LEFT JOIN bt_skill_flow_param b ON b.tenant_id = a.tenant_id AND b.flow_id = a.flow_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id IN (#{tenantId}, -1)
+      AND a.flow_id = #{id}
+  </select>
+
+  <select id="selectApiServicesByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT service_id, service_name, path_json, header_json, query_json, body_json, response_json
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectApiServiceInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT service_id AS skill_id, service_name AS skill_name, service_code AS skill_code
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectApiServiceById" resultType="com.iwhalecloud.bote.dto.skill.SkillServiceDTO">
+    SELECT service_id, service_name, response_json
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND service_id = #{id}
+  </select>
+
+  <select id="selectSqlServicesByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillSqlDTO">
+    SELECT service_id, service_name, remark, req_json, resp_json
+    FROM bt_skill_sql
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSqlServiceInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT service_id AS skill_id, service_name AS skill_name, service_code AS skill_code
+    FROM bt_skill_sql
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSqlServiceById" resultType="com.iwhalecloud.bote.dto.skill.SkillSqlDTO">
+    SELECT service_id, service_name, resp_json
+    FROM bt_skill_sql
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND service_id = #{id}
+  </select>
+
+  <select id="selectFunctionsByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillFunctionDTO">
+    SELECT func_id, func_name, remark, req_json, resp_json
+    FROM bt_skill_function
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectFunctionInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT func_id AS skill_id, func_name AS skill_name, func_code AS skill_code
+    FROM bt_skill_function
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectFunctionById" resultType="com.iwhalecloud.bote.dto.skill.SkillFunctionDTO">
+    SELECT func_id, func_name, resp_json
+    FROM bt_skill_function
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND func_id = #{id}
+  </select>
+
+  <select id="selectPluginsByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillPluginDTO">
+    SELECT api_id, api_name, remark, req_json
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND api_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPluginInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT api_id AS skill_id, api_name AS skill_name, api_code AS skill_code
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND api_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPagesByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillPageDTO">
+    SELECT page_id, page_name, req_param_json
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND page_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPageInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT page_id AS skill_id, page_name AS skill_name, page_code AS skill_code
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND page_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPageFuncListByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO">
+    SELECT page_func_id, func_name, remark, req_json
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectPageFuncInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT page_func_id AS skill_id, func_name AS skill_name, func_code AS skill_code
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_func_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectKnowledgeListByIds" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT knowledge_id, knowledge_name, knowledge_desc
+    FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectKnowledgeInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT knowledge_id AS skill_id, knowledge_name AS skill_name
+    FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectMcpInfoByIds" resultType="com.iwhalecloud.bote.dto.generator.flow.SkillBasicInfoDTO">
+    SELECT server_id AS skill_id, server_name AS skill_name
+    FROM bt_mcp_server
+    WHERE status_cd = '00A'
+      AND tenant_id in (#{tenantId}, -1)
+      AND server_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+</mapper>

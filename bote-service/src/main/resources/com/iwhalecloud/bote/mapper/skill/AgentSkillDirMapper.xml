@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.AgentSkillDirMapper">
+
+  <insert id="insertAgentSkillDir">
+    INSERT INTO bt_agent_skill_dir (
+      dir_id, parent_dir_id, skill_id, tenant_id, dir_name, status_cd,
+      created_time, updated_time, creator_id, updator_id, remark
+    ) VALUES (
+      #{dto.dirId}, #{dto.parentDirId}, #{dto.skillId}, #{dto.tenantId}, #{dto.dirName}, #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateAgentSkillDir">
+    UPDATE bt_agent_skill_dir
+    SET
+    <if test="dto.parentDirId != null">
+      parent_dir_id = #{dto.parentDirId},
+    </if>
+    <if test="dto.dirName != null">
+      dir_name = #{dto.dirName},
+    </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE dir_id = #{dto.dirId} AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectByDirId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDirDTO">
+    SELECT dir_id, parent_dir_id, skill_id, tenant_id, dir_name, status_cd,
+           created_time, updated_time, creator_id, updator_id, remark
+    FROM bt_agent_skill_dir
+    WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
+  </select>
+
+  <select id="existDir" resultType="int">
+    SELECT COUNT(1) FROM bt_agent_skill_dir
+    WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
+  </select>
+
+  <select id="existDirName" resultType="int">
+    SELECT COUNT(1) FROM bt_agent_skill_dir
+    WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
+      AND dir_name = #{dirName}
+    <if test="excludeDirId != null">
+      AND dir_id != #{excludeDirId}
+    </if>
+  </select>
+
+  <select id="listActiveBySkillId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDirDTO">
+    SELECT dir_id, parent_dir_id, skill_id, tenant_id, dir_name, status_cd,
+           created_time, updated_time, creator_id, updator_id, remark
+    FROM bt_agent_skill_dir
+    WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
+    ORDER BY created_time ASC, dir_id ASC
+  </select>
+
+  <select id="selectRootDirBySkillId" resultType="com.iwhalecloud.bote.dto.skill.AgentSkillDirDTO">
+    SELECT dir_id, parent_dir_id, skill_id, tenant_id, dir_name, status_cd,
+           created_time, updated_time, creator_id, updator_id, remark
+    FROM bt_agent_skill_dir
+    WHERE tenant_id = #{tenantId}
+      AND skill_id = #{skillId}
+      AND parent_dir_id = -1
+      AND status_cd = '00A'
+    ORDER BY created_time ASC, dir_id ASC
+  </select>
+
+  <update id="deleteByDirId">
+    UPDATE bt_agent_skill_dir
+    SET status_cd = '00X', updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
+  </update>
+
+  <update id="deleteAllBySkillId">
+    UPDATE bt_agent_skill_dir
+    SET status_cd = '00X', updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
+  </update>
+</mapper>

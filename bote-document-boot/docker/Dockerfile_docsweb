@@ -1,0 +1,73 @@
+# 文档中心（Java + Node sidecar）镜像
+#
+# 前置：
+#   1. 本地已有 bote-runtime-base:1.0.0（无则先构建 aadp/docker/base-runtime.Dockerfile）
+#   2. mvn -pl bote-document-boot -am package -DskipTests   # 在 aadp 目录
+#   3. ./build-server.sh                                    # 在 docs-web 目录，生成 dist-server/
+#      注意：仅 yarn build:server 不够，必须跑 build-server.sh
+#
+# 构建（上下文为 tgaip520，含 aadp 与 docs-web）：
+#   cd /path/to/tgaip520
+#   docker build --pull=false --platform linux/amd64 \
+#     -f aadp/bote-document-boot/docker/Dockerfile_docsweb \
+#     -t bote-document:local --build-arg VERSION=local .
+#
+ARG BASE_RUNTIME_IMAGE=bote-runtime-base:1.0.0
+
+FROM ${BASE_RUNTIME_IMAGE} AS unpack-jar
+COPY aadp/bote-document-boot/target/bote-document-boot.jar /app/app.jar
+WORKDIR /app/tmp
+RUN jar xf ../app.jar \
+ && find-start-class META-INF/MANIFEST.MF > start-class \
+ && rm -rf org BOOT-INF/classpath.idx BOOT-INF/layers.idx \
+        META-INF/MANIFEST.MF META-INF/maven \
+        META-INF/services/java.nio.file.spi.FileSystemProvider \
+ && mv META-INF BOOT-INF/classes/
+
+FROM ${BASE_RUNTIME_IMAGE}
+
+ARG VERSION=0.0.1-SNAPSHOT
+LABEL maintainer=bian.jiaping
+LABEL description="博特文档中心 - Java + Node sidecar"
+LABEL org.opencontainers.image.version="${VERSION}"
+
+ENV APP_VERSION=${VERSION}
+ENV TZ=Asia/Shanghai
+ENV LOG_DIR=/home/zpaas/log
+ENV ZSMART_HOME=/opt/ZSMART_HOME \
+    SERVER_PORT=9080 \
+    APP_CONTEXT_PATH=/ \
+    MANAGEMENT_PORT=9080 \
+    MANAGEMENT_CONTEXT_PATH=/management \
+    MANAGEMENT_SECURITY_ENABLED=true \
+    FTF_MANAGEMENT_SECURITY_ENABLED=true \
+    FTF_MANAGEMENT_SECURITY_ALLOW=127.0.0.1 \
+    JAVA_OPTS="-XX:MaxRAMPercentage=60.0 -Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Dfile.encoding=UTF-8" \
+    NODE_ENV=production \
+    COLLAB_SERVER_PORT=9300 \
+    SIDECAR_BASE_URL=http://127.0.0.1:9080 \
+    SIDECAR_WS_BASE_URL=ws://127.0.0.1:9888 \
+    z_app=lcdp \
+    zcm_log_type="project=kp"
+
+LABEL zcm.logs.lcdp="/app/log/*.log" \
+      zcm.logs.lcdp.tags="project=kp"
+
+EXPOSE 9080
+EXPOSE 9300
+EXPOSE 9888
+
+COPY --chown=zpaas:zpaas --from=unpack-jar /app/tmp /app/app
+COPY --chown=zpaas:zpaas aadp/bote-document-boot/docker/start_node.sh /app/start_node.sh
+COPY --chown=zpaas:zpaas aadp/bote-document-boot/docker/logback.xml /opt/config/logback.xml
+COPY --chown=zpaas:zpaas docs-web/dist-server /app/collab-server
+
+RUN chmod 755 /app/start_node.sh \
+ && mkdir -p /opt/ZSMART_HOME/etc /opt/ZSMART_HOME/log "${LOG_DIR}" /app/log /log/k8sapplication /opt/config \
+ && chown -R zpaas:zpaas /opt/ZSMART_HOME /home/zpaas /app /log /opt/config
+
+USER zpaas
+WORKDIR /app
+
+# Java 后台启动；start_node.sh 等待 9080 就绪后 exec Node sidecar（9300）
+CMD ["bash", "-c", "java $JAVA_OPTS -cp /app/app/BOOT-INF/classes/:/app/app/BOOT-INF/lib/* $(cat /app/app/start-class) & exec sh /app/start_node.sh"]

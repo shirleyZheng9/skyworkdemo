@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.EvalTargetMapper">
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.TargetEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="source_target_id" property="sourceTargetId" jdbcType="VARCHAR"/>
+    <result column="target_type" property="targetType" jdbcType="INTEGER"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 创建评估目标 -->
+  <insert id="createEvalTarget" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.TargetEntity" >
+    INSERT INTO bt_eval_target (
+    id, space_id, source_target_id, target_type, created_by, updated_by, created_at, updated_at, deleted_at
+    ) VALUES (
+    #{target.id}, #{target.spaceId}, #{target.sourceTargetId}, #{target.targetType},
+    #{target.createdBy}, #{target.updatedBy}, #{target.createdAt}, #{target.updatedAt}, #{target.deletedAt}
+    )
+  </insert>
+
+  <!-- 获取评估目标 -->
+  <select id="getEvalTarget" resultMap="BaseResultMap">
+    SELECT * FROM bt_eval_target
+    WHERE id = #{targetId} AND deleted_at IS NULL
+  </select>
+
+  <!-- 根据来源ID获取评估目标 -->
+  <select id="getEvalTargetBySourceId" resultMap="BaseResultMap">
+    SELECT * FROM bt_eval_target
+    WHERE space_id = #{spaceId}
+    AND source_target_id = #{sourceTargetId}
+    AND target_type = #{targetType}
+    AND deleted_at IS NULL
+  </select>
+
+  <!-- 根据来源ID批量获取评估目标 -->
+  <select id="batchGetEvalTargetBySource" resultMap="BaseResultMap">
+    SELECT * FROM bt_eval_target
+    WHERE space_id = #{spaceId}
+    AND source_target_id IN
+    <foreach collection="sourceTargetIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND target_type = #{targetType}
+    AND deleted_at IS NULL
+  </select>
+
+  <!-- 批量获取评估目标 -->
+  <select id="batchGetEvalTarget" resultMap="BaseResultMap">
+    SELECT * FROM bt_eval_target
+    WHERE space_id = #{spaceId}
+    AND id IN
+    <foreach collection="targetIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND deleted_at IS NULL
+  </select>
+</mapper>

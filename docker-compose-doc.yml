@@ -1,0 +1,30 @@
+# 文档中心（Java 9080 + Node sidecar 9300 + WebSocket 9888）
+#
+# 前置（在 tgaip520 根目录）：
+#   cd aadp && mvn -pl bote-document-boot -am package -DskipTests
+#   cd ../docs-web && ./build-server.sh
+#
+# 启动（在 tgaip520 根目录）：
+#   docker compose -f aadp/docker-compose-doc.yml up -d --build
+#
+# 若需 linux/amd64（部署到 x86 服务器），取消下方 platform 注释并重建：
+#   docker compose -f aadp/docker-compose-doc.yml build --no-cache
+
+services:
+  botedocument:
+    image: bote-document:local
+    build:
+      context: ..
+      dockerfile: aadp/bote-document-boot/docker/Dockerfile_docsweb
+    platform: linux/amd64   # 本地 Apple Silicon 请保持注释；部署 amd64 服务器时再打开
+    container_name: botedocument
+    environment:
+      SIDECAR_BASE_URL: http://127.0.0.1:9080
+      SIDECAR_WS_BASE_URL: ws://127.0.0.1:9888
+      COLLAB_SERVER_PORT: "9300"
+    ports:
+      - "9080:9080"
+      - "9300:9300"
+      - "9888:9888"
+    volumes:
+      - ./config/coreConfig.properties:/opt/ZSMART_HOME/etc/coreConfig.properties

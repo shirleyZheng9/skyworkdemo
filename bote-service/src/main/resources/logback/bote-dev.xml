@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="false" scanPeriod="30 seconds">
+  <property name="Z_APP" value="${Z_APP:-bote}"/>
+
+  <!-- 日志目录默认使用 ZSMART_HOME/log, 适用于传统部署环境，可以配置 LOG_DIR 环境变量或系统参数指定目录 -->
+  <property name="LOG_DIR" value="${LOG_DIR:-${ZSMART_HOME}/log}"/>
+  <property name="BUSI_LEVEL" value="DEBUG"/>
+
+  <include resource="logback/bote-base.xml"/>
+
+</configuration>

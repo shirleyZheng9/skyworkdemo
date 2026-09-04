@@ -1,0 +1,7 @@
+server:
+  port: 58080
+
+logging:
+  level:
+    root: info
+    com.iwhalecloud: debug

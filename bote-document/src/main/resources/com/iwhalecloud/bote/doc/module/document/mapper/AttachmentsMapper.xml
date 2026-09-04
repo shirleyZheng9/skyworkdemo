@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.AttachmentsMapper">
+  <!-- @formatter:off -->
+  <select id="selectByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.document.entity.AttachmentsEntity">
+    SELECT id, document_id, file_id, file_name, file_size, file_extension, creator_id, updator_id, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_attachments
+    WHERE id = #{id}
+      AND status_cd = '00A'
+  </select>
+  <!-- @formatter:on -->
+
+  <select id="selectByDocId" resultType="com.iwhalecloud.bote.doc.module.document.entity.AttachmentsEntity">
+    SELECT id,
+           document_id,
+           file_id,
+           file_name,
+           file_size,
+           file_extension,
+           creator_id,
+           updator_id,
+           tenant_id,
+           created_time,
+           updated_time,
+           status_cd
+    FROM bt_dc_attachments
+    WHERE document_id = #{docId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByFileId" resultType="com.iwhalecloud.bote.doc.module.document.entity.AttachmentsEntity">
+    SELECT id,
+           document_id,
+           file_id,
+           file_name,
+           file_size,
+           file_extension,
+           creator_id,
+           updator_id,
+           created_time,
+           updated_time,
+           status_cd
+    FROM bt_dc_attachments
+    WHERE file_id = #{fileId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_attachments (
+    id, document_id, file_id, file_name, file_size, file_extension, creator_id,
+    updator_id, created_time, updated_time, status_cd
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.fileId},
+    #{entity.fileName},
+    #{entity.fileSize},
+    #{entity.fileExtension},
+    #{entity.creatorId},
+    #{entity.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_attachments
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </update>
+
+</mapper>

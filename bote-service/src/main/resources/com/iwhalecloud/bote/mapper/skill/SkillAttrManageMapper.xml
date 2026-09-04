@@ -1,0 +1,579 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillAttrManageMapper">
+  <sql id="attrSpecColumns">
+    a.attr_id,
+    a.attr_nbr,
+    a.attr_name,
+    a.attr_desc,
+    a.par_attr_id,
+    a.default_value,
+    a.catalog_item_id,
+    a.data_type,
+    a.tenant_id,
+    a.status_cd,
+    a.creator_id,
+    a.updator_id,
+    a.created_time,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="attrValueColumns">
+    b.attr_value_id,
+    b.attr_id,
+    b.attr_value_name,
+    b.attr_value_code,
+    b.attr_value_desc,
+    b.attr_value,
+    b.tenant_id,
+    b.creator_id,
+    b.created_time,
+    b.status_cd,
+    b.updator_id,
+    b.updated_time,
+    b.remark,
+    b.sortby
+  </sql>
+
+  <sql id="attrValueRelColumns">
+    r.rel_id,
+    r.a_attr_value_id,
+    r.a_attr_id,
+    r.z_attr_value_id,
+    r.z_attr_id,
+    r.tenant_id,
+    r.status_cd,
+    r.creator_id,
+    r.created_time,
+    r.updator_id,
+    r.updated_time,
+    r.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.attr_nbr LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.attr_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+  </sql>
+
+  <select id="checkAttrNbr" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_attr_spec
+    WHERE status_cd = '00A'
+    AND attr_nbr = #{dto.attrNbr}
+    AND tenant_id = #{dto.tenantId}
+    <if test="dto.attrId != null">
+      AND attr_id != #{dto.attrId}
+    </if>
+  </select>
+
+  <select id="getAttrSpec" resultType="com.iwhalecloud.bote.dto.skill.SkillAttrSpecDTO">
+    SELECT
+    <include refid="attrSpecColumns"/>
+    FROM bt_skill_attr_spec a
+    WHERE attr_id = #{id}
+      AND status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="getAttrSpecByCode" resultType="com.iwhalecloud.bote.dto.skill.SkillAttrSpecDTO">
+    SELECT
+    <include refid="attrSpecColumns"/>
+    FROM bt_skill_attr_spec a
+    WHERE attr_nbr = #{attrCode}
+    AND tenant_id = #{tenantId}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertAttrSpec">
+    INSERT INTO bt_skill_attr_spec (
+    attr_id,
+    attr_nbr,
+    attr_name,
+    attr_desc,
+    par_attr_id,
+    default_value,
+    data_type,
+    tenant_id,
+    catalog_item_id,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.attrId},
+    #{dto.attrNbr},
+    #{dto.attrName},
+    #{dto.attrDesc},
+    #{dto.parAttrId},
+    #{dto.defaultValue},
+    #{dto.dataType},
+    #{dto.tenantId},
+    #{dto.catalogItemId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertAttrSpec">
+    INSERT INTO bt_skill_attr_spec (
+    attr_id,
+    attr_nbr,
+    attr_name,
+    attr_desc,
+    par_attr_id,
+    default_value,
+    data_type,
+    tenant_id,
+    catalog_item_id,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.attrId},
+    #{dto.attrNbr},
+    #{dto.attrName},
+    #{dto.attrDesc},
+    #{dto.parAttrId},
+    #{dto.defaultValue},
+    #{dto.dataType},
+    #{dto.tenantId},
+    #{dto.catalogItemId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertAttrSpec" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_skill_attr_spec (
+      attr_id,
+      attr_nbr,
+      attr_name,
+      attr_desc,
+      par_attr_id,
+      default_value,
+      data_type,
+      tenant_id,
+      catalog_item_id,
+      status_cd,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.attrId},
+      #{dto.attrNbr},
+      #{dto.attrName},
+      #{dto.attrDesc},
+      #{dto.parAttrId},
+      #{dto.defaultValue},
+      #{dto.dataType},
+      #{dto.tenantId},
+      #{dto.catalogItemId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateAttrSpec">
+    UPDATE bt_skill_attr_spec
+    <set>
+      <if test="dto.checkFieldUpdateFlag('attrNbr')">
+        attr_nbr = #{dto.attrNbr},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrName')">
+        attr_name = #{dto.attrName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrDesc')">
+        attr_desc = #{dto.attrDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('parAttrId')">
+        par_attr_id = #{dto.parAttrId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('defaultValue')">
+        default_value = #{dto.defaultValue},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dataType')">
+        data_type = #{dto.dataType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE attr_id = #{dto.attrId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteAttrSpec">
+    UPDATE bt_skill_attr_spec
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE attr_id = #{attrId}
+      AND tenant_id IN (#{tenantId}, -1)
+  </update>
+
+  <select id="selectAttrSpecList" resultType="com.iwhalecloud.bote.dto.skill.SkillAttrSpecDTO">
+    SELECT
+    <include refid="attrSpecColumns"/>
+    FROM bt_skill_attr_spec a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.configFlag == 'F'.toString()">
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </when>
+      <otherwise>
+        AND a.tenant_id = #{query.tenantId}
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectAttrSpecPage" resultType="com.iwhalecloud.bote.dto.skill.SkillAttrSpecDTO">
+    SELECT
+    <include refid="attrSpecColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_attr_spec a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <insert id="batchInsertAttrValue">
+    INSERT INTO bt_skill_attr_value (
+    attr_value_id,
+    attr_id,
+    attr_value_name,
+    attr_value_code,
+    attr_value_desc,
+    attr_value,
+    tenant_id,
+    creator_id,
+    created_time,
+    status_cd,
+    updator_id,
+    updated_time,
+    remark,
+    sortby
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.attrValueId},
+      #{dto.attrId},
+      #{dto.attrValueName},
+      #{dto.attrValueCode},
+      #{dto.attrValueDesc},
+      #{dto.attrValue},
+      #{dto.tenantId},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark},
+      #{dto.sortby}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertAttrValue" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_skill_attr_value (
+      attr_value_id,
+      attr_id,
+      attr_value_name,
+      attr_value_code,
+      attr_value_desc,
+      attr_value,
+      tenant_id,
+      creator_id,
+      created_time,
+      status_cd,
+      updator_id,
+      updated_time,
+      remark,
+      sortby
+      ) VALUES (
+      #{dto.attrValueId},
+      #{dto.attrId},
+      #{dto.attrValueName},
+      #{dto.attrValueCode},
+      #{dto.attrValueDesc},
+      #{dto.attrValue},
+      #{dto.tenantId},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark},
+      #{dto.sortby}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <insert id="batchInsertAttrValueRel">
+    insert into bt_skill_attr_value_rel (
+    rel_id,
+    a_attr_value_id,
+    a_attr_id,
+    z_attr_value_id,
+    z_attr_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updated_time,
+    updator_id,
+    remark,
+    tenant_id
+    ) values
+    <foreach collection="list" item="dto" index="index" separator=",">
+      (
+      #{dto.relId},
+      #{dto.aAttrValueId},
+      #{dto.aAttrId},
+      #{dto.zAttrValueId},
+      #{dto.zAttrId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.tenantId}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertAttrValueRel" databaseId="oracle">
+    insert all
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      into bt_skill_attr_value_rel (
+      rel_id,
+      a_attr_value_id,
+      a_attr_id,
+      z_attr_value_id,
+      z_attr_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updated_time,
+      updator_id,
+      remark,
+      tenant_id
+      ) values (
+      #{dto.relId},
+      #{dto.aAttrValueId},
+      #{dto.aAttrId},
+      #{dto.zAttrValueId},
+      #{dto.zAttrId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      #{dto.remark},
+      #{dto.tenantId}
+      )
+    </foreach>
+    select 1 from dual
+  </insert>
+
+  <update id="updateAttrValueRel">
+    UPDATE bt_skill_attr_value_rel
+    <set>
+      <if test="dto.checkFieldUpdateFlag('aAttrValueId')">
+        a_attr_value_id = #{dto.aAttrValueId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('aAttrId')">
+        a_attr_id = #{dto.aAttrId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('zAttrValueId')">
+        z_attr_value_id = #{dto.zAttrValueId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('zAttrId')">
+        z_attr_id = #{dto.zAttrId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('tenantId')">
+        tenant_id = #{dto.tenantId},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE rel_id = #{dto.relId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+
+  <update id="updateAttrValue">
+    UPDATE bt_skill_attr_value
+    <set>
+      <if test="dto.checkFieldUpdateFlag('attrId')">
+        attr_id = #{dto.attrId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrValueName')">
+        attr_value_name = #{dto.attrValueName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrValueCode')">
+        attr_value_code = #{dto.attrValueCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrValueDesc')">
+        attr_value_desc = #{dto.attrValueDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrValue')">
+        attr_value = #{dto.attrValue},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sortby')">
+        sortby = #{dto.sortby},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE attr_value_id = #{dto.attrValueId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectAttrValueList" resultType="com.iwhalecloud.bote.dto.skill.SkillAttrValueDTO">
+    SELECT
+    <include refid="attrValueColumns"/>
+    FROM bt_skill_attr_value b
+    WHERE b.status_cd = '00A'
+      AND b.attr_id = #{attrId}
+      AND b.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectAttrValueByAttrCode" resultType="com.iwhalecloud.bote.dto.base.SimpleAttrDTO">
+    SELECT DISTINCT
+      b.attr_value_id,
+      b.attr_id,
+      b.attr_value,
+      b.attr_value_name,
+      b.attr_value_code,
+      b.attr_value_desc,
+      b.sortby,
+      a.attr_nbr AS "attrCode",
+      a.attr_name
+    FROM bt_skill_attr_spec a
+    JOIN bt_skill_attr_value b ON b.attr_id = a.attr_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.attr_nbr = #{attrCode}
+      AND a.tenant_id = #{tenantId}
+    ORDER BY b.attr_id, b.sortby
+  </select>
+
+  <select id="selectAllAttrValue" resultType="com.iwhalecloud.bote.dto.base.SimpleAttrDTO">
+    SELECT DISTINCT
+      b.attr_value_id,
+      b.attr_id,
+      b.attr_value,
+      b.attr_value_name,
+      b.attr_value_code,
+      b.attr_value_desc,
+      b.sortby,
+      a.attr_nbr AS "attrCode",
+      a.attr_name,
+      a.tenant_id
+    FROM bt_skill_attr_spec a
+    JOIN bt_skill_attr_value b ON b.attr_id = a.attr_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+    ORDER BY b.attr_id, b.sortby
+  </select>
+
+  <select id="selectAttrValueRelList" resultType="com.iwhalecloud.bote.dto.skill.SkillAttrValueRelDTO">
+    SELECT
+    <include refid="attrValueRelColumns"/>, s.attr_nbr as z_attr_nbr, s.attr_name as z_attr_name,
+      v.attr_value_name as z_attr_value_name, v.attr_value as z_attr_value
+    FROM bt_skill_attr_value_rel r
+    LEFT JOIN bt_skill_attr_spec s on s.attr_id = r.z_attr_id and s.tenant_id = r.tenant_id
+    LEFT JOIN bt_skill_attr_value v on v.attr_value_id = r.z_attr_value_id and v.tenant_id = r.tenant_id
+    WHERE r.status_cd = '00A'
+    <if test="tenantId != null">
+      AND r.tenant_id = #{tenantId}
+    </if>
+    <if test="attrValueIds != null and attrValueIds.size() != 0">
+      AND r.a_attr_value_id IN (<foreach collection="attrValueIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+  </select>
+
+  <update id="deleteAttrValueRel">
+    UPDATE bt_skill_attr_value_rel
+    SET status_cd = '00X',
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id in (#{tenantId}, -1)
+    AND z_attr_id = #{zAttId}
+  </update>
+</mapper>

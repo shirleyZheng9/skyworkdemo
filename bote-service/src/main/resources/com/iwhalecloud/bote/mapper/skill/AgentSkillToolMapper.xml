@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.AgentSkillToolMapper">
+
+  <select id="selectToolsBySkillId" resultType="com.iwhalecloud.bote.dto.skill.SimpleAgentSkillToolDTO">
+    SELECT tool_id, tool_code, tool_name, tool_type
+    FROM bt_agent_skill_tool
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND skill_id = #{skillId}
+  </select>
+
+  <select id="selectToolsBySkillIds" resultType="com.iwhalecloud.bote.dto.skill.SimpleAgentSkillToolDTO">
+    SELECT skill_id, tool_id, tool_code, tool_name, tool_type
+    FROM bt_agent_skill_tool
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND skill_id IN (<foreach collection="skillIds" item="skillId" separator=",">#{skillId}</foreach>)
+  </select>
+
+  <update id="deleteBySkillId">
+    UPDATE bt_agent_skill_tool
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
+  </update>
+
+  <insert id="batchInsertAgentSkillTools">
+    INSERT INTO bt_agent_skill_tool (
+      id, tenant_id, skill_id, tool_id, tool_code, tool_name, tool_type, status_cd,
+      created_time, updated_time, creator_id, updator_id, remark
+    ) VALUES
+    <foreach collection="list" item="dto" separator=",">
+      (#{dto.id}, #{dto.tenantId}, #{dto.skillId}, #{dto.toolId}, #{dto.toolCode}, #{dto.toolName}, #{dto.toolType}, #{dto.statusCd},
+       <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+       <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+       #{dto.creatorId}, #{dto.updatorId}, #{dto.remark})
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertAgentSkillTools" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" separator=" ">
+      INTO bt_agent_skill_tool (
+      id, tenant_id, skill_id, tool_id, tool_code, tool_name, tool_type, status_cd,
+      created_time, updated_time, creator_id, updator_id, remark
+      ) VALUES (
+      #{dto.id}, #{dto.tenantId}, #{dto.skillId}, #{dto.toolId}, #{dto.toolCode}, #{dto.toolName}, #{dto.toolType}, #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId}, #{dto.updatorId}, #{dto.remark})
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+</mapper>

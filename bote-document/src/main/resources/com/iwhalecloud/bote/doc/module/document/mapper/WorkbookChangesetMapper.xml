@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.WorkbookChangesetMapper">
+
+  <insert id="insert">
+    INSERT INTO bt_dc_workbook_changeset (
+    id, document_id, revision, base_rev, user_id, mutations, orig_mutations, sid, req_id, tenant_id, created_time, updated_time, status_cd
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.revision},
+    #{entity.baseRev},
+    #{entity.userId},
+    #{entity.mutations},
+    #{entity.origMutations},
+    #{entity.sid},
+    #{entity.reqId},
+    #{entity.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_workbook_changeset
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="selectByDocumentIdAndRevision" resultType="com.iwhalecloud.bote.doc.module.document.entity.WorkbookChangesetEntity">
+    select id,
+           document_id,
+           revision,
+           base_rev,
+           user_id,
+           mutations,
+           orig_mutations,
+           sid,
+           req_id,
+           tenant_id,
+           created_time,
+           updated_time,
+           status_cd
+    from bt_dc_workbook_changeset
+    where document_id = #{documentId}
+      and revision > #{revision}
+      and status_cd = '00A'
+    order by revision
+  </select>
+  <select id="selectMaxRevision" resultType="java.lang.Long">
+    select max(revision)
+    from bt_dc_workbook_changeset
+    where document_id = #{documentId}
+      and status_cd = '00A'
+  </select>
+
+</mapper>

@@ -1,0 +1,3 @@
+com.iwhalecloud.bote.config.properties.BoteBaseAutoConfigProperties
+com.iwhalecloud.bote.common.lock.redis.RedisDistributedLockAutoConfiguration
+com.iwhalecloud.bote.common.lock.zookeeper.ZookeeperDistributedLockAutoConfiguration

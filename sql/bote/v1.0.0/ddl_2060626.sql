@@ -1,0 +1,1 @@
+ALTER TABLE bt_docchain_extra_cfg MODIFY COLUMN setter_options varchar(1000) COMMENT 'setter_options';

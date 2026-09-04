@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.EvalTargetVersionMapper">
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.TargetVersionEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="target_id" property="targetId" jdbcType="BIGINT"/>
+    <result column="source_target_version" property="sourceTargetVersion" jdbcType="VARCHAR"/>
+    <result column="target_meta" property="targetMeta" jdbcType="VARCHAR"/>
+    <result column="input_schema" property="inputSchema" jdbcType="VARCHAR"/>
+    <result column="output_schema" property="outputSchema" jdbcType="VARCHAR"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="updated_by" property="updatedBy" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 创建评估目标版本 -->
+  <insert id="createEvalTargetVersion" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.TargetVersionEntity">
+    INSERT INTO bt_eval_target_version (
+    id, space_id, target_id, source_target_version, target_meta, input_schema, output_schema,
+    created_by, updated_by, created_at, updated_at, deleted_at
+    ) VALUES (
+    #{target.id}, #{target.spaceId}, #{target.targetId}, #{target.sourceTargetVersion},
+    #{target.targetMeta},
+    #{target.inputSchema},
+    #{target.outputSchema},
+    #{target.createdBy}, #{target.updatedBy}, #{target.createdAt}, #{target.updatedAt}, #{target.deletedAt}
+    )
+  </insert>
+
+  <!-- 获取评估目标版本 -->
+  <select id="getEvalTargetVersion" resultMap="BaseResultMap">
+    SELECT id, space_id, target_id, source_target_version, target_meta, input_schema, output_schema,
+           created_by, updated_by, created_at, updated_at, deleted_at
+    FROM bt_eval_target_version
+    WHERE id = #{versionId}
+    AND space_id = #{spaceId}
+    AND deleted_at IS NULL
+  </select>
+
+  <!-- 根据目标获取评估目标版本 -->
+  <select id="getEvalTargetVersionByTarget" resultMap="BaseResultMap">
+    SELECT id, space_id, target_id, source_target_version, target_meta, input_schema, output_schema,
+           created_by, updated_by, created_at, updated_at, deleted_at
+    FROM bt_eval_target_version
+    WHERE space_id = #{spaceId}
+    AND target_id = #{targetId}
+    AND source_target_version = #{sourceTargetVersion}
+    AND deleted_at IS NULL
+  </select>
+
+  <!-- 批量获取评估目标版本 -->
+  <select id="batchGetEvalTargetVersion" resultMap="BaseResultMap">
+    SELECT id, space_id, target_id, source_target_version, target_meta, input_schema, output_schema,
+           created_by, updated_by, created_at, updated_at, deleted_at
+    FROM bt_eval_target_version
+    WHERE space_id = #{spaceId}
+    AND id IN
+    <foreach collection="versionIds" item="item" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND deleted_at IS NULL
+  </select>
+</mapper>

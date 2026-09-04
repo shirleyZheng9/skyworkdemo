@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptAggrResultMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptAggrResultEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="experiment_id" property="experimentId" jdbcType="BIGINT"/>
+    <result column="field_type" property="fieldType" jdbcType="INTEGER"/>
+    <result column="field_key" property="fieldKey" jdbcType="VARCHAR"/>
+    <result column="score" property="score" jdbcType="DECIMAL"/>
+    <result column="aggr_result" property="aggrResult" jdbcType="VARCHAR"/>
+    <result column="version" property="version" jdbcType="BIGINT"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, experiment_id, field_type, field_key, score, aggr_result,
+    version, status, created_at, updated_at, deleted_at
+  </sql>
+
+  <!-- 获取实验聚合结果 -->
+  <select id="getExptAggrResult" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_aggr_result
+    WHERE experiment_id = #{experimentId}
+    AND field_type = #{fieldType}
+    AND field_key = #{fieldKey}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 根据实验ID获取聚合结果列表 -->
+  <select id="getExptAggrResultByExperimentId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_aggr_result
+    WHERE experiment_id = #{experimentId}
+  </select>
+
+  <!-- 批量根据实验ID获取聚合结果列表 -->
+  <select id="batchGetExptAggrResultByExperimentIds" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_aggr_result
+    WHERE experiment_id IN
+    <foreach collection="experimentIds" item="experimentId" open="(" separator="," close=")">
+      #{experimentId}
+    </foreach>
+  </select>
+
+  <!-- 创建实验聚合结果 -->
+  <insert id="createExptAggrResult" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptAggrResultEntity">
+    INSERT INTO bt_expt_aggr_result (
+    id, space_id, experiment_id, field_type, field_key, score, aggr_result,
+    version, status, created_at, updated_at, deleted_at
+    ) VALUES (
+    #{id}, #{spaceId}, #{experimentId}, #{fieldType}, #{fieldKey}, #{score}, #{aggrResult},
+    #{version}, #{status}, #{createdAt}, #{updatedAt}, #{deletedAt}
+    )
+  </insert>
+
+  <!-- 批量创建实验聚合结果 -->
+  <insert id="batchCreateExptAggrResult">
+    INSERT INTO bt_expt_aggr_result (
+    id, space_id, experiment_id, field_type, field_key, score, aggr_result,
+    version, status, created_at, updated_at, deleted_at
+    ) VALUES
+    <foreach collection="exptAggrResults" item="item" separator=",">
+      (
+      #{item.id}, #{item.spaceId}, #{item.experimentId}, #{item.fieldType}, #{item.fieldKey},
+      #{item.score}, #{item.aggrResult}, #{item.version}, #{item.status},
+      #{item.createdAt}, #{item.updatedAt}, #{item.deletedAt}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量创建实验聚合结果 - Oracle语法 -->
+  <insert id="batchCreateExptAggrResult" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="exptAggrResults" item="item" separator=" ">
+      INTO bt_expt_aggr_result (
+      id, space_id, experiment_id, field_type, field_key, score, aggr_result,
+      version, status, created_at, updated_at, deleted_at
+      ) VALUES (
+      #{item.id}, #{item.spaceId}, #{item.experimentId}, #{item.fieldType}, #{item.fieldKey},
+      #{item.score}, #{item.aggrResult}, #{item.version}, #{item.status},
+      #{item.createdAt}, #{item.updatedAt}, #{item.deletedAt}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 根据版本更新实验聚合结果 -->
+  <update id="updateExptAggrResultByVersion">
+    UPDATE bt_expt_aggr_result
+    SET score = #{exptAggrResult.score},
+    aggr_result = #{exptAggrResult.aggrResult},
+    status = 1,
+    updated_at = #{exptAggrResult.updatedAt}
+    WHERE experiment_id = #{exptAggrResult.experimentId}
+    AND field_type = #{exptAggrResult.fieldType}
+    AND field_key = #{exptAggrResult.fieldKey}
+    AND version = #{taskVersion}
+    AND status = 2
+  </update>
+
+  <!-- 更新并获取最新版本 -->
+  <update id="updateAndGetLatestVersion">
+    UPDATE bt_expt_aggr_result
+    SET version = version + 1,
+    status = 2,
+    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE experiment_id = #{experimentId}
+    AND field_type = #{fieldType}
+    AND field_key = #{fieldKey}
+  </update>
+</mapper>

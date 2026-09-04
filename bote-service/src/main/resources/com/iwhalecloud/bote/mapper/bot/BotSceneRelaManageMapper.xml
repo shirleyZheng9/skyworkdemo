@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.BotSceneRelaManageMapper">
+
+  <sql id="scenePromptColumns">
+    a.scene_prompt_id,
+    a.scene_id,
+    a.prompt_id,
+    a.scene_prompt,
+    a.prompt_type,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="sceneToolColumns">
+    a.tool_id,
+    a.scene_id,
+    a.tool_code,
+    a.tool_desc,
+    a.tool_type,
+    a.tool_param,
+    a.tool_config,
+    a.first_flag,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="sceneSkillColumns">
+    a.scene_skill_id,
+    a.scene_id,
+    a.ext_skill_id,
+    a.skill_id,
+    a.skill_code,
+    a.skill_name,
+    a.skill_type,
+    a.skill_json,
+    a.skill_config_json,
+    a.tenant_id,
+    a.status_cd,
+    a.created_time,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <insert id="insertSceneParam">
+    INSERT INTO bt_bot_scene_param (
+    param_id,
+    scene_id,
+    variable_json,
+    request_json,
+    response_json,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.paramId},
+    #{dto.sceneId},
+    #{dto.variableJson},
+    #{dto.requestJson},
+    #{dto.responseJson},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSceneParam">
+    UPDATE bt_bot_scene_param
+    SET
+    <if test="dto.checkFieldUpdateFlag('variableJson')">
+      variable_json = #{dto.variableJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('requestJson')">
+      request_json = #{dto.requestJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('responseJson')">
+      response_json = #{dto.responseJson},
+    </if>
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE param_id = #{dto.paramId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getSceneParam" resultType="com.iwhalecloud.bote.dto.bot.BotSceneParamDTO">
+    SELECT a.param_id,
+           a.variable_json,
+           a.request_json,
+           a.response_json,
+           a.tenant_id
+    FROM bt_bot_scene_param a
+    WHERE scene_id = #{sceneId}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectSceneParamsByIds" resultType="com.iwhalecloud.bote.dto.bot.BotSceneParamDTO">
+    SELECT param_id, variable_json, request_json, response_json, tenant_id, scene_id
+    FROM bt_bot_scene_param
+    WHERE scene_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND status_cd = '00A'
+    AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertScenePrompt">
+    INSERT INTO bt_bot_scene_prompt (
+    scene_prompt_id,
+    scene_id,
+    prompt_id,
+    scene_prompt,
+    prompt_type,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.scenePromptId},
+    #{dto.sceneId},
+    #{dto.promptId},
+    #{dto.scenePrompt},
+    #{dto.promptType},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateScenePrompt">
+    UPDATE bt_bot_scene_prompt
+    <set>
+      <if test="dto.checkFieldUpdateFlag('sceneId')">
+        scene_id = #{dto.sceneId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptId')">
+        prompt_id = #{dto.promptId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('scenePrompt')">
+        scene_prompt = #{dto.scenePrompt},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('promptType')">
+        prompt_type = #{dto.promptType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE scene_prompt_id = #{dto.scenePromptId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getScenePrompt" resultType="com.iwhalecloud.bote.dto.bot.BotScenePromptDTO">
+    SELECT
+    <include refid="scenePromptColumns"/>
+    FROM bt_bot_scene_prompt a
+    WHERE scene_id = #{sceneId}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="batchInsertSceneSkill">
+    INSERT INTO bt_bot_scene_skill (
+    scene_skill_id,
+    scene_id,
+    skill_id,
+    skill_code,
+    skill_name,
+    skill_type,
+    skill_json,
+    skill_config_json,
+    ext_skill_id,
+    tenant_id,
+    status_cd,
+    created_time,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.sceneSkillId},
+      #{dto.sceneId},
+      #{dto.skillId},
+      #{dto.skillCode},
+      #{dto.skillName},
+      #{dto.skillType},
+      #{dto.skillJson},
+      #{dto.skillConfigJson},
+      #{dto.extSkillId},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSceneSkill" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_bot_scene_skill (
+      scene_skill_id,
+      scene_id,
+      skill_id,
+      skill_code,
+      skill_name,
+      skill_type,
+      skill_json,
+      skill_config_json,
+      ext_skill_id,
+      tenant_id,
+      status_cd,
+      created_time,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.sceneSkillId},
+      #{dto.sceneId},
+      #{dto.skillId},
+      #{dto.skillCode},
+      #{dto.skillName},
+      #{dto.skillType},
+      #{dto.skillJson},
+      #{dto.extSkillId},
+      #{dto.skillConfigJson},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateSceneSkill">
+    UPDATE bt_bot_scene_skill
+    <set>
+      <if test="dto.checkFieldUpdateFlag('sceneId')">
+        scene_id = #{dto.sceneId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillId')">
+        skill_id = #{dto.skillId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillCode')">
+        skill_code = #{dto.skillCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillName')">
+        skill_name = #{dto.skillName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillType')">
+        skill_type = #{dto.skillType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillJson')">
+        skill_json = #{dto.skillJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('skillConfigJson')">
+        skill_config_json = #{dto.skillConfigJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('extSkillId')">
+        ext_skill_id = #{dto.extSkillId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE scene_skill_id = #{dto.sceneSkillId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectSceneSkillList" resultType="com.iwhalecloud.bote.dto.bot.BotSceneSkillDTO">
+    SELECT
+    <include refid="sceneSkillColumns"/>
+    FROM bt_bot_scene_skill a
+    WHERE scene_id = #{sceneId}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+</mapper>

@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.PlatBotInfoManageMapper">
+
+  <sql id="platBotInfoColumns">
+    a.plat_bot_id,
+    a.tenant_id,
+    a.bot_type,
+    a.bot_id,
+    a.owner_tenant_id,
+    a.bot_name,
+    a.bot_code,
+    a.status,
+    a.bot_icon,
+    a.bot_desc,
+    a.req_url,
+    a.catalog_item_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.bot_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.bot_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemId != null">
+      AND a.catalog_item_id = #{query.catalogItemId}
+    </if>
+  </sql>
+
+  <select id="existsPlatBotInfoCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_plat_bot_info
+    WHERE status_cd = '00A'
+    AND bot_code = #{dto.botCode}
+    <if test="dto.platBotId != null">
+      AND plat_bot_id != #{dto.platBotId}
+    </if>
+  </select>
+
+  <select id="existsPlatBotInfo" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_plat_bot_info
+    WHERE status_cd = '00A'
+    AND bot_id = #{dto.botId}
+    AND owner_tenant_id = #{dto.ownerTenantId}
+  </select>
+
+  <select id="getPlatBot" resultType="com.iwhalecloud.bote.dto.bot.TemplateBotDTO">
+    SELECT
+    <include refid="platBotInfoColumns"/>, c.catalog_name, '平台' AS "creatorName", u.user_name as "creatorCode", u.user_icon as "creatorIcon",
+    c.catalog_id as "catalogItemId"
+    FROM bt_plat_bot_info a
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id
+    LEFT JOIN bt_user u on u.user_id = a.creator_id
+    WHERE a.plat_bot_id = #{id}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="getPlatBotInfo" resultType="com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO">
+    SELECT
+    <include refid="platBotInfoColumns"/>
+    FROM bt_plat_bot_info a
+    WHERE a.plat_bot_id = #{id}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="getPlatBotByBotId" resultType="com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO">
+    SELECT
+    <include refid="platBotInfoColumns"/>
+    FROM bt_plat_bot_info a
+    WHERE a.bot_id = #{botId}
+      AND a.owner_tenant_id = #{ownerTenantId}
+      AND a.status_cd = '00A'
+  </select>
+
+  <insert id="insertPlatBotInfo">
+    INSERT INTO bt_plat_bot_info (
+    plat_bot_id,
+    tenant_id,
+    bot_name,
+    bot_code,
+    bot_id,
+    bot_type,
+    owner_tenant_id,
+    status,
+    bot_icon,
+    bot_desc,
+    req_url,
+    catalog_item_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.platBotId},
+    #{dto.tenantId},
+    #{dto.botName},
+    #{dto.botCode},
+    #{dto.botId},
+    #{dto.botType},
+    #{dto.ownerTenantId},
+    #{dto.status},
+    #{dto.botIcon},
+    #{dto.botDesc},
+    #{dto.reqUrl},
+    #{dto.catalogItemId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertPlatBotInfo">
+    INSERT INTO bt_plat_bot_info (
+    plat_bot_id,
+    tenant_id,
+    bot_name,
+    bot_code,
+    bot_id,
+    bot_type,
+    owner_tenant_id,
+    status,
+    bot_icon,
+    bot_desc,
+    req_url,
+    catalog_item_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+      #{dto.platBotId},
+      #{dto.tenantId},
+      #{dto.botName},
+      #{dto.botCode},
+      #{dto.botId},
+      #{dto.botType},
+      #{dto.ownerTenantId},
+      #{dto.status},
+      #{dto.botIcon},
+      #{dto.botDesc},
+      #{dto.reqUrl},
+      #{dto.catalogItemId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertPlatBotInfo" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_plat_bot_info (
+      plat_bot_id,
+      tenant_id,
+      bot_name,
+      bot_code,
+      bot_id,
+      bot_type,
+      owner_tenant_id,
+      status,
+      bot_icon,
+      bot_desc,
+      req_url,
+      catalog_item_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.platBotId},
+      #{dto.tenantId},
+      #{dto.botName},
+      #{dto.botCode},
+      #{dto.botId},
+      #{dto.botType},
+      #{dto.ownerTenantId},
+      #{dto.status},
+      #{dto.botIcon},
+      #{dto.botDesc},
+      #{dto.reqUrl},
+      #{dto.catalogItemId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updatePlatBotInfo">
+    UPDATE bt_plat_bot_info
+    <set>
+    <if test="dto.checkFieldUpdateFlag('platBotId')">
+      plat_bot_id = #{dto.platBotId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('tenantId')">
+      tenant_id = #{dto.tenantId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('botName')">
+      bot_name = #{dto.botName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('botCode')">
+      bot_code = #{dto.botCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('status')">
+      status = #{dto.status},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('botIcon')">
+      bot_icon = #{dto.botIcon},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('botDesc')">
+      bot_desc = #{dto.botDesc},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('reqUrl')">
+      req_url = #{dto.reqUrl},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+      catalog_item_id = #{dto.catalogItemId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('creatorId')">
+      creator_id = #{dto.creatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('updatorId')">
+      updator_id = #{dto.updatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('erverName')">
+      erver_name = #{dto.erverName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('botType')">
+      bot_type = #{dto.botType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('botId')">
+      bot_id = #{dto.botId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('ownerTenantId')">
+      owner_tenant_id = #{dto.ownerTenantId},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE plat_bot_id = #{dto.platBotId}
+  </update>
+
+  <update id="deletePlatBotInfo">
+    UPDATE bt_plat_bot_info
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE plat_bot_id = #{platBotId}
+  </update>
+
+  <update id="updatePlatBotInfoStatus">
+    UPDATE bt_plat_bot_info
+    SET status = #{status},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE plat_bot_id = #{platBotId}
+  </update>
+
+  <select id="selectPlatBotInfoList" resultType="com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO">
+    SELECT
+    <include refid="platBotInfoColumns"/>, c.catalog_name, u.real_name as "updatorName"
+    FROM bt_plat_bot_info a
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id
+    LEFT JOIN bt_user u on u.user_id = a.updator_id
+    LEFT JOIN bt_bot b on a.bot_id = b.bot_id and b.tenant_id = a.owner_tenant_id
+    WHERE 1=1
+    AND b.bot_status = '1'
+    AND b.status_cd = '00A'
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectPlatBotInfoPage" resultType="com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO">
+    SELECT
+    <include refid="platBotInfoColumns"/>, c.catalog_name, u.real_name as "updatorName"
+    FROM bt_plat_bot_info a
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id and a.tenant_id = c.tenant_id
+    LEFT JOIN bt_user u on u.user_id = a.updator_id
+    LEFT JOIN bt_bot b ON a.bot_type = 'platform' AND a.bot_id = b.bot_id AND b.tenant_id = a.owner_tenant_id
+    WHERE 1=1
+    AND (a.bot_type != 'platform' OR (b.status_cd = '00A' AND b.bot_status = '1'))
+    <include refid="batchQueryCondition"/>
+    order by a.updated_time desc
+  </select>
+
+  <select id="queryPlatAndUserBotPage" resultType="com.iwhalecloud.bote.dto.bot.TemplateBotDTO">
+    SELECT * FROM (
+    <if test="query.source == 'platform'.toString() or query.source == '' or query.source == null">
+      SELECT
+      MIN(a.auth_id) as platBotId,
+      MAX(a.bot_icon) as bot_icon,
+      MAX(b.bot_name) as bot_name,
+      MAX(a.bot_desc) as bot_desc,
+      a.bot_id,
+      MAX(a.owner_tenant_id) as owner_tenant_id,
+      MAX(a.auth_tenant_id) as auth_tenant_id,
+      MAX(a.user_id) as user_id,
+      MAX(a.catalog_item_id) as catalog_item_id,
+      MAX(c.catalog_name) as catalog_name,
+      MAX(t.tenant_name) as tenant_name,
+      MAX(u.real_name) as "creatorName",
+      MAX(u.user_name) as "creatorCode",
+      NULL AS req_url,
+      MAX(a.creator_id) as creator_id,
+      'platform' AS "botType",
+      'F' AS "isPlatformPublish",
+      MAX(a.created_time) as created_time
+      FROM bt_bot_auth a
+      LEFT JOIN bt_bot b on a.bot_id = b.bot_id and b.tenant_id = a.owner_tenant_id and b.bot_status = '1' and b.status_cd = '00A'
+      LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id
+      LEFT JOIN bt_tenant t on t.tenant_id = a.owner_tenant_id
+      LEFT JOIN bt_user u on u.user_id = a.creator_id
+      WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND b.bot_status = '1'
+      <if test="query.spaceId == null">
+        AND t.status_cd = '00A'
+      </if>
+      AND a.auth_status = 'T'
+      <if test="!query.isAdmin">
+        AND a.auth_tenant_id IN (#{query.tenantId}, -1)
+        AND a.user_id IN (#{query.userId}, -1)
+        AND a.org_id IN (<foreach collection="query.orgIdList" item="orgId" separator=","> #{orgId} </foreach>)
+      </if>
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND a.bot_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      <if test="query.catalogItemId != null">
+        AND a.catalog_item_id = #{query.catalogItemId}
+      </if>
+      <if test="query.dataFrom == null or query.dataFrom == ''">
+        AND (a.data_from != '10A' OR a.data_from IS NULL)
+      </if>
+      GROUP BY a.bot_id
+    </if>
+    <if test="query.source == '' or query.source == null">
+      UNION ALL
+    </if>
+    <if test="query.source == 'user'.toString() or query.source == '' or query.source == null">
+      SELECT  i.plat_bot_id, i.bot_icon AS bot_icon, i.bot_name, i.bot_desc, i.bot_id, i.owner_tenant_id,
+      NULL AS auth_tenant_id, NULL AS user_id, i.catalog_item_id, d.catalog_name, NULL AS tenant_name, '平台' AS "creatorName",
+      tu.user_name AS "creatorCode", i.req_url, i.creator_id, i.bot_type,
+      'T' AS "isPlatformPublish", i.created_time
+      FROM bt_plat_bot_info i
+      LEFT JOIN bt_catalog d on i.catalog_item_id = d.catalog_id and i.tenant_id = d.tenant_id
+      LEFT JOIN bt_user tu on tu.user_id = i.creator_id
+      LEFT JOIN bt_bot o ON i.bot_type = 'platform' AND i.bot_id = o.bot_id AND o.tenant_id = i.owner_tenant_id
+      WHERE i.tenant_id = -1
+      AND i.status_cd = '00A'
+      AND i.status = '1'
+      AND (i.bot_type != 'platform' OR (o.status_cd = '00A' AND o.bot_status = '1'))
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND i.bot_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      <if test="query.catalogItemId != null">
+        AND i.catalog_item_id = #{query.catalogItemId}
+      </if>
+    </if>
+    ) temp_result
+    ORDER BY created_time DESC
+  </select>
+
+  <select id="getUserBot" resultType="com.iwhalecloud.bote.dto.bot.TemplateBotDTO">
+    SELECT
+    a.bot_desc, a.bot_icon, c.catalog_name, u.real_name as "creatorName", a.bot_name, a.bot_id, a.owner_tenant_id, a.auth_tenant_id, a.user_id,
+    c.catalog_id as "catalogItemId",u.user_name as "creatorCode", a.creator_id
+    FROM bt_bot_auth a
+    LEFT JOIN bt_catalog c on a.catalog_item_id = c.catalog_id
+    LEFT JOIN bt_user u on u.user_id = a.creator_id
+    WHERE a.auth_id = #{authId}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="selectUserAuthBotPage" resultType="com.iwhalecloud.bote.dto.bot.TemplateBotDTO">
+    SELECT * FROM (
+      SELECT a.bot_id,
+        MIN(a.auth_id) as platBotId,
+        MAX(b.bot_name) as bot_name,
+        MAX(b.bot_use) as bot_use,
+        MAX(a.owner_tenant_id) as owner_tenant_id,
+        MAX(a.auth_tenant_id) as auth_tenant_id,
+        MAX(a.catalog_item_id) as catalog_item_id,
+        MAX(a.creator_id) as creator_id,
+        MAX(a.created_time) as created_time
+      FROM bt_bot_auth a
+      JOIN bt_bot b on a.bot_id = b.bot_id and b.tenant_id = a.owner_tenant_id
+      WHERE a.status_cd = '00A'
+        AND b.status_cd = '00A'
+        AND b.bot_status = '1'
+        AND a.auth_status = 'T'
+        AND a.data_from = '10A'
+      <if test="!query.isAdmin">
+        AND a.auth_tenant_id IN (#{query.tenantId}, -1)
+        AND a.user_id IN (#{query.userId}, -1)
+        AND a.org_id IN (<foreach collection="query.orgIdList" item="orgId" separator=","> #{orgId} </foreach>)
+      </if>
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND a.bot_name LIKE
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      <if test="query.catalogItemId != null">
+        AND a.catalog_item_id = #{query.catalogItemId}
+      </if>
+      GROUP BY a.bot_id
+    ) temp_result
+    ORDER BY created_time DESC
+  </select>
+</mapper>

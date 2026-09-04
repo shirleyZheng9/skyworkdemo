@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptItemResultMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptItemResultEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+    <result column="expt_run_id" property="exptRunId" jdbcType="BIGINT"/>
+    <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+    <result column="item_idx" property="itemIdx" jdbcType="INTEGER"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="err_msg" property="errMsg" jdbcType="BLOB"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="log_id" property="logId" jdbcType="VARCHAR"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, expt_run_id, item_id, item_idx, status, err_msg,
+    created_at, updated_at, deleted_at, log_id
+  </sql>
+
+  <!-- 批量获取实验数据项结果 -->
+  <select id="batchGet" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_item_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </select>
+
+  <!-- 批量创建实验数据项结果（如果不存在） -->
+  <insert id="batchCreateNx">
+    INSERT INTO bt_expt_item_result (
+    id, space_id, expt_id, expt_run_id, item_id, item_idx, status, err_msg,
+    created_at, updated_at, deleted_at, log_id
+    ) VALUES
+    <foreach collection="itemResults" item="item" separator=",">
+      (
+      #{item.id}, #{item.spaceId}, #{item.exptId}, #{item.exptRunId}, #{item.itemId},
+      #{item.itemIdx}, #{item.status}, #{item.errMsg}, #{item.createdAt}, #{item.updatedAt},
+      #{item.deletedAt}, #{item.logId}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 批量创建实验数据项结果（如果不存在）- Oracle语法 -->
+  <insert id="batchCreateNx" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="itemResults" item="item" separator=" ">
+      INTO bt_expt_item_result (
+      id, space_id, expt_id, expt_run_id, item_id, item_idx, status, err_msg,
+      created_at, updated_at, deleted_at, log_id
+      ) VALUES (
+      #{item.id}, #{item.spaceId}, #{item.exptId}, #{item.exptRunId}, #{item.itemId},
+      #{item.itemIdx}, #{item.status}, #{item.errMsg}, #{item.createdAt}, #{item.updatedAt},
+      #{item.deletedAt}, #{item.logId}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <!-- 扫描实验数据项结果 -->
+  <select id="scanItemResults" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM (
+      SELECT
+      <include refid="Base_Column_List"/>
+      FROM bt_expt_item_result
+      WHERE space_id = #{spaceId}
+      AND expt_id = #{exptId}
+      AND status IN
+      <foreach collection="status" item="statusItem" open="(" separator="," close=")">
+        #{statusItem}
+      </foreach>
+      <if test="cursor != null and cursor > 0">
+        AND id > #{cursor}
+      </if>
+      ORDER BY id ASC
+    ) t
+    where 1 = 1
+    <if test="limit != null and limit > 0">
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      #{limit}
+    </if>
+  </select>
+
+  <!-- 根据实验ID获取数据项ID列表 -->
+  <select id="getItemIdListByExptId" resultType="java.lang.Long">
+    SELECT item_id
+    FROM bt_expt_item_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    GROUP BY item_id
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    10000
+  </select>
+
+  <!-- 根据实验ID分页查询数据项结果 -->
+  <select id="listItemResultsByExptId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_item_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    ORDER BY id
+    <choose>
+      <when test="desc != null and desc">
+        DESC
+      </when>
+      <otherwise>
+        ASC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 保存实验数据项结果（拆分MySQL特殊语法） -->
+  <insert id="saveItemResults">
+    INSERT INTO bt_expt_item_result (
+    id, space_id, expt_id, expt_run_id, item_id, item_idx, status, err_msg,
+    created_at, updated_at, deleted_at, log_id
+    ) VALUES
+    <foreach collection="itemResults" item="item" separator=",">
+      (
+      #{item.id}, #{item.spaceId}, #{item.exptId}, #{item.exptRunId}, #{item.itemId},
+      #{item.itemIdx}, #{item.status}, #{item.errMsg}, #{item.createdAt}, #{item.updatedAt},
+      #{item.deletedAt}, #{item.logId}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 获取数据项轮次结果 -->
+  <select id="getItemTurnResults" resultType="com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultEntity">
+    SELECT
+      id, space_id, expt_id, expt_run_id, item_id, turn_id, turn_idx, status,
+      trace_id, log_id, target_result_id, err_msg, created_at, updated_at, deleted_at
+    FROM bt_expt_turn_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND item_id = #{itemId}
+  </select>
+
+  <!-- 更新数据项结果 -->
+  <update id="updateItemsResult">
+    UPDATE bt_expt_item_result
+    <set>
+      <foreach collection="ufields" index="key" item="value" separator=",">
+        ${key} = #{value}
+      </foreach>
+    </set>
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND item_id IN
+    <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+      #{itemId}
+    </foreach>
+  </update>
+
+  <!-- 根据实验ID获取最大数据项序号 -->
+  <select id="getMaxItemIdxByExptId" resultType="java.lang.Integer">
+    SELECT MAX(item_idx) as max_item_idx
+    FROM bt_expt_item_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+  </select>
+
+  <!-- 新增方法：拆分MySQL特殊语法 -->
+
+  <!-- 检查数据项结果是否存在 -->
+  <select id="existsByKeys" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_expt_item_result
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id = #{itemId}
+  </select>
+
+  <!-- 插入数据项结果 -->
+  <insert id="insertItemResult" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptItemResultEntity">
+    INSERT INTO bt_expt_item_result (
+    id, space_id, expt_id, expt_run_id, item_id, item_idx, status, err_msg,
+    created_at, updated_at, deleted_at, log_id
+    ) VALUES (
+    #{id}, #{spaceId}, #{exptId}, #{exptRunId}, #{itemId},
+    #{itemIdx}, #{status}, #{errMsg}, #{createdAt}, #{updatedAt},
+    #{deletedAt}, #{logId}
+    )
+  </insert>
+
+  <!-- 更新数据项结果（保持原有条件） -->
+  <update id="updateItemResult" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExptItemResultEntity">
+    UPDATE bt_expt_item_result
+    SET item_idx = #{itemIdx},
+    status = #{status},
+    err_msg = #{errMsg},
+    updated_at = #{updatedAt},
+    deleted_at = #{deletedAt},
+    log_id = #{logId}
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND expt_run_id = #{exptRunId}
+    AND item_id = #{itemId}
+  </update>
+</mapper>

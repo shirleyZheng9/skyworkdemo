@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.iwhalecloud.bote</groupId>
+    <artifactId>bote</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bote-service</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.iwhalecloud.bote</groupId>
+      <artifactId>bote-mcp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.iwhalecloud.bote</groupId>
+      <artifactId>bote-document</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.iwhalecloud.bote</groupId>
+      <artifactId>bote-sandbox</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.iwhalecloud.bote.skills</groupId>
+      <artifactId>bote-skills</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.iwhalecloud.bss.litchi</groupId>
+      <artifactId>litchi-crypto</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.iwhalecloud.bss.litchi</groupId>
+      <artifactId>litchi-archive</artifactId>
+    </dependency>
+
+    <!-- 鉴权模块 -->
+    <dependency>
+      <groupId>com.iwhalecloud.bss.litchi</groupId>
+      <artifactId>litchi-security</artifactId>
+    </dependency>
+
+    <!-- 消息发送节点 -->
+    <dependency>
+      <groupId>com.iwhalecloud.bss.litchi</groupId>
+      <artifactId>litchi-mq</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.iwhalecloud.bss.litchi</groupId>
+      <artifactId>litchi-mq-kafka</artifactId>
+    </dependency>
+
+    <!-- license核心包 -->
+    <dependency>
+      <groupId>com.iwhalecloud.common</groupId>
+      <artifactId>license-core</artifactId>
+    </dependency>
+
+    <!-- 工具包 -->
+    <dependency>
+      <groupId>com.github.houbb</groupId>
+      <artifactId>sensitive-word</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.belerweb</groupId>
+      <artifactId>pinyin4j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.dataformat</groupId>
+      <artifactId>jackson-dataformat-xml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.github.victools</groupId>
+      <artifactId>jsonschema-generator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.victools</groupId>
+      <artifactId>jsonschema-module-jackson</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.victools</groupId>
+      <artifactId>jsonschema-module-swagger-2</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.networknt</groupId>
+      <artifactId>json-schema-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.freemarker</groupId>
+      <artifactId>freemarker</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-datetime</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-dateutil</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.groovy</groupId>
+      <artifactId>groovy-json</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>easyexcel</artifactId>
+    </dependency>
+
+    <!-- 数据库驱动 -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mariadb.jdbc</groupId>
+      <artifactId>mariadb-java-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc8</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.database.nls</groupId>
+      <artifactId>orai18n</artifactId>
+    </dependency>
+
+    <!-- Swagger 文档 -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.xiaoymin</groupId>
+      <artifactId>knife4j-openapi3-ui</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger.parser.v3</groupId>
+      <artifactId>swagger-parser</artifactId>
+      <exclusions>
+        <!-- swagger-parser-v2-converter 用于支持 Swagger 2.0, 实际未用到，暂时排除 -->
+        <exclusion>
+          <groupId>io.swagger.parser.v3</groupId>
+          <artifactId>swagger-parser-v2-converter</artifactId>
+        </exclusion>
+        <!-- swagger-compat-spec-parser 用于支持 Swagger 1.0~1.2, 版本太旧了没必要支持(2.0 发布于 2014 年) -->
+        <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-compat-spec-parser</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-all</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-docx-converter</artifactId>
+    </dependency>
+
+    <!-- 钉钉api对接 -->
+    <dependency>
+      <groupId>com.aliyun</groupId>
+      <artifactId>dingtalk</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.dingtalk.open</groupId>
+      <artifactId>dingtalk-stream</artifactId>
+    </dependency>
+
+    <!-- 飞书SDK -->
+    <dependency>
+      <groupId>com.larksuite.oapi</groupId>
+      <artifactId>oapi-sdk</artifactId>
+    </dependency>
+    <!-- ElasticSearch -->
+    <dependency>
+      <groupId>co.elastic.clients</groupId>
+      <artifactId>elasticsearch-java</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>io.github.a2asdk</groupId>
+      <artifactId>a2a-java-sdk-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.github.a2asdk</groupId>
+      <artifactId>a2a-java-sdk-transport-jsonrpc</artifactId>
+    </dependency>
+
+    <!-- 讯飞语音 -->
+    <dependency>
+      <groupId>cn.xfyun</groupId>
+      <artifactId>websdk-java-speech</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+
+    <!-- ZXing 二维码生成 -->
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.zxing</groupId>
+      <artifactId>javase</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>io.github.git-commit-id</groupId>
+        <artifactId>git-commit-id-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.app.UserFavAppMapper">
+
+  <insert id="insertUserFavApp">
+    INSERT INTO bt_user_fav_app (
+    fav_id,
+    user_id,
+    app_id,
+    sort_order,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.favId},
+    #{dto.userId},
+    #{dto.appId},
+    #{dto.sortOrder},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="insertUserFavAppBatch">
+    INSERT INTO bt_user_fav_app (
+    fav_id,
+    user_id,
+    app_id,
+    sort_order,
+    space_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.favId},
+    #{dto.userId},
+    #{dto.appId},
+    #{dto.sortOrder},
+    #{dto.spaceId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="insertUserFavAppBatch" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_user_fav_app (
+      fav_id,
+      user_id,
+      app_id,
+      sort_order,
+      space_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.favId},
+      #{dto.userId},
+      #{dto.appId},
+      #{dto.sortOrder},
+      #{dto.spaceId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="deleteUserFavApp">
+    UPDATE bt_user_fav_app
+    SET status_cd = '00X',
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+      AND app_id = #{appId}
+      AND space_id = #{spaceId}
+  </update>
+
+  <update id="batchDeleteUserFavApp">
+    UPDATE bt_user_fav_app
+    SET status_cd = '00X',
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+      AND space_id = #{spaceId}
+      AND fav_id IN (<foreach collection="list" item="favId" separator=", ">#{favId}</foreach>)
+  </update>
+
+  <select id="selectUserFavAppList" resultType="com.iwhalecloud.bote.dto.app.UserFavAppDTO">
+    SELECT a.fav_id, a.app_id, a.sort_order, a.app_id AS workbenchAppId,
+           wa.app_name
+    FROM bt_user_fav_app a
+    LEFT JOIN bt_workbench_app wa ON wa.workbench_app_id = a.app_id
+    WHERE a.status_cd = '00A'
+      AND wa.status_cd = '00A'
+      AND wa.app_status = 'A'
+      AND a.user_id = #{params.userId}
+      AND a.space_id = #{params.spaceId}
+    <if test="params.checkAuth">
+      AND exists(
+        SELECT 1 FROM bt_workbench_app_auth au
+        WHERE au.status_cd = '00A'
+          AND au.workbench_app_id = a.app_id
+          AND (au.user_id IN (#{params.userId}, -1)
+          <if test="params.orgIds != null and params.orgIds.size() > 0">
+            OR au.org_id IN (<foreach collection="params.orgIds" item="orgId" separator=",">#{orgId}</foreach>)
+          </if>
+          )
+      )
+    </if>
+    ORDER BY a.sort_order, a.updated_time
+  </select>
+
+  <select id="selectUserFavAppPage" resultType="com.iwhalecloud.bote.dto.app.UserFavAppDTO">
+    SELECT a.fav_id, a.app_id, a.sort_order, a.app_id AS workbenchAppId,
+           wa.app_name
+    FROM bt_user_fav_app a
+    LEFT JOIN bt_workbench_app wa ON wa.workbench_app_id = a.app_id
+    WHERE a.status_cd = '00A'
+      AND wa.status_cd = '00A'
+      AND wa.app_status = 'A'
+      AND a.user_id = #{params.userId}
+      AND a.space_id = #{params.spaceId}
+    ORDER BY a.sort_order, a.updated_time
+  </select>
+
+  <select id="countUserFavApp" resultType="java.lang.Integer">
+    SELECT count(*)
+    FROM bt_user_fav_app
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <update id="updateSortOrder">
+    UPDATE bt_user_fav_app
+    SET sort_order = #{dto.sortOrder},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND fav_id = #{dto.favId}
+      AND user_id = #{dto.userId}
+      AND space_id = #{dto.spaceId}
+  </update>
+
+  <select id="maxUserFavAppSort" resultType="java.lang.Integer">
+    SELECT MAX(sort_order) AS max_sort_order
+    FROM bt_user_fav_app
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="checkExistsByAppId" resultType="java.lang.Boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_user_fav_app
+    WHERE status_cd = '00A'
+      AND app_id = #{appId}
+      AND space_id = #{spaceId}
+      AND user_id = #{userId}
+  </select>
+
+  <update id="clearAllUserFavApp">
+    UPDATE bt_user_fav_app
+    SET status_cd = '00X',
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND user_id = #{userId}
+      AND space_id = #{spaceId}
+  </update>
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.SheetBlockMapper">
+  <!-- @formatter:off -->
+  <select id="selectByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.document.entity.SheetBlockEntity">
+    SELECT block_id, start_row, end_row, sheet_id, size, file_id, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_sheet_block
+    WHERE block_id = #{blockId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByFileId" resultType="com.iwhalecloud.bote.doc.module.document.entity.SheetBlockEntity">
+    SELECT block_id, start_row, end_row, sheet_id, size, file_id, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_sheet_block
+    WHERE file_id = #{fileId}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_sheet_block (
+      block_id, start_row, end_row, sheet_id, size, file_id, tenant_id, created_time, updated_time, status_cd
+    ) VALUES (
+      #{entity.blockId},
+      #{entity.startRow},
+      #{entity.endRow},
+      #{entity.sheetId},
+      #{entity.size},
+      #{entity.fileId},
+      #{entity.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_sheet_block
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE block_id = #{blockId}
+      AND status_cd = '00A'
+  </update>
+
+</mapper>

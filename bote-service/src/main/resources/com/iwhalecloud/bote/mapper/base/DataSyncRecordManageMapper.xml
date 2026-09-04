@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.DataSyncRecordManageMapper">
+
+  <select id="selectTableDefinition" resultType="com.iwhalecloud.bote.dto.datasync.DataSyncTableDefinition">
+    SELECT
+      data_config_code,
+      data_config_path,
+      table_code,
+      primary_key,
+      foreign_key,
+      tenant_id_alias,
+      sync_all_query_condition,
+      content_replace_rule,
+      sortby
+    FROM bt_data_sync_cfg
+    WHERE status_cd = '00A'
+      AND data_config_path IN ('TENANT', 'BOT')
+  </select>
+
+  <select id="selectDataSyncNode" resultType="com.iwhalecloud.bote.dto.datasync.DataSyncNodeDTO">
+    SELECT code,
+           name,
+           parent_code,
+           parent_name,
+           table_code,
+           primary_column,
+           code_column,
+           name_column,
+           query_condition,
+           catalog_flag,
+           catalog_type,
+           group_sortby
+    FROM bt_data_sync_query_cfg
+    WHERE status_cd = '00A'
+    ORDER BY group_sortby, sortby
+  </select>
+</mapper>

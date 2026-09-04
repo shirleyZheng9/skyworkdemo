@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.dashboard.DataDashboardMapper">
+
+  <!-- 顶部资源概览。 -->
+  <resultMap id="overviewMetricCountResultMap"
+             type="com.iwhalecloud.bote.dto.dashboard.OverviewMetricCountDTO">
+    <result property="code" column="metric_code"/>
+    <result property="total" column="total_count"/>
+    <result property="todayIncrease" column="today_increase"/>
+  </resultMap>
+
+  <!--
+    2026-08-31 新增：顶部核心资源总量及今日新增。
+
+    一、为什么使用 UNION ALL
+    1. 本查询不是把多表明细合并后再统计，而是每张资源主表独立完成 COUNT 聚合；
+    2. 每个分支只返回一行，UNION ALL 最终只合并少量聚合结果，不做去重排序；
+    3. 相比前端并发调用多个分页列表接口，本接口避免了列表字段、目录、用户、排序等额外成本，
+       也保证首屏四张卡片使用同一次请求和同一组今日时间边界。
+
+    二、统计口径
+    1. 今日新增使用 created_time in [todayStart, tomorrowStart)，不是“较昨日净增长”；
+    2. 智能体统计当前租户智能体列表默认可查询的有效记录，即排除 A2A 服务；
+    3. 知识库统计当前租户有效知识库主记录，不额外关联文档表，避免把文件数量误当知识库数量；
+    4. 模型统计当前租户自建模型 + 当前租户可见的公开平台模型，沿用模型列表的可见资源口径；
+    5. 插件/MCP合并为一个卡片，统计当前租户可见的全部有效插件与 MCP 服务。
+
+    三、性能边界
+    若未来单租户资源量大到索引 COUNT 仍不能稳定满足 2 秒，再升级为汇总表或短 TTL 缓存。
+  -->
+  <select id="selectOverviewMetrics" resultMap="overviewMetricCountResultMap">
+    SELECT 'agent' AS metric_code,
+    COUNT(*) AS total_count,
+    <choose>
+      <when test="todayStart != null and tomorrowStart != null">
+        COALESCE(SUM(CASE
+        WHEN created_time &gt;= #{todayStart}
+        AND created_time &lt; #{tomorrowStart}
+        THEN 1 ELSE 0 END), 0)
+      </when>
+      <otherwise>
+        0
+      </otherwise>
+    </choose>
+    AS today_increase
+    FROM bt_bot_scene
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+    AND scene_type != 'a2a'
+
+    UNION ALL
+
+    <!-- 知识库 -->
+    SELECT 'knowledge' AS metric_code,
+    COUNT(*) AS total_count,
+    <choose>
+      <when test="todayStart != null and tomorrowStart != null">
+        COALESCE(SUM(CASE
+        WHEN created_time &gt;= #{todayStart}
+        AND created_time &lt; #{tomorrowStart}
+        THEN 1 ELSE 0 END), 0)
+      </when>
+      <otherwise>
+        0
+      </otherwise>
+    </choose>
+    AS today_increase
+    FROM bt_knowledge_base
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+
+    UNION ALL
+
+    <!-- 大模型：统计当前租户可见的模型接入资源。 -->
+    SELECT 'model' AS metric_code,
+    COUNT(*) AS total_count,
+    <choose>
+      <when test="todayStart != null and tomorrowStart != null">
+        COALESCE(SUM(CASE
+        WHEN created_time &gt;= #{todayStart}
+        AND created_time &lt; #{tomorrowStart}
+        THEN 1 ELSE 0 END), 0)
+      </when>
+      <otherwise>
+        0
+      </otherwise>
+    </choose>
+    AS today_increase
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+    <!-- data_from IS NULL 沿用模型管理列表口径，排除通用智能体等特殊来源模型。 -->
+    AND data_from IS NULL
+    AND (
+    tenant_id = #{tenantId}
+    OR (tenant_id = -1 AND is_public = 'T')
+    )
+
+    UNION ALL
+
+    <!-- 插件/MCP：页面合并展示为一个工具能力卡片，SQL 中先分别统计再求和。 -->
+    SELECT 'tool' AS metric_code,
+    COALESCE(SUM(total_count), 0) AS total_count,
+    COALESCE(SUM(today_increase), 0) AS today_increase
+    FROM (
+    <!-- 插件-->
+    SELECT COUNT(*) AS total_count,
+    <choose>
+      <when test="todayStart != null and tomorrowStart != null">
+        COALESCE(SUM(CASE
+        WHEN created_time &gt;= #{todayStart}
+        AND created_time &lt; #{tomorrowStart}
+        THEN 1 ELSE 0 END), 0)
+      </when>
+      <otherwise>
+        0
+      </otherwise>
+    </choose>
+    AS today_increase
+    FROM bt_plugin
+    WHERE status_cd = '00A'
+    AND tenant_id IN (#{tenantId}, -1)
+
+    UNION ALL
+
+    <!-- MCP：统计当前租户可见的 MCP 服务。 -->
+    SELECT COUNT(*) AS total_count,
+    <choose>
+      <when test="todayStart != null and tomorrowStart != null">
+        COALESCE(SUM(CASE
+        WHEN created_time &gt;= #{todayStart}
+        AND created_time &lt; #{tomorrowStart}
+        THEN 1 ELSE 0 END), 0)
+      </when>
+      <otherwise>
+        0
+      </otherwise>
+    </choose>
+    AS today_increase
+    FROM bt_mcp_server
+    WHERE status_cd = '00A'
+    <!-- data_from IS NULL 沿用 MCP 管理列表口径，排除通用智能体来源的特殊服务。 -->
+    AND data_from IS NULL
+    <!-- MCP 能力对当前租户展示时包含租户自建和平台资源。 -->
+    AND tenant_id IN (#{tenantId}, -1)
+    ) tool_source
+  </select>
+
+  <!-- 今日动态资源新增量 -->
+  <select id="selectTodayResourceIncreases" resultMap="overviewMetricCountResultMap">
+    <!-- 新增智能体：统计当前租户今天新建的有效智能体，排除 A2A 服务。 -->
+    SELECT 'agent' AS metric_code,
+    0 AS total_count,
+    COUNT(*) AS today_increase
+    FROM bt_bot_scene
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+    <!-- 排除 A2A 服务，保持和智能体列表口径一致。 -->
+    AND scene_type != 'a2a'
+    AND created_time &gt;= #{todayStart}
+    AND created_time &lt; #{tomorrowStart}
+
+    UNION ALL
+
+    <!-- 新增知识库：统计当前租户今天新建的有效知识库主记录。 -->
+    SELECT 'knowledge' AS metric_code,
+    0 AS total_count,
+    COUNT(*) AS today_increase
+    <!-- 知识库主表。 -->
+    FROM bt_knowledge_base
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+    AND created_time &gt;= #{todayStart}
+    AND created_time &lt; #{tomorrowStart}
+  </select>
+
+  <!--
+    2026-08-28 新增：智能体模式分布统计。
+    统计口径：
+    1. tenant_id：只查询当前租户，保证数据隔离；
+    2. status_cd = '00A'：只统计有效、未软删除的数据；
+  -->
+  <resultMap id="agentModeCountResultMap" type="com.iwhalecloud.bote.dto.dashboard.AgentModeCountDTO">
+    <result property="code" column="mode_code"/>
+    <result property="count" column="mode_count"/>
+  </resultMap>
+
+  <select id="selectAgentModeCounts" resultMap="agentModeCountResultMap">
+    SELECT scene_type AS mode_code,
+    COUNT(*) AS mode_count
+    FROM bt_bot_scene
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+    AND scene_type IN ('scene', 'chatflow', 'knowledge')
+    GROUP BY scene_type
+  </select>
+
+  <!--
+    2026-08-28 新增：知识库文件类型分布统计。
+    从 bt_document 出发，一条有效 document_id 只计一次，避免把聊天附件、头像、
+       插件产物等 bt_file 中的非知识库文件错误计入；
+    INNER JOIN bt_knowledge_base 排除已软删除的知识库及没有知识库主记录的数据；
+    bt_file.file_id 为主键，因此 document -> file_info -> file 均最多匹配一条；
+
+  -->
+  <resultMap id="knowledgeFileTypeCountResultMap"
+             type="com.iwhalecloud.bote.dto.dashboard.KnowledgeFileTypeCountDTO">
+    <result property="code" column="category_code"/>
+    <result property="count" column="file_count"/>
+  </resultMap>
+
+  <select id="selectKnowledgeFileTypeCounts"
+          resultMap="knowledgeFileTypeCountResultMap">
+
+    SELECT
+    CASE
+    WHEN source_data.file_extension IN
+    ('doc', 'docx', 'pdf', 'ppt', 'pptx', 'txt', 'md', 'html', 'wps')
+    THEN 'document'
+
+    WHEN source_data.file_extension IN
+    ('xls', 'xlsx', 'csv', 'tsv')
+    THEN 'spreadsheet'
+
+    WHEN source_data.file_extension IN
+    ('jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp')
+    THEN 'image'
+
+    WHEN source_data.file_extension IN
+    ('mp3', 'wav', 'm4a', 'aac', 'flac', 'ogg', 'wma',
+     'mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg')
+    THEN 'audioVideo'
+
+    ELSE 'other'
+    END AS category_code,
+
+    COUNT(*) AS file_count
+
+    FROM (
+    SELECT
+    SUBSTRING_INDEX(
+    LOWER(TRIM(f.file_type)),
+    '.',
+    -1
+    ) AS file_extension
+
+    FROM bt_document d
+
+    LEFT JOIN bt_file_info fi
+    ON fi.file_info_id = d.file_info_id
+    AND fi.tenant_id = d.tenant_id
+    AND fi.status_cd = '00A'
+
+    LEFT JOIN bt_file f
+    ON f.file_id = fi.file_id
+    AND f.status_cd = '00A'
+
+    WHERE d.tenant_id = #{tenantId}
+    AND d.status_cd = '00A'
+
+    AND EXISTS (
+    SELECT 1
+    FROM bt_knowledge_base kb
+    WHERE kb.knowledge_id = d.knowledge_id
+    AND kb.tenant_id = d.tenant_id
+    AND kb.status_cd = '00A'
+    )
+    ) source_data
+
+    GROUP BY category_code
+
+  </select>
+
+  <resultMap id="modelUsageStatResultMap" type="com.iwhalecloud.bote.dto.dashboard.ModelUsageStatDTO">
+    <result property="productType" column="product_type"/>
+    <result property="count" column="invoke_count"/>
+  </resultMap>
+
+  <!--
+    模型累计使用分布查询：
+    1. 只读取当前租户汇总记录，调用量必须大于 0；
+    2. product_type 由定时汇总与状态校准任务维护，查询接口不再关联模型主表或字典表；
+    3. 查询只按 product_type 分组汇总，展示名称交由前端根据 MODEL_PRODUCT_TYPE 字典翻译。
+  -->
+  <select id="selectModelUsageTotals" resultMap="modelUsageStatResultMap">
+    SELECT s.product_type AS product_type,
+    SUM(s.invoke_count) AS invoke_count
+    FROM bt_dashboard_model_usage_total s
+    WHERE s.tenant_id = #{tenantId}
+    AND s.invoke_count > 0
+    GROUP BY s.product_type
+    ORDER BY SUM(s.invoke_count) DESC, s.product_type
+  </select>
+
+  <!-- 今日大模型调用次数。当天日志保留在当前表，避免为实时指标额外扫描历史表。 -->
+  <select id="selectModelInvokeCount" resultType="java.lang.Long">
+    <!-- 只返回总次数，不读取 request_json/response_json 等大字段。 -->
+    SELECT COUNT(*)
+    <!-- 今日实时调用日志来源于当前模型使用日志表。 -->
+    FROM bt_model_usage_log
+    <!-- tenant_id 限定当前工作空间，start_time 限定当天自然日调用发生时间。 -->
+    WHERE tenant_id = #{tenantId}
+      AND start_time &gt;= #{startTime}
+      AND start_time &lt; #{endTime}
+  </select>
+
+  <!-- 今日知识构建完成文档数。 -->
+  <select id="selectBuiltDocumentCount" resultType="java.lang.Long">
+    <!-- 统计文档条数，一条有效 document_id 只算一份知识构建文档。 -->
+    SELECT COUNT(*)
+    <!-- 以 bt_document 为主体，避免把知识库主表数量或文件表附件数量误算进来。 -->
+    FROM bt_document d
+    <!-- tenant_id/status_cd 保证只统计当前工作空间有效文档。 -->
+    WHERE d.tenant_id = #{tenantId}
+      AND d.status_cd = '00A'
+      <!-- doc_status = 10D 表示构建完成，也就是页面口径里的已学习文档。 -->
+      AND d.doc_status = #{successStatus}
+      <!-- process_completed_at 使用左闭右开当天时间窗，表示今天完成构建。 -->
+      AND d.process_completed_at &gt;= #{startTime}
+      AND d.process_completed_at &lt; #{endTime}
+      <!-- 只统计仍归属于有效知识库的文档，排除知识库已删除后的残留文档。 -->
+      AND EXISTS (
+        SELECT 1
+        FROM bt_knowledge_base kb
+        WHERE kb.knowledge_id = d.knowledge_id
+          AND kb.tenant_id = d.tenant_id
+          AND kb.status_cd = '00A'
+      )
+  </select>
+
+  <resultMap id="conversationMessageTrendCountResultMap"
+             type="com.iwhalecloud.bote.dto.dashboard.ConversationMessageTrendCountDTO">
+    <result property="statDate" column="stat_date"/>
+    <result property="messageCount" column="message_count"/>
+  </resultMap>
+
+  <!-- 最近三十天每日对话消息量趋势：默认 MySQL 写法，只统计用户消息，当前表与历史表同时覆盖。 -->
+  <select id="selectConversationMessageTrend" resultMap="conversationMessageTrendCountResultMap">
+    SELECT message_source.stat_date,
+           SUM(message_source.message_count) AS message_count
+    <!-- 内层当前表和历史表分别先按天聚合，减少 UNION ALL 的中间数据量。 -->
+    FROM (
+      <!-- 当前会话消息表：统计尚未归档的用户消息。 -->
+      SELECT
+      <!-- MySQL 使用 DATE_FORMAT 统一输出 yyyy-MM-dd 字符串。 -->
+      DATE_FORMAT(m.created_time, '%Y-%m-%d') AS stat_date,
+      <!-- 当前表当天用户消息数先在子查询内聚合，避免外层处理明细行。 -->
+      COUNT(*) AS message_count
+      <!-- m 为消息表，s 为会话表；消息表没有 tenant_id，需要通过会话表隔离租户。 -->
+      FROM bt_bot_session_msg m
+      JOIN bt_bot_session s
+        ON s.session_id = m.session_id
+      <!-- 只统计当前租户有效用户消息；role=user 表示一条用户侧对话消息。 -->
+      WHERE s.tenant_id = #{tenantId}
+        AND m.status_cd = '00A'
+        AND m.role = 'user'
+        AND m.created_time &gt;= #{startTime}
+        AND m.created_time &lt; #{endTime}
+      <!-- 当前表按自然日聚合，日期表达式与 SELECT 保持一致。 -->
+      GROUP BY DATE_FORMAT(m.created_time, '%Y-%m-%d')
+
+      UNION ALL
+
+      <!-- 历史会话消息表：统计已归档但仍落在最近三十天内的用户消息。 -->
+      SELECT
+      DATE_FORMAT(m.created_time, '%Y-%m-%d') AS stat_date,
+      COUNT(*) AS message_count
+      FROM bt_bot_session_msg_his m
+      JOIN bt_bot_session_his s
+        ON s.session_id = m.session_id
+      <!-- 历史表沿用相同口径：当前租户、有效消息、用户角色、日期范围。 -->
+      WHERE s.tenant_id = #{tenantId}
+        AND m.status_cd = '00A'
+        AND m.role = 'user'
+        AND m.created_time &gt;= #{startTime}
+        AND m.created_time &lt; #{endTime}
+      GROUP BY DATE_FORMAT(m.created_time, '%Y-%m-%d')
+    ) message_source
+    <!-- 当前表和历史表同一天都有数据时，在这里把两边数量相加。 -->
+    GROUP BY message_source.stat_date
+    ORDER BY message_source.stat_date
+  </select>
+
+</mapper>

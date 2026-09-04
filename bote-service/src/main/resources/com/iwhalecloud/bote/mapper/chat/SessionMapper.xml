@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.SessionMapper">
+
+  <sql id="sessionColumns">
+    a.session_id,
+    a.bot_id,
+    a.bot_tenant_id,
+    a.tenant_id,
+    a.ext_system_id,
+    a.plat_bot_id,
+    a.space_id,
+    a.session_title,
+    a.prologue,
+    a.begin_time,
+    a.end_time,
+    a.is_test,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="getSession" resultType="com.iwhalecloud.bote.dto.chat.SessionDTO">
+    SELECT
+    <include refid="sessionColumns"/>
+    FROM bt_bot_session a
+    WHERE session_id = #{id}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectBotIdBySessionId" resultType="java.lang.Long">
+    SELECT bot_id
+    FROM bt_bot_session
+    WHERE status_cd = '00A'
+      AND session_id = #{sessionId}
+  </select>
+
+  <select id="selectSpaceIdBySessionId" resultType="java.lang.Long">
+    SELECT space_id
+    FROM bt_bot_session
+    WHERE status_cd = '00A'
+      AND session_id = #{sessionId}
+  </select>
+
+  <insert id="insertSession">
+    INSERT INTO bt_bot_session (
+    session_id,
+    bot_id,
+    bot_tenant_id,
+    tenant_id,
+    ext_system_id,
+    plat_bot_id,
+    space_id,
+    session_title,
+    prologue,
+    begin_time,
+    end_time,
+    is_test,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.sessionId},
+    #{dto.botId},
+    #{dto.botTenantId},
+    #{dto.tenantId},
+    #{dto.extSystemId},
+    #{dto.platBotId},
+    #{dto.spaceId},
+    #{dto.sessionTitle},
+    #{dto.prologue},
+    #{dto.beginTime},
+    #{dto.endTime},
+    #{dto.isTest},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSession">
+    UPDATE bt_bot_session
+    <set>
+      <if test="dto.sessionTitle != null and dto.sessionTitle != ''">
+        session_title = #{dto.sessionTitle},
+      </if>
+      <if test="dto.prologue != null and dto.prologue != ''">
+        prologue = #{dto.prologue},
+      </if>
+      <if test="dto.endTime != null">
+        end_time = #{dto.endTime},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE session_id = #{dto.sessionId}
+  </update>
+
+  <select id="selectLatestSessionId" resultType="java.lang.Long">
+    SELECT session_id
+    FROM (
+      SELECT session_id
+      FROM bt_bot_session
+      WHERE status_cd = '00A'
+        AND bot_id = #{botId}
+        AND creator_id = #{userId}
+      <if test="extSystemId != null">
+        AND ext_system_id = #{extSystemId}
+      </if>
+      ORDER BY updated_time DESC
+    ) TMP
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="listSessions" resultType="com.iwhalecloud.bote.dto.chat.SessionDTO">
+    SELECT a.session_id,
+    a.bot_id,
+    a.ext_system_id,
+    a.plat_bot_id,
+    a.session_title,
+    a.prologue,
+    a.updated_time,
+    (SELECT MAX(m.created_time) FROM bt_bot_session_msg m WHERE m.session_id = a.session_id) AS last_msg_time
+    FROM bt_bot_session a
+    WHERE a.status_cd = '00A'
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+      AND a.creator_id = #{query.userId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.session_title LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.extSystemId != null">
+      AND a.ext_system_id = #{query.extSystemId}
+    </if>
+    <choose>
+      <when test="query.isTest">
+        AND a.is_test = 'T'
+      </when>
+      <otherwise>
+        AND a.is_test IS NULL
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectSessionList" resultType="com.iwhalecloud.bote.dto.chat.SessionDTO">
+    SELECT a.session_id,
+    a.bot_id,
+    a.bot_tenant_id,
+    a.ext_system_id,
+    <choose>
+      <when test="query.isRuntime == true">
+        (SELECT MAX(p.plat_bot_id) FROM bt_plat_bot_info p WHERE p.bot_id = a.bot_id AND p.status_cd = '00A' AND p.status = '1') AS plat_bot_id,
+      </when>
+      <otherwise>
+        COALESCE(
+          (SELECT MAX(p.plat_bot_id) FROM bt_plat_bot_info p WHERE p.bot_id = a.bot_id AND p.status_cd = '00A' AND p.status = '1'),
+          (SELECT MAX(bba.auth_id) FROM bt_bot_auth bba WHERE bba.bot_id = a.bot_id AND bba.status_cd = '00A')
+        ) AS plat_bot_id,
+      </otherwise>
+    </choose>
+    a.session_title,
+    a.updated_time,
+    CASE WHEN bb.tenant_id = -1 THEN 'T' ELSE 'F' END AS isPlatformPublish
+    FROM bt_bot_session a
+    LEFT JOIN bt_bot bb ON bb.bot_id = a.bot_id
+    WHERE a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+      AND space_id = #{query.spaceId}
+    </if>
+      AND a.creator_id = #{query.userId}
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.isMark">
+      AND exists(select 1 from bt_chat_bot_cfg b
+                WHERE a.space_id = b.space_id
+                  AND ((a.bot_id = b.bot_id) OR (a.bot_id IS NULL AND a.plat_bot_id = b.bot_id))
+                  AND a.creator_id = b.creator_id
+                  AND b.status_cd = '00A'
+                  AND b.action_type = 'mark')
+    </if>
+    <if test="query.isClose">
+      AND not exists(select 1 from bt_chat_bot_cfg b
+                WHERE a.space_id = b.space_id
+                  AND ((a.bot_id = b.bot_id) OR (a.bot_id IS NULL AND a.plat_bot_id = b.bot_id))
+                  AND a.creator_id = b.creator_id
+                  AND b.status_cd = '00A'
+                  AND b.action_type = 'close')
+    </if>
+    <choose>
+      <when test="query.isTest">
+        AND a.is_test = 'T'
+      </when>
+      <otherwise>
+        AND a.is_test IS NULL
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time desc
+  </select>
+
+  <select id="getSessionByPlatBotId" resultType="com.iwhalecloud.bote.dto.chat.SessionDTO">
+    SELECT
+    <include refid="sessionColumns"/>
+    FROM bt_bot_session a
+    WHERE plat_bot_id = #{platBotId}
+    <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+      AND status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectSessionScenePage" resultType="com.iwhalecloud.bote.dto.chat.export.SessionSceneDTO">
+    SELECT a.session_id,
+           a.session_title,
+           a.created_time,
+           a.updated_time,
+           b.bot_name,
+           b.bot_id,
+           d.scene_name,
+           d.scene_id,
+           e.real_name AS updatorName,
+           a.bot_tenant_id
+    FROM bt_bot_session a
+           LEFT JOIN bt_bot b ON a.bot_id = b.bot_id
+           LEFT JOIN bt_bot_session_msg c ON a.session_id = c.session_id
+           LEFT JOIN bt_bot_scene d ON c.scene_id = d.scene_id
+           LEFT JOIN bt_user e ON a.updator_id = e.user_id
+    WHERE a.status_cd = '00A'
+        AND a.tenant_id = #{query.tenantId}
+      <if test="query.botId != null">
+        AND a.bot_id = #{query.botId}
+      </if>
+      <if test="query.sceneId != null">
+        AND c.scene_id = #{query.sceneId}
+      </if>
+      <if test="query.minBeginTime != null">
+        AND a.created_time &gt;= #{query.minBeginTime}
+      </if>
+      <if test="query.maxBeginTime != null">
+        AND a.created_time &lt;= #{query.maxBeginTime}
+      </if>
+      <if test="query.sessionId != null">
+        AND a.session_id = #{query.sessionId}
+      </if>
+    GROUP BY a.session_id, a.session_title, a.created_time, b.bot_name, d.scene_name, e.real_name, d.scene_id, b.bot_id, a.updated_time, a.bot_tenant_id
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSceneBySessionId" resultType="com.iwhalecloud.bote.dto.chat.export.SessionSceneDTO">
+    SELECT distinct
+           b.scene_id,
+           b.scene_name
+    FROM bt_bot_session a
+          LEFT JOIN bt_bot_session_msg c ON a.session_id = c.session_id
+          LEFT JOIN bt_bot_scene b ON c.scene_id = b.scene_id
+    WHERE a.session_id = #{sessionId} AND c.scene_id IS NOT NULL
+  </select>
+
+  <select id="getSessionByGroupId" resultType="com.iwhalecloud.bote.dto.chat.SessionDTO">
+    SELECT session_id
+    FROM bt_bot_session
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND creator_id = #{userId}
+      AND remark = #{groupId}
+  </select>
+
+  <select id="selectCompressedSummary" resultType="java.lang.String">
+    SELECT compressed_summary
+    FROM bt_bot_session
+    WHERE session_id = #{sessionId}
+  </select>
+
+  <update id="updateCompressedSummary">
+    UPDATE bt_bot_session
+    SET compressed_summary = #{compressedSummary}
+    WHERE session_id = #{sessionId}
+  </update>
+</mapper>

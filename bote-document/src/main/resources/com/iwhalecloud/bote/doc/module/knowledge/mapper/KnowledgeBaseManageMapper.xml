@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeBaseManageMapper">
+
+  <sql id="knowledgeBaseColumns">
+    a.knowledge_id,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.knowledge_type,
+    a.topic_id,
+    a.knowledge_name,
+    a.knowledge_desc,
+    a.knowledge_icon,
+    a.file_counts,
+    a.error_message,
+    a.knowledge_status,
+    a.publish_time,
+    a.knowledge_strategy,
+    a.ext_config_json,
+    a.is_exist,
+    a.is_temporary,
+    a.visibility_scope,
+    a.color,
+    a.owner_id,
+    a.kb_code,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.space_id
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.knowledge_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.knowledgeStatus != null and query.knowledgeStatus != ''">
+      AND a.knowledge_status = #{query.knowledgeStatus}
+    </if>
+    <if test="query.knowledgeType != null and query.knowledgeType != ''">
+      AND a.knowledge_type = #{query.knowledgeType}
+    </if>
+    <choose>
+      <when test="query.sort == 'asc'.toString()">
+        ORDER BY a.created_time ASC
+      </when>
+      <otherwise>
+        ORDER BY a.created_time DESC
+      </otherwise>
+    </choose>
+  </sql>
+
+  <sql id="batchQueryCondition2">
+    AND a.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.unTenantId != null">
+      AND a.tenant_id != #{query.unTenantId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.knowledge_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.knowledgeStatus != null and query.knowledgeStatus != ''">
+      AND a.knowledge_status = #{query.knowledgeStatus}
+    </if>
+    <if test="query.knowledgeType != null and query.knowledgeType != ''">
+      AND a.knowledge_type = #{query.knowledgeType}
+    </if>
+  </sql>
+  <sql id="sqlSort">
+    <choose>
+      <when test="query.sort == 'asc'.toString()">
+        ORDER BY a.created_time ASC
+      </when>
+      <otherwise>
+        ORDER BY a.created_time DESC
+      </otherwise>
+    </choose>
+  </sql>
+
+  <select id="existsKnowledgeBaseName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+      AND tenant_id = #{dto.tenantId}
+      AND knowledge_name = #{dto.knowledgeName}
+    <if test="dto.knowledgeId != null">
+      AND knowledge_id != #{dto.knowledgeId}
+    </if>
+    <if test="dto.spaceId != null">
+      AND space_id = #{dto.spaceId}
+    </if>
+  </select>
+
+  <select id="getKnowledgeBase" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT
+    <include refid="knowledgeBaseColumns"/>,
+    CASE WHEN pin.target_id IS NOT NULL THEN 1 ELSE 0 END as isTopPinned,
+    CASE WHEN uf.target_id IS NOT NULL THEN 1 ELSE 0 END as isFavorite
+    FROM bt_knowledge_base a
+    LEFT JOIN bt_dc_user_homepage_pin pin ON a.kb_code = pin.target_id  and a.tenant_id=pin.tenant_id
+    AND pin.target_type = 'KNOWLEDGE'
+    AND pin.status_cd = '00A' AND pin.user_id=#{userId}
+    LEFT JOIN bt_dc_user_favorite uf ON a.kb_code = uf.target_id  and a.tenant_id=uf.tenant_id
+    AND uf.target_type = 'KNOWLEDGE'
+    AND uf.status_cd = '00A' AND uf.user_id=#{userId}
+    WHERE a.knowledge_id = #{knowledgeId}
+      AND a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectKnowledgeStatus" resultType="java.lang.String">
+    SELECT knowledge_status
+    FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+      AND knowledge_id = #{knowledgeId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertKnowledgeBase">
+    INSERT INTO bt_knowledge_base (
+    knowledge_id,
+    catalog_item_id,
+    tenant_id,
+    space_id,
+    knowledge_type,
+    topic_id,
+    knowledge_name,
+    knowledge_desc,
+    knowledge_icon,
+    file_counts,
+    error_message,
+    knowledge_status,
+    publish_time,
+    knowledge_strategy,
+    ext_config_json,
+    is_exist,
+    is_temporary,
+    visibility_scope,
+    kb_code,
+    color,
+    owner_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time
+    ) VALUES (
+    #{dto.knowledgeId},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    #{dto.spaceId},
+    #{dto.knowledgeType},
+    #{dto.topicId},
+    #{dto.knowledgeName},
+    #{dto.knowledgeDesc},
+    #{dto.knowledgeIcon},
+    #{dto.fileCounts},
+    #{dto.errorMessage},
+    #{dto.knowledgeStatus},
+    #{dto.publishTime},
+    #{dto.knowledgeStrategy},
+    #{dto.extConfigJson},
+    #{dto.isExist},
+    #{dto.isTemporary},
+    #{dto.visibilityScope},
+    #{dto.kbCode},
+    #{dto.color},
+    #{dto.ownerId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <update id="updateKnowledgeBase">
+    UPDATE bt_knowledge_base
+    <set>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('knowledgeType')">
+        knowledge_type = #{dto.knowledgeType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('topicId')">
+        topic_id = #{dto.topicId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('color')">
+        color = #{dto.color},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('knowledgeName')">
+        knowledge_name = #{dto.knowledgeName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('knowledgeDesc')">
+        knowledge_desc = #{dto.knowledgeDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('knowledgeIcon')">
+        knowledge_icon = #{dto.knowledgeIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('fileCounts')">
+        file_counts = #{dto.fileCounts},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('knowledgeStatus')">
+        knowledge_status = #{dto.knowledgeStatus},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('publishTime')">
+        publish_time = #{dto.publishTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('knowledgeStrategy')">
+        knowledge_strategy = #{dto.knowledgeStrategy},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('extConfigJson')">
+        ext_config_json = #{dto.extConfigJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('errorMessage')">
+        error_message = #{dto.errorMessage},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isExist')">
+        is_exist = #{dto.isExist},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isTemporary')">
+        is_temporary = #{dto.isTemporary},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE knowledge_id = #{dto.knowledgeId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateKnowledgeForRebuild">
+    UPDATE bt_knowledge_base
+    SET topic_id = #{dto.topicId},
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE knowledge_id = #{dto.knowledgeId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteKnowledgeBase">
+    UPDATE bt_knowledge_base
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE knowledge_id = #{knowledgeId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectKnowledgeBaseList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleKnowledgeBaseDTO">
+    SELECT
+    a.tenant_id,
+    a.knowledge_id,
+    a.knowledge_name,
+    a.knowledge_desc,
+    a.knowledge_icon,
+    a.knowledge_type,
+    a.created_time,
+    a.owner_id,
+    a.space_id
+    FROM bt_knowledge_base a
+    WHERE 1=1
+    <include refid="batchQueryCondition2"/>
+    <if test="query.superAdmin!= true">
+    AND (
+       a.owner_id = #{query.userId}
+      OR a.visibility_scope = 'PUBLIC'
+      OR a.knowledge_id in(select bp.kb_id from bt_dc_kb_permission bp where bp.status_cd = '00A' and ((bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>))
+      )
+    </if>
+    <include refid="sqlSort"/>
+  </select>
+
+  <select id="selectKnowledgeBasePage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT
+    <include refid="knowledgeBaseColumns"/>,
+    CASE WHEN pin.target_id IS NOT NULL THEN 1 ELSE 0 END as isTopPinned,
+    CASE WHEN uf.target_id IS NOT NULL THEN 1 ELSE 0 END as isFavorite
+    FROM bt_knowledge_base a
+    LEFT JOIN bt_dc_user_homepage_pin pin ON a.kb_code = pin.target_id and pin.tenant_id=#{query.pinTenantId}
+    AND pin.target_type = 'KNOWLEDGE'
+    AND pin.status_cd = '00A' AND pin.user_id=#{query.userId}
+    LEFT JOIN bt_dc_user_favorite uf ON a.kb_code = uf.target_id and uf.tenant_id=#{query.pinTenantId}
+    AND uf.target_type = 'KNOWLEDGE'
+    AND uf.status_cd = '00A' AND uf.user_id=#{query.userId}
+    WHERE 1=1
+    <include refid="batchQueryCondition2"/>
+    <if test="query.superAdmin!= true">
+    AND (
+       a.owner_id = #{query.userId}
+      OR a.visibility_scope = 'PUBLIC'
+      OR a.knowledge_id in(select bp.kb_id from bt_dc_kb_permission bp where bp.status_cd = '00A' and ((bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>))
+      )
+    </if>
+    <include refid="sqlSort"/>
+  </select>
+
+  <select id="selectSimpleKnowledgeBasePage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleKnowledgeBaseDTO">
+    SELECT
+    a.tenant_id,
+    a.knowledge_id,
+    a.knowledge_name,
+    a.knowledge_desc,
+    a.knowledge_icon,
+    a.color,
+    a.created_time,
+    a.space_id
+    CASE WHEN pin.target_id IS NOT NULL THEN 1 ELSE 0 END as isTopPinned,
+    CASE WHEN uf.target_id IS NOT NULL THEN 1 ELSE 0 END as isFavorite
+    FROM bt_knowledge_base a
+    LEFT JOIN bt_dc_user_homepage_pin pin ON a.kb_code = pin.target_id and a.tenant_id=pin.tenant_id
+    AND pin.target_type = 'KNOWLEDGE'
+    AND pin.status_cd = '00A' AND pin.user_id=#{query.userId}
+    LEFT JOIN bt_dc_user_favorite uf ON a.kb_code = uf.target_id and a.tenant_id=uf.tenant_id
+    AND uf.target_type = 'KNOWLEDGE'
+    AND uf.status_cd = '00A' AND uf.user_id=#{query.userId}
+    WHERE 1=1
+    <include refid="batchQueryCondition2"/>
+    <if test="query.superAdmin!= true">
+    AND (
+       a.owner_id = #{query.userId}
+      OR a.visibility_scope = 'PUBLIC'
+      OR a.knowledge_id in(select bp.kb_id from bt_dc_kb_permission bp where bp.status_cd = '00A' and ((bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>))
+      )
+    </if>
+    <include refid="sqlSort"/>
+  </select>
+
+  <select id="getSimpleKnowledge" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleKnowledgeBaseDTO">
+    SELECT
+    tenant_id,
+    knowledge_id,
+    knowledge_name,
+    knowledge_desc,
+    knowledge_icon,
+    knowledge_type,
+    space_id
+    FROM bt_knowledge_base a
+    WHERE 1=1
+      AND status_cd ='00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id = #{knowledgeId}
+  </select>
+
+  <select id="selectKnowledgeComboboxPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeComboboxDTO">
+    SELECT a.knowledge_id, a.knowledge_name, a.knowledge_desc, a.knowledge_type, a.created_time
+    FROM bt_knowledge_base a
+    WHERE a.status_cd = '00A'
+     <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.knowledge_name LIKE<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.knowledgeType != null and query.knowledgeType != ''">
+      AND a.knowledge_type = #{query.knowledgeType}
+    </if>
+    <if test="query.superAdmin!= true">
+    AND (
+       a.owner_id = #{query.userId}
+      OR a.visibility_scope = 'PUBLIC'
+      OR a.knowledge_id in(select bp.kb_id from bt_dc_kb_permission bp where bp.status_cd = '00A' and ((bp.subject_type = 'USER' AND bp.subject_id = #{query.userId})
+      <if test="query.deptIds != null and query.deptIds.size() > 0">
+        OR (bp.subject_type = 'ORG' AND bp.subject_id IN (<foreach collection="query.deptIds" item="id" separator=", ">#{id}</foreach>))
+      </if>))
+      )
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectSimpleKnowledgeById" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT knowledge_id,
+           knowledge_name,
+           knowledge_type,
+           topic_id,
+           knowledge_strategy,
+           ext_config_json,
+           visibility_scope,
+           owner_id,
+           is_exist,
+           catalog_item_id,
+           kb_code,
+           space_id,
+           tenant_id
+    FROM bt_knowledge_base
+    WHERE status_cd ='00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id = #{knowledgeId}
+  </select>
+
+  <select id="selectSimpleKnowledgeByIds" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT knowledge_id, knowledge_name, knowledge_type, topic_id, knowledge_strategy, ext_config_json, visibility_scope, owner_id,is_exist,tenant_id,space_id
+    FROM bt_knowledge_base
+    WHERE status_cd ='00A'
+      AND tenant_id = #{tenantId}
+      AND knowledge_id IN (<foreach collection="knowledgeIds" item="knowledgeId" separator=",">#{knowledgeId}</foreach>)
+  </select>
+
+  <select id="selectAllDocChainExtraCfg" resultType="com.iwhalecloud.bote.dto.knowledge.docchain.DocChainExtraCfgDTO">
+    SELECT id, name, code, tip, comp_type,
+           static_code, setter_options, group_name, group_code, is_hidden, is_required,
+           is_redo, is_root, default_value, sortby, is_dynamic, relation_json,ext_group_name
+    FROM bt_docchain_extra_cfg
+    WHERE status_cd = '00A'
+    ORDER BY id
+  </select>
+
+  <select id="selectDynamicDocChainExtraCfg" resultType="com.iwhalecloud.bote.dto.knowledge.docchain.DocChainExtraCfgDTO">
+    SELECT id, name, code, tip, comp_type,
+           static_code, setter_options, group_name, group_code, is_hidden, is_required,
+           is_redo, is_root, default_value, sortby, is_dynamic, relation_json
+    FROM bt_docchain_extra_cfg
+    WHERE status_cd = '00A'
+    AND is_dynamic = 'T'
+  </select>
+
+  <update id="updateDocChainExtraCfgTime">
+    UPDATE bt_docchain_extra_cfg
+    SET updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = 1
+  </update>
+  <select id="selectKnowledgeBaseById" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
+    SELECT
+    <include refid="knowledgeBaseColumns"/>
+    from bt_knowledge_base a where a.status_cd ='00A' and a.knowledge_id = #{knowledgeId}
+  </select>
+  <update id="updateKnowledgeBaseVisibilityScope">
+    UPDATE bt_knowledge_base SET visibility_scope=#{visibilityScope},updator_id=#{userId},updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where knowledge_id = #{knowledgeId} AND tenant_id = #{tenantId}
+  </update>
+</mapper>

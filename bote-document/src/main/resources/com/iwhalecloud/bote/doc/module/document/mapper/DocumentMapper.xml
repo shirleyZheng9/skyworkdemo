@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocumentMapper">
+  <!-- @formatter:off -->
+  <sql id="documentColumns">
+    id, document_id, document_name, library_id, parent_id, document_type, content_source,
+           revision, word_count, view_count,
+           is_convert, is_builtin, builtin_type, prev_document_id, tenant_id, space_id, creator_id, updator_id,
+           created_time, updated_time, status_cd, file_info_id, permission_mode, released, data_url
+  </sql>
+  <!-- @formatter:on -->
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+    SELECT <include refid="documentColumns" />
+    FROM bt_dc_document
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocumentIdAndTenantId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+    SELECT <include refid="documentColumns" />
+    FROM bt_dc_document
+    WHERE document_id = #{documentId}
+    <if test="tenantId != null and platform != 'portal'">
+      AND tenant_id = #{tenantId}
+    </if>
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectLibraryIdByDocumentId" resultType="java.lang.String">
+    select library_id
+    from bt_dc_document
+    where document_id = #{documentId}
+      and status_cd = '00A'
+  </select>
+
+  <select id="selectRevisionByDocumentId" resultType="java.lang.Long">
+    SELECT revision
+    FROM bt_dc_document
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectDocumentNamesByLibraryId" resultType="java.lang.String">
+    SELECT document_name
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND status_cd = '00A'
+    ORDER BY document_name
+  </select>
+
+  <!-- MySQL / PostgreSQL 使用 LIMIT 1 -->
+  <select id="selectFirstSiblingDocumentId" resultType="java.lang.String">
+    SELECT document_id
+    FROM bt_dc_document
+    WHERE parent_id = #{parentId}
+      AND status_cd = '00A'
+      AND prev_document_id IS NULL
+    ORDER BY created_time DESC
+    LIMIT 1
+  </select>
+
+  <!-- Oracle 使用 ROWNUM 取首条 -->
+  <select id="selectFirstSiblingDocumentId" resultType="java.lang.String" databaseId="oracle">
+    SELECT document_id
+    FROM (
+      SELECT document_id
+      FROM bt_dc_document
+      WHERE parent_id = #{parentId}
+        AND status_cd = '00A'
+        AND prev_document_id IS NULL
+      ORDER BY created_time DESC
+    )
+    WHERE ROWNUM &lt;= 1
+  </select>
+  <select id="selectByLibraryIdAndDocumentIds" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+    SELECT
+    <include refid="documentColumns"/>
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+    and document_id in
+    <foreach item="item" index="index" collection="documentIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND status_cd = '00A'
+  </select>
+
+  <select id="findBatchByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO">
+    SELECT
+    a.id, a.document_id, a.document_name, a.library_id, a.parent_id, a.document_type, a.content_source, a.revision, a.word_count, a.view_count,
+    a.is_convert, a.is_builtin, a.builtin_type, a.prev_document_id, a.tenant_id, a.creator_id, a.updator_id,
+    a.created_time, a.updated_time, a.status_cd, a.file_info_id, a.released, a.data_url, b.file_id
+    FROM bt_dc_document a
+    LEFT JOIN bt_file_info b ON a.file_info_id = b.file_info_id AND b.status_cd = '00A' and b.tenant_id=a.tenant_id
+    where a.document_id in
+    <foreach item="item" index="index" collection="documentIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="selectByNameAndParent" resultType="com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO">
+    SELECT
+    <include refid="documentColumns"/>
+    FROM bt_dc_document
+    WHERE document_name = #{documentName}
+    AND parent_id = #{parentId}
+    AND library_id = #{libraryId}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_document (id, document_id, document_name, library_id, parent_id, document_type,
+    content_source, file_info_id,
+    revision, word_count, view_count, is_convert, is_builtin, builtin_type, prev_document_id,
+    tenant_id, space_id, creator_id, updator_id, created_time, updated_time, status_cd, released, data_url)
+    VALUES (
+    #{document.id},
+    #{document.documentId},
+    #{document.documentName},
+    #{document.libraryId},
+    #{document.parentId},
+    #{document.documentType},
+    #{document.contentSource},
+    #{document.fileInfoId},
+    #{document.revision},
+    #{document.wordCount},
+    #{document.viewCount},
+    #{document.isConvert},
+    #{document.isBuiltin},
+    #{document.builtinType},
+    #{document.prevDocumentId},
+    #{document.tenantId},
+    #{document.spaceId},
+    #{document.creatorId},
+    #{document.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{document.statusCd},
+    #{document.released},
+    #{document.dataUrl}
+    )
+  </insert>
+
+  <!-- Oracle 批量插入使用 INSERT ALL 写法 -->
+  <insert id="batchInsert" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="documents" item="document" index="index" separator=" ">
+      INTO bt_dc_document (id, document_id, document_name, library_id, parent_id, document_type,
+      content_source, file_info_id,
+      revision, word_count, view_count, is_convert, is_builtin, builtin_type, prev_document_id,
+      tenant_id, space_id, creator_id, updator_id, created_time, updated_time, status_cd, released, data_url)
+      VALUES (
+      #{document.id},
+      #{document.documentId},
+      #{document.documentName},
+      #{document.libraryId},
+      #{document.parentId},
+      #{document.documentType},
+      #{document.contentSource},
+      #{document.fileInfoId},
+      #{document.revision},
+      #{document.wordCount},
+      #{document.viewCount},
+      #{document.isConvert},
+      #{document.isBuiltin},
+      #{document.builtinType},
+      #{document.prevDocumentId},
+      #{document.tenantId},
+      #{document.spaceId},
+      #{document.creatorId},
+      #{document.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{document.statusCd},
+      #{document.released},
+      #{document.dataUrl}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <insert id="batchInsert">
+    INSERT INTO bt_dc_document (id, document_id, document_name, library_id, parent_id, document_type,
+    content_source, file_info_id,
+    revision, word_count, view_count, is_convert, is_builtin, builtin_type, prev_document_id,
+    tenant_id, space_id, creator_id, updator_id, created_time, updated_time, status_cd, released, data_url)
+    VALUES
+    <foreach collection="documents" item="document" index="index" separator=", ">
+      (
+      #{document.id},
+      #{document.documentId},
+      #{document.documentName},
+      #{document.libraryId},
+      #{document.parentId},
+      #{document.documentType},
+      #{document.contentSource},
+      #{document.fileInfoId},
+      #{document.revision},
+      #{document.wordCount},
+      #{document.viewCount},
+      #{document.isConvert},
+      #{document.isBuiltin},
+      #{document.builtinType},
+      #{document.prevDocumentId},
+      #{document.tenantId},
+      #{document.spaceId},
+      #{document.creatorId},
+      #{document.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{document.statusCd},
+      #{document.released},
+      #{document.dataUrl}
+      )
+    </foreach>
+  </insert>
+
+  <update id="update">
+    UPDATE bt_dc_document
+    SET
+    document_name = #{document.documentName},
+    parent_id = #{document.parentId},
+    document_type = #{document.documentType},
+    content_source = #{document.contentSource},
+    file_info_id = #{document.fileInfoId},
+    revision = #{document.revision},
+    word_count = #{document.wordCount},
+    view_count = #{document.viewCount},
+    is_convert = #{document.isConvert},
+    is_builtin = #{document.isBuiltin},
+    builtin_type = #{document.builtinType},
+    prev_document_id = #{document.prevDocumentId},
+    tenant_id = #{document.tenantId},
+    space_id = #{document.spaceId},
+    updator_id = #{document.updatorId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    status_cd = #{document.statusCd}
+    WHERE document_id = #{document.documentId}
+    AND tenant_id = #{document.tenantId}
+    AND space_id = #{document.spaceId}
+  </update>
+
+    <update id="updateMoveLibrary">
+    UPDATE bt_dc_document
+    SET
+    library_id = #{document.libraryId},
+    parent_id = #{document.parentId},
+    prev_document_id = #{document.prevDocumentId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{document.documentId}
+    AND tenant_id = #{document.tenantId}
+  </update>
+
+  <update id="deleteByDocumentId">
+    UPDATE bt_dc_document
+    SET status_cd = '00X',
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+  </update>
+  <update id="updateSiblingPreDocumentId">
+    update bt_dc_document
+    set prev_document_id = #{preDocumentId},
+        updated_time     = #{updatedTime}
+    where document_id = #{documentId}
+  </update>
+  <update id="updateDocumentBasicInfo">
+    update bt_dc_document
+    set document_name = #{documentName},
+    updator_id = #{userId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where document_id = #{documentId}
+  </update>
+
+  <update id="updateUploadDocumentName">
+    update bt_dc_document
+    set document_name = #{documentName},
+    document_type = #{documentType},
+    updator_id = #{userId},
+    revision = revision + 1,
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where document_id = #{documentId} and content_source = 'UPLOAD' and status_cd = '00A'
+  </update>
+
+  <update id="rubbishByDocumentIds">
+    UPDATE bt_dc_document
+    SET status_cd = '00R',
+    updator_id= #{optUserId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id in
+    <foreach item="item" index="index" collection="documentId" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    and status_cd = '00A'
+  </update>
+
+  <select id="selectByFileNameAndSize" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+    SELECT
+    <include refid="documentColumns"/>
+    FROM bt_dc_document
+    WHERE document_name = #{fileName}
+    AND file_info_id IN (
+    SELECT id FROM bt_file_info
+    WHERE file_size = #{fileSize}
+    AND status_cd = '00A'
+    )
+    AND status_cd = '00A'
+    ORDER BY created_time DESC
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <update id="updateByDocumentId">
+    UPDATE bt_dc_document
+    SET
+    document_name = #{document.documentName},
+    parent_id = #{document.parentId},
+    document_type = #{document.documentType},
+    content_source = #{document.contentSource},
+    file_info_id = #{document.fileInfoId},
+    revision = #{document.revision},
+    word_count = #{document.wordCount},
+    view_count = #{document.viewCount},
+    is_convert = #{document.isConvert},
+    is_builtin = #{document.isBuiltin},
+    builtin_type = #{document.builtinType},
+    prev_document_id = #{document.prevDocumentId},
+    tenant_id = #{document.tenantId},
+    space_id = #{document.spaceId},
+    updator_id = #{document.updatorId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    status_cd = #{document.statusCd}
+    WHERE document_id = #{document.documentId}
+    AND tenant_id = #{document.tenantId}
+    AND space_id = #{document.spaceId}
+  </update>
+  <update id="updateLibraryRootNodeName">
+    update bt_dc_document
+    set document_name = #{libraryName},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where library_id = #{libraryId}
+    and document_type = 'ROOT'
+    and status_cd = '00A'
+  </update>
+  <update id="updateLastModify">
+    update bt_dc_document
+    set updator_id = #{updatorId},
+    revision = revision + 1,
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where document_id = #{documentId}
+    and status_cd = '00A'
+  </update>
+
+  <select id="selectDocumentsByLibraryId" resultType="com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO">
+    SELECT <include refid="documentColumns" />
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND status_cd = '00A'
+    ORDER BY document_name
+  </select>
+
+  <select id="selectRootNodeByLibraryId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+    SELECT <include refid="documentColumns" />
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND document_type = 'ROOT'
+      AND parent_id = '0'
+      AND status_cd = '00A'
+  </select>
+
+  <update id="updateDocumentPermissionMode">
+    update bt_dc_document
+    set permission_mode = #{permissionMode},
+    updator_id = #{updatorId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where document_id = #{documentId}
+    and status_cd = '00A'
+  </update>
+
+  <select id="findLibraryBatchByDocumentId"
+          resultType="com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO">
+    SELECT
+    a.document_id, a.library_id
+    FROM bt_dc_document a
+    where a.document_id in
+    <foreach item="item" index="index" collection="documentIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND a.status_cd = '00A'
+  </select>
+
+  <update id="updateConvertedToOnlineDocument">
+    UPDATE bt_dc_document
+    SET document_name = #{documentName},
+        document_type = 'WORD_ONLINE',
+        content_source = 'ONLINE',
+        is_convert = 'T',
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </update>
+  <update id="updateConvertedToOnlineWorkbook">
+    UPDATE bt_dc_document
+    SET document_name = #{documentName},
+        document_type = 'EXCEL_ONLINE',
+        content_source = 'ONLINE',
+        is_convert = 'T',
+        updator_id = #{userId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </update>
+  <update id="updateMoveLibraryBySubNodeIds">
+   UPDATE bt_dc_document
+    SET
+    library_id = #{libraryId},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id in <foreach item="item" index="index" collection="documentIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND status_cd = '00A'
+  </update>
+  <update id="updateReleasedType">
+    UPDATE bt_dc_document
+    SET released = #{releasedType},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </update>
+  <select id="queryDocumentReleased" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentReleasedDTO">
+  SELECT released,document_id,document_name,document_type,tenant_id,space_id
+    FROM bt_dc_document
+    WHERE document_id = #{documentId}
+      AND status_cd = '00A'
+  </select>
+  <select id="findFoldersByLibraryId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+  SELECT <include refid="documentColumns" />
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND document_type = 'FOLDER'
+      AND tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+  <update id="updatePreDocumentId">
+  UPDATE bt_dc_document
+    SET prev_document_id = #{documentId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE prev_document_id = #{prevDocumentId}
+      AND status_cd = '00A'
+  </update>
+  <select id="existsDocumentByName" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_dc_document
+    WHERE status_cd = '00A'
+      AND library_id = #{libraryId}
+      AND document_name= #{fileName}
+      AND parent_id=#{parentId}
+    <if test="documentId != null and documentId !=''">
+      AND document_id != #{documentId}
+    </if>
+    <if test="documentType != null and documentType !=''">
+      AND document_type = #{documentType}
+    </if>
+    <if test="contentSource != null and contentSource !=''">
+      AND content_source = #{contentSource}
+    </if>
+  </select>
+</mapper>

@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.DocumentParameterManageMapper">
+
+  <sql id="documentParameterColumns">
+    a.parameter_id,
+    a.document_id,
+    a.parameter_name,
+    a.default_value,
+    a.mapping_code,
+    a.data_type,
+    a.sort,
+    a.tenant_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertDocumentParameter">
+    INSERT INTO bt_document_parameter (
+    parameter_id,
+    document_id,
+    parameter_name,
+    default_value,
+    mapping_code,
+    data_type,
+    sort,
+    tenant_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.parameterId},
+    #{dto.documentId},
+    #{dto.parameterName},
+    #{dto.defaultValue},
+    #{dto.mappingCode},
+    #{dto.dataType},
+    #{dto.sort},
+    #{dto.tenantId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertDocumentParameter">
+    INSERT INTO bt_document_parameter (
+    parameter_id,
+    document_id,
+    parameter_name,
+    default_value,
+    mapping_code,
+    data_type,
+    sort,
+    tenant_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.parameterId},
+    #{dto.documentId},
+    #{dto.parameterName},
+    #{dto.defaultValue},
+    #{dto.mappingCode},
+    #{dto.dataType},
+    #{dto.sort},
+    #{dto.tenantId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertDocumentParameter" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_document_parameter (
+      parameter_id,
+      document_id,
+      parameter_name,
+      default_value,
+      mapping_code,
+      data_type,
+      sort,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.parameterId},
+      #{dto.documentId},
+      #{dto.parameterName},
+      #{dto.defaultValue},
+      #{dto.mappingCode},
+      #{dto.dataType},
+      #{dto.sort},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateDocumentParameter">
+    UPDATE bt_document_parameter
+    <set>
+    <if test="dto.checkFieldUpdateFlag('parameterId')">
+      parameter_id = #{dto.parameterId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('documentId')">
+      document_id = #{dto.documentId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('parameterName')">
+      parameter_name = #{dto.parameterName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('parameterCode')">
+        parameter_code = #{dto.parameterCode},
+    </if>
+      default_value = #{dto.defaultValue},
+    <if test="dto.checkFieldUpdateFlag('mappingCode')">
+      mapping_code = #{dto.mappingCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('dataType')">
+      data_type = #{dto.dataType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('sort')">
+      sort = #{dto.sort},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('tenantId')">
+      tenant_id = #{dto.tenantId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('creatorId')">
+      creator_id = #{dto.creatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('updatorId')">
+      updator_id = #{dto.updatorId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE parameter_id = #{dto.parameterId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteDocumentParameterByDocumentId">
+    UPDATE bt_document_parameter
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE document_id = #{documentId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectDocumentParameterList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentParameterDTO">
+    SELECT
+    <include refid="documentParameterColumns"/>
+    FROM bt_document_parameter a
+    WHERE a.status_cd = '00A'
+    AND a.document_id = #{documentId}
+    AND a.tenant_id = #{tenantId}
+    ORDER BY a.sort ASC
+  </select>
+
+  <select id="selectParameterList" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentParameterDTO">
+    SELECT
+    <include refid="documentParameterColumns"/>
+    FROM bt_document_parameter a
+    WHERE a.status_cd = '00A'
+    <if test="query.documentId != null">
+      AND a.document_id = #{query.documentId}
+    </if>
+    <if test="query.documentIds != null and !query.documentIds.isEmpty()">
+      AND a.document_id IN (<foreach collection="query.documentIds" item="id" separator=",">#{id}</foreach>)
+    </if>
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.parameter_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.sort ASC
+  </select>
+
+  <select id="selectDocumentParameterPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentParameterDTO">
+    SELECT
+    <include refid="documentParameterColumns"/>
+    FROM bt_document_parameter a
+    WHERE a.status_cd = '00A'
+    AND a.document_id = #{query.documentId}
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != null and query.searchContent != ''">
+    AND a.parameter_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.sort ASC
+  </select>
+</mapper>

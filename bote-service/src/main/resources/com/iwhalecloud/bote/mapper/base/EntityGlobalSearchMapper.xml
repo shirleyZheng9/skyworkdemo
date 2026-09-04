@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.EntityGlobalSearchMapper">
+
+  <select id="selectBotByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT bot_id AS entityId, bot_name AS entityName
+    FROM bt_bot
+    WHERE status_cd = '00A'
+    AND bot_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSceneByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT scene_id AS entityId, scene_name AS entityName
+    FROM bt_bot_scene
+    WHERE status_cd = '00A'
+    AND scene_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillServiceByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT service_id AS entityId, service_name AS entityName, service_code AS entityCode
+    FROM bt_skill_service
+    WHERE status_cd = '00A'
+    AND service_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillFlowByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT flow_id AS entityId, flow_name AS entityName, flow_code AS entityCode
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+    AND flow_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillPageByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT page_id AS entityId, page_name AS entityName, page_code AS entityCode
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+    AND page_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillFunctionByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT func_id AS entityId, func_name AS entityName, func_code AS entityCode
+    FROM bt_skill_function
+    WHERE status_cd = '00A'
+    AND func_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillAttrByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT attr_id AS entityId, attr_name AS entityName, attr_nbr AS entityCode
+    FROM bt_skill_attr_spec
+    WHERE status_cd = '00A'
+    AND attr_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillPluginByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT api_id AS entityId, api_name AS entityName, api_code AS entityCode
+    FROM bt_skill_plugin
+    WHERE status_cd = '00A'
+    AND api_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillPageFuncByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT page_func_id AS entityId, func_name AS entityName, func_code AS entityCode
+    FROM bt_skill_page_func
+    WHERE status_cd = '00A'
+    AND page_func_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillSqlByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT service_id AS entityId, service_name AS entityName, service_code AS entityCode
+    FROM bt_skill_sql
+    WHERE status_cd = '00A'
+    AND service_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectKnowledgeByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT knowledge_id AS entityId, knowledge_name AS entityName
+    FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+    AND knowledge_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectLargeModelByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT model_id AS entityId, model_name AS entityName
+    FROM bt_library_large_model
+    WHERE status_cd = '00A'
+    AND model_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectDataTableByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT table_id AS entityId, table_code AS entityName
+    FROM bt_data_table
+    WHERE status_cd = '00A'
+    AND table_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectPromptByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT id AS entityId, name AS entityName
+    FROM bt_prompt_basic
+    WHERE  id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND space_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectDataSourceByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT data_source_id AS entityId, data_source_name AS entityName
+    FROM bt_data_source
+    WHERE status_cd = '00A'
+    AND data_source_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectMcpByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT server_id AS entityId, server_name AS entityName
+    FROM bt_mcp_server
+    WHERE status_cd = '00A'
+    AND server_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectA2AByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT agent_id AS entityId, agent_name AS entityName
+    FROM bt_a2a_agent
+    WHERE status_cd = '00A'
+    AND agent_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectCopilotPointByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT point_id AS entityId, point_name AS entityName
+    FROM bt_copilot_point
+    WHERE status_cd = '00A'
+    AND point_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectServicePlatformByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT platform_id AS entityId, platform_name AS entityName
+    FROM bt_service_platform
+    WHERE status_cd = '00A'
+    AND platform_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectJobByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT bss_job_id AS entityId, bss_job_name AS entityName
+    FROM bt_job
+    WHERE state in ('00A', '00W')
+    AND bss_job_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectPluginByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT plugin_id AS entityId, plugin_name AS entityName
+    FROM bt_plugin
+    WHERE status_cd = '00A'
+    AND plugin_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectEnvByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT variable_id AS entityId, variable_name AS entityName
+    FROM bt_env_variable
+    WHERE status_cd = '00A'
+    AND variable_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectAgentSkillByIds" resultType="com.iwhalecloud.bote.dto.base.EntityInfoDTO">
+    SELECT skill_id AS entityId, skill_name AS entityName
+    FROM bt_agent_skill
+    WHERE status_cd = '00A'
+    AND skill_id IN (<foreach item="id" collection="ids" separator=",">#{id}</foreach>)
+    AND tenant_id IN (#{tenantId}, -1)
+  </select>
+</mapper>

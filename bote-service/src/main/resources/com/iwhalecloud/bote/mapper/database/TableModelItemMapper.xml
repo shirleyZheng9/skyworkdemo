@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.database.TableModelItemMapper">
+
+  <sql id="tableModelItemColums">
+    a.item_id,
+    a.table_id,
+    a.change_sql,
+    a.tenant_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertTableModelItem">
+    INSERT INTO bt_table_model_item (
+      item_id,
+      table_id,
+      change_sql,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark
+    ) VALUES (
+      #{dto.itemId},
+      #{dto.tableId},
+      #{dto.changeSql},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+     )
+  </insert>
+
+  <select id="selectTableModelItem" resultType="com.iwhalecloud.bote.dto.database.TableModelItemDTO">
+    SELECT <include refid="tableModelItemColums"/>
+    FROM bt_table_model_item a
+    WHERE a.status_cd = '00A'
+      AND a.item_id = #{itemId}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectTableModelItemPage" resultType="com.iwhalecloud.bote.dto.database.TableModelItemDTO">
+    SELECT <include refid="tableModelItemColums"/>
+    FROM bt_table_model_item a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+    <if test="tableId != null">
+      AND a.table_id = #{tableId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectItemListForExport" resultType="com.iwhalecloud.bote.dto.database.TableModelItemDTO">
+    SELECT a.item_id, a.table_id, a.change_sql, a.tenant_id,
+         s.data_source_code
+    FROM bt_table_model_item a
+    JOIN bt_data_table b ON b.table_id = a.table_id AND b.tenant_id = a.tenant_id
+    JOIN bt_data_source s ON s.data_source_id = b.data_source_id AND s.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+    <if test="tableIds != null and tableIds.size() > 0">
+      AND a.table_id IN (<foreach collection="tableIds" item="tableId" separator=", ">#{tableId}</foreach>)
+    </if>
+    ORDER BY a.item_id
+  </select>
+
+  <update id="deleteTableModelItem">
+    UPDATE bt_table_model_item
+    SET status_cd = '00X',
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND item_id = #{itemId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+</mapper>
+

@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.oauth.OAuth2ClientManageMapper">
+
+  <sql id="oauth2ClientColumns">
+    a.client_id,
+    a.client_code,
+    a.client_secret,
+    a.client_name,
+    a.description_info,
+    a.grant_types,
+    a.scopes,
+    a.enabled,
+    a.access_token_expire_seconds,
+    a.refresh_token_expire_seconds,
+    a.auth_code_expire_seconds,
+    a.status_cd,
+    a.creator_id,
+    a.updator_id,
+    a.created_time,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.clientCode != null and query.clientCode != ''">
+      AND a.client_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.clientCode}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.clientName != null and query.clientName != ''">
+      AND a.client_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.clientName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.enabled != null and query.enabled != ''">
+      AND a.enabled = #{query.enabled}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.client_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.client_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+  </sql>
+
+  <select id="existsOAuth2ClientCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_oauth2_client
+    WHERE status_cd = '00A'
+    AND client_code = #{dto.clientCode}
+    <if test="dto.clientId != null">
+      AND client_id != #{dto.clientId}
+    </if>
+  </select>
+
+  <select id="getOAuth2Client" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO">
+    SELECT
+    <include refid="oauth2ClientColumns"/>
+    FROM bt_oauth2_client a
+    WHERE a.client_id = #{id}
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="getOAuth2ClientByCode" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO">
+    SELECT
+    <include refid="oauth2ClientColumns"/>
+    FROM bt_oauth2_client a
+    WHERE a.client_code = #{clientCode}
+    AND a.enabled = 'T'
+    AND a.status_cd = '00A'
+  </select>
+
+  <select id="getOAuth2ClientByCodeAndSecret" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO">
+    SELECT
+    <include refid="oauth2ClientColumns"/>
+    FROM bt_oauth2_client a
+    WHERE a.client_code = #{clientCode}
+    AND a.client_secret = #{clientSecret}
+    AND a.enabled = 'T'
+    AND a.status_cd = '00A'
+  </select>
+
+  <insert id="insertOAuth2Client">
+    INSERT INTO bt_oauth2_client (
+    client_id,
+    client_code,
+    client_secret,
+    client_name,
+    description_info,
+    grant_types,
+    scopes,
+    enabled,
+    access_token_expire_seconds,
+    refresh_token_expire_seconds,
+    auth_code_expire_seconds,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.clientId},
+    #{dto.clientCode},
+    #{dto.clientSecret},
+    #{dto.clientName},
+    #{dto.descriptionInfo},
+    #{dto.grantTypes},
+    #{dto.scopes},
+    #{dto.enabled},
+    #{dto.accessTokenExpireSeconds},
+    #{dto.refreshTokenExpireSeconds},
+    #{dto.authCodeExpireSeconds},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertOAuth2Client">
+    INSERT INTO bt_oauth2_client (
+    client_id,
+    client_code,
+    client_secret,
+    client_name,
+    description_info,
+    grant_types,
+    scopes,
+    enabled,
+    access_token_expire_seconds,
+    refresh_token_expire_seconds,
+    auth_code_expire_seconds,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.clientId},
+    #{dto.clientCode},
+    #{dto.clientSecret},
+    #{dto.clientName},
+    #{dto.descriptionInfo},
+    #{dto.grantTypes},
+    #{dto.scopes},
+    #{dto.enabled},
+    #{dto.accessTokenExpireSeconds},
+    #{dto.refreshTokenExpireSeconds},
+    #{dto.authCodeExpireSeconds},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertOAuth2Client" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO  bt_oauth2_client (
+      client_id,
+      client_code,
+      client_secret,
+      client_name,
+      description_info,
+      grant_types,
+      scopes,
+      enabled,
+      access_token_expire_seconds,
+      refresh_token_expire_seconds,
+      auth_code_expire_seconds,
+      status_cd,
+      creator_id,
+      updator_id,
+      created_time,
+      updated_time,
+      remark
+      ) VALUES (
+      #{dto.clientId},
+      #{dto.clientCode},
+      #{dto.clientSecret},
+      #{dto.clientName},
+      #{dto.descriptionInfo},
+      #{dto.grantTypes},
+      #{dto.scopes},
+      #{dto.enabled},
+      #{dto.accessTokenExpireSeconds},
+      #{dto.refreshTokenExpireSeconds},
+      #{dto.authCodeExpireSeconds},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateOAuth2Client">
+    UPDATE bt_oauth2_client
+    <set>
+    <if test="dto.checkFieldUpdateFlag('clientCode')">
+      client_code = #{dto.clientCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('clientSecret')">
+      client_secret = #{dto.clientSecret},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('clientName')">
+      client_name = #{dto.clientName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('descriptionInfo')">
+      description_info = #{dto.descriptionInfo},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('grantTypes')">
+      grant_types = #{dto.grantTypes},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('scopes')">
+      scopes = #{dto.scopes},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('enabled')">
+      enabled = #{dto.enabled},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('accessTokenExpireSeconds')">
+      access_token_expire_seconds = #{dto.accessTokenExpireSeconds},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('refreshTokenExpireSeconds')">
+      refresh_token_expire_seconds = #{dto.refreshTokenExpireSeconds},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('authCodeExpireSeconds')">
+      auth_code_expire_seconds = #{dto.authCodeExpireSeconds},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE client_id = #{dto.clientId}
+  </update>
+
+  <update id="deleteOAuth2Client">
+    UPDATE bt_oauth2_client
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE client_id = #{clientId}
+  </update>
+
+  <select id="selectOAuth2ClientList" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO">
+    SELECT
+    <include refid="oauth2ClientColumns"/>
+    FROM bt_oauth2_client a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectOAuth2ClientPage" resultType="com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO">
+    SELECT
+    <include refid="oauth2ClientColumns"/>
+    FROM bt_oauth2_client a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.created_time DESC
+  </select>
+
+</mapper>

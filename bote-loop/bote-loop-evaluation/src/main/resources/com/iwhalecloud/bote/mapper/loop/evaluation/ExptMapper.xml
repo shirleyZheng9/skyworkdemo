@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExperimentEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="name" property="name" jdbcType="VARCHAR"/>
+    <result column="description" property="description" jdbcType="VARCHAR"/>
+    <result column="eval_set_version_id" property="evalSetVersionId" jdbcType="BIGINT"/>
+    <result column="target_type" property="targetType" jdbcType="BIGINT"/>
+    <result column="target_version_id" property="targetVersionId" jdbcType="BIGINT"/>
+    <result column="eval_conf" property="evalConf" jdbcType="VARCHAR"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="status_message" property="statusMessage" jdbcType="VARCHAR"/>
+    <result column="start_at" property="startAt" jdbcType="TIMESTAMP"/>
+    <result column="end_at" property="endAt" jdbcType="TIMESTAMP"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="latest_run_id" property="latestRunId" jdbcType="BIGINT"/>
+    <result column="target_id" property="targetId" jdbcType="BIGINT"/>
+    <result column="eval_set_id" property="evalSetId" jdbcType="BIGINT"/>
+    <result column="credit_cost" property="creditCost" jdbcType="INTEGER"/>
+    <result column="source_type" property="sourceType" jdbcType="INTEGER"/>
+    <result column="source_id" property="sourceId" jdbcType="VARCHAR"/>
+    <result column="expt_type" property="exptType" jdbcType="INTEGER"/>
+    <result column="max_alive_time" property="maxAliveTime" jdbcType="BIGINT"/>
+    <result column="catalog_item_id" property="catalogItemId" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, created_by, name, description, eval_set_version_id, target_type,
+    target_version_id, eval_conf, status, status_message, start_at, end_at,
+    created_at, updated_at, deleted_at, latest_run_id, target_id, eval_set_id,
+    credit_cost, source_type, source_id, expt_type, max_alive_time, catalog_item_id
+  </sql>
+
+  <!-- 创建实验 -->
+  <insert id="create" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExperimentEntity" >
+    INSERT INTO bt_experiment (
+    id, space_id, created_by, name, description, eval_set_version_id, target_type,
+    target_version_id, eval_conf, status, status_message, start_at, end_at,
+    created_at, updated_at, deleted_at, latest_run_id, target_id, eval_set_id,
+    credit_cost, source_type, source_id, expt_type, max_alive_time, catalog_item_id
+    ) VALUES (
+    #{id}, #{spaceId}, #{createdBy}, #{name}, #{description}, #{evalSetVersionId}, #{targetType},
+    #{targetVersionId}, #{evalConf}, #{status}, #{statusMessage}, #{startAt}, #{endAt},
+    #{createdAt}, #{updatedAt}, #{deletedAt}, #{latestRunId}, #{targetId}, #{evalSetId},
+    #{creditCost}, #{sourceType}, #{sourceId}, #{exptType}, #{maxAliveTime}, #{catalogItemId}
+    )
+  </insert>
+
+  <!-- 更新实验 -->
+  <update id="update" parameterType="com.iwhalecloud.bote.entity.loop.evaluation.ExperimentEntity">
+    UPDATE bt_experiment
+    <set>
+      <if test="spaceId != null">
+        space_id = #{spaceId},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy},
+      </if>
+      <if test="name != null">
+        name = #{name},
+      </if>
+      <if test="description != null">
+        description = #{description},
+      </if>
+      <if test="evalSetVersionId != null">
+        eval_set_version_id = #{evalSetVersionId},
+      </if>
+      <if test="targetType != null">
+        target_type = #{targetType},
+      </if>
+      <if test="targetVersionId != null">
+        target_version_id = #{targetVersionId},
+      </if>
+      <if test="evalConf != null">
+        eval_conf = #{evalConf},
+      </if>
+      <if test="status != null">
+        status = #{status},
+      </if>
+      <if test="statusMessage != null">
+        status_message = #{statusMessage},
+      </if>
+      <if test="startAt != null">
+        start_at = #{startAt},
+      </if>
+      <if test="endAt != null">
+        end_at = #{endAt},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt},
+      </if>
+      <if test="latestRunId != null">
+        latest_run_id = #{latestRunId},
+      </if>
+      <if test="targetId != null">
+        target_id = #{targetId},
+      </if>
+      <if test="evalSetId != null">
+        eval_set_id = #{evalSetId},
+      </if>
+      <if test="creditCost != null">
+        credit_cost = #{creditCost},
+      </if>
+      <if test="sourceType != null">
+        source_type = #{sourceType},
+      </if>
+      <if test="sourceId != null">
+        source_id = #{sourceId},
+      </if>
+      <if test="exptType != null">
+        expt_type = #{exptType},
+      </if>
+      <if test="maxAliveTime != null">
+        max_alive_time = #{maxAliveTime},
+      </if>
+      <if test="catalogItemId != null">
+        catalog_item_id = #{catalogItemId},
+      </if>
+    </set>
+    WHERE id = #{id}
+  </update>
+
+  <!-- 删除实验 -->
+  <delete id="delete">
+    DELETE FROM bt_experiment WHERE id = #{id}
+  </delete>
+
+  <!-- 批量删除实验 -->
+  <delete id="mDelete">
+    DELETE FROM bt_experiment WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+
+  <!-- 分页查询实验列表 -->
+  <select id="list" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_experiment
+    <where>
+      space_id = #{spaceId}
+      <if test="filter != null and filter.fuzzyName != null and filter.fuzzyName != ''">
+        AND name LIKE CONCAT('%', #{filter.fuzzyName}, '%')
+      </if>
+      <if test="catalogItemId != null">
+        AND catalog_item_id = #{catalogItemId}
+      </if>
+      <if test="filter != null and filter.includes != null">
+        <if test="filter.includes.createdBy != null and filter.includes.createdBy.size > 0">
+          AND created_by IN
+          <foreach collection="filter.includes.createdBy" item="createdBy" open="(" separator="," close=")">
+            #{createdBy}
+          </foreach>
+        </if>
+        <if test="filter.includes.targetIds != null and filter.includes.targetIds.size > 0">
+          AND target_id IN
+          <foreach collection="filter.includes.targetIds" item="targetId" open="(" separator="," close=")">
+            #{targetId}
+          </foreach>
+        </if>
+        <if test="filter.includes.evalSetIds != null and filter.includes.evalSetIds.size > 0">
+          AND eval_set_id IN
+          <foreach collection="filter.includes.evalSetIds" item="evalSetId" open="(" separator="," close=")">
+            #{evalSetId}
+          </foreach>
+        </if>
+        <if test="filter.includes.status != null and filter.includes.status.size > 0">
+          AND status IN
+          <foreach collection="filter.includes.status" item="status" open="(" separator="," close=")">
+            #{status}
+          </foreach>
+        </if>
+        <if test="filter.includes.targetType != null and filter.includes.targetType.size > 0">
+          AND target_type IN
+          <foreach collection="filter.includes.targetType" item="targetType" open="(" separator="," close=")">
+            #{targetType}
+          </foreach>
+        </if>
+        <if test="filter.includes.sourceId != null and filter.includes.sourceId.size > 0">
+          AND source_id IN
+          <foreach collection="filter.includes.sourceId" item="sourceId" open="(" separator="," close=")">
+            #{sourceId}
+          </foreach>
+        </if>
+        <if test="filter.includes.exptType != null and filter.includes.exptType.size > 0">
+          AND expt_type IN
+          <foreach collection="filter.includes.exptType" item="exptType" open="(" separator="," close=")">
+            #{exptType}
+          </foreach>
+        </if>
+        <if test="filter.includes.sourceType != null and filter.includes.sourceType.size > 0">
+          AND source_type IN
+          <foreach collection="filter.includes.sourceType" item="sourceType" open="(" separator="," close=")">
+            #{sourceType}
+          </foreach>
+        </if>
+      </if>
+      <if test="filter != null and filter.excludes != null">
+        <if test="filter.excludes.createdBy != null and filter.excludes.createdBy.size > 0">
+          AND created_by NOT IN
+          <foreach collection="filter.excludes.createdBy" item="createdBy" open="(" separator="," close=")">
+            #{createdBy}
+          </foreach>
+        </if>
+        <if test="filter.excludes.targetIds != null and filter.excludes.targetIds.size > 0">
+          AND target_id NOT IN
+          <foreach collection="filter.excludes.targetIds" item="targetId" open="(" separator="," close=")">
+            #{targetId}
+          </foreach>
+        </if>
+        <if test="filter.excludes.evalSetIds != null and filter.excludes.evalSetIds.size > 0">
+          AND eval_set_id NOT IN
+          <foreach collection="filter.excludes.evalSetIds" item="evalSetId" open="(" separator="," close=")">
+            #{evalSetId}
+          </foreach>
+        </if>
+        <if test="filter.excludes.status != null and filter.excludes.status.size > 0">
+          AND status NOT IN
+          <foreach collection="filter.excludes.status" item="status" open="(" separator="," close=")">
+            #{status}
+          </foreach>
+        </if>
+        <if test="filter.excludes.targetType != null and filter.excludes.targetType.size > 0">
+          AND target_type NOT IN
+          <foreach collection="filter.excludes.targetType" item="targetType" open="(" separator="," close=")">
+            #{targetType}
+          </foreach>
+        </if>
+        <if test="filter.excludes.sourceId != null and filter.excludes.sourceId.size > 0">
+          AND source_id NOT IN
+          <foreach collection="filter.excludes.sourceId" item="sourceId" open="(" separator="," close=")">
+            #{sourceId}
+          </foreach>
+        </if>
+        <if test="filter.excludes.exptType != null and filter.excludes.exptType.size > 0">
+          AND expt_type NOT IN
+          <foreach collection="filter.excludes.exptType" item="exptType" open="(" separator="," close=")">
+            #{exptType}
+          </foreach>
+        </if>
+        <if test="filter.excludes.sourceType != null and filter.excludes.sourceType.size > 0">
+          AND source_type NOT IN
+          <foreach collection="filter.excludes.sourceType" item="sourceType" open="(" separator="," close=")">
+            #{sourceType}
+          </foreach>
+        </if>
+      </if>
+    </where>
+    <if test="orders != null and orders.size > 0">
+      ORDER BY
+      <foreach collection="orders" item="order" separator=",">
+        <choose>
+          <when test="order.field == 'start_time'">
+            start_at
+          </when>
+          <when test="order.field == 'end_time'">
+            end_at
+          </when>
+          <otherwise>
+            start_at
+          </otherwise>
+        </choose>
+        <choose>
+          <when test="order.isAsc != null and order.isAsc">
+            ASC
+          </when>
+          <otherwise>
+            DESC
+          </otherwise>
+        </choose>
+      </foreach>
+    </if>
+    <if test="orders == null or orders.size == 0">
+      ORDER BY start_at DESC
+    </if>
+  </select>
+
+  <!-- 根据名称获取实验 -->
+  <select id="getByName" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_experiment
+    WHERE space_id = #{spaceId} AND name = #{name}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 根据ID获取实验 -->
+  <select id="getById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_experiment
+    WHERE id = #{id}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 批量根据ID获取实验 -->
+  <select id="mGetById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_experiment
+    WHERE id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+</mapper>

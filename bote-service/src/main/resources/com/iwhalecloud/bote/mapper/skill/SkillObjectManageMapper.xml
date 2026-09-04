@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillObjectManageMapper">
+  <sql id="objectColumns">
+    a.busi_object_id,
+    a.busi_object_code,
+    a.busi_object_name,
+    a.catalog_item_id,
+    a.data_source_id,
+    a.attr_json,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+      a.busi_object_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.busi_object_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+  </sql>
+
+  <insert id="insertSkillObject">
+    INSERT INTO bt_skill_object(
+    busi_object_id,
+    busi_object_code,
+    busi_object_name,
+    catalog_item_id,
+    data_source_id,
+    attr_json,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    )
+    VALUES (
+    #{dto.busiObjectId},
+    #{dto.busiObjectCode},
+    #{dto.busiObjectName},
+    #{dto.catalogItemId},
+    #{dto.dataSourceId},
+    #{dto.attrJson},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillObject">
+    UPDATE bt_skill_object
+    <set>
+      <if test="dto.checkFieldUpdateFlag('busiObjectCode')">
+        busi_object_code = #{dto.busiObjectCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('busiObjectName')">
+        busi_object_name = #{dto.busiObjectName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        data_source_id = #{dto.dataSourceId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('attrJson')">
+        attr_json = #{dto.attrJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.remark != null">
+        remark = #{dto.remark},
+      </if>
+      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE busi_object_id = #{dto.busiObjectId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="findSkillObject" resultType="com.iwhalecloud.bote.dto.skill.SkillObjectDTO">
+    SELECT
+    <include refid="objectColumns"/>
+    FROM bt_skill_object a
+    WHERE a.status_cd = '00A'
+      AND a.busi_object_id = #{id}
+      AND a.tenant_id IN (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSkillObjectList" resultType="com.iwhalecloud.bote.dto.skill.SkillObjectDTO">
+    SELECT
+    <include refid="objectColumns"/>
+    FROM bt_skill_object a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <if test="query.tenantId != null">
+      AND a.tenant_id IN (#{query.tenantId}, -1)
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSkillObjectPage" resultType="com.iwhalecloud.bote.dto.skill.SkillObjectDTO">
+    SELECT
+    <include refid="objectColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_object a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteSkillObject">
+    UPDATE bt_skill_object
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE busi_object_id = #{busiObjectId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="existsSkillObjectCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_object
+    WHERE status_cd = '00A'
+    AND busi_object_code = #{dto.busiObjectCode}
+    AND tenant_id in (#{dto.tenantId}, -1)
+    <if test="dto.busiObjectId != null">
+      AND busi_object_id != #{dto.busiObjectId}
+    </if>
+  </select>
+</mapper>

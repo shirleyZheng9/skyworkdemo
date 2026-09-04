@@ -1,0 +1,24 @@
+{
+  "name": "Dify",
+  "code": "dify",
+  "description": "对接dify平台，通过chatFlow接口调用大模型",
+  "attrs": [
+    {
+      "type": "input",
+      "name": [
+        "protocolExt",
+        "chatFlowSecret"
+      ],
+      "label": "Api密钥",
+      "formProps": {
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入chatFlow Api密钥"
+          }
+        ]
+      }
+    },
+    "contextLength"
+  ]
+}

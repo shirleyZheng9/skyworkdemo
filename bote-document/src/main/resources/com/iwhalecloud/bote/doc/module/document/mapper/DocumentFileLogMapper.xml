@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocumentFileLogMapper">
+  <!-- @formatter:off -->
+  <sql id="documentFileLogColumns">
+    id, document_id, file_id, revision, tenant_id, creator_id, created_time, status_cd
+  </sql>
+  <!-- @formatter:on -->
+
+  <insert id="insert">
+    INSERT INTO bt_dc_document_file_log (
+      id, document_id, file_id, revision, tenant_id, creator_id, created_time, status_cd
+    ) VALUES (
+      #{log.id},
+      #{log.documentId},
+      #{log.fileId},
+      #{log.revision},
+      #{log.tenantId},
+      #{log.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{log.statusCd}
+    )
+  </insert>
+
+  <select id="selectDetailById" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentFileLogDTO">
+    SELECT
+      l.id,
+      l.document_id,
+      l.file_id,
+      l.revision,
+      l.tenant_id,
+      l.creator_id,
+      l.created_time,
+      l.status_cd,
+      d.document_name AS documentName,
+      d.content_source AS contentSource,
+      f.file_name AS fileName,
+      u.real_name AS userName
+    FROM bt_dc_document_file_log l
+    LEFT JOIN bt_dc_document d
+      ON d.document_id = l.document_id
+      AND d.tenant_id = l.tenant_id
+      AND d.status_cd = '00A'
+    LEFT JOIN bt_file f
+      ON f.file_id = l.file_id
+      AND f.status_cd = '00A'
+    LEFT JOIN bt_user u
+      ON u.user_id = l.creator_id
+    WHERE l.id = #{id}
+      AND l.tenant_id = #{tenantId}
+      AND l.status_cd = '00A'
+  </select>
+
+  <select id="selectDetailListByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentFileLogDTO">
+    SELECT
+      l.id,
+      l.document_id,
+      l.file_id,
+      l.revision,
+      l.tenant_id,
+      l.creator_id,
+      l.created_time,
+      l.status_cd,
+      d.document_name AS documentName,
+      d.content_source AS contentSource,
+      f.file_name AS fileName,
+      u.real_name AS userName
+    FROM bt_dc_document_file_log l
+    LEFT JOIN bt_dc_document d
+      ON d.document_id = l.document_id
+      AND d.tenant_id = l.tenant_id
+      AND d.status_cd = '00A'
+    LEFT JOIN bt_file f
+      ON f.file_id = l.file_id
+      AND f.status_cd = '00A'
+    LEFT JOIN bt_user u
+      ON u.user_id = l.creator_id
+    WHERE l.document_id = #{documentId}
+      AND l.tenant_id = #{tenantId}
+      AND l.status_cd = '00A'
+    ORDER BY l.created_time DESC
+  </select>
+</mapper>

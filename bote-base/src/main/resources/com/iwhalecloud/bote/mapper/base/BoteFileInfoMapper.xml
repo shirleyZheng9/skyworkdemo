@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.base.BoteFileInfoMapper">
+  <sql id="fileInfoCloumns">
+    file_id,
+    bot_id AS app_id,
+    store_type,
+    file_path_in_server,
+    file_name,
+    file_desc,
+    file_size,
+    file_type,
+    created_time AS create_date,
+    status_cd,
+    updated_time AS status_date
+  </sql>
+
+  <select id="getFileInfoById" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+    select
+    <include refid="fileInfoCloumns"/>
+    FROM bt_file
+    where file_id = #{fileId}
+  </select>
+
+  <select id="queryFileInfoByIds" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+    select
+    <include refid="fileInfoCloumns"/>
+    FROM bt_file
+    where status_cd = '00A'
+    <if test="fileIds != null and !fileIds.isEmpty()">
+      and file_id in (<foreach collection="fileIds" item="id" separator=", ">#{id}</foreach>)
+    </if>
+  </select>
+
+  <insert id="insertFileInfo">
+    insert INTO bt_file (
+    file_id,
+    bot_id,
+    store_type,
+    file_path_in_server,
+    file_name,
+    file_desc,
+    file_size,
+    file_type,
+    created_time,
+    status_cd,
+    updated_time)
+    values (
+    #{dto.fileId},
+    #{dto.appId},
+    #{dto.storeType},
+    #{dto.filePathInServer},
+    #{dto.fileName},
+    #{dto.fileDesc},
+    #{dto.fileSize},
+    #{dto.fileType},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <update id="markDropFileInfo">
+    UPDATE bt_file
+    set status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    where file_id = #{fileId}
+  </update>
+
+  <select id="selectDisabledFiles" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+    SELECT file_id, store_type, file_path_in_server
+    FROM bt_file
+    WHERE status_cd = '00D'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+  </select>
+
+  <delete id="deleteDisabledFilesByIds">
+    UPDATE bt_file
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00D'
+      AND file_id IN (<foreach collection="fileIds" item="id" separator=", ">#{id}</foreach>)
+  </delete>
+
+  <update id="updateFileName">
+    UPDATE bt_file
+    SET
+    file_name = #{fileName},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE file_id = #{fileId}
+      AND status_cd = '00A'
+  </update>
+
+  <update id="updateFileInfo">
+    UPDATE bt_file
+    <set>
+      <if test="dto.storeType != null">
+        store_type = #{dto.storeType},
+      </if>
+      <if test="dto.filePathInServer != null">
+        file_path_in_server = #{dto.filePathInServer},
+      </if>
+      <if test="dto.fileName != null">
+        file_name = #{dto.fileName},
+      </if>
+      <if test="dto.fileSize != null">
+        file_size = #{dto.fileSize},
+      </if>
+      <if test="dto.fileType != null">
+        file_type = #{dto.fileType},
+      </if>
+      <if test="dto.statusCd != null">
+        status_cd = #{dto.statusCd},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE file_id = #{dto.fileId}
+  </update>
+
+  <select id="getFileInfoByFileInfoId" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+   select
+    a.file_id,
+    a.bot_id AS app_id,
+    a.store_type,
+    a.file_path_in_server,
+    a.file_name,
+    a.file_desc,
+    a.file_size,
+    a.file_type,
+    a.created_time AS create_date,
+    a.status_cd,
+    a.updated_time AS status_date
+    FROM bt_file a ,bt_file_info b
+    where
+    a.file_id = b.file_id
+    and a.status_cd = '00A'
+    and b.file_info_id = #{fileInfoId}
+    and b.tenant_id=#{tenantId}
+  </select>
+</mapper>

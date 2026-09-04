@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.beyond.BeyondFileMapper">
+  <!-- @formatter:off -->
+  <insert id="insert">
+    INSERT INTO bt_beyond_file (id, tenant_id, beyond_file_id, file_id, status_cd, creator_id, created_time)
+    VALUES (
+      #{file.id},
+      #{file.tenantId},
+      #{file.beyondFileId},
+      #{file.fileId},
+      #{file.statusCd},
+      #{file.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    )
+  </insert>
+
+  <select id="selectFileIdsByBeyondFileIds" resultType="com.iwhalecloud.bote.entity.beyond.BeyondFileEntity">
+    SELECT beyond_file_id, file_id
+    FROM bt_beyond_file
+    WHERE status_cd = '00A'
+      AND beyond_file_id IN (<foreach item="item" collection="beyondFileIds" separator=",">#{item}</foreach>)
+  </select>
+
+</mapper>

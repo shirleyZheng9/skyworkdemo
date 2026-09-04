@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.ExternalPortalMapper">
+
+  <insert id="insertPortal">
+    INSERT INTO bt_external_portal (
+    id,
+    portal_name,
+    portal_code,
+    portal_type,
+    default_tenant_id,
+    default_role,
+    login_url,
+    logged_url,
+    redirect_url,
+    cookie_name,
+    url_param_name,
+    auto_create_tenant,
+    secret_key,
+    sso_script,
+    header_json,
+    status_cd,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    remark)
+    VALUES (
+    #{dto.id},
+    #{dto.portalName},
+    #{dto.portalCode},
+    #{dto.portalType},
+    #{dto.defaultTenantId},
+    #{dto.defaultRole},
+    #{dto.loginUrl},
+    #{dto.loggedUrl},
+    #{dto.redirectUrl},
+    #{dto.cookieName},
+    #{dto.urlParamName},
+    #{dto.autoCreateTenant},
+    #{dto.secretKey},
+    #{dto.ssoScript},
+    #{dto.headerJson},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePortal">
+    UPDATE bt_external_portal
+    SET
+    <if test="dto.checkFieldUpdateFlag('portalName')">
+      portal_name = #{dto.portalName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('portalCode')">
+      portal_code = #{dto.portalCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('portalType')">
+      portal_type = #{dto.portalType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('defaultTenantId')">
+      default_tenant_id = #{dto.defaultTenantId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('defaultRole')">
+      default_role = #{dto.defaultRole},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('loginUrl')">
+      login_url = #{dto.loginUrl},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('loggedUrl')">
+      logged_url = #{dto.loggedUrl},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('redirectUrl')">
+      redirect_url = #{dto.redirectUrl},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('cookieName')">
+      cookie_name = #{dto.cookieName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('urlParamName')">
+      url_param_name = #{dto.urlParamName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('autoCreateTenant')">
+      auto_create_tenant = #{dto.autoCreateTenant},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('secretKey')">
+      secret_key = #{dto.secretKey},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('ssoScript')">
+      sso_script = #{dto.ssoScript},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('headerJson')">
+      header_json = #{dto.headerJson},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{dto.id}
+  </update>
+
+  <update id="updatePortalStatus">
+    UPDATE bt_external_portal
+    SET status_cd = #{status},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+    AND status_cd != '00X'
+  </update>
+
+  <delete id="deletePortal">
+    UPDATE bt_external_portal
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </delete>
+
+  <select id="existsPortalCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_external_portal
+    WHERE status_cd != '00X'
+      AND portal_code = #{portalCode}
+  </select>
+
+  <select id="selectPortalById" resultType="com.iwhalecloud.bote.dto.portal.ExternalPortalDTO">
+    SELECT id, portal_name, portal_code, portal_type, default_tenant_id, default_role,
+           login_url, logged_url, cookie_name, redirect_url,
+           url_param_name, auto_create_tenant, secret_key, sso_script, header_json,
+           status_cd, creator_id, created_time, updator_id, updated_time, remark
+    FROM bt_external_portal
+    WHERE id = #{id}
+      AND status_cd != '00X'
+  </select>
+
+  <select id="selectPortalPage" resultType="com.iwhalecloud.bote.dto.portal.ExternalPortalDTO">
+    SELECT id, portal_name, portal_code, portal_type, logged_url, status_cd
+    FROM bt_external_portal
+    WHERE status_cd != '00X'
+    <if test="query.keyword != null and query.keyword != ''">
+      AND (
+      portal_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      portal_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.portalType != null and query.portalType != ''">
+      AND portal_type = #{query.portalType}
+    </if>
+    <if test="query.enabled != null and query.enabled">
+      AND status_cd = '00A'
+    </if>
+    <if test="query.enabled != null and not query.enabled">
+      AND status_cd = '00D'
+    </if>
+    <if test="query.tenantId != null">
+      AND default_tenant_id = #{query.tenantId}
+    </if>
+  </select>
+
+  <select id="selectAllPortalList" resultType="com.iwhalecloud.bote.dto.portal.ExternalPortalDTO">
+    SELECT id, portal_name, portal_code, portal_type, default_tenant_id, default_role,
+           login_url, logged_url, cookie_name, url_param_name, redirect_url,
+           auto_create_tenant, secret_key, sso_script, header_json
+    FROM bt_external_portal
+    WHERE status_cd = '00A'
+      AND default_tenant_id = #{tenantId}
+    ORDER BY id
+  </select>
+
+  <select id="selectPortalByPortalCode" resultType="com.iwhalecloud.bote.dto.portal.ExternalPortalDTO">
+    SELECT id, portal_name, portal_code, portal_type, default_tenant_id, default_role,
+           login_url, logged_url, cookie_name, url_param_name, redirect_url,
+           auto_create_tenant, secret_key, sso_script, header_json
+    FROM bt_external_portal
+    WHERE status_cd = '00A'
+      AND portal_code = #{portalCode}
+  </select>
+
+  <select id="selectPortalByPortalType" resultType="com.iwhalecloud.bote.dto.portal.ExternalPortalDTO">
+    SELECT id, portal_name, portal_code, default_tenant_id, login_url, logged_url, cookie_name, url_param_name
+    FROM bt_external_portal
+    WHERE status_cd = '00A'
+      AND portal_type = #{portalType}
+      AND portal_code = #{portalCode}
+  </select>
+
+</mapper>

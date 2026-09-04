@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocContentMapper">
+  <!-- @formatter:off -->
+  <select id="selectByPrimaryKey" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocContentEntity">
+    SELECT id, document_id, content, ydoc, text_content, creator_id, updator_id, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_doc_content
+    WHERE id = #{id}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectByDocId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocContentEntity">
+    SELECT id, document_id, content, ydoc, text_content, creator_id, updator_id, tenant_id, created_time, updated_time, status_cd
+    FROM bt_dc_doc_content
+    WHERE document_id = #{docId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectDTOByDocId" resultType="com.iwhalecloud.bote.doc.module.document.dto.DcDocContentDTO">
+    SELECT c.id, c.document_id, c.content, c.ydoc, c.text_content, c.creator_id, c.updator_id, c.tenant_id,
+           c.created_time, c.updated_time, c.status_cd,
+           d.revision
+    FROM bt_dc_doc_content c
+    INNER JOIN bt_dc_document d ON c.document_id = d.document_id AND d.status_cd = '00A'
+    WHERE c.document_id = #{docId}
+      AND c.status_cd = '00A'
+  </select>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_doc_content (
+    id, document_id, content, ydoc, text_content, creator_id, updator_id, tenant_id, created_time, updated_time, status_cd
+    ) VALUES (
+    #{entity.id},
+    #{entity.documentId},
+    #{entity.content},
+    #{entity.ydoc},
+    #{entity.textContent},
+    #{entity.creatorId},
+    #{entity.updatorId},
+    #{entity.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{entity.statusCd}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey">
+    UPDATE bt_dc_doc_content
+    SET content = #{entity.content},
+    ydoc = #{entity.ydoc},
+    text_content = #{entity.textContent},
+    updator_id = #{entity.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{entity.id}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteByPrimaryKey">
+    UPDATE bt_dc_doc_content
+    SET status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+    AND status_cd = '00A'
+  </update>
+
+</mapper>

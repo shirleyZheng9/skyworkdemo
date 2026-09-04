@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnResultFilterMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultFilterEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="VARCHAR"/>
+    <result column="expt_id" property="exptId" jdbcType="VARCHAR"/>
+    <result column="item_id" property="itemId" jdbcType="VARCHAR"/>
+    <result column="item_idx" property="itemIdx" jdbcType="INTEGER"/>
+    <result column="turn_id" property="turnId" jdbcType="VARCHAR"/>
+    <result column="status" property="status" jdbcType="INTEGER"/>
+    <result column="eval_set_version_id" property="evalSetVersionId" jdbcType="VARCHAR"/>
+    <result column="created_date" property="createdDate" jdbcType="VARCHAR"/>
+    <result column="eval_target_data" property="evalTargetData" jdbcType="VARCHAR"/>
+    <result column="evaluator_score" property="evaluatorScore" jdbcType="VARCHAR"/>
+    <result column="evaluator_score_corrected" property="evaluatorScoreCorrected" jdbcType="DOUBLE"/>
+    <result column="annotation_float" property="annotationFloat" jdbcType="VARCHAR"/>
+    <result column="annotation_bool" property="annotationBool" jdbcType="VARCHAR"/>
+    <result column="annotation_string" property="annotationString" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_id, item_id, item_idx, turn_id, status, eval_set_version_id,
+    created_date, eval_target_data, evaluator_score, evaluator_score_corrected,
+    annotation_float, annotation_bool, annotation_string, created_at, updated_at
+  </sql>
+
+  <!-- 保存过滤器数据 -->
+  <insert id="save">
+    INSERT INTO bt_expt_turn_result_filter (
+    space_id, expt_id, item_id, item_idx, turn_id, status, eval_set_version_id,
+    created_date, eval_target_data, evaluator_score, evaluator_score_corrected,
+    annotation_float, annotation_bool, annotation_string, created_at, updated_at
+    ) VALUES
+    <foreach collection="filter" item="item" separator=",">
+      (
+      #{item.spaceId}, #{item.exptId}, #{item.itemId}, #{item.itemIdx}, #{item.turnId},
+      #{item.status}, #{item.evalSetVersionId}, #{item.createdDate},
+      #{item.evalTargetData,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.evaluatorScore,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.evaluatorScoreCorrected},
+      #{item.annotationFloat,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.annotationBool,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.annotationString,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.createdAt}, #{item.updatedAt}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="save" databaseId="oracle">
+    INSERT INTO bt_expt_turn_result_filter (
+    space_id, expt_id, item_id, item_idx, turn_id, status, eval_set_version_id,
+    created_date, eval_target_data, evaluator_score, evaluator_score_corrected,
+    annotation_float, annotation_bool, annotation_string, created_at, updated_at
+    ) VALUES
+    <foreach collection="filter" item="item" separator=",">
+      (
+      #{item.spaceId}, #{item.exptId}, #{item.itemId}, #{item.itemIdx}, #{item.turnId},
+      #{item.status}, #{item.evalSetVersionId}, #{item.createdDate},
+      #{item.evalTargetData,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.evaluatorScore,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      <choose>
+        <when test="item.evaluatorScoreCorrected == null">0</when>
+        <when test="item.evaluatorScoreCorrected == true">1</when>
+        <otherwise>0</otherwise>
+      </choose>,
+      #{item.annotationFloat,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.annotationBool,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.annotationString,typeHandler=com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.handler.JsonTypeHandler},
+      #{item.createdAt}, #{item.updatedAt}
+      )
+    </foreach>
+  </insert>
+
+  <!-- 查询项目ID状态 -->
+  <select id="queryItemIdStates" resultType="map">
+    SELECT
+    etrf.item_id as item_id,
+    etrf.status as status
+    FROM bt_expt_turn_result_filter etrf
+    <if test="cond.itemSnapshotCond != null or cond.keywordSearch != null">
+      INNER JOIN bt_dataset_item_snapshot dis ON etrf.eval_set_version_id = dis.version_id AND etrf.item_id = dis.item_id
+    </if>
+    WHERE 1=1
+    <if test="cond.spaceId != null">
+      AND etrf.space_id = #{cond.spaceId}
+    </if>
+    <if test="cond.exptId != null">
+      AND etrf.expt_id = #{cond.exptId}
+    </if>
+    <if test="cond.itemIds != null and cond.itemIds.size > 0">
+      <foreach collection="cond.itemIds" item="filter" separator=" ">
+        <choose>
+          <when test="filter.op == 'in' or filter.op == 'IN'">
+            AND etrf.item_id IN
+            <foreach collection="filter.values" item="value" open="(" separator="," close=")">
+              #{value}
+            </foreach>
+          </when>
+          <when test="filter.op == '='">
+            AND etrf.item_id = #{filter.values[0]}
+          </when>
+          <when test="filter.op == 'between' or filter.op == 'BETWEEN'">
+            AND etrf.item_id BETWEEN #{filter.values[0]} AND #{filter.values[1]}
+          </when>
+          <when test="filter.op == '!='">
+            AND etrf.item_id != #{filter.values[0]}
+          </when>
+          <when test="filter.op == 'NOT IN'">
+            AND etrf.item_id NOT IN
+            <foreach collection="filter.values" item="value" open="(" separator="," close=")">
+              #{value}
+            </foreach>
+          </when>
+        </choose>
+      </foreach>
+    </if>
+    <if test="cond.itemRunStatus != null and cond.itemRunStatus.size > 0">
+      <foreach collection="cond.itemRunStatus" item="filter" separator=" ">
+        <choose>
+          <when test="filter.op == 'in' or filter.op == 'IN'">
+            AND etrf.status IN
+            <foreach collection="filter.values" item="value" open="(" separator="," close=")">
+              #{value}
+            </foreach>
+          </when>
+          <when test="filter.op == '='">
+            AND etrf.status = #{filter.values[0]}
+          </when>
+          <when test="filter.op == 'between' or filter.op == 'BETWEEN'">
+            AND etrf.status BETWEEN #{filter.values[0]} AND #{filter.values[1]}
+          </when>
+          <when test="filter.op == '!='">
+            AND etrf.status != #{filter.values[0]}
+          </when>
+          <when test="filter.op == 'NOT IN'">
+            AND etrf.status NOT IN
+            <foreach collection="filter.values" item="value" open="(" separator="," close=")">
+              #{value}
+            </foreach>
+          </when>
+        </choose>
+      </foreach>
+    </if>
+    <if test="cond.createdDate != null">
+      AND etrf.created_date = #{cond.createdDate}
+    </if>
+    <if test="cond.evalSetVersionId != null">
+      AND etrf.eval_set_version_id = #{cond.evalSetVersionId}
+    </if>
+    <if test="cond.evaluatorScoreCorrected != null">
+      AND etrf.evaluator_score_corrected ${cond.evaluatorScoreCorrected.op} #{cond.evaluatorScoreCorrected.values[0]}
+    </if>
+    <if test="cond.itemSnapshotCond != null or cond.keywordSearch != null">
+      AND dis.sync_ck_date = #{cond.evalSetSyncCkDate}
+    </if>
+    <if test="cond.mapCond != null">
+      <if test="cond.mapCond.evalTargetDataFilters != null and cond.mapCond.evalTargetDataFilters.size > 0">
+        <foreach collection="cond.mapCond.evalTargetDataFilters" item="filter" separator=" ">
+          <choose>
+            <when test="filter.op == '='">
+              AND JSON_EXTRACT(etrf.eval_target_data, CONCAT('$.', #{filter.key})) = #{filter.values[0]}
+            </when>
+            <when test="filter.op == 'LIKE'">
+              AND JSON_EXTRACT(etrf.eval_target_data, CONCAT('$.', #{filter.key})) LIKE CONCAT('%', #{filter.values[0]}, '%')
+            </when>
+            <when test="filter.op == 'NOT LIKE'">
+              AND JSON_EXTRACT(etrf.eval_target_data, CONCAT('$.', #{filter.key})) NOT LIKE CONCAT('%', #{filter.values[0]}, '%')
+            </when>
+            <when test="filter.op == '!='">
+              AND JSON_EXTRACT(etrf.eval_target_data, CONCAT('$.', #{filter.key})) != #{filter.values[0]}
+            </when>
+          </choose>
+        </foreach>
+      </if>
+      <if test="cond.mapCond.evaluatorScoreFilters != null and cond.mapCond.evaluatorScoreFilters.size > 0">
+        <foreach collection="cond.mapCond.evaluatorScoreFilters" item="filter" separator=" ">
+          <choose>
+            <when test="filter.op == '='">
+              AND ABS(JSON_EXTRACT(etrf.evaluator_score, CONCAT('$.', #{filter.key})) - #{filter.values[0]}) &lt; 1e-8
+            </when>
+            <when test="filter.op == '>' or filter.op == '>=' or filter.op == '&lt;' or filter.op == '&lt;=' or filter.op == '!='">
+              AND JSON_EXTRACT(etrf.evaluator_score, CONCAT('$.', #{filter.key})) ${filter.op} #{filter.values[0]}
+            </when>
+            <when test="filter.op == 'BETWEEN'">
+              AND JSON_EXTRACT(etrf.evaluator_score, CONCAT('$.', #{filter.key})) BETWEEN #{filter.values[0]} AND #{filter.values[1]}
+            </when>
+          </choose>
+        </foreach>
+      </if>
+    </if>
+    <if test="cond.keywordSearch != null and cond.keywordSearch.keyword != null">
+      AND (
+      etrf.item_id = #{cond.keywordSearch.keyword}
+      <if test="cond.keywordSearch.evalTargetDataFilters != null and cond.keywordSearch.evalTargetDataFilters.size > 0">
+        <foreach collection="cond.keywordSearch.evalTargetDataFilters" item="filter" separator=" ">
+          OR JSON_EXTRACT(etrf.eval_target_data, CONCAT('$.', #{filter.key})) LIKE CONCAT('%', #{cond.keywordSearch.keyword}, '%')
+        </foreach>
+      </if>
+      )
+    </if>
+    ORDER BY etrf.item_idx
+    <if test="cond.page != null">
+      <if test="cond.page.limit != null and cond.page.limit > 0">
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+        #{cond.page.limit}
+      </if>
+      <if test="cond.page.offset != null and cond.page.offset > 0">
+        OFFSET #{cond.page.offset}
+      </if>
+    </if>
+  </select>
+
+  <!-- 根据实验ID和项目ID获取数据 -->
+  <select id="getByExptIdItemIds" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_result_filter etrf
+    WHERE etrf.space_id = #{spaceId}
+    AND etrf.expt_id = #{exptId}
+    AND etrf.created_date = #{createdDate}
+    <if test="itemIds != null and itemIds.size > 0">
+      AND etrf.item_id IN
+      <foreach collection="itemIds" item="itemId" open="(" separator="," close=")">
+        #{itemId}
+      </foreach>
+    </if>
+  </select>
+</mapper>

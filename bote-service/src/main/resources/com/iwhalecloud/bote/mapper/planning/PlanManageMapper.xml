@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.planning.PlanManageMapper">
+
+  <sql id="planRecordColumns">
+    a.plan_id,
+    a.plan_title,
+    a.user_request,
+    a.status,
+    a.bot_id,
+    a.tenant_id,
+    a.start_time,
+    a.end_time,
+    a.spent_time,
+    a.failed_step_name,
+    a.fail_reason,
+    a.scene_dsl,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="planStepColumns">
+    a.step_id,
+    a.plan_id,
+    a.agent_id,
+    a.agent_name,
+    a.agent_type,
+    a.is_auto_run,
+    a.agent_request,
+    a.agent_result,
+    a.agent_param,
+    a.step_status,
+    a.session_id,
+    a.bot_id,
+    a.tenant_id,
+    a.context_id,
+    a.start_time,
+    a.end_time,
+    a.spent_time,
+    a.step_index,
+    a.fail_reason,
+    a.flow_step_json,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="getPlanRecord" resultType="com.iwhalecloud.bote.dto.planning.PlanRecordDTO">
+    SELECT
+    <include refid="planRecordColumns"/>
+    FROM bt_plan_record a
+    WHERE plan_id = #{planId}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="insertPlanRecord">
+    INSERT INTO bt_plan_record (
+    plan_id,
+    plan_title,
+    user_request,
+    status,
+    bot_id,
+    tenant_id,
+    start_time,
+    end_time,
+    spent_time,
+    failed_step_name,
+    fail_reason,
+    scene_dsl,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.planId},
+    #{dto.planTitle},
+    #{dto.userRequest},
+    #{dto.status},
+    #{dto.botId},
+    #{dto.tenantId},
+    #{dto.startTime},
+    #{dto.endTime},
+    #{dto.spentTime},
+    #{dto.failedStepName},
+    #{dto.failReason},
+    #{dto.sceneDsl},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePlanRecord">
+    UPDATE bt_plan_record SET status = #{dto.status},
+    <if test="dto.failReason != null and dto.failReason != ''">
+      fail_reason = #{dto.failReason},
+    </if>
+    <if test="dto.failedStepName != null and dto.failedStepName != ''">
+      failed_step_name = #{dto.failedStepName},
+    </if>
+    <if test="dto.startTime != null">
+      start_time = #{dto.startTime},
+    </if>
+    end_time = #{dto.endTime},
+    spent_time = #{dto.spentTime},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE plan_id = #{dto.planId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deletePlanRecord">
+    UPDATE bt_plan_record
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE plan_id = #{planId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="getPlanStep" resultType="com.iwhalecloud.bote.dto.planning.PlanStepDTO">
+    SELECT
+    <include refid="planStepColumns"/>
+    FROM bt_plan_step a
+    WHERE step_id = #{stepId}
+      AND status_cd = '00A'
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <insert id="batchInsertPlanStep">
+    INSERT INTO bt_plan_step (
+    step_id,
+    plan_id,
+    agent_id,
+    agent_name,
+    agent_type,
+    is_auto_run,
+    agent_request,
+    agent_param,
+    agent_result,
+    step_status,
+    session_id,
+    bot_id,
+    tenant_id,
+    context_id,
+    start_time,
+    end_time,
+    spent_time,
+    step_index,
+    fail_reason,
+    flow_step_json,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.stepId},
+      #{dto.planId},
+      #{dto.agentId},
+      #{dto.agentName},
+      #{dto.agentType},
+      #{dto.isAutoRun},
+      #{dto.agentRequest},
+      #{dto.agentParam},
+      #{dto.agentResult},
+      #{dto.stepStatus},
+      #{dto.sessionId},
+      #{dto.botId},
+      #{dto.tenantId},
+      #{dto.contextId},
+      #{dto.startTime},
+      #{dto.endTime},
+      #{dto.spentTime},
+      #{dto.stepIndex},
+      #{dto.failReason},
+      #{dto.flowStepJson},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertPlanStep" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_plan_step (
+      step_id,
+      plan_id,
+      agent_id,
+      agent_name,
+      agent_type,
+      is_auto_Run,
+      agent_request,
+      agent_param,
+      agent_result,
+      step_status,
+      session_id,
+      bot_id,
+      tenant_id,
+      context_id,
+      start_time,
+      end_time,
+      spent_time,
+      step_index,
+      fail_reason,
+      flow_step_json,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.stepId},
+      #{dto.planId},
+      #{dto.agentId},
+      #{dto.agentName},
+      #{dto.agentType},
+      #{dto.isAutoRun},
+      #{dto.agentRequest},
+      #{dto.agentParam},
+      #{dto.agentResult},
+      #{dto.stepStatus},
+      #{dto.sessionId},
+      #{dto.botId},
+      #{dto.tenantId},
+      #{dto.contextId},
+      #{dto.startTime},
+      #{dto.endTime},
+      #{dto.spentTime},
+      #{dto.stepIndex},
+      #{dto.failReason},
+      #{dto.flowStepJson},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updatePlanStep">
+    UPDATE bt_plan_step
+    <set>
+      <if test="dto.checkFieldUpdateFlag('planId')">
+        plan_id = #{dto.planId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentId')">
+        agent_id = #{dto.agentId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentName')">
+        agent_name = #{dto.agentName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentType')">
+        agent_type = #{dto.agentType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isAutoRun')">
+        is_auto_run = #{dto.isAutoRun},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentRequest')">
+        agent_request = #{dto.agentRequest},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentParam')">
+        agent_param = #{dto.agentParam},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('agentResult')">
+        agent_result = #{dto.agentResult},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('stepStatus')">
+        step_status = #{dto.stepStatus},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sessionId')">
+        session_id = #{dto.sessionId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botId')">
+        bot_id = #{dto.botId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('contextId')">
+        context_id = #{dto.contextId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('startTime')">
+        start_time = #{dto.startTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('endTime')">
+        end_time = #{dto.endTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('spentTime')">
+        spent_time = #{dto.spentTime},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('stepIndex')">
+        step_index = #{dto.stepIndex},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('failReason')">
+        fail_reason = #{dto.failReason},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('updatorId')">
+        updator_id = #{dto.updatorId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE step_id = #{dto.stepId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateStepStatus">
+    UPDATE bt_plan_step SET step_status = #{dto.stepStatus},
+    <if test="dto.contextId != null and dto.contextId != ''">
+      context_id = #{dto.contextId},
+    </if>
+    <if test="dto.flowStepJson != null and dto.flowStepJson != ''">
+      flow_step_json = #{dto.flowStepJson},
+    </if>
+    <if test="dto.failReason != null and dto.failReason != ''">
+      fail_reason = #{dto.failReason},
+    </if>
+    <if test="dto.startTime != null">
+      start_time = #{dto.startTime},
+    </if>
+    <if test="dto.endTime != null">
+      end_time = #{dto.endTime},
+    </if>
+    <if test="dto.spentTime != null">
+      spent_time = #{dto.spentTime},
+    </if>
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE step_id = #{dto.stepId}
+      AND step_index = #{dto.stepIndex}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deletePlanStep">
+    UPDATE bt_plan_step
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE step_id = #{stepId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectPlanStepList" resultType="com.iwhalecloud.bote.dto.planning.PlanStepDTO">
+    SELECT
+    <include refid="planStepColumns"/>
+    FROM bt_plan_step a
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND plan_id = #{planId}
+      AND tenant_id = #{tenantId}
+    ORDER BY step_index
+  </select>
+
+  <select id="getPlanStepByContextId" resultType="com.iwhalecloud.bote.dto.planning.PlanStepDTO">
+    SELECT
+    <include refid="planStepColumns"/>
+    FROM bt_plan_step a
+    WHERE 1=1
+      AND status_cd = '00A'
+      AND plan_id = #{planId}
+      AND tenant_id = #{tenantId}
+      AND context_id = #{contextId}
+  </select>
+</mapper>

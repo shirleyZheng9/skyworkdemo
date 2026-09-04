@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.PrivManageMapper">
+
+  <sql id="privColumns">
+    a.priv_id,
+    a.priv_type,
+    a.priv_code,
+    a.priv_name,
+    a.priv_url,
+    a.catalog_item_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.priv_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.priv_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.privType != null and query.privType != ''">
+      AND a.priv_type = #{query.privType}
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.privIds != null and query.privIds.size() > 0">
+      AND a.priv_id IN (<foreach collection="query.privIds" item="privId" separator=",">#{privId}</foreach>)
+    </if>
+  </sql>
+
+  <select id="existsPrivCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_priv
+    WHERE status_cd = '00A'
+    AND priv_code = #{dto.privCode}
+    <if test="dto.privId != null">
+      AND priv_id != #{dto.privId}
+    </if>
+  </select>
+
+  <select id="getPriv" resultType="com.iwhalecloud.bote.dto.portal.PrivDTO">
+    SELECT
+    <include refid="privColumns"/>
+    FROM bt_priv a
+    WHERE priv_id = #{id}
+    AND status_cd = '00A'
+  </select>
+
+  <insert id="insertPriv">
+    INSERT INTO bt_priv (
+    priv_id,
+    priv_type,
+    priv_code,
+    priv_name,
+    priv_url,
+    catalog_item_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.privId},
+    #{dto.privType},
+    #{dto.privCode},
+    #{dto.privName},
+    #{dto.privUrl},
+    #{dto.catalogItemId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePriv">
+    UPDATE bt_priv
+    <set>
+      <if test="dto.checkFieldUpdateFlag('privType')">
+        priv_type = #{dto.privType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('privCode')">
+        priv_code = #{dto.privCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('privName')">
+        priv_name = #{dto.privName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('privUrl')">
+        priv_url = #{dto.privUrl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE priv_id = #{dto.privId}
+  </update>
+
+  <update id="deletePriv">
+    UPDATE bt_priv
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE priv_id = #{privId}
+  </update>
+
+  <select id="selectPrivList" resultType="com.iwhalecloud.bote.dto.portal.PrivDTO">
+    SELECT
+    <include refid="privColumns"/>
+    FROM bt_priv a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+  </select>
+
+  <select id="selectPrivPage" resultType="com.iwhalecloud.bote.dto.portal.PrivDTO">
+    SELECT
+    <include refid="privColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName"
+    FROM bt_priv a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.created_time
+  </select>
+
+</mapper>

@@ -1,0 +1,41 @@
+{
+  "name": "二级聚智",
+  "code": "juzhi2",
+  "description": "对接中国移动的二级聚智平台（省内），通过工作流接口实现知识检索，通过智能体接口实现知识问答",
+  "attrs": [
+    {
+      "type": "input",
+      "name": [
+        "knowledgeTypeExt",
+        "juzhiKnowledgeId"
+      ],
+      "label": "聚智知识库 ID",
+      "formProps": {
+        "tooltip": "在聚智的知识库列表页面，打开浏览器开发者工具，搜索知识库，从 flames-docqa/doc/semantic-doc/lib/page 响应中找出 id, 比如 19052d08f675473092b0e872a511063a",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入聚智知识库 ID, 比如 19052d08f675473092b0e872a511063a"
+          }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "name": [
+        "knowledgeTypeExt",
+        "juzhiAssistantCode"
+      ],
+      "label": "聚智智能体编码",
+      "formProps": {
+        "tooltip": "用于做知识问答，智能体应该只包含知识库技能，提示词配置为“使用知识库回答用户问题”。智能体编码获取路径: 应用管理 -> 应用详情 -> 关联智能体，比如 dialog@1916807245687504896",
+        "rules": [
+          {
+            "required": true,
+            "message": "请输入聚智智能体编码，比如 dialog@1916807245687504896"
+          }
+        ]
+      }
+    }
+  ]
+}

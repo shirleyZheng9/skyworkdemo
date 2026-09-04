@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.FlowQueryMapper">
+
+  <select id="selectDslByFlowId" resultType="com.iwhalecloud.bote.dto.scene.SimpleDslInfoDTO">
+    SELECT flow_id AS id, flow_code AS code, flow_name AS name, CASE WHEN flow_type = 'multiStep' THEN 1 ELSE 0 END AS chatflow, flow_dsl AS dsl_json,
+           flow_step_json
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+      <!-- 安全围栏场景，约定可在博特资产租户下定义全局的 -->
+      AND tenant_id IN (#{tenantId}, -1, 2)
+      AND flow_id = #{flowId}
+  </select>
+
+  <select id="selectDslByFlowIds" resultType="com.iwhalecloud.bote.dto.scene.SimpleDslInfoDTO">
+    SELECT flow_id AS id, flow_code AS code, flow_name AS name, CASE WHEN flow_type = 'multiStep' THEN 1 ELSE 0 END AS chatflow, flow_dsl AS dsl_json,
+           flow_step_json
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+      <!-- 安全围栏场景，约定可在博特资产租户下定义全局的 -->
+      AND tenant_id IN (#{tenantId}, -1, 2)
+      AND flow_id IN (<foreach collection="flowIds" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+</mapper>

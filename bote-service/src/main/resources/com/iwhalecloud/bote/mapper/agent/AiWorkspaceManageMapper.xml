@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.AiWorkspaceManageMapper">
+
+  <sql id="workspaceColumns">
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.file_name,
+    a.file_content,
+    a.memory_type,
+    a.tenant_id,
+    a.scene_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.userId != null">
+      AND a.creator_id = #{query.userId}
+    </if>
+    <if test="query.spaceId != null">
+      AND a.space_id = #{query.spaceId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+  </sql>
+
+  <select id="getAiWorkspace" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">
+    SELECT
+    <include refid="workspaceColumns"/>
+    FROM bt_ai_workspace a
+    WHERE a.id = #{id}
+  </select>
+
+  <insert id="insertAiWorkspace">
+    INSERT INTO bt_ai_workspace (
+    id,
+    space_id,
+    bot_id,
+    file_name,
+    file_content,
+    memory_type,
+    tenant_id,
+    scene_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.id},
+    #{dto.spaceId},
+    #{dto.botId},
+    #{dto.fileName},
+    #{dto.fileContent},
+    #{dto.memoryType},
+    #{dto.tenantId},
+    #{dto.sceneId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertAiWorkspace">
+    INSERT INTO bt_ai_workspace (
+    id,
+    space_id,
+    bot_id,
+    file_name,
+    file_content,
+    memory_type,
+    tenant_id,
+    scene_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark)
+    VALUES
+    <foreach collection="list" item="dto" separator=",">
+      (
+      #{dto.id},
+      #{dto.spaceId},
+      #{dto.botId},
+      #{dto.fileName},
+      #{dto.fileContent},
+      #{dto.memoryType},
+      #{dto.tenantId},
+      #{dto.sceneId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertAiWorkspace" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" separator=" ">
+      INTO bt_ai_workspace (
+      id,
+      space_id,
+      bot_id,
+      file_name,
+      file_content,
+      memory_type,
+      tenant_id,
+      scene_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark)
+      VALUES (
+        #{dto.id},
+        #{dto.spaceId},
+        #{dto.botId},
+        #{dto.fileName},
+        #{dto.fileContent},
+        #{dto.memoryType},
+        #{dto.tenantId},
+        #{dto.sceneId},
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        #{dto.statusCd},
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        #{dto.creatorId},
+        #{dto.updatorId},
+        #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateAiWorkspace">
+    UPDATE bt_ai_workspace
+    <set>
+    <if test="dto.checkFieldUpdateFlag('fileName')">
+      file_name = #{dto.fileName},
+    </if>
+      file_content = #{dto.fileContent},
+    <if test="dto.checkFieldUpdateFlag('statusCd')">
+      status_cd = #{dto.statusCd},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('remark')">
+      remark = #{dto.remark},
+    </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE id = #{dto.id}
+  </update>
+
+  <select id="selectAiWorkspaceList" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">
+    SELECT
+    a.id,
+    a.space_id,
+    a.bot_id,
+    a.file_name,
+    a.file_content,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+    FROM bt_ai_workspace a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+      AND a.memory_type IS NULL
+    order by a.created_time
+  </select>
+
+  <select id="selectFileContentByFileName" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">
+    SELECT id, file_content
+    FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+      AND file_name = #{fileName}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectIdByFileName" resultType="java.lang.Long">
+    SELECT id
+    FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+      AND file_name = #{fileName}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <update id="updateFileContentById">
+    UPDATE bt_ai_workspace
+    SET file_content = #{fileContent},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE id = #{id}
+  </update>
+
+  <select id="selectMemoryFileList" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">
+    SELECT id, file_name, file_content, memory_type
+    FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND creator_id = #{userId}
+      AND bot_id = #{botId}
+      AND memory_type = #{memoryType}
+    <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+    <if test="tenantId != null">
+      AND tenant_id = #{tenantId}
+    </if>
+    ORDER BY created_time
+  </select>
+
+  <select id="selectMemoryFileByName" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">
+    SELECT id, file_name, file_content, memory_type
+    FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND creator_id = #{userId}
+      AND file_name = #{fileName}
+      AND memory_type IS NOT NULL
+    <if test="botId != null">
+      AND bot_id = #{botId}
+    </if>
+    <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+    <if test="tenantId != null">
+      AND tenant_id = #{tenantId}
+    </if>
+    <if test="sceneId != null">
+      AND scene_id = #{sceneId}
+    </if>
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectMemoryAiWorkspacePage" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">
+    SELECT id, file_name, memory_type, updated_time
+    FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND bot_id = #{query.botId}
+      AND space_id = #{query.spaceId}
+      AND creator_id = #{query.userId}
+      AND memory_type IS NOT NULL
+    ORDER BY created_time
+  </select>
+
+</mapper>

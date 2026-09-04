@@ -1,0 +1,14 @@
+# 敏感词黑名单
+# 参考 https://github.com/fwwdn/sensitive-stop-words/blob/master/%E6%94%BF%E6%B2%BB%E7%B1%BB.txt
+毛泽东
+周恩来
+邓小平
+习近平
+习仲勋
+温家宝
+胡锦涛
+江泽民
+邓小平
+朱镕基
+李洪志
+法轮功

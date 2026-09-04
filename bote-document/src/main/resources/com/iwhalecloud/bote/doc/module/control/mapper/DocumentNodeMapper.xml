@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.control.mapper.DocumentNodeMapper">
+
+  <resultMap id="nodeInfo" type="com.iwhalecloud.bote.doc.module.control.vo.BaseNodeInfo">
+    <result column="node_id" property="nodeId"/>
+    <result column="node_name" property="nodeName"/>
+    <result column="node_type" property="nodeType"/>
+    <result column="content_source" property="contentSource"/>
+  </resultMap>
+
+  <resultMap id="nodeInfoMap" type="com.iwhalecloud.bote.doc.module.control.vo.NodeInfoVo" extends="nodeInfo">
+    <result column="library_id" property="libraryId"/>
+    <result column="parent_id" property="parentId"/>
+    <result column="pre_node_id" property="preNodeId"/>
+    <result column="node_favorite" property="nodeFavorite"/>
+    <result column="node_pined" property="nodePined"/>
+    <result column="node_permit_set" property="nodePermitSet"/>
+    <result column="created_time" property="createdTime"/>
+    <result column="updated_time" property="updatedTime"/>
+    <result column="tenant_id" property="tenantId"/>
+    <result column="space_id" property="spaceId"/>
+  </resultMap>
+
+  <resultMap id="nodeInfoTree" type="com.iwhalecloud.bote.doc.module.control.vo.NodeInfoTreeVo" extends="nodeInfoMap"/>
+
+  <select id="selectNodeInfoTreeByNodeIds" resultMap="nodeInfoTree">
+    SELECT
+    bdd.document_id as node_id,
+    bdd.library_id,
+    bdd.creator_id,
+    CASE
+    WHEN bdd.parent_id = '0' THEN bddl.library_name
+    ELSE bdd.document_name
+    END AS node_name,
+    bdd.document_type as node_type,
+    bdd.content_source,
+    bdd.parent_id,
+    bdd.tenant_id,
+    bdd.space_id,
+    bdd.prev_document_id as pre_node_id,
+    CASE
+    WHEN leaf.document_id IS NOT NULL THEN 1
+    ELSE 0
+    END AS has_children,
+    bdd.created_time,
+    bdd.updated_time,
+    CASE
+    WHEN ddp.document_id IS NOT NULL THEN 1
+    ELSE 0
+    END as node_permit_set,
+    CASE
+    WHEN duf.target_id IS NOT NULL THEN 1
+    ELSE 0
+    END AS node_favorite,
+    CASE
+    WHEN bduhp.target_id IS NOT NULL THEN 1
+    ELSE 0
+    END AS node_pined
+    FROM
+    bt_dc_document bdd
+    JOIN
+    bt_dc_document_library bddl ON bdd.library_id = bddl.library_id
+    LEFT JOIN (
+      SELECT DISTINCT parent_id as document_id
+      FROM bt_dc_document
+      WHERE status_cd = '00A'
+        <if test="nodeIds != null and nodeIds.size() > 0">
+        AND parent_id IN
+        <foreach item="item" index="index" collection="nodeIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        </if>
+    ) leaf ON leaf.document_id = bdd.document_id
+    LEFT JOIN (
+      SELECT DISTINCT document_id
+      FROM bt_dc_document_permission
+      WHERE status_cd = '00A'
+        <if test="nodeIds != null and nodeIds.size() > 0">
+        AND document_id IN
+        <foreach item="item" index="index" collection="nodeIds" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        </if>
+    ) ddp ON ddp.document_id = bdd.document_id
+    LEFT JOIN bt_dc_user_favorite duf ON duf.target_id = bdd.document_id
+      AND duf.target_type IN ('DOCUMENT', 'FOLDER')
+      AND duf.user_id = #{userId}
+      AND duf.status_cd = '00A'
+      AND duf.tenant_id = #{envTenantId}
+    LEFT JOIN bt_dc_user_homepage_pin bduhp ON bduhp.target_id = bdd.document_id
+      AND bduhp.target_type = 'DOCUMENT'
+      AND bduhp.user_id = #{userId}
+      AND bduhp.status_cd = '00A'
+      AND bduhp.tenant_id = #{envTenantId}
+    WHERE bdd.document_id IN
+    <foreach item="item" index="index" collection="nodeIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND bdd.status_cd = '00A'
+    <if test="tenantId != null">
+        AND bdd.tenant_id = #{tenantId}
+    </if>
+  </select>
+
+  <select id="selectDocumentNodeTreeDTOByParentIdIn" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentNodeTreeDTO">
+    SELECT document_id as node_id,
+    document_type as node_type,
+    parent_id,
+    prev_document_id as pre_node_id
+    FROM bt_dc_document
+    WHERE parent_id IN
+    <foreach item="item" index="index" collection="parentIds" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
+    AND status_cd = '00A'
+  </select>
+
+  <select id="selectNodeBaseInfosByNodeIds"
+          resultType="com.iwhalecloud.bote.doc.module.control.model.NodeBaseInfoDTO">
+    SELECT document_id as node_id,
+    parent_id,
+    library_id,
+    document_type as node_type,
+    document_name as node_name,
+    content_source,
+    creator_id,
+    permission_mode
+    FROM bt_dc_document
+    WHERE document_id IN
+    <foreach item="item" index="index" collection="nodeIds" open="("
+             separator="," close=")">
+      #{item}
+    </foreach>
+    and status_cd = '00A'
+  </select>
+
+  <select id="selectNodeBaseInfoByNodeId"
+          resultType="com.iwhalecloud.bote.doc.module.control.model.NodeBaseInfoDTO">
+    SELECT document_id   as node_id,
+           parent_id,
+           library_id,
+           document_type as node_type,
+           document_name as node_name,
+           content_source,
+           creator_id,
+           permission_mode
+    FROM bt_dc_document
+    WHERE document_id = #{nodeId}
+      and status_cd = '00A'
+  </select>
+
+  <select id="selectRootNodeIdByLibraryId" resultType="java.lang.String">
+    SELECT document_id
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND document_type = 'ROOT'
+      and status_cd = '00A'
+       <if test="tenantId != null">
+      AND (tenant_id = #{tenantId} or is_builtin='T')
+    </if>
+     <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+  </select>
+  <select id="selectNodeInfoByNodeIds" resultMap="nodeInfoMap">
+    SELECT bdd.document_id as node_id,
+    bdd.library_id,
+    CASE
+    WHEN bdd.parent_id = '0' THEN bddl.library_name
+    ELSE bdd.document_name
+    END AS node_name,
+    bdd.document_type as node_type,
+    bdd.content_source,
+    bdd.parent_id,
+    bdd.space_id,
+    bdd.tenant_id,
+    bdd.prev_document_id as pre_node_id,
+    CASE
+    WHEN EXISTS(select 1
+    from bt_dc_document leaf
+    where leaf.parent_id = bdd.document_id and bdd.status_cd = '00A') THEN 1
+    ELSE 0
+    END AS has_children,
+    bdd.created_time,
+    bdd.updated_time,
+    CASE
+    WHEN EXISTS (SELECT 1
+    FROM bt_dc_document_permission ddp
+    WHERE ddp.document_id = bdd.document_id
+    AND ddp.status_cd = '00A') THEN 1
+    ELSE 0 END as node_permit_set,
+    CASE
+    WHEN EXISTS(select 1
+    from bt_dc_user_favorite duf
+    where duf.target_id = bdd.document_id
+    AND duf.target_type IN ('DOCUMENT', 'FOLDER')
+    AND duf.user_id = #{userId}) THEN 0
+    ELSE 1
+    END AS node_favorite
+    FROM bt_dc_document bdd
+    JOIN
+    bt_dc_document_library bddl ON bdd.library_id = bddl.library_id
+    WHERE bdd.document_id IN
+    <foreach item="item" index="index" collection="nodeIds" open="(" separator="," close=")">
+      #{item}
+    </foreach>
+    AND bdd.status_cd = '00A'
+  </select>
+  <select id="selectNodeInfoByNodeId" resultMap="nodeInfoMap">
+    SELECT bdd.document_id                                                              as node_id,
+           bdd.library_id,
+           CASE bdd.parent_id WHEN '0' THEN ddl.library_name ELSE bdd.document_name END as node_name,
+           bdd.document_type                                                            as node_type,
+           bdd.content_source,
+           bdd.parent_id,
+           bdd.tenant_id,
+           bdd.space_id,
+           bdd.prev_document_id                                                         as pre_node_id,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_dc_document leaf
+                          WHERE leaf.parent_id = bdd.document_id
+                            AND leaf.status_cd = '00A') THEN 1
+             ELSE 0 END                                                                 as has_children,
+           bdd.created_time,
+           bdd.updated_time,
+           CASE
+             WHEN EXISTS (SELECT 1
+                          FROM bt_dc_document_permission ddp
+                          WHERE ddp.document_id = bdd.document_id
+                            AND ddp.status_cd = '00A') THEN 1
+             ELSE 0 END                                                                 as node_permit_set
+    FROM bt_dc_document bdd
+           JOIN bt_dc_document_library ddl ON bdd.library_id = ddl.library_id
+    WHERE bdd.document_id = #{nodeId}
+      AND bdd.status_cd = '00A'
+  </select>
+  <select id="selectNodeInfoWithPermissionStatus"
+          resultType="com.iwhalecloud.bote.doc.module.control.model.SimpleNodeInfo">
+    SELECT bdd.document_id   as node_id,
+           bdd.parent_id,
+           bdd.document_type as node_type,
+           bdd.permission_mode
+    FROM bt_dc_document bdd
+           LEFT JOIN bt_dc_document_permission ddp
+                     ON ddp.document_id = bdd.document_type AND ddp.status_cd = '00A'
+    WHERE bdd.document_id = #{nodeId}
+      AND bdd.status_cd = '00A'
+  </select>
+
+  <select id="selectNodeIdByPreNodeId" resultType="java.lang.String">
+    select document_id
+    from bt_dc_document bdc
+    where prev_document_id = #{nodeId}
+      and status_cd = '00A'
+  </select>
+
+  <update id="updatePreNodeIdByJoinSelf">
+    <choose>
+      <when test="_databaseId == 'mysql'">
+        UPDATE bt_dc_document bdd
+        INNER JOIN bt_dc_document bdd2 ON bdd2.document_id = bdd.prev_document_id
+        SET bdd.prev_document_id = bdd2.prev_document_id,
+        bdd.updated_time =
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        WHERE bdd.parent_id = #{parentId}
+        AND bdd.prev_document_id = #{preNodeId}
+        AND bdd.status_cd = '00A'
+      </when>
+      <when test="_databaseId == 'postgresql'">
+        UPDATE bt_dc_document bdd
+        SET prev_document_id = bdd2.prev_document_id,
+        updated_time =
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        FROM bt_dc_document bdd2
+        WHERE bdd2.document_id = bdd.prev_document_id
+        AND bdd.parent_id = #{parentId}
+        AND bdd.prev_document_id = #{preNodeId}
+        AND bdd.status_cd = '00A'
+      </when>
+      <when test="_databaseId == 'oracle'">
+        <![CDATA[
+        MERGE INTO bt_dc_document bdd
+        USING (
+          SELECT bdd1.document_id,
+                 bdd2.prev_document_id AS new_prev_document_id
+          FROM bt_dc_document bdd1
+          INNER JOIN bt_dc_document bdd2 ON bdd2.document_id = bdd1.prev_document_id
+          WHERE bdd1.parent_id = #{parentId}
+          AND bdd1.prev_document_id = #{preNodeId}
+          AND bdd1.status_cd = '00A'
+        ) source
+        ON (bdd.document_id = source.document_id)
+        WHEN MATCHED THEN
+        UPDATE SET bdd.prev_document_id = source.new_prev_document_id,
+                   bdd.updated_time = SYSDATE
+        ]]>
+      </when>
+      <otherwise>
+        UPDATE bt_dc_document bdd
+        INNER JOIN bt_dc_document bdd2 ON bdd2.document_id = bdd.prev_document_id
+        SET bdd.prev_document_id = bdd2.prev_document_id,
+        bdd.updated_time =
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        WHERE bdd.parent_id = #{parentId}
+        AND bdd.prev_document_id = #{preNodeId}
+        AND bdd.status_cd = '00A'
+      </otherwise>
+    </choose>
+  </update>
+  <update id="updatePreNodeIdBySelf">
+    UPDATE bt_dc_document bdd
+    SET prev_document_id = #{newPreNodeId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE parent_id = #{parentId}
+    <choose>
+      <when test="originPreNodeId != null">
+        AND prev_document_id = #{originPreNodeId}
+      </when>
+      <otherwise>
+        AND prev_document_id IS NULL
+      </otherwise>
+    </choose>
+    AND status_cd = '00A'
+  </update>
+
+  <update id="updatePreNodeIdByNodeId">
+    UPDATE bt_dc_document bdd
+    SET prev_document_id = #{newPreNodeId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bdd.document_id = #{nodeId}
+    AND status_cd = '00A'
+  </update>
+  <update id="updateInfoByNodeId">
+    UPDATE bt_dc_document bdd
+    SET prev_document_id = #{newPreNodeId},
+    parent_id =#{parentId},
+    updator_id = #{userId},
+    updated_time =
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE bdd.document_id = #{nodeId}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="selectNodeIdByParentIdAndPreNodeId" resultType="java.lang.String">
+    SELECT document_id as node_id
+    FROM bt_dc_document bdd
+    WHERE parent_id = #{parentId}
+    <choose>
+      <when test="preNodeId != null and preNodeId != ''">
+        AND prev_document_id = #{preNodeId}
+      </when>
+      <otherwise>
+        AND prev_document_id IS NULL
+      </otherwise>
+    </choose>
+    AND status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 根据文档库ID查询所有文档节点ID -->
+  <select id="selectWithoutRootByLibraryId" resultType="java.lang.String">
+    SELECT document_id
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND status_cd = '00A'
+      AND document_type != 'ROOT'
+    ORDER BY created_time ASC
+  </select>
+
+  <select id="searchByNodeName" resultType="com.iwhalecloud.bote.doc.module.control.model.NodeBaseInfoDTO">
+    SELECT document_id as node_id,
+    parent_id,
+    library_id,
+    document_type as node_type,
+    document_name as node_name,
+    content_source,
+    creator_id
+    from bt_dc_document
+    where library_id = #{libraryId}
+    and document_name like
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+    #{keyword}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    and status_cd = '00A'
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    #{limit}
+  </select>
+  <select id="selectRootNodeIdDcDocumentEntityByLibraryId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">
+   SELECT id, document_id, document_name, library_id, parent_id, document_type, content_source, revision, word_count, view_count, is_convert, is_builtin, builtin_type, prev_document_id, tenant_id, creator_id, updator_id, created_time, updated_time, status_cd, file_info_id, permission_mode, space_id
+    FROM bt_dc_document
+    WHERE library_id = #{libraryId}
+      AND document_type = 'ROOT'
+      and status_cd = '00A'
+       <if test="tenantId != null">
+      AND (tenant_id = #{tenantId} or is_builtin='T')
+    </if>
+     <if test="spaceId != null">
+      AND space_id = #{spaceId}
+    </if>
+  </select>
+  <select id="selectNodeSubIdsByParentId" resultType="java.lang.String">
+    select bdd.document_id  from bt_dc_document bdd where bdd.parent_id =#{nodeId} and bdd.status_cd ='00A'
+  </select>
+  <select id="selectNodeInfoTreePageByNodeId" resultMap="nodeInfoTree">
+    SELECT
+      bdd.document_id as node_id,
+      bdd.library_id,
+      bdd.creator_id,
+      CASE
+        WHEN bdd.parent_id = '0' THEN bddl.library_name
+        ELSE bdd.document_name
+      END AS node_name,
+      bdd.document_type as node_type,
+      bdd.content_source,
+      bdd.parent_id,
+      bdd.tenant_id,
+      bdd.space_id,
+      bdd.prev_document_id as pre_node_id,
+      CASE
+        WHEN EXISTS (
+          SELECT 1 FROM bt_dc_document leaf
+          WHERE leaf.parent_id = bdd.document_id AND leaf.status_cd = '00A'
+        ) THEN 1
+        ELSE 0
+      END AS has_children,
+      bdd.created_time,
+      bdd.updated_time,
+      CASE
+        WHEN EXISTS (
+          SELECT 1 FROM bt_dc_document_permission ddp
+          WHERE ddp.document_id = bdd.document_id AND ddp.status_cd = '00A'
+        ) THEN 1
+        ELSE 0
+      END as node_permit_set,
+      CASE
+        WHEN duf.target_id IS NOT NULL THEN 1
+        ELSE 0
+      END AS node_favorite,
+      CASE
+        WHEN bduhp.target_id IS NOT NULL THEN 1
+        ELSE 0
+      END AS node_pined
+    FROM bt_dc_document bdd
+    JOIN bt_dc_document_library bddl ON bdd.library_id = bddl.library_id
+    LEFT JOIN bt_dc_user_favorite duf ON duf.target_id = bdd.document_id
+      AND duf.target_type IN ('DOCUMENT', 'FOLDER')
+      AND duf.user_id = #{userId}
+      AND duf.status_cd = '00A'
+      AND duf.tenant_id = #{query.envTenantId}
+    LEFT JOIN bt_dc_user_homepage_pin bduhp ON bduhp.target_id = bdd.document_id
+      AND bduhp.target_type = 'DOCUMENT'
+      AND bduhp.user_id = #{userId}
+      AND bduhp.status_cd = '00A'
+      AND bduhp.tenant_id = #{query.envTenantId}
+    WHERE bdd.parent_id = #{query.documentId}
+      AND bdd.status_cd = '00A'
+    <if test="query.tenantId != null">
+      AND bdd.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.keyword != null and query.keyword != ''">
+      <bind name="keywordPattern" value="'%' + query.keyword + '%'"/>
+      AND bdd.document_name LIKE #{keywordPattern}
+    </if>
+    ORDER BY bdd.created_time DESC
+  </select>
+
+  <select id="countFolderByParentId" resultType="java.lang.Long">
+    SELECT COUNT(*) FROM bt_dc_document
+    WHERE parent_id = #{parentId}
+      AND status_cd = '00A'
+      AND document_type = 'FOLDER'
+  </select>
+
+  <select id="countDocByParentId" resultType="java.lang.Long">
+    SELECT COUNT(*) FROM bt_dc_document
+    WHERE parent_id = #{parentId}
+      AND status_cd = '00A'
+      AND document_type != 'FOLDER'
+  </select>
+</mapper>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.bot.ClawEnvVariableManageMapper">
+
+  <sql id="envColumns">
+    a.id,
+    a.tenant_id,
+    a.scene_id,
+    a.variable_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <insert id="batchInsertClawEnvVariable">
+    INSERT INTO bt_claw_env_variable (
+      id, tenant_id, scene_id, variable_id, created_time, status_cd, updated_time, creator_id, updator_id, remark
+    ) VALUES
+    <foreach collection="list" item="dto" separator=",">
+      (
+      #{dto.id}, #{dto.tenantId}, #{dto.sceneId}, #{dto.variableId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertClawEnvVariable" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" separator=" ">
+      INTO bt_claw_env_variable (
+        id, tenant_id, scene_id, variable_id, created_time, status_cd, updated_time, creator_id, updator_id, remark
+      ) VALUES (
+        #{dto.id}, #{dto.tenantId}, #{dto.sceneId}, #{dto.variableId},
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateClawEnvVariable">
+    UPDATE bt_claw_env_variable
+    <set>
+      <if test="dto.checkFieldUpdateFlag('variableId')">
+        variable_id = #{dto.variableId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE id = #{dto.id}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectClawEnvVariableList" resultType="com.iwhalecloud.bote.dto.bot.ClawEnvVariableDTO">
+    SELECT
+    <include refid="envColumns"/>,
+      b.variable_name,
+      b.variable_code
+    FROM bt_claw_env_variable a
+    LEFT JOIN bt_env_variable b ON a.variable_id = b.variable_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.scene_id = #{sceneId}
+      AND a.tenant_id = #{tenantId}
+    ORDER BY a.created_time
+  </select>
+</mapper>

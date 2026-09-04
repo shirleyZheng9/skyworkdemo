@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.ServiceGatewayManageMapper">
+  <sql id="gatewayColumns">
+    a.gateway_id,
+    a.platform_id,
+    a.env_code,
+    a.url,
+    a.header_json,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <insert id="batchInsertServiceGateway">
+    INSERT INTO bt_service_gateway(
+    gateway_id,
+    platform_id,
+    env_code,
+    url,
+    header_json,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.gatewayId},
+      #{dto.platformId},
+      #{dto.envCode},
+      #{dto.url},
+      #{dto.headerJson},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertServiceGateway" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_service_gateway(
+      gateway_id,
+      platform_id,
+      env_code,
+      url,
+      header_json,
+      tenant_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES(
+      #{dto.gatewayId},
+      #{dto.platformId},
+      #{dto.envCode},
+      #{dto.url},
+      #{dto.headerJson},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateServiceGateway">
+    UPDATE bt_service_gateway
+    <set>
+      <if test="dto.checkFieldUpdateFlag('envCode')">
+        env_code = #{dto.envCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('url')">
+        url = #{dto.url},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('headerJson')">
+        header_json = #{dto.headerJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE gateway_id = #{dto.gatewayId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="selectSimpleGatewayByPlatformIdAndEnvCode" resultType="com.iwhalecloud.bote.dto.skill.SimpleServiceGatewayDTO">
+    SELECT url, header_json
+    FROM bt_service_gateway
+    WHERE status_cd = '00A'
+      AND platform_id = #{platformId}
+      AND env_code = #{envCode}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectServiceGatewayById" resultType="com.iwhalecloud.bote.dto.skill.ServiceGatewayDTO">
+    SELECT <include refid="gatewayColumns"/>
+    FROM bt_service_gateway a
+    WHERE a.status_cd = '00A'
+    AND a.platform_id = #{platformId}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectServiceGatewayByIds" resultType="com.iwhalecloud.bote.dto.skill.ServiceGatewayDTO">
+    SELECT <include refid="gatewayColumns"/>
+    FROM bt_service_gateway a
+    WHERE a.status_cd = '00A'
+    AND a.platform_id IN (<foreach collection="platformIds" item="id" separator=",">#{id}</foreach>)
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectGatewayByEnvCode" resultType="com.iwhalecloud.bote.dto.skill.ServiceGatewayDTO">
+    SELECT <include refid="gatewayColumns"/>,
+    b.platform_name,
+    b.platform_code
+    FROM bt_service_gateway a
+    LEFT JOIN bt_service_platform b ON a.platform_id = b.platform_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+    AND b.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    AND a.env_code = #{envCode}
+  </select>
+
+  <select id="selectGatewayByUrl" resultType="com.iwhalecloud.bote.dto.skill.ServiceGatewayDTO">
+    SELECT <include refid="gatewayColumns"/>,
+    b.platform_name,
+    b.platform_code
+    FROM bt_service_gateway a
+    LEFT JOIN bt_service_platform b ON a.platform_id = b.platform_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND b.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.env_code = #{envCode}
+      AND a.url = #{url}
+  </select>
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.prompt.PromptDebugContextMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.prompt.PromptDebugContextEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="prompt_id" property="promptId" jdbcType="BIGINT"/>
+    <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+    <result column="mock_contexts" property="mockContexts" jdbcType="VARCHAR"/>
+    <result column="mock_variables" property="mockVariables" jdbcType="VARCHAR"/>
+    <result column="mock_tools" property="mockTools" jdbcType="VARCHAR"/>
+    <result column="debug_config" property="debugConfig" jdbcType="VARCHAR"/>
+    <result column="compare_config" property="compareConfig" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , prompt_id, user_id, mock_contexts, mock_variables, mock_tools, debug_config, compare_config,
+    created_at, updated_at, deleted_at
+  </sql>
+
+  <!-- 插入记录 -->
+  <insert id="insert" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptDebugContextEntity">
+    INSERT INTO bt_prompt_debug_context (id, prompt_id, user_id, mock_contexts, mock_variables, mock_tools, debug_config, compare_config,
+                                         created_at, updated_at, deleted_at)
+    VALUES (#{id,jdbcType=BIGINT},
+            #{promptId,jdbcType=BIGINT},
+            #{userId,jdbcType=VARCHAR},
+            #{mockContexts,jdbcType=VARCHAR},
+            #{mockVariables,jdbcType=VARCHAR},
+            #{mockTools,jdbcType=VARCHAR},
+            #{debugConfig,jdbcType=VARCHAR},
+            #{compareConfig,jdbcType=VARCHAR},
+            #{createdAt,jdbcType=TIMESTAMP},
+            #{updatedAt,jdbcType=TIMESTAMP},
+            #{deletedAt,jdbcType=BIGINT})
+  </insert>
+
+  <!-- 根据条件查询 -->
+  <select id="selectByCondition" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_debug_context
+    WHERE prompt_id = #{promptId,jdbcType=BIGINT}
+    AND user_id = #{userId,jdbcType=VARCHAR}
+    AND deleted_at = 0
+    order by updated_at desc
+  </select>
+
+  <!-- 根据ID查询 -->
+  <select id="selectById" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_prompt_debug_context
+    WHERE id = #{id,jdbcType=BIGINT}
+    AND deleted_at = 0
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    1
+  </select>
+
+  <!-- 根据ID更新 -->
+  <update id="updateById" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptDebugContextEntity">
+    UPDATE bt_prompt_debug_context
+    <set>
+      <if test="promptId != null">
+        prompt_id = #{promptId,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="mockContexts != null">
+        mock_contexts = #{mockContexts,jdbcType=VARCHAR},
+      </if>
+      <if test="mockVariables != null">
+        mock_variables = #{mockVariables,jdbcType=VARCHAR},
+      </if>
+      <if test="mockTools != null">
+        mock_tools = #{mockTools,jdbcType=VARCHAR},
+      </if>
+      <if test="debugConfig != null">
+        debug_config = #{debugConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="compareConfig != null">
+        compare_config = #{compareConfig,jdbcType=VARCHAR},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="deletedAt != null">
+        deleted_at = #{deletedAt,jdbcType=BIGINT},
+      </if>
+    </set>
+    WHERE id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

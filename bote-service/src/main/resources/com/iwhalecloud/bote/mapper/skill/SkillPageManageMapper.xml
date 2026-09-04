@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillPageManageMapper">
+  <sql id="skillPageColumns">
+    a.page_id,
+    a.page_name,
+    a.page_title,
+    a.page_code,
+    a.req_param_json,
+    a.mock_req_param_json,
+    a.page_type,
+    a.page_source_type,
+    a.page_content,
+    a.page_css_json,
+    a.file_info_id,
+    a.page_template_json,
+    a.catalog_item_id,
+    a.tenant_id,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (
+      a.page_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR
+      a.page_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.pageSourceType != null and query.pageSourceType != ''">
+      AND a.page_source_type = #{query.pageSourceType}
+    </if>
+  </sql>
+
+  <insert id="insertSkillPage">
+    INSERT INTO bt_skill_page(
+    page_id,
+    page_name,
+    page_title,
+    page_code,
+    req_param_json,
+    mock_req_param_json,
+    page_type,
+    page_source_type,
+    page_content,
+    page_css_json,
+    file_info_id,
+    page_template_json,
+    catalog_item_id,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    )
+    VALUES (
+    #{dto.pageId},
+    #{dto.pageName},
+    #{dto.pageTitle},
+    #{dto.pageCode},
+    #{dto.reqParamJson},
+    #{dto.mockReqParamJson},
+    #{dto.pageType},
+    #{dto.pageSourceType},
+    #{dto.pageContent},
+    #{dto.pageCssJson},
+    #{dto.fileInfoId},
+    #{dto.pageTemplateJson},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertSkillPage">
+    INSERT INTO bt_skill_page(
+    page_id,
+    page_name,
+    page_title,
+    page_code,
+    req_param_json,
+    mock_req_param_json,
+    page_type,
+    page_source_type,
+    page_content,
+    page_css_json,
+    file_info_id,
+    page_template_json,
+    catalog_item_id,
+    tenant_id,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.pageId},
+    #{dto.pageName},
+    #{dto.pageTitle},
+    #{dto.pageCode},
+    #{dto.reqParamJson},
+    #{dto.mockReqParamJson},
+    #{dto.pageType},
+    #{dto.pageSourceType},
+    #{dto.pageContent},
+    #{dto.pageCssJson},
+    #{dto.fileInfoId},
+    #{dto.pageTemplateJson},
+    #{dto.catalogItemId},
+    #{dto.tenantId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSkillPage" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_skill_page (
+      page_id,
+      page_name,
+      page_title,
+      page_code,
+      req_param_json,
+      mock_req_param_json,
+      page_type,
+      page_source_type,
+      page_content,
+      page_css_json,
+      file_info_id,
+      page_template_json,
+      catalog_item_id,
+      tenant_id,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.pageId},
+      #{dto.pageName},
+      #{dto.pageTitle},
+      #{dto.pageCode},
+      #{dto.reqParamJson},
+      #{dto.mockReqParamJson},
+      #{dto.pageType},
+      #{dto.pageSourceType},
+      #{dto.pageContent},
+      #{dto.pageCssJson},
+      #{dto.fileInfoId},
+      #{dto.pageTemplateJson},
+      #{dto.catalogItemId},
+      #{dto.tenantId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateSkillPage">
+    UPDATE bt_skill_page
+    <set>
+      <if test="dto.checkFieldUpdateFlag('pageName')">
+        page_name = #{dto.pageName},
+      </if>
+      <if test="dto.pageTitle != null">
+        page_title = #{dto.pageTitle},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageCode')">
+        page_code = #{dto.pageCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('reqParamJson')">
+        req_param_json = #{dto.reqParamJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('mockReqParamJson')">
+        mock_req_param_json = #{dto.mockReqParamJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageType')">
+        page_type = #{dto.pageType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageSourceType')">
+        page_source_type = #{dto.pageSourceType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageContent')">
+        page_content = #{dto.pageContent},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageCssJson')">
+        page_css_json = #{dto.pageCssJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('fileInfoId')">
+        file_info_id = #{dto.fileInfoId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('pageTemplateJson')">
+        page_template_json = #{dto.pageTemplateJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updator_id = #{dto.updatorId}
+    </set>
+    WHERE page_id = #{dto.pageId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <select id="getSkillPage" resultType="com.iwhalecloud.bote.dto.skill.SkillPageDTO">
+    SELECT <include refid="skillPageColumns"/>, b.file_id
+    FROM bt_skill_page a
+    LEFT JOIN bt_file_info b ON a.file_info_id = b.file_info_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+    AND a.page_id = #{id}
+    AND a.tenant_id in (#{tenantId}, -1)
+  </select>
+
+  <select id="selectSimplePage" resultType="com.iwhalecloud.bote.dto.skill.SkillPageDTO">
+    SELECT page_id, page_name, page_title, page_code, page_source_type, page_type, page_template_json, req_param_json
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_id = #{id}
+  </select>
+
+  <select id="selectSimplePages" resultType="com.iwhalecloud.bote.dto.skill.SkillPageDTO">
+    SELECT page_id, page_name, page_title, page_code, page_source_type, page_type, page_template_json, req_param_json
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+      AND tenant_id IN (#{tenantId}, -1)
+      AND page_id IN (<foreach collection="ids" item="id" separator=",">#{id}</foreach>)
+  </select>
+
+  <select id="selectSkillPagePage" resultType="com.iwhalecloud.bote.dto.skill.SkillPageDTO">
+    SELECT
+    <include refid="skillPageColumns"/>,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_page a
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <update id="deleteSkillPage">
+    UPDATE bt_skill_page
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE page_id = #{pageId}
+      AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="existsSkillPageCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+    AND page_code = #{dto.pageCode}
+    AND tenant_id in (#{dto.tenantId}, -1)
+    <if test="dto.pageId != null">
+      AND page_id != #{dto.pageId}
+    </if>
+  </select>
+
+  <select id="getSkillPageContentByCode" resultType="java.lang.String">
+    SELECT page_content
+    FROM bt_skill_page
+    WHERE status_cd = '00A'
+      AND page_code = #{pageCode}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="getFileIdByPageCode" resultType="java.lang.Long">
+    SELECT b.file_id
+    FROM bt_skill_page a
+    JOIN bt_file_info b ON a.file_info_id = b.file_info_id AND a.tenant_id = b.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.page_code = #{pageCode}
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+</mapper>

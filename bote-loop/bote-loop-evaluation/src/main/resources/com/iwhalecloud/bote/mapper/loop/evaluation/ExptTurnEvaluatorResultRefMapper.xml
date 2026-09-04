@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnEvaluatorResultRefMapper">
+  <!-- 结果映射 -->
+  <resultMap id="BaseResultMap" type="com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnEvaluatorResultRefEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="expt_turn_result_id" property="exptTurnResultId" jdbcType="BIGINT"/>
+    <result column="evaluator_version_id" property="evaluatorVersionId" jdbcType="BIGINT"/>
+    <result column="evaluator_result_id" property="evaluatorResultId" jdbcType="BIGINT"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+    <result column="deleted_at" property="deletedAt" jdbcType="BIGINT"/>
+    <result column="expt_id" property="exptId" jdbcType="BIGINT"/>
+  </resultMap>
+
+  <!-- 基础字段列表 -->
+  <sql id="Base_Column_List">
+    id, space_id, expt_turn_result_id, evaluator_version_id, evaluator_result_id,
+    created_at, updated_at, deleted_at, expt_id
+  </sql>
+
+  <!-- 批量获取实验轮次评估器结果引用 -->
+  <select id="batchGet" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_eval_res_ref
+    WHERE space_id = #{spaceId}
+    AND expt_turn_result_id IN
+    <foreach collection="exptTurnResultIds" item="exptTurnResultId" open="(" separator="," close=")">
+      #{exptTurnResultId}
+    </foreach>
+  </select>
+
+  <!-- 根据实验ID获取实验轮次评估器结果引用 -->
+  <select id="getByExptId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_eval_res_ref
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+  </select>
+
+  <!-- 根据实验ID和评估器版本ID获取实验轮次评估器结果引用 -->
+  <select id="getByExptEvaluatorVersionId" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_expt_turn_eval_res_ref
+    WHERE space_id = #{spaceId}
+    AND expt_id = #{exptId}
+    AND evaluator_version_id = #{evaluatorVersionId}
+  </select>
+</mapper>

@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.SessionMsgMapper">
+
+  <select id="selectMsgById" resultType="com.iwhalecloud.bote.dto.chat.SessionMsgDTO">
+    SELECT a.msg_id, a.msg_type, a.memorized, a.creator_id<if test="selectMemoryContent">, b.memory_content</if>
+    FROM bt_bot_session_msg a
+    JOIN bt_bot_session_msg_text b ON b.msg_id = a.msg_id
+    WHERE a.msg_id = #{msgId}
+  </select>
+
+  <update id="updateSessionMsgLikeType">
+    UPDATE bt_bot_session_msg
+    SET like_type = #{likeType},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE msg_id = #{msgId}
+  </update>
+
+  <insert id="batchInsertSessionMsg">
+    INSERT INTO bt_bot_session_msg (
+    msg_id,
+    session_id,
+    bot_id,
+    transaction_id,
+    scene_id,
+    context_id,
+    plan_id,
+    msg_type,
+    memorized,
+    role,
+    begin_time,
+    end_time,
+    msg_status,
+    sort,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    ref_msg_id
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+      (
+      #{dto.msgId},
+      #{dto.sessionId},
+      #{dto.botId},
+      #{dto.transactionId},
+      #{dto.sceneId},
+      #{dto.contextId},
+      #{dto.planId},
+      #{dto.msgType},
+      #{dto.memorized},
+      #{dto.role},
+      #{dto.beginTime},
+      #{dto.endTime},
+      #{dto.msgStatus},
+      #{dto.sort},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.refMsgId}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSessionMsg" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_bot_session_msg (
+      msg_id,
+      session_id,
+      bot_id,
+      transaction_id,
+      scene_id,
+      context_id,
+      plan_id,
+      msg_type,
+      memorized,
+      role,
+      begin_time,
+      end_time,
+      msg_status,
+      sort,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      ref_msg_id
+      ) VALUES (
+      #{dto.msgId},
+      #{dto.sessionId},
+      #{dto.botId},
+      #{dto.transactionId},
+      #{dto.sceneId},
+      #{dto.contextId},
+      #{dto.planId},
+      #{dto.msgType},
+      #{dto.memorized},
+      #{dto.role},
+      #{dto.beginTime},
+      #{dto.endTime},
+      #{dto.msgStatus},
+      #{dto.sort},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.refMsgId}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="listSessionMsgs" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT a.msg_id AS id,
+    a.ref_msg_id AS ref_id,
+    a.transaction_id,
+    a.context_id,
+    a.plan_id,
+    a.msg_type AS type,
+    a.role,
+    b.msg_text AS content,
+    a.like_type,
+    a.begin_time,
+    a.end_time,
+    b.ext_params
+    FROM bt_bot_session_msg a
+    JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+    AND a.session_id = #{sessionId}
+    <!-- 忽略前端不需要展示的消息类型 -->
+    AND a.msg_type NOT IN ('point', 'questions', 'exception')
+    <!-- 界面上不需要显示空消息 -->
+    AND b.msg_text IS NOT NULL
+    ORDER BY a.sort
+  </select>
+
+  <select id="selectMessagesBySessionId" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT a.msg_id AS id,
+           a.transaction_id,
+           a.msg_type AS type,
+           a.role,
+           b.msg_text AS content,
+           b.ext_params
+    FROM bt_bot_session_msg a
+    JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      AND a.session_id = #{sessionId}
+      AND a.msg_type IN ('general', 'a2ui', 'page', 'pageFunc')
+      AND (a.compressed IS NULL OR a.compressed = 'F')
+      <if test="contextId == null or contextId == ''">
+        AND a.context_id IS NULL
+      </if>
+      <if test="contextId != null and contextId != ''">
+        AND a.context_id = #{contextId}
+      </if>
+    ORDER BY a.sort
+  </select>
+
+  <select id="selectTransactionIdsPage" resultType="java.lang.Long">
+    SELECT transaction_id
+    FROM (
+        SELECT transaction_id, MAX(sort) AS sort
+        FROM bt_bot_session_msg
+        WHERE status_cd = '00A'
+          AND session_id = #{query.sessionId}
+          <!-- 排除子智能体的消息 -->
+          AND (context_id IS NULL OR context_id NOT LIKE 'sub:%')
+          <!-- 忽略前端不需要展示的消息类型 -->
+          AND msg_type NOT IN ('point', 'pageFunc', 'questions', 'exception')
+          AND (plan_id IS NULL OR msg_type = 'confirmPlan')
+        <if test="query.lastMsgSort != null">
+          AND sort &lt; #{query.lastMsgSort}
+        </if>
+        <if test="query.sceneId != null">
+          AND scene_id = #{query.sceneId}
+        </if>
+        <if test="query.likeType == '1'.toString() or query.likeType == '2'.toString()">
+          AND like_type = #{query.likeType}
+        </if>
+        <if test="query.likeType == '3'.toString()">
+          AND like_type IS NULL
+        </if>
+        GROUP BY transaction_id
+    ) tmp
+    ORDER BY sort
+  </select>
+
+  <select id="selectMessagesByTransactionIds" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT a.msg_id AS id,
+           a.ref_msg_id AS ref_id,
+           a.bot_id,
+           a.transaction_id,
+           a.context_id,
+           a.scene_id,
+           a.plan_id,
+           a.msg_type AS type,
+           a.role,
+           b.msg_text AS content,
+           b.download_type,
+           b.content_type,
+           b.paragraph_group,
+           b.paragraph_sortby,
+           a.like_type,
+           a.begin_time,
+           a.end_time,
+           b.ext_params,
+           a.feedback_reason,
+           a.sort
+    FROM bt_bot_session_msg a
+    LEFT JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      <!-- 忽略前端不需要展示的消息类型 -->
+      AND a.msg_type NOT IN ('point', 'pageFunc', 'questions', 'exception')
+      AND (a.plan_id IS NULL OR a.msg_type = 'confirmPlan')
+      AND a.transaction_id IN (<foreach collection="transactionIds" item="id" separator=",">#{id}</foreach>)
+    <if test="query.likeType == '1'.toString() or query.likeType == '2'.toString()">
+      AND a.like_type = #{query.likeType}
+    </if>
+    <if test="query.likeType == '3'.toString()">
+      AND a.like_type IS NULL
+    </if>
+    ORDER BY a.sort
+  </select>
+
+  <select id="selectRelatedSessionMessage" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT a.msg_id AS id,
+    a.ref_msg_id AS ref_id,
+    a.bot_id,
+    a.transaction_id,
+    a.context_id,
+    a.scene_id,
+    a.plan_id,
+    a.msg_type AS type,
+    a.role,
+    b.msg_text AS content,
+    b.download_type,
+    b.content_type,
+    b.paragraph_group,
+    b.paragraph_sortby,
+    a.like_type,
+    a.begin_time,
+    a.end_time,
+    b.ext_params,
+    a.sort
+    FROM bt_bot_session_msg a
+    LEFT JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      AND a.session_id = #{sessionId}
+      <!-- 忽略前端不需要展示的消息类型 -->
+      AND a.msg_type NOT IN ('point', 'pageFunc', 'questions', 'exception')
+      <!-- 界面上不需要显示空消息 -->
+      AND b.msg_text IS NOT NULL
+      AND a.ref_msg_id IN (<foreach collection="msgIds" item="msgId" separator=", ">#{msgId}</foreach>)
+  </select>
+
+  <select id="selectParagraphSessionMessage" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT a.msg_id AS id,
+    a.ref_msg_id AS ref_id,
+    a.bot_id,
+    a.transaction_id,
+    a.context_id,
+    a.scene_id,
+    a.plan_id,
+    a.msg_type AS type,
+    a.role,
+    b.msg_text AS content,
+    b.download_type,
+    b.content_type,
+    b.paragraph_group,
+    b.paragraph_sortby,
+    a.like_type,
+    a.begin_time,
+    a.end_time,
+    b.ext_params,
+    a.sort
+    FROM bt_bot_session_msg a
+    LEFT JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      AND a.session_id = #{sessionId}
+      AND b.content_type = 'paragraph'
+      AND a.transaction_id IN (<foreach collection="transactionIds" item="id" separator=", ">#{id}</foreach>)
+  </select>
+
+  <select id="selectSessionMessageForPlan" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT a.msg_id AS id,
+    a.ref_msg_id AS ref_id,
+    a.bot_id,
+    a.transaction_id,
+    a.context_id,
+    a.scene_id,
+    a.plan_id,
+    a.msg_type AS type,
+    a.role,
+    b.msg_text AS content,
+    b.download_type,
+    b.content_type,
+    b.paragraph_group,
+    b.paragraph_sortby,
+    a.like_type,
+    a.begin_time,
+    a.end_time,
+    b.ext_params,
+    a.sort
+    FROM bt_bot_session_msg a
+    JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+    AND a.session_id = #{sessionId}
+    <!-- 忽略前端不需要展示的消息类型 -->
+    AND a.msg_type NOT IN ('point', 'questions', 'exception')
+    <!-- 界面上不需要显示空消息 -->
+    AND b.msg_text IS NOT NULL
+    AND a.plan_id IN (<foreach collection="planIds" item="planId" separator=", ">#{planId}</foreach>)
+    ORDER BY a.sort DESC
+  </select>
+
+  <select id="selectMessagesPage" resultType="com.iwhalecloud.bote.dto.chat.ChatMessageItemDTO">
+    SELECT a.msg_id, a.msg_type, c.msg_text, a.begin_time, a.session_id, a.msg_status,
+    b.bot_id, f.bot_name, b.bot_tenant_id,
+    a.scene_id, e.scene_name, e.scene_type,
+    b.creator_id AS user_id, d.real_name AS user_name, d.user_name AS user_code
+    FROM bt_bot_session_msg a
+    JOIN bt_bot_session b ON b.session_id = a.session_id
+    JOIN bt_bot_session_msg_text c ON c.msg_id = a.msg_id
+    LEFT JOIN bt_user d ON d.user_id = b.creator_id
+    LEFT JOIN bt_bot_scene e ON e.scene_id = a.scene_id AND e.tenant_id = b.bot_tenant_id
+    LEFT JOIN bt_bot f ON b.bot_id = f.bot_id AND f.tenant_id IN (-1, b.bot_tenant_id)
+    WHERE a.status_cd = '00A'
+      AND (b.tenant_id = #{query.tenantId} OR b.space_id = #{query.tenantId})
+      AND (a.msg_type IN ('input', 'point') OR (a.msg_type IN ('general', 'a2ui') AND a.role = 'user'))
+    <if test="query.botId != null">
+      AND b.bot_id = #{query.botId}
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+    <if test="query.userId != null">
+      AND b.creator_id = #{query.userId}
+    </if>
+    <if test="query.minBeginTime != null">
+      AND a.begin_time &gt;= #{query.minBeginTime}
+    </if>
+    <if test="query.maxBeginTime != null">
+      AND a.begin_time &lt;= #{query.maxBeginTime}
+    </if>
+    <if test="query.msgType != null and query.msgType != ''">
+      AND a.msg_type = #{query.msgType}
+    </if>
+    <if test="query.msgStatus != null and query.msgStatus != ''">
+      AND a.msg_status = #{query.msgStatus}
+    </if>
+    <!-- 不要添加 msg_text 不为空条件，为空的消息也应该允许查看，比如只上传了文件没输入消息内容 -->
+    <if test="query.keyword != null and query.keyword != ''">
+      AND c.msg_text IS NOT NULL
+      AND c.msg_text LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.begin_time DESC
+  </select>
+
+  <select id="getMaxSort" resultType="java.lang.Integer">
+    SELECT MAX(a.sort) FROM bt_bot_session_msg a
+    WHERE a.session_id = #{sessionId} AND a.status_cd = '00A'
+  </select>
+
+  <select id="getMaxSortByContext" resultType="java.lang.Integer">
+    SELECT MAX(a.sort) FROM bt_bot_session_msg a
+    WHERE a.session_id = #{sessionId} AND a.status_cd = '00A'
+    <choose>
+      <when test="contextId == null or contextId == ''">
+        AND a.context_id IS NULL
+      </when>
+      <otherwise>
+        AND a.context_id = #{contextId}
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectHistoryTextMessagesByContextId" resultType="com.iwhalecloud.bote.dto.chat.HistoryMessageDTO">
+    SELECT a.msg_type, a.role AS msg_role, b.msg_text
+    FROM bt_bot_session_msg a
+           JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      AND a.session_id = #{sessionId}
+      AND a.context_id = #{contextId}
+      AND a.begin_time > #{date}
+      AND a.msg_type IN ('input', 'text')
+      AND b.msg_text IS NOT NULL
+    ORDER BY a.begin_time
+  </select>
+
+  <select id="selectHistoryMessagesByContextId" resultType="com.iwhalecloud.bote.dto.chat.HistoryMessageDTO">
+    SELECT a.msg_type,
+           a.role AS msg_role,
+           CASE
+             WHEN a.msg_type IN ('page', 'pageFunc') AND b.memory_content IS NOT NULl THEN NULL
+             ELSE b.msg_text
+             END AS msg_text,
+           b.memory_content
+    FROM bt_bot_session_msg a
+           JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      AND a.session_id = #{sessionId}
+      AND a.context_id = #{contextId}
+      AND a.begin_time > #{date}
+      AND a.memorized = 'T'
+    ORDER BY a.begin_time
+  </select>
+
+  <select id="selectLastMessage" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT * FROM (
+    SELECT
+    a.msg_id,
+    a.session_id,
+    a.transaction_id,
+    a.scene_id,
+    a.context_id,
+    a.sort
+    FROM bt_bot_session_msg a
+    WHERE a.status_cd = '00A'
+    AND a.session_id = #{sessionId}
+    <if test="contextId != null and contextId != ''">
+      AND a.context_id = #{contextId}
+    </if>
+    ORDER BY a.sort DESC, a.created_time DESC) TMP
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectSceneIdByContextId" resultType="java.lang.Long">
+    SELECT scene_id
+    FROM bt_bot_session_msg
+    WHERE status_cd = '00A'
+      AND session_id = #{sessionId}
+      AND context_id = #{contextId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="existsMessage" resultType="java.lang.Boolean">
+      SELECT
+        CASE
+            WHEN EXISTS (SELECT 1 FROM bt_bot_session_msg WHERE session_id = #{sessionId} AND context_id = #{contextId}) THEN 1
+            ELSE 0
+        END AS existence
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.from_dual"/>
+  </select>
+
+  <select id="selectLastMessageForShow" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
+    SELECT * FROM (
+    SELECT
+    a.msg_id,
+    a.session_id,
+    a.transaction_id,
+    a.scene_id,
+    a.context_id,
+    a.sort,
+    a.msg_type AS "type",
+    b.msg_text AS "content"
+    FROM bt_bot_session_msg a
+    LEFT JOIN bt_bot_session_msg_text b ON a.msg_id = b.msg_id
+    WHERE a.status_cd = '00A'
+      AND b.msg_text IS NOT NULL
+      AND a.session_id = #{sessionId}
+      AND a.msg_type IN (<foreach collection="msgTypes" item="msgType" separator=",">#{msgType}</foreach>)
+      AND a.role = 'user'
+    ORDER BY a.sort DESC, a.created_time DESC) TMP
+    WHERE 1=1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <update id="updateFeedbackMessage">
+    UPDATE bt_bot_session_msg
+    SET
+    <if test="feedbackReason != null and feedbackReason !=''">
+      feedback_reason = #{feedbackReason},
+    </if>
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE msg_id = #{msgId}
+  </update>
+
+  <update id="updateMsgStatus">
+    UPDATE bt_bot_session_msg
+    SET msg_status = #{msgStatus}
+    WHERE msg_id = #{msgId}
+  </update>
+
+  <update id="updateMsgCompressed">
+    UPDATE bt_bot_session_msg
+    SET compressed = 'T'
+    WHERE msg_id IN (<foreach collection="msgIds" item="msgId" separator=",">#{msgId}</foreach>)
+  </update>
+</mapper>

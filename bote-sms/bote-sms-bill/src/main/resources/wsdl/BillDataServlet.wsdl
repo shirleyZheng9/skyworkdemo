@@ -1,0 +1,97 @@
+<wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://intf.smpin.tydic.com" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="BillDataSvr" targetNamespace="http://intf.smpin.tydic.com">
+	<wsdl:types>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://vo.intf.smpin.tydic.com" targetNamespace="http://vo.intf.smpin.tydic.com" version="1.0">
+			<xs:complexType name="UserVo">
+				<xs:sequence>
+					<xs:element form="qualified" minOccurs="0" name="userName" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="passWord" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="sysCode" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="productId" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfBillReqVo">
+				<xs:sequence>
+					<xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="BillReqVo" type="tns:BillReqVo"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="BillReqVo">
+				<xs:sequence>
+					<xs:element form="qualified" name="channelType" type="xs:int"/>
+					<xs:element form="qualified" minOccurs="0" name="endDate" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="planId" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="params" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="beginDate" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="pushUrl" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="createStaff" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="endHour" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="latnId" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="productId" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="productType" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="id" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="toTel" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="isOntime" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="beginHour" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="batch" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="flowCode" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="sentContent" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="createDespart" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" name="businessId" type="xs:long"/>
+					<xs:element form="qualified" minOccurs="0" name="sentType" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="sysCode" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="BillResVo">
+				<xs:sequence>
+					<xs:element form="qualified" minOccurs="0" name="stateDesc" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" maxOccurs="unbounded" minOccurs="0" name="errorFlowCode" nillable="true" type="xs:string"/>
+					<xs:element form="qualified" minOccurs="0" name="state" nillable="true" type="xs:string"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+		<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://intf.smpin.tydic.com" xmlns:ns1="http://vo.intf.smpin.tydic.com" elementFormDefault="unqualified" targetNamespace="http://intf.smpin.tydic.com" version="1.0">
+			<xs:import namespace="http://vo.intf.smpin.tydic.com"/>
+			<xs:element name="BillInfo" type="tns:BillInfo"/>
+			<xs:element name="BillInfoResponse" type="tns:BillInfoResponse"/>
+			<xs:complexType name="BillInfo">
+				<xs:sequence>
+					<xs:element form="qualified" minOccurs="0" name="UserVo" type="ns1:UserVo"/>
+					<xs:element form="qualified" minOccurs="0" name="ArrayOfBillReqVo" type="ns1:ArrayOfBillReqVo"/>
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="BillInfoResponse">
+				<xs:sequence>
+					<xs:element minOccurs="0" name="BillResVo" type="ns1:BillResVo"/>
+				</xs:sequence>
+			</xs:complexType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message name="BillInfo">
+		<wsdl:part element="tns:BillInfo" name="parameters"> </wsdl:part>
+	</wsdl:message>
+	<wsdl:message name="BillInfoResponse">
+		<wsdl:part element="tns:BillInfoResponse" name="parameters"> </wsdl:part>
+	</wsdl:message>
+	<wsdl:portType name="BillDataSvrPortType">
+		<wsdl:operation name="BillInfo">
+			<wsdl:input message="tns:BillInfo" name="BillInfo"> </wsdl:input>
+			<wsdl:output message="tns:BillInfoResponse" name="BillInfoResponse"> </wsdl:output>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BillDataSvrSoapBinding" type="tns:BillDataSvrPortType">
+		<soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="BillInfo">
+			<soap:operation soapAction="" style="document"/>
+			<wsdl:input name="BillInfo">
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output name="BillInfoResponse">
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="BillDataSvr">
+		<wsdl:port binding="tns:BillDataSvrSoapBinding" name="BillDataSvrHttpPort">
+			<soap:address location="http://137.32.180.175:20081/smp_in/servlet/BillDataServlet"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

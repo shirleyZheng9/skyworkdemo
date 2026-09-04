@@ -1,0 +1,442 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeOpsMapper">
+
+  <sql id="timeGroupExpr">
+    <choose>
+      <when test="_databaseId == 'mysql'">
+        <choose>
+          <when test="query.timeType == 'day'">DATE_FORMAT(created_time, '%H:00')</when>
+          <when test="query.timeType == 'year'">DATE_FORMAT(created_time, '%Y%m')</when>
+          <otherwise>DATE_FORMAT(created_time, '%Y%m%d')</otherwise>
+        </choose>
+      </when>
+      <otherwise>
+        <choose>
+          <when test="query.timeType == 'day'">TO_CHAR(created_time, 'HH24') || ':00'</when>
+          <when test="query.timeType == 'year'">TO_CHAR(created_time, 'YYYYMM')</when>
+          <otherwise>TO_CHAR(created_time, 'YYYYMMDD')</otherwise>
+        </choose>
+      </otherwise>
+    </choose>
+  </sql>
+
+  <select id="selectKnowledgeOpsOverview" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsOverviewDTO">
+    SELECT
+    (SELECT COUNT(*) FROM bt_knowledge_base
+    WHERE status_cd = '00A'
+      AND tenant_id = #{query.tenantId}
+    ) AS knowledgeCount,
+    (SELECT count(distinct bd.document_id) from bt_document bd
+    LEFT JOIN bt_knowledge_base kb on kb.knowledge_id = bd.knowledge_id
+    WHERE  bd.tenant_id = #{query.tenantId}
+    AND kb.tenant_id = bd.tenant_id
+    AND kb.status_cd ='00A'
+    AND bd.status_cd = '00A'
+    ) AS documentCount,
+    (SELECT COUNT(DISTINCT a.qa_id) FROM bt_dc_qa_record a
+    LEFT JOIN bt_user u ON u.user_id = a.creator_id
+    LEFT JOIN bt_tenant_user tu ON tu.user_id = u.user_id
+    WHERE a.status_cd = '00A'
+    AND u.status_cd = '00A'
+    AND tu.status_cd = '00A'
+    AND a.tenant_id = #{query.tenantId}
+    AND tu.tenant_id = a.tenant_id
+    ) AS userAskCount,
+    (SELECT COUNT(DISTINCT c.user_id)
+    FROM bt_document bd
+    LEFT JOIN bt_dc_document_contributor c ON c.document_id = bd.dc_document_id
+    LEFT JOIN bt_user u ON u.user_id = c.user_id
+    WHERE bd.status_cd = '00A'
+    AND c.status_cd = '00A'
+    AND u.status_cd = '00A'
+      AND bd.tenant_id = #{query.tenantId}
+    ) AS documentContributorCount
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.from_dual"/>
+  </select>
+
+  <select id="selectKnowledgeReference" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeReferenceDTO">
+    SELECT
+    kb.knowledge_id AS knowledgeId,
+    kb.knowledge_name,
+    COUNT(rel.kb_id) AS refCount
+    FROM bt_knowledge_base kb
+    LEFT JOIN bt_dc_qa_record_kb_rel rel ON rel.kb_id = kb.knowledge_id AND rel.status_cd = '00A' AND rel.tenant_id = #{query.tenantId}
+    LEFT JOIN bt_dc_qa_record qa ON qa.qa_id = rel.qa_id AND qa.status_cd = '00A' AND qa.tenant_id = #{query.tenantId}
+    WHERE kb.status_cd = '00A'
+    AND kb.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != '' and query.searchContent != null">
+      AND kb.knowledge_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    GROUP BY kb.knowledge_id, kb.knowledge_name
+    ORDER BY refCount DESC, MAX(kb.created_time) DESC
+  </select>
+
+  <select id="selectDocumentReference" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentReferenceDTO">
+    SELECT
+    bd.ext_system_id AS docId,
+    bd.doc_name AS documentName,
+    kb.knowledge_name AS knowledgeName,
+    COUNT(DISTINCT ref.qa_id) AS refCount
+    FROM bt_document bd
+    LEFT JOIN bt_knowledge_base kb ON kb.knowledge_id = bd.knowledge_id  AND kb.tenant_id = #{query.tenantId}
+    LEFT JOIN bt_dc_qa_chunk_reference ref ON ref.doc_id = bd.ext_system_id AND ref.status_cd = '00A' AND ref.tenant_id = #{query.tenantId}
+    LEFT JOIN bt_dc_qa_record qa ON qa.qa_id = ref.qa_id AND qa.status_cd = '00A' AND qa.tenant_id = #{query.tenantId}
+    WHERE bd.status_cd = '00A'
+    AND kb.status_cd = '00A'
+    AND bd.tenant_id = #{query.tenantId}
+    <if test="query.searchContent != '' and query.searchContent != null">
+      AND bd.doc_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    GROUP BY bd.ext_system_id, bd.doc_name, kb.knowledge_name
+    ORDER BY refCount DESC, MAX(bd.created_time) DESC
+  </select>
+
+  <select id="selectHotQuestionRank" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsHotQuestionDTO">
+    SELECT
+    qa.question,
+    COUNT(*) AS count
+    FROM bt_dc_qa_record qa
+    WHERE qa.status_cd = '00A'
+    AND qa.tenant_id = #{query.tenantId}
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+    GROUP BY qa.question
+    ORDER BY count DESC
+  </select>
+
+  <select id="selectHotQuestionRank" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsHotQuestionDTO" databaseId="oracle">
+    SELECT
+    CAST(qa.question AS VARCHAR2(4000)) AS question,
+    COUNT(*) AS count
+    FROM bt_dc_qa_record qa
+    WHERE qa.status_cd = '00A'
+    AND qa.tenant_id = #{query.tenantId}
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+    GROUP BY CAST(qa.question AS VARCHAR2(4000))
+    ORDER BY count DESC
+  </select>
+
+  <select id="selectHotQuestionRankByStandarQuestion" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsHotQuestionDTO">
+    SELECT
+    qa.standard_question AS question,
+    COUNT(*) AS count
+    FROM bt_dc_qa_record qa
+    WHERE qa.status_cd = '00A'
+    AND qa.tenant_id = #{query.tenantId}
+    AND qa.standard_question IS NOT NULL
+    AND qa.standard_question != ''
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+    GROUP BY qa.standard_question
+    ORDER BY COUNT(*) DESC
+  </select>
+
+  <select id="selectHotQuestionRankByStandarQuestion" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsHotQuestionDTO" databaseId="oracle">
+    SELECT
+    CAST(qa.standard_question AS VARCHAR2(4000)) AS question,
+    COUNT(*) AS count
+    FROM bt_dc_qa_record qa
+    WHERE qa.status_cd = '00A'
+    AND qa.tenant_id = #{query.tenantId}
+    AND qa.standard_question IS NOT NULL
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+    GROUP BY CAST(qa.standard_question AS VARCHAR2(4000))
+    ORDER BY COUNT(*) DESC
+  </select>
+
+  <select id="selectDislikeRawFeedbackTypes" resultType="string">
+    SELECT qa.feedback_type
+    FROM bt_dc_qa_record qa
+    WHERE qa.status_cd = '00A'
+      AND qa.user_feedback = 'DISLIKE'
+      AND qa.feedback_type IS NOT NULL
+      AND qa.tenant_id = #{query.tenantId}
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+  </select>
+
+  <select id="selectFeedbackRatio" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsFeedBackRatioDTO">
+    SELECT
+    SUM(CASE WHEN a.user_feedback = 'LIKE'    THEN 1 ELSE 0 END) AS likeCount,
+    SUM(CASE WHEN a.user_feedback = 'DISLIKE' THEN 1 ELSE 0 END) AS dislikeCount
+    FROM bt_dc_qa_record a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.startTime != null">
+      AND a.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND a.created_time &lt;= #{query.endTime}
+    </if>
+  </select>
+
+  <select id="findDocTotal" resultType="integer">
+    SELECT COUNT(*) AS total
+    FROM bt_dc_document_contributor c
+    LEFT JOIN bt_document bd ON bd.dc_document_id = c.document_id
+    LEFT JOIN bt_user u ON u.user_id = c.user_id
+    LEFT JOIN bt_tenant_user tu ON tu.user_id = u.user_id
+    WHERE c.status_cd = '00A'
+      AND u.status_cd = '00A'
+      AND tu.status_cd = '00A'
+      AND bd.status_cd = '00A'
+      AND bd.tenant_id = #{tenantId}
+      AND tu.tenant_id = c.tenant_id
+  </select>
+
+  <select id="selectDocContributorRank" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsContributorDTO">
+    SELECT
+    u.user_id AS userId,
+    u.real_name,
+    COUNT(bd.document_id) AS uploadCount
+    FROM bt_tenant_user tu
+    LEFT JOIN bt_user u ON u.user_id = tu.user_id
+    LEFT JOIN bt_dc_document_contributor c ON c.user_id = u.user_id AND c.status_cd = '00A' AND c.tenant_id = #{query.tenantId}
+    LEFT JOIN bt_document bd ON bd.dc_document_id = c.document_id AND bd.status_cd = '00A' AND bd.tenant_id = #{query.tenantId}
+    WHERE tu.tenant_id = #{query.tenantId}
+    AND tu.status_cd = '00A'
+    AND u.status_cd = '00A'
+    <if test="query.searchContent != '' and query.searchContent != null">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.startTime != null">
+      AND c.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND c.created_time &lt;= #{query.endTime}
+    </if>
+    GROUP BY u.user_id, u.real_name
+    ORDER BY uploadCount DESC, MAX(u.created_time) ASC
+  </select>
+
+  <select id="selectDocContributeDailyStats" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordItemDto">
+    SELECT
+    <include refid="timeGroupExpr"/> AS name,
+    COUNT(*) AS value
+    FROM (
+    SELECT bd.created_time AS created_time
+    FROM bt_dc_document_contributor c
+    LEFT JOIN bt_document bd ON bd.dc_document_id = c.document_id
+    LEFT JOIN bt_user u ON u.user_id = c.user_id
+    LEFT JOIN bt_tenant_user tu ON tu.user_id = u.user_id AND tu.tenant_id = c.tenant_id
+    WHERE c.status_cd = '00A'
+    AND bd.status_cd = '00A'
+    AND u.status_cd = '00A'
+    AND tu.status_cd = '00A'
+    AND c.tenant_id = #{query.tenantId}
+    <if test="query.startTime != null">
+      AND bd.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND bd.created_time &lt;= #{query.endTime}
+    </if>
+    ) t
+    GROUP BY <include refid="timeGroupExpr"/>
+    ORDER BY name ASC
+  </select>
+
+  <select id="findUserQuestionTotal" resultType="integer">
+    SELECT COUNT(*) AS total
+    FROM bt_dc_qa_record a
+    LEFT JOIN bt_user u ON u.user_id = a.creator_id
+    LEFT JOIN bt_tenant_user tu ON tu.user_id = u.user_id AND tu.tenant_id = a.tenant_id
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND u.status_cd = '00A'
+      AND tu.status_cd = '00A'
+  </select>
+
+  <select id="selectUserQuestionRank" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsContributorDTO">
+    SELECT
+    u.user_id AS userId,
+    u.real_name,
+    COUNT(qa.qa_id) AS questionCount
+    FROM bt_tenant_user tu
+    LEFT JOIN bt_user u ON u.user_id = tu.user_id
+    LEFT JOIN bt_dc_qa_record qa ON qa.creator_id = u.user_id AND qa.status_cd = '00A' AND qa.tenant_id = #{query.tenantId}
+    WHERE tu.tenant_id = #{query.tenantId}
+    AND tu.status_cd = '00A'
+    AND u.status_cd = '00A'
+    <if test="query.searchContent != '' and query.searchContent != null">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+    GROUP BY u.user_id, u.real_name
+    ORDER BY questionCount DESC, MAX(u.created_time) ASC
+  </select>
+
+  <select id="selectUserQuestionDailyStats" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordItemDto">
+    SELECT
+    <include refid="timeGroupExpr"/> AS name,
+    COUNT(*) AS value
+    FROM (
+    SELECT qa.created_time AS created_time
+    FROM bt_dc_qa_record qa
+    LEFT JOIN bt_user u ON u.user_id = qa.creator_id
+    LEFT JOIN bt_tenant_user tu ON tu.user_id = u.user_id AND tu.tenant_id = qa.tenant_id
+    WHERE qa.status_cd = '00A'
+    AND tu.status_cd = '00A'
+    AND u.status_cd = '00A'
+    AND qa.tenant_id = #{query.tenantId}
+    <if test="query.startTime != null">
+      AND qa.created_time >= #{query.startTime}
+    </if>
+    <if test="query.endTime != null">
+      AND qa.created_time &lt;= #{query.endTime}
+    </if>
+    ) t
+    GROUP BY <include refid="timeGroupExpr"/>
+    ORDER BY name ASC
+  </select>
+
+  <select id="selectComprehensiveRank" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsComprehensiveDTO">
+    SELECT
+      u.user_id,
+      u.real_name,
+      u.user_icon,
+      COALESCE(doc_s.upload_count, 0) AS uploadCount,
+      COALESCE(fb_s.like_count, 0) AS likeCount,
+      COALESCE(fb_s.dislike_count, 0) AS dislikeCount,
+      COALESCE(ref_s.ref_count, 0) AS referenceCount,
+      (COALESCE(doc_s.upload_count, 0)
+         + COALESCE(fb_s.like_count, 0)
+         - COALESCE(fb_s.dislike_count, 0)
+        + COALESCE(ref_s.ref_count, 0)) AS comprehensiveScore
+    FROM (
+      SELECT tu.user_id
+      FROM bt_tenant_user tu
+      WHERE tu.tenant_id = #{query.tenantId}
+        AND tu.status_cd = '00A'
+    ) tu
+    JOIN bt_user u ON u.user_id = tu.user_id AND u.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    LEFT JOIN (
+    SELECT c.user_id AS creator_id, COUNT(bd.document_id) AS upload_count
+    FROM bt_dc_document_contributor c
+    LEFT JOIN bt_document bd ON bd.dc_document_id = c.document_id AND bd.status_cd = '00A' AND bd.tenant_id = #{query.tenantId}
+    WHERE c.status_cd = '00A'
+    AND c.tenant_id = #{query.tenantId}
+    GROUP BY c.user_id
+    ) doc_s ON doc_s.creator_id = u.user_id
+
+    LEFT JOIN (
+    SELECT
+    doc_owner.creator_id,
+    SUM(CASE WHEN qa.user_feedback = 'LIKE' THEN 1 ELSE 0 END) AS like_count,
+    SUM(CASE WHEN qa.user_feedback = 'DISLIKE' THEN 1 ELSE 0 END) AS dislike_count
+    FROM (
+    SELECT DISTINCT ref.qa_id, ref.doc_id
+    FROM bt_dc_qa_chunk_reference ref
+    WHERE ref.status_cd = '00A'
+    AND ref.tenant_id = #{query.tenantId}
+    ) ref
+    LEFT JOIN (
+    SELECT bd.ext_system_id AS doc_id, d.creator_id
+    FROM bt_document bd
+    LEFT JOIN bt_dc_document d ON d.document_id = bd.dc_document_id
+    WHERE bd.status_cd = '00A'
+    AND d.status_cd = '00A'
+    ) doc_owner ON doc_owner.doc_id = ref.doc_id
+    LEFT JOIN bt_dc_qa_record qa ON qa.qa_id = ref.qa_id AND qa.status_cd = '00A'
+    GROUP BY doc_owner.creator_id
+    ) fb_s ON fb_s.creator_id = u.user_id
+
+    LEFT JOIN (
+    SELECT doc_owner.creator_id, COUNT(*) AS ref_count
+    FROM (
+    SELECT DISTINCT qa_id, doc_id
+    FROM bt_dc_qa_chunk_reference
+    WHERE status_cd = '00A' AND tenant_id = #{query.tenantId}
+    ) ref
+    LEFT JOIN (
+    SELECT bd.ext_system_id AS doc_id, d.creator_id
+    FROM bt_document bd
+    LEFT JOIN bt_dc_document d ON d.document_id = bd.dc_document_id
+    WHERE bd.status_cd = '00A' AND d.status_cd = '00A'
+    ) doc_owner ON doc_owner.doc_id = ref.doc_id
+    GROUP BY doc_owner.creator_id
+    ) ref_s ON ref_s.creator_id = u.user_id
+    ORDER BY comprehensiveScore DESC
+  </select>
+
+  <select id="selectDcQaRecordPage" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaRecordDTO">
+    SELECT a.qa_id, a.question, a.answer, a.created_time, u.real_name AS creatorName, a.feedback_type, a.feedback_reason, a.operate_state,
+    k.knowledge_name
+    FROM bt_dc_qa_record a
+    LEFT JOIN bt_dc_qa_record_kb_rel b ON b.qa_id = a.qa_id
+    LEFT JOIN bt_knowledge_base k ON k.knowledge_id = b.kb_id AND k.tenant_id = #{query.tenantId}
+    LEFT JOIN bt_user u ON u.user_id = a.creator_id
+    WHERE a.status_cd = '00A'
+    AND a.user_feedback = 'DISLIKE'
+    AND a.tenant_id = #{query.tenantId}
+    <if test="query.feedbackTypes != null and query.feedbackTypes.size() > 0">
+      AND (
+      <foreach collection="query.feedbackTypes" item="type" separator=" OR ">
+        (a.feedback_type = #{type}
+        OR a.feedback_type LIKE CONCAT(#{type}, ',%')
+        OR a.feedback_type LIKE CONCAT('%,', #{type}, ',%')
+        OR a.feedback_type LIKE CONCAT('%,', #{type}))
+      </foreach>
+      )
+    </if>
+    <if test="query.searchContent != '' and query.searchContent != null">
+      AND u.real_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <update id="updateFeedbackOperateState">
+    UPDATE bt_dc_qa_record
+    SET operate_state = #{operateState},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE qa_id = #{qaId}
+  </update>
+</mapper>

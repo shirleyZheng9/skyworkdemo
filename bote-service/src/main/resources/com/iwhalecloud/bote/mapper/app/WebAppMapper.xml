@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.app.WebAppMapper">
+
+  <sql id="webAppColumns">
+    a.web_app_id,
+    a.space_id,
+    a.app_name,
+    a.app_desc,
+    a.app_icon,
+    a.auth_type,
+    a.open_type,
+    a.access_url,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark
+  </sql>
+
+  <insert id="insertWebApp">
+    INSERT INTO bt_web_app (
+    web_app_id,
+    space_id,
+    app_name,
+    app_desc,
+    app_icon,
+    auth_type,
+    open_type,
+    access_url,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark
+    ) VALUES (
+    #{dto.webAppId},
+    #{dto.spaceId},
+    #{dto.appName},
+    #{dto.appDesc},
+    #{dto.appIcon},
+    #{dto.authType},
+    #{dto.openType},
+    #{dto.accessUrl},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateWebApp">
+    UPDATE bt_web_app
+    <set>
+      <if test="dto.checkFieldUpdateFlag('appName')">
+        app_name = #{dto.appName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('appDesc')">
+        app_desc = #{dto.appDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('appIcon')">
+        app_icon = #{dto.appIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('authType')">
+        auth_type = #{dto.authType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('openType')">
+        open_type = #{dto.openType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('accessUrl')">
+        access_url = #{dto.accessUrl},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE web_app_id = #{dto.webAppId}
+      AND space_id = #{dto.spaceId}
+  </update>
+
+  <select id="selectWebApp" resultType="com.iwhalecloud.bote.dto.app.WebAppDTO">
+    SELECT
+    <include refid="webAppColumns"/>
+    FROM bt_web_app a
+    WHERE a.status_cd = '00A'
+      AND a.web_app_id = #{webAppId}
+      AND a.space_id = #{spaceId}
+  </select>
+
+  <select id="selectWebAppBasicInfo" resultType="com.iwhalecloud.bote.dto.app.WebAppDTO">
+    SELECT web_app_id, app_name, open_type, access_url
+    FROM bt_web_app
+    WHERE status_cd = '00A'
+      AND web_app_id = #{webAppId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <update id="deleteWebApp">
+    UPDATE bt_web_app
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND web_app_id = #{webAppId}
+      AND space_id = #{spaceId}
+  </update>
+
+  <select id="selectWebAppPage" resultType="com.iwhalecloud.bote.dto.app.WebAppDTO">
+    SELECT a.web_app_id, a.app_name, a.created_time, a.updated_time,
+        (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS creatorName,
+        (SELECT w.space_name FROM bt_workspace w WHERE w.space_id = a.space_id) AS spaceName
+    FROM bt_web_app a
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{query.spaceId}
+    <if test="query.appName != null and query.appName != ''">
+      AND a.app_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.appName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="checkUsedForBenchApp" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_workbench_app_rel war
+    LEFT JOIN bt_workbench_app wa ON wa.workbench_app_id = war.workbench_app_id AND wa.status_cd = '00A'
+    WHERE war.status_cd = '00A'
+      AND war.rel_app_id = #{webAppId}
+      AND wa.app_status = 'A'
+  </select>
+
+  <select id="selectWebAppList" resultType="com.iwhalecloud.bote.dto.app.WebAppDTO">
+    SELECT web_app_id, app_name
+    FROM bt_web_app
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="selectWebAppIcon" resultType="java.lang.String">
+    SELECT app_icon
+    FROM bt_web_app
+    WHERE status_cd = '00A'
+      AND web_app_id = #{webAppId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="selectWebAppByBotId" resultType="com.iwhalecloud.bote.dto.app.SimpleWebAppDTO">
+    SELECT c.web_app_id, c.app_name, c.auth_type, c.open_type, c.access_url, c.space_id
+    FROM bt_workbench_app a
+    LEFT JOIN bt_workbench_app_rel b ON a.workbench_app_id = b.workbench_app_id AND a.space_id = b.space_id
+    LEFT JOIN bt_web_app c ON b.rel_app_id = c.web_app_id AND a.space_id = c.space_id
+    WHERE a.status_cd = '00A'
+      AND a.app_status = 'A'
+      AND b.status_cd = '00A'
+      AND b.rel_app_type = 'webApp'
+      AND c.status_cd = '00A'
+      AND exists(SELECT 1 FROM bt_workbench_app_rel d
+                          WHERE a.workbench_app_id = d.workbench_app_id
+                            AND a.space_id = d.space_id
+                            AND d.status_cd = '00A'
+                            AND d.rel_app_type = 'aiBot'
+                            AND d.rel_app_id = #{botId}
+                            AND d.tenant_id = #{tenantId})
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+</mapper>

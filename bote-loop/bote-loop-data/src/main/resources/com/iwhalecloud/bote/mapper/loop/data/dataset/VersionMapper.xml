@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.loop.data.dataset.VersionMapper">
+  <!-- 结果映射 -->
+  <resultMap id="VersionResultMap" type="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetVersionEntity">
+    <id column="id" property="id" jdbcType="BIGINT"/>
+    <result column="app_id" property="appId" jdbcType="INTEGER"/>
+    <result column="space_id" property="spaceId" jdbcType="BIGINT"/>
+    <result column="dataset_id" property="datasetId" jdbcType="BIGINT"/>
+    <result column="schema_id" property="schemaId" jdbcType="BIGINT"/>
+    <result column="dataset_brief" property="datasetBrief" jdbcType="VARCHAR"/>
+    <result column="version" property="version" jdbcType="VARCHAR"/>
+    <result column="version_num" property="versionNum" jdbcType="BIGINT"/>
+    <result column="description" property="description" jdbcType="VARCHAR"/>
+    <result column="item_count" property="itemCount" jdbcType="BIGINT"/>
+    <result column="snapshot_status" property="snapshotStatus" jdbcType="VARCHAR"/>
+    <result column="snapshot_progress" property="snapshotProgress" jdbcType="VARCHAR"/>
+    <result column="update_version" property="updateVersion" jdbcType="BIGINT"/>
+    <result column="created_by" property="createdBy" jdbcType="VARCHAR"/>
+    <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
+    <result column="disabled_at" property="disabledAt" jdbcType="TIMESTAMP"/>
+  </resultMap>
+
+  <!-- 基础字段 -->
+  <sql id="Base_Column_List">
+    id
+    , app_id, space_id, dataset_id, schema_id, dataset_brief, version, version_num,
+        description, item_count, snapshot_status, snapshot_progress, update_version,
+        created_by, created_at, disabled_at
+  </sql>
+
+  <!-- 创建版本 -->
+  <insert id="createVersion" parameterType="com.iwhalecloud.bote.entity.loop.data.dataset.DatasetVersionEntity">
+    INSERT INTO bt_dataset_version (id, app_id, space_id, dataset_id, schema_id, dataset_brief, version, version_num,
+                                    description, item_count, snapshot_status, snapshot_progress, update_version,
+                                    created_by, created_at, disabled_at)
+    VALUES (#{id}, #{appId}, #{spaceId}, #{datasetId}, #{schemaId}, #{datasetBrief}, #{version}, #{versionNum},
+            #{description}, #{itemCount}, #{snapshotStatus}, #{snapshotProgress}, #{updateVersion},
+            #{createdBy}, #{createdAt}, #{disabledAt})
+  </insert>
+
+  <!-- 获取版本 -->
+  <select id="getVersion" resultMap="VersionResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset_version
+    WHERE space_id = #{spaceId} AND id = #{versionId}
+  </select>
+
+  <!-- 批量获取版本 -->
+  <select id="mGetVersions" resultMap="VersionResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset_version
+    WHERE space_id = #{spaceId}
+    AND id IN
+    <foreach collection="ids" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </select>
+
+  <!-- 列表查询版本 -->
+  <select id="listVersions" resultMap="VersionResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM bt_dataset_version
+    <where>
+      space_id = #{spaceId}
+      <if test="datasetId != null">
+        AND dataset_id = #{datasetId}
+      </if>
+      <if test="ids != null and ids.size() > 0">
+        AND id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+      </if>
+      <if test="versions != null and versions.size() > 0">
+        AND version IN
+        <foreach collection="versions" item="version" open="(" separator="," close=")">
+          #{version}
+        </foreach>
+      </if>
+      <if test="versionNums != null and versionNums.size() > 0">
+        AND version_num IN
+        <foreach collection="versionNums" item="versionNum" open="(" separator="," close=")">
+          #{versionNum}
+        </foreach>
+      </if>
+      <if test="versionLike != null and versionLike != ''">
+        AND version LIKE CONCAT('%', #{versionLike}, '%')
+      </if>
+    </where>
+    ORDER BY created_at DESC, id DESC
+  </select>
+
+  <!-- 统计版本数量 -->
+  <select id="countVersions" resultType="java.lang.Long">
+    SELECT COUNT(*)
+    FROM bt_dataset_version
+    <where>
+      space_id = #{spaceId}
+      <if test="datasetId != null">
+        AND dataset_id = #{datasetId}
+      </if>
+      <if test="ids != null and ids.size() > 0">
+        AND id IN
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+          #{id}
+        </foreach>
+      </if>
+      <if test="versions != null and versions.size() > 0">
+        AND version IN
+        <foreach collection="versions" item="version" open="(" separator="," close=")">
+          #{version}
+        </foreach>
+      </if>
+      <if test="versionNums != null and versionNums.size() > 0">
+        AND version_num IN
+        <foreach collection="versionNums" item="versionNum" open="(" separator="," close=")">
+          #{versionNum}
+        </foreach>
+      </if>
+      <if test="versionLike != null and versionLike != ''">
+        AND version LIKE CONCAT('%', #{versionLike}, '%')
+      </if>
+    </where>
+  </select>
+
+  <!-- 更新版本 -->
+  <update id="patchVersion">
+    UPDATE bt_dataset_version
+    <set>
+      <if test="patch.appId != null">
+        app_id = #{patch.appId},
+      </if>
+      <if test="patch.datasetId != null">
+        dataset_id = #{patch.datasetId},
+      </if>
+      <if test="patch.schemaId != null">
+        schema_id = #{patch.schemaId},
+      </if>
+      <if test="patch.datasetBrief != null">
+        dataset_brief = #{patch.datasetBrief},
+      </if>
+      <if test="patch.version != null">
+        version = #{patch.version},
+      </if>
+      <if test="patch.versionNum != null">
+        version_num = #{patch.versionNum},
+      </if>
+      <if test="patch.description != null">
+        description = #{patch.description},
+      </if>
+      <if test="patch.itemCount != null">
+        item_count = #{patch.itemCount},
+      </if>
+      <if test="patch.snapshotStatus != null">
+        snapshot_status = #{patch.snapshotStatus},
+      </if>
+      <if test="patch.snapshotProgress != null">
+        snapshot_progress = #{patch.snapshotProgress},
+      </if>
+      <if test="patch.updateVersion != null">
+        update_version = #{patch.updateVersion},
+      </if>
+      <if test="patch.disabledAt != null">
+        disabled_at = #{patch.disabledAt},
+      </if>
+    </set>
+    WHERE id = #{where.id} AND space_id = #{where.spaceId}
+  </update>
+</mapper>

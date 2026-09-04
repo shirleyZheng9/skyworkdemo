@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.intent.IntentLogManageMapper">
+
+  <sql id="intentLogColumns">
+    a.log_id,
+    a.tenant_id,
+    a.bot_id,
+    a.scene_id,
+    a.content,
+    a.mark_status,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+      AND a.status_cd = '00A'
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.content LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+  </sql>
+
+  <select id="getIntentLog" resultType="com.iwhalecloud.bote.dto.intent.IntentLogDTO">
+    SELECT
+    <include refid="intentLogColumns"/>
+    FROM bt_chat_intention_log a
+    WHERE log_id = #{id}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insertIntentLog">
+    INSERT INTO bt_chat_intention_log (
+    log_id,
+    tenant_id,
+    bot_id,
+    scene_id,
+    content,
+    mark_status,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.logId},
+    #{dto.tenantId},
+    #{dto.botId},
+    #{dto.sceneId},
+    #{dto.content},
+    #{dto.markStatus},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <select id="selectIntentLogPage" resultType="com.iwhalecloud.bote.dto.intent.IntentLogDTO">
+    SELECT
+    <include refid="intentLogColumns"/>, s.scene_name AS "sceneName", b.bot_name AS "botName"
+    FROM bt_chat_intention_log a
+    LEFT JOIN bt_bot_scene s ON s.scene_id = a.scene_id
+    LEFT JOIN bt_bot b ON b.bot_id = a.bot_id
+    WHERE 1=1
+    <include refid="batchQueryCondition"/>
+      AND exists (SELECT 1 FROM bt_bot_scene s WHERE s.scene_id = a.scene_id AND s.status_cd = '00A')
+    ORDER BY a.created_time DESC
+  </select>
+
+  <update id="updateIntentLogStatus">
+    UPDATE bt_chat_intention_log
+    SET mark_status = #{markStatus},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE log_id = #{logId}
+  </update>
+
+</mapper>

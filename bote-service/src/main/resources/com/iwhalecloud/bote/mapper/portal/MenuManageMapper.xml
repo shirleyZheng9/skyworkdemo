@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.MenuManageMapper">
+
+  <sql id="dirColumns">
+    a.dir_id,
+    a.dir_name,
+    a.parent_id,
+    a.dir_type,
+    a.dir_icon,
+    a.menu_id,
+    a.menu_type,
+    a.sortby,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="dirMenuColumns">
+    a.rel_id,
+    a.dir_id,
+    a.menu_id,
+    a.menu_name,
+    a.menu_type,
+    a.menu_icon,
+    a.sortby,
+    a.is_hidden,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="getPortalDir" resultType="com.iwhalecloud.bote.dto.portal.PortalDirDTO">
+    SELECT
+    <include refid="dirColumns"/>
+    FROM bt_portal_dir a
+    WHERE dir_id = #{id}
+      AND status_cd = '00A'
+  </select>
+
+  <insert id="insertPortalDir">
+    INSERT INTO bt_portal_dir (
+    dir_id,
+    dir_name,
+    parent_id,
+    dir_type,
+    dir_icon,
+    menu_id,
+    menu_type,
+    sortby,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.dirId},
+    #{dto.dirName},
+    #{dto.parentId},
+    #{dto.dirType},
+    #{dto.dirIcon},
+    #{dto.menuId},
+    #{dto.menuType},
+    #{dto.sortby},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updatePortalDir">
+    UPDATE bt_portal_dir
+    <set>
+      <if test="dto.checkFieldUpdateFlag('dirName')">
+        dir_name = #{dto.dirName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('parentId')">
+        parent_id = #{dto.parentId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dirType')">
+        dir_type = #{dto.dirType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('dirIcon')">
+        dir_icon = #{dto.dirIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('menuId')">
+        menu_id = #{dto.menuId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('menuType')">
+        menu_type = #{dto.menuType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sortby')">
+        sortby = #{dto.sortby},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE dir_id = #{dto.dirId}
+  </update>
+
+  <update id="deletePortalDir">
+    UPDATE bt_portal_dir
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE dir_id = #{dirId}
+  </update>
+
+  <select id="getDirMenu" resultType="com.iwhalecloud.bote.dto.portal.PortalDirMenuDTO">
+    SELECT
+    <include refid="dirMenuColumns"/>,
+    b.priv_url AS "menuUrl"
+    FROM bt_portal_dir_menu a
+    LEFT JOIN bt_priv b ON a.menu_id = b.priv_id
+    WHERE a.rel_id = #{id}
+      AND a.status_cd = '00A'
+  </select>
+
+  <insert id="insertDirMenu">
+    INSERT INTO bt_portal_dir_menu (
+    rel_id,
+    dir_id,
+    menu_id,
+    menu_name,
+    menu_type,
+    menu_icon,
+    sortby,
+    is_hidden,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.relId},
+    #{dto.dirId},
+    #{dto.menuId},
+    #{dto.menuName},
+    #{dto.menuType},
+    #{dto.menuIcon},
+    #{dto.sortby},
+    #{dto.isHidden},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <insert id="batchInsertDirMenu">
+    INSERT INTO bt_portal_dir_menu (
+    rel_id,
+    dir_id,
+    menu_id,
+    menu_name,
+    menu_type,
+    menu_icon,
+    sortby,
+    is_hidden,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="dto" separator=",">
+      (
+      #{dto.relId},
+      #{dto.dirId},
+      #{dto.menuId},
+      #{dto.menuName},
+      #{dto.menuType},
+      #{dto.menuIcon},
+      #{dto.sortby},
+      #{dto.isHidden},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertDirMenu" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" separator=" ">
+      INTO bt_portal_dir_menu (
+      rel_id,
+      dir_id,
+      menu_id,
+      menu_name,
+      menu_type,
+      menu_icon,
+      sortby,
+      is_hidden,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{dto.relId},
+      #{dto.dirId},
+      #{dto.menuId},
+      #{dto.menuName},
+      #{dto.menuType},
+      #{dto.menuIcon},
+      #{dto.sortby},
+      #{dto.isHidden},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.statusCd},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.creatorId},
+      #{dto.updatorId},
+      #{dto.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="updateDirMenu">
+    UPDATE bt_portal_dir_menu
+    <set>
+      <if test="dto.checkFieldUpdateFlag('dirId')">
+        dir_id = #{dto.dirId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('menuId')">
+        menu_id = #{dto.menuId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('menuName')">
+        menu_name = #{dto.menuName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('menuType')">
+        menu_type = #{dto.menuType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('menuIcon')">
+        menu_icon = #{dto.menuIcon},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('sortby')">
+        sortby = #{dto.sortby},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('isHidden')">
+        is_hidden = #{dto.isHidden},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE rel_id = #{dto.relId}
+  </update>
+
+  <update id="deleteDirMenu">
+    UPDATE bt_portal_dir_menu
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE rel_id = #{relId}
+  </update>
+
+  <select id="selectDirList" resultType="com.iwhalecloud.bote.dto.portal.PortalDirDTO">
+    SELECT <include refid="dirColumns"/>,
+    b.priv_url AS "menuUrl"
+    FROM bt_portal_dir a
+    LEFT JOIN bt_priv b ON a.menu_id = b.priv_id
+    WHERE a.status_cd = '00A'
+  </select>
+
+  <select id="selectDirMenuList" resultType="com.iwhalecloud.bote.dto.portal.PortalDirMenuDTO">
+    SELECT
+    a.rel_id,
+    a.dir_id,
+    a.menu_id,
+    COALESCE(a.menu_name, b.priv_name) AS "menuName",
+    a.menu_type,
+    a.menu_icon,
+    a.sortby,
+    a.is_hidden,
+    b.priv_url AS "menuUrl"
+    FROM bt_portal_dir_menu a
+    LEFT JOIN bt_priv b ON a.menu_id = b.priv_id
+    WHERE a.status_cd = '00A'
+    <if test="menuIds != null and menuIds.size() > 0">
+      AND a.menu_id IN (<foreach item="menuId" collection="menuIds" separator=",">#{menuId}</foreach>)
+    </if>
+  </select>
+
+  <select id="selectDirMenuByDirId" resultType="com.iwhalecloud.bote.dto.portal.PortalDirMenuDTO">
+    SELECT <include refid="dirMenuColumns"/>
+    FROM bt_portal_dir_menu a
+    WHERE a.status_cd = '00A'
+      AND a.dir_id = #{dirId}
+    ORDER BY a.sortby
+  </select>
+
+</mapper>

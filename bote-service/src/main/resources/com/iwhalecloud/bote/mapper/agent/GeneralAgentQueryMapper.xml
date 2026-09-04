@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.agent.GeneralAgentQueryMapper">
+
+  <select id="getModelId" resultType="java.lang.Long">
+    SELECT model_id FROM bt_ai_model
+    WHERE status_cd = '00A'
+      AND model_type = 'llm'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="getSpaceModelId" resultType="java.lang.Long">
+    SELECT model_id FROM bt_library_large_model
+    WHERE status_cd = '00A'
+      AND is_enabled = 'T'
+      AND tenant_id = #{spaceId}
+      AND data_from IS NULL
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="getModelTenantId" resultType="java.lang.Long">
+    SELECT a.tenant_id FROM bt_library_large_model a
+    WHERE a.status_cd = '00A'
+      AND a.model_id = #{modelId}
+      AND (a.tenant_id IN (#{spaceId}, -1) OR
+           EXISTS (SELECT 1 FROM bt_workspace b WHERE b.space_id = #{spaceId}
+                                                  AND a.tenant_id = b.space_tenant_id))
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="getPlatformModelId" resultType="java.lang.Long">
+    SELECT model_id FROM bt_library_large_model
+    WHERE status_cd = '00A'
+      AND is_enabled = 'T'
+      AND tenant_id = -1
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectEnvVariableList" resultType="com.iwhalecloud.bote.dto.agent.SimpleAiEnvVariableDTO">
+    SELECT variable_code, variable_value
+    FROM bt_ai_env_variable
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+  </select>
+
+  <select id="selectEnabledMcpIds" resultType="java.lang.Long">
+    SELECT a.mcp_id
+    FROM bt_ai_mcp a
+    JOIN bt_mcp_server b ON b.server_id = a.mcp_id
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.bot_id = #{botId}
+      AND a.creator_id = #{userId}
+      AND b.status_cd = '00A'
+    <choose>
+      <when test="platform">
+        AND b.tenant_id = -1
+      </when>
+      <otherwise>
+        AND b.tenant_id = a.space_id
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="selectEnabledSkillIds" resultType="java.lang.Long">
+    SELECT a.skill_id
+    FROM bt_ai_skill a
+    JOIN bt_agent_skill b ON b.skill_id = a.skill_id
+    WHERE a.status_cd = '00A'
+      AND a.space_id = #{spaceId}
+      AND a.bot_id = #{botId}
+      AND a.creator_id = #{userId}
+      AND b.status_cd = '00A'
+    <choose>
+      <when test="platform">
+        AND b.tenant_id = -1
+      </when>
+      <otherwise>
+        AND b.tenant_id = a.space_id
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="getCustomPrompt" resultType="java.lang.String">
+    SELECT file_content FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+      AND file_name = #{fileName}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="selectCustomPromptList" resultType="com.iwhalecloud.bote.dto.agent.SimpleAiWorkspaceDTO">
+    SELECT file_name, file_content
+    FROM bt_ai_workspace
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND bot_id = #{botId}
+      AND creator_id = #{userId}
+      AND #{botId} = -1
+      AND (memory_type IS NULL OR memory_type = '')
+  </select>
+</mapper>

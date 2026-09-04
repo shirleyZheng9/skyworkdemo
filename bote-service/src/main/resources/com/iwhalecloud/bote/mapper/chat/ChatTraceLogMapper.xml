@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.chat.ChatTraceLogMapper">
+
+  <insert id="batchInsert">
+    INSERT INTO bt_chat_trace_log (log_id,
+                                   msg_id,
+                                   step_name,
+                                   input,
+                                   output_json,
+                                   log_content,
+                                   start_time,
+                                   time_spent,
+                                   log_status,
+                                   sort,
+                                   created_time)
+    VALUES
+    <foreach collection="logs" item="log" separator=",">
+      (
+        #{log.logId},
+        #{log.msgId},
+        #{log.stepName},
+        #{log.input},
+        #{log.outputJson},
+        #{log.logContent},
+        #{log.startTime},
+        #{log.timeSpent},
+        #{log.logStatus},
+        #{log.sort},
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsert" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="logs" item="log" separator=" ">
+    INTO bt_chat_trace_log (log_id,
+                                     msg_id,
+                                     step_name,
+                                     input,
+                                     output_json,
+                                     log_content,
+                                     start_time,
+                                     time_spent,
+                                     log_status,
+                                     sort,
+                                     created_time
+      ) VALUES (
+        #{log.logId},
+        #{log.msgId},
+        #{log.stepName},
+        #{log.input},
+        #{log.outputJson},
+        #{log.logContent},
+        #{log.startTime},
+        #{log.timeSpent},
+        #{log.logStatus},
+        #{log.sort},
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="selectByMsgId" resultType="com.iwhalecloud.bote.dto.chat.vo.ChatTraceLogVO">
+    SELECT log_id, step_name, input AS input_json, output_json, log_content, time_spent, log_status
+    FROM bt_chat_trace_log
+    WHERE msg_id = #{msgId}
+    ORDER BY sort
+  </select>
+
+  <delete id="deleteByMaxDate" timeout="120">
+    <!-- PostgreSQL, Oracle 不支持在 UPDATE/DELETE 中使用 LIMIT, 但支持在 WHERE 条件中对更新的表做子查询 -->
+    DELETE
+    FROM bt_chat_trace_log
+    WHERE log_id IN (
+        SELECT log_id
+        FROM bt_chat_trace_log
+        WHERE start_time &lt; #{maxDate}
+        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+       )
+  </delete>
+
+  <delete id="deleteByMaxDate" databaseId="mysql" timeout="120">
+    <!-- MySQL 不支持在 WHERE 条件中对更新的表做子查询，但支持 LIMIT -->
+    DELETE
+    FROM bt_chat_trace_log
+    WHERE start_time &lt; #{maxDate}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    #{limit}
+  </delete>
+</mapper>

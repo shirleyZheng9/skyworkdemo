@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.doc.module.document.mapper.DocumentCommentMapper">
+
+  <sql id="commentColumns">
+    a.comment_id,
+    a.document_id,
+    a.uuid,
+    a.content,
+    a.old_content,
+    a.record_type,
+    a.correction_type,
+    a.correction_reason,
+    a.review_status,
+    a.reviewer_id,
+    a.review_time,
+    a.parent_id,
+    a.tenant_id,
+    a.edit,
+    a.creator_id,
+    a.updator_id,
+    a.created_time,
+    a.updated_time,
+    a.status_cd
+  </sql>
+
+  <sql id="queryCondition">
+    AND a.status_cd = '00A'
+    <if test="request.documentId != null and request.documentId != ''">
+      AND a.document_id = #{request.documentId}
+    </if>
+    <if test="request.recordType != null and request.recordType != ''">
+      AND a.record_type = #{request.recordType}
+    </if>
+    <if test="request.reviewStatus != null and request.reviewStatus != ''">
+      AND a.review_status = #{request.reviewStatus}
+    </if>
+  </sql>
+
+  <insert id="insert">
+    INSERT INTO bt_dc_document_comment (
+    comment_id,
+    document_id,
+    uuid,
+    content,
+    old_content,
+    record_type,
+    correction_type,
+    correction_reason,
+    review_status,
+    reviewer_id,
+    review_time,
+    parent_id,
+    edit,
+    creator_id,
+    updator_id,
+    created_time,
+    updated_time,
+    status_cd
+    ) VALUES (
+    #{comment.commentId},
+    #{comment.documentId},
+    #{comment.uuid},
+    #{comment.content},
+    #{comment.oldContent},
+    #{comment.recordType},
+    #{comment.correctionType},
+    #{comment.correctionReason},
+    #{comment.reviewStatus},
+    #{comment.reviewerId},
+    #{comment.reviewTime},
+    #{comment.parentId},
+    #{comment.edit},
+    #{comment.creatorId},
+    #{comment.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{comment.statusCd}
+    )
+  </insert>
+
+  <select id="selectById" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentCommentDTO">
+    SELECT
+    <include refid="commentColumns"/>
+    FROM bt_dc_document_comment a
+    WHERE a.comment_id = #{commentId}
+    AND a.status_cd = '00A'
+  </select>
+
+  <update id="updateContent">
+    UPDATE bt_dc_document_comment
+    SET content = #{comment.content},
+    edit = #{comment.edit},
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{comment.updatorId}
+    WHERE comment_id = #{comment.commentId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="updateReviewStatus">
+    UPDATE bt_dc_document_comment
+    SET review_status = #{comment.reviewStatus},
+    reviewer_id = #{comment.reviewerId},
+    review_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{comment.updatorId}
+    WHERE comment_id = #{comment.commentId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteById">
+    UPDATE bt_dc_document_comment
+    SET status_cd = '00X',
+    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{updatorId}
+    WHERE comment_id = #{commentId}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="selectByDocumentId" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentCommentDTO">
+    SELECT
+    <include refid="commentColumns"/>
+    FROM bt_dc_document_comment a
+    <where>
+      <include refid="queryCondition"/>
+    </where>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="selectByUuids" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentCommentDTO">
+    SELECT
+    <include refid="commentColumns"/>
+    FROM bt_dc_document_comment a
+    WHERE a.status_cd = '00A'
+    AND a.uuid IN
+    <foreach collection="uuids" item="uuid" open="(" separator="," close=")">
+      #{uuid}
+    </foreach>
+    ORDER BY a.created_time DESC
+  </select>
+
+  <select id="countByDocumentId" resultType="long">
+    SELECT COUNT(1)
+    FROM bt_dc_document_comment a
+    <where>
+      <include refid="queryCondition"/>
+    </where>
+  </select>
+
+  <select id="selectByParentId" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentCommentDTO">
+    SELECT
+    <include refid="commentColumns"/>
+    FROM bt_dc_document_comment a
+    WHERE a.parent_id = #{parentId}
+    AND a.status_cd = '00A'
+    ORDER BY a.created_time ASC
+  </select>
+
+  <select id="selectByUuid" resultType="com.iwhalecloud.bote.doc.module.document.dto.DocumentCommentDTO">
+    SELECT
+    <include refid="commentColumns"/>
+    FROM bt_dc_document_comment a
+    WHERE a.uuid = #{uuid}
+    AND a.status_cd = '00A'
+    AND a.review_status= 'PENDING'
+    AND a.document_id=#{documentId}
+  </select>
+
+</mapper>

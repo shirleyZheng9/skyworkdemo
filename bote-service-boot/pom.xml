@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.iwhalecloud.bote</groupId>
+    <artifactId>bote</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>bote-service-boot</artifactId>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.iwhalecloud.bote</groupId>
+      <artifactId>bote-service</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.iwhalecloud.bote</groupId>
+      <artifactId>bote-loop-api</artifactId>
+    </dependency>
+    <!-- 适配 dify -->
+    <dependency>
+      <groupId>com.iwhalecloud.bote</groupId>
+      <artifactId>bote-adapter-dify</artifactId>
+    </dependency>
+
+    <!-- 只提供给服务函数、工作流脚本节点使用，本工程的代码不允许使用 -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>fastjson</artifactId>
+    </dependency>
+    <!-- 升级 commons-beanutils 后没了 commons-collections 依赖，但部分工作流的脚本节点中仍然引用了 -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <!-- 各类文件服务器 -->
+    <profile>
+      <id>fdfs</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bss.litchi</groupId>
+          <artifactId>litchi-file-fdfs</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>ftp</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bss.litchi</groupId>
+          <artifactId>litchi-file-ftp</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>hdfs</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bss.litchi</groupId>
+          <artifactId>litchi-file-hdfs</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>oss</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bss.litchi</groupId>
+          <artifactId>litchi-file-oss</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>sdfs</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bss.litchi</groupId>
+          <artifactId>litchi-file-sdfs</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>sftp</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bss.litchi</groupId>
+          <artifactId>litchi-file-sftp</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- 各类数据库 -->
+    <profile>
+      <id>oceanbase</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.oceanbase</groupId>
+          <artifactId>oceanbase-client</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>dm</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.dameng</groupId>
+          <artifactId>DmJdbcDriver18</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>panwei</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bote</groupId>
+          <artifactId>bote-optional-panwei</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>yashan</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.yashandb</groupId>
+          <artifactId>yashandb-jdbc</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>goldendb</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.glodendb</groupId>
+          <artifactId>gdb_mysql-connector-java</artifactId>
+          <version>5.1.46.89</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>goldendb-oracle</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.goldendb</groupId>
+          <artifactId>gdb_mysql-connector-java-oracle</artifactId>
+          <version>5.1.46.82</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>kingbase</id>
+      <dependencies>
+        <dependency>
+          <groupId>cn.com.kingbase</groupId>
+          <artifactId>kingbase8</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- 接口适配 -->
+    <profile>
+      <!-- 适配中国移动的聚智平台 -->
+      <id>juzhi</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bote</groupId>
+          <artifactId>bote-adapter-juzhi</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <!-- 适配中国移动的磐智平台 -->
+      <id>panzhi</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bote</groupId>
+          <artifactId>bote-adapter-panzhi</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <!-- 河南电信统一消息推送平台 -->
+    <profile>
+      <id>sms-bill</id>
+      <dependencies>
+        <dependency>
+          <groupId>com.iwhalecloud.bote</groupId>
+          <artifactId>bote-sms-bill</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+  </profiles>
+
+  <build>
+    <finalName>${project.artifactId}</finalName>
+
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <configuration>
+          <excludes>
+            <exclude>
+              <groupId>org.projectlombok</groupId>
+              <artifactId>lombok</artifactId>
+            </exclude>
+            <exclude>
+              <groupId>com.github.spotbugs</groupId>
+              <artifactId>spotbugs-annotations</artifactId>
+            </exclude>
+            <exclude>
+              <groupId>jakarta.servlet</groupId>
+              <artifactId>jakarta.servlet-api</artifactId>
+            </exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>

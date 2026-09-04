@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.portal.TenantSettingInfoManageMapper">
+
+  <sql id="tenantSettingInfoColumns">
+    a.setting_id,
+    a.tenant_id,
+    a.bot_id,
+    a.func_type,
+    a.setting_info,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="getTenantSettingInfo" resultType="com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO">
+    SELECT
+    <include refid="tenantSettingInfoColumns"/>
+    FROM bt_tenant_setting_info a
+    WHERE a.setting_id = #{id}
+      AND a.tenant_id = #{tenantId}
+      AND a.status_cd = '00A'
+  </select>
+
+  <insert id="insertTenantSettingInfo">
+    INSERT INTO bt_tenant_setting_info (
+    setting_id,
+    tenant_id,
+    bot_id,
+    func_type,
+    setting_info,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.settingId},
+    #{dto.tenantId},
+    #{dto.botId},
+    #{dto.funcType},
+    #{dto.settingInfo},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateTenantSettingInfo">
+    UPDATE bt_tenant_setting_info
+    <set>
+      <if test="dto.checkFieldUpdateFlag('settingId')">
+        setting_id = #{dto.settingId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('botId')">
+        bot_id = #{dto.botId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('funcType')">
+        func_type = #{dto.funcType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('settingInfo')">
+        setting_info = #{dto.settingInfo},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE setting_id = #{dto.settingId}
+      AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteTenantSettingInfo">
+    UPDATE bt_tenant_setting_info
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE setting_id = #{settingId}
+  </update>
+
+  <select id="selectTenantSettingInfoList" resultType="com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO">
+    SELECT
+    <include refid="tenantSettingInfoColumns"/>
+    FROM bt_tenant_setting_info a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectTenantSettingInfoListByFuncTypes" resultType="com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO">
+    SELECT
+    <include refid="tenantSettingInfoColumns"/>
+    FROM bt_tenant_setting_info a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{query.tenantId}
+    <if test="query.funcTypes != null and query.funcTypes.size() > 0">
+      AND a.func_type IN (<foreach item="funcType" collection="query.funcTypes" separator=",">#{funcType}</foreach>)
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.botId == null">
+      AND a.bot_id IS NULL
+    </if>
+  </select>
+
+  <select id="getTenantSettingInfoByTenantIdAndType" resultType="com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO">
+    SELECT <include refid="tenantSettingInfoColumns"/>
+    FROM bt_tenant_setting_info a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.func_type = #{funcType}
+      AND a.bot_id IS NULL
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+  </select>
+
+  <select id="existsFuncSwitchSettingInfo" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_tenant_setting_info a
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id = #{tenantId}
+      AND a.bot_id = #{botId}
+      AND a.func_type = 'func_switch'
+  </select>
+
+  <update id="updateFuncSwitchInfo">
+    UPDATE bt_tenant_setting_info
+    SET setting_info = #{settingInfo}
+    WHERE status_cd = '00A'
+      AND func_type = 'func_switch'
+      AND tenant_id = #{tenantId}
+      AND bot_id = #{botId}
+  </update>
+
+  <select id="selectTenantSettingInfoByType" resultType="com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO">
+    SELECT
+    <include refid="tenantSettingInfoColumns"/>
+    FROM bt_tenant_setting_info a
+    WHERE a.status_cd = '00A'
+      AND a.func_type = #{funcType}
+  </select>
+</mapper>

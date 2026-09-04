@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.app.WorkbenchAppRelMapper">
+
+  <sql id="columns">
+    a.rel_id,
+    a.workbench_app_id,
+    a.rel_app_id,
+    a.rel_app_type,
+    a.tenant_id,
+    a.status_cd,
+    a.creator_id,
+    a.created_time,
+    a.updator_id,
+    a.updated_time,
+    a.remark,
+    a.space_id
+  </sql>
+
+  <insert id="insertAppRel">
+    INSERT INTO bt_workbench_app_rel (
+    rel_id,
+    workbench_app_id,
+    rel_app_id,
+    rel_app_type,
+    tenant_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark,
+    space_id
+    ) VALUES (
+    #{dto.relId},
+    #{dto.workbenchAppId},
+    #{dto.relAppId},
+    #{dto.relAppType},
+    #{dto.tenantId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark},
+    #{dto.spaceId}
+    )
+  </insert>
+
+  <insert id="insertAppRelBatch">
+    INSERT INTO bt_workbench_app_rel (
+    rel_id,
+    workbench_app_id,
+    rel_app_id,
+    rel_app_type,
+    tenant_id,
+    status_cd,
+    creator_id,
+    created_time,
+    updator_id,
+    updated_time,
+    remark,
+    space_id
+    ) VALUES
+    <foreach collection="list" item="dto" index="index" separator=", ">
+    (
+    #{dto.relId},
+    #{dto.workbenchAppId},
+    #{dto.relAppId},
+    #{dto.relAppType},
+    #{dto.tenantId},
+    #{dto.statusCd},
+    #{dto.creatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.updatorId},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.remark},
+    #{dto.spaceId}
+    )
+    </foreach>
+  </insert>
+
+  <insert id="insertAppRelBatch" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="dto" index="index" separator=" ">
+      INTO bt_workbench_app_rel (
+      rel_id,
+      workbench_app_id,
+      rel_app_id,
+      rel_app_type,
+      tenant_id,
+      status_cd,
+      creator_id,
+      created_time,
+      updator_id,
+      updated_time,
+      remark,
+      space_id
+      ) VALUES (
+      #{dto.relId},
+      #{dto.workbenchAppId},
+      #{dto.relAppId},
+      #{dto.relAppType},
+      #{dto.tenantId},
+      #{dto.statusCd},
+      #{dto.creatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.updatorId},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{dto.remark},
+      #{dto.spaceId}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <update id="deleteByWorkbenchAppId">
+    UPDATE bt_workbench_app_rel
+    SET status_cd = '00X',
+        updator_id = #{updatorId},
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND workbench_app_id = #{workbenchAppId}
+      AND space_id = #{spaceId}
+  </update>
+
+  <select id="existByRelAppId" resultType="java.lang.Boolean">
+    SELECT CASE WHEN COUNT(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_workbench_app_rel
+    WHERE status_cd = '00A'
+      AND rel_app_id = #{relAppId}
+      AND space_id = #{spaceId}
+    <if test="tenantId != null">
+      AND tenant_id = #{tenantId}
+    </if>
+  </select>
+
+  <select id="selectByWorkbenchAppId" resultType="com.iwhalecloud.bote.dto.app.WorkbenchAppRelDTO">
+    SELECT rel_id, workbench_app_id, rel_app_id, rel_app_type, tenant_id, space_id
+    FROM bt_workbench_app_rel
+    WHERE status_cd = '00A'
+      AND workbench_app_id = #{workbenchAppId}
+      AND space_id = #{spaceId}
+  </select>
+
+  <select id="selectByWorkbenchAppIds" resultType="com.iwhalecloud.bote.dto.app.WorkbenchAppRelDTO">
+    SELECT rel_id, workbench_app_id, rel_app_id, rel_app_type, tenant_id, space_id
+    FROM bt_workbench_app_rel
+    WHERE status_cd = '00A'
+      AND space_id = #{spaceId}
+      AND workbench_app_id IN (<foreach collection="appIdList" item="appId" separator=", ">#{appId}</foreach>)
+  </select>
+
+  <select id="selectByRelAppIdAndType" resultType="com.iwhalecloud.bote.dto.app.WorkbenchAppRelDTO">
+    SELECT rel_id, workbench_app_id, rel_app_id, rel_app_type, space_id
+    FROM bt_workbench_app_rel
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND rel_app_id = #{relAppId}
+      AND rel_app_type = #{relAppType}
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    </select>
+
+  <update id="unpublishByRelAppIdAndType">
+    UPDATE bt_workbench_app_rel
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND rel_app_id = #{relAppId}
+      AND rel_app_type = #{relAppType}
+  </update>
+
+  <update id="updateAppStatusToDisabled">
+    UPDATE bt_workbench_app
+    SET status_cd = '00X',
+        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE space_id = #{spaceId}
+      AND workbench_app_id = #{workbenchAppId}
+  </update>
+
+</mapper>
+

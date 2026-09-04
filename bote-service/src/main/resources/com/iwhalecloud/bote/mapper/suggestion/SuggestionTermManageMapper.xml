@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.iwhalecloud.bote.mapper.suggestion.SuggestionTermManageMapper">
+
+  <sql id="suggestionTermColumns">
+    a.term_id,
+    a.bot_id,
+    a.scene_id,
+    a.tenant_id,
+    a.term_content,
+    a.term_type,
+    a.owner_type,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <select id="selectSuggestionTermPage" resultType="com.iwhalecloud.bote.dto.suggestion.SuggestionTermDTO">
+    SELECT
+    a.term_id,
+    a.bot_id,
+    a.scene_id,
+    a.tenant_id,
+    a.term_content,
+    a.term_type,
+    a.owner_type,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    t.tenant_name,
+    b.bot_name,
+    s.scene_name,
+    u.real_name AS "updatorName"
+    FROM bt_suggestion_term a
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.tenant_id AND t.status_cd = '00A'
+    LEFT JOIN bt_bot b ON b.bot_id = a.bot_id AND b.tenant_id = a.tenant_id AND b.status_cd = '00A'
+    LEFT JOIN bt_bot_scene s ON s.scene_id = a.scene_id AND s.tenant_id = a.tenant_id AND s.status_cd = '00A'
+    LEFT JOIN bt_user u ON u.user_id = a.updator_id AND u.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+    <if test="query.termType != null and query.termType != ''">
+      AND a.term_type = #{query.termType}
+    </if>
+    <if test="query.ownerType != null and query.ownerType != ''">
+      AND a.owner_type = #{query.ownerType}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND a.term_content LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <insert id="insertSuggestionTerm" parameterType="com.iwhalecloud.bote.entity.suggestion.SuggestionTermEntity">
+    INSERT INTO bt_suggestion_term (
+    term_id,
+    bot_id,
+    scene_id,
+    tenant_id,
+    term_content,
+    term_type,
+    owner_type,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{termId},
+    #{botId},
+    #{sceneId},
+    #{tenantId},
+    #{termContent},
+    #{termType},
+    #{ownerType},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    '00A',
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{creatorId},
+    #{updatorId},
+    #{remark}
+    )
+  </insert>
+
+  <update id="updateSuggestionTerm" parameterType="com.iwhalecloud.bote.entity.suggestion.SuggestionTermEntity">
+    UPDATE bt_suggestion_term
+    SET
+    term_content = #{termContent},
+    bot_id = #{botId},
+    scene_id = #{sceneId},
+    term_type = #{termType},
+    owner_type = #{ownerType},
+    remark = #{remark},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updator_id = #{updatorId}
+    WHERE term_id = #{termId}
+    AND tenant_id = #{tenantId}
+    AND status_cd = '00A'
+  </update>
+
+  <update id="deleteSuggestionTerm">
+    UPDATE bt_suggestion_term
+    SET
+    status_cd = '00X',
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE term_id = #{termId}
+    AND tenant_id = #{tenantId}
+    AND status_cd = '00A'
+  </update>
+
+  <select id="checkSceneExists" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_bot_scene
+    WHERE scene_id = #{sceneId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="checkTenantExists" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_tenant
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00A'
+  </select>
+
+  <select id="selectSuggestionTerm" resultType="com.iwhalecloud.bote.dto.suggestion.SuggestionTermDTO">
+    SELECT
+    term_id,
+    bot_id,
+    scene_id,
+    tenant_id,
+    term_content,
+    term_type,
+    owner_type,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    FROM bt_suggestion_term a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="selectSuggestionTermById" resultType="com.iwhalecloud.bote.entity.suggestion.SuggestionTermEntity">
+    SELECT
+    <include refid="suggestionTermColumns"/>
+    FROM bt_suggestion_term a
+    WHERE a.status_cd = '00A'
+    AND a.term_id = #{termId}
+    AND a.tenant_id = #{tenantId}
+  </select>
+
+  <select id="checkSuggestionTermExists" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_suggestion_term a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    AND a.owner_type = #{ownerType}
+    AND a.term_type = #{termType}
+    AND a.term_content = #{termContent}
+    <if test="termId != null and termId != ''">
+      AND a.term_id != #{termId}
+    </if>
+    <if test="ownerType == 'BOT'">
+      AND a.bot_id = #{ownerId}
+    </if>
+    <if test="ownerType == 'SCENE'">
+      AND a.scene_id = #{ownerId}
+    </if>
+  </select>
+
+  <insert id="batchInsertSuggestionTerms">
+    INSERT INTO bt_suggestion_term (
+    term_id,
+    bot_id,
+    scene_id,
+    tenant_id,
+    term_content,
+    term_type,
+    owner_type,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES
+    <foreach collection="list" item="entity" separator=",">
+      (
+      #{entity.termId},
+      #{entity.botId},
+      #{entity.sceneId},
+      #{entity.tenantId},
+      #{entity.termContent},
+      #{entity.termType},
+      #{entity.ownerType},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      '00A',
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.creatorId},
+      #{entity.updatorId},
+      #{entity.remark}
+      )
+    </foreach>
+  </insert>
+
+  <insert id="batchInsertSuggestionTerms" databaseId="oracle">
+    INSERT ALL
+    <foreach collection="list" item="entity" separator=" ">
+      INTO bt_suggestion_term (
+      term_id,
+      bot_id,
+      scene_id,
+      tenant_id,
+      term_content,
+      term_type,
+      owner_type,
+      created_time,
+      status_cd,
+      updated_time,
+      creator_id,
+      updator_id,
+      remark
+      ) VALUES (
+      #{entity.termId},
+      #{entity.botId},
+      #{entity.sceneId},
+      #{entity.tenantId},
+      #{entity.termContent},
+      #{entity.termType},
+      #{entity.ownerType},
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      '00A',
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      #{entity.creatorId},
+      #{entity.updatorId},
+      #{entity.remark}
+      )
+    </foreach>
+    SELECT 1 FROM dual
+  </insert>
+
+  <select id="checkSuggestionTermContentsExist" resultType="string">
+    SELECT a.term_content
+    FROM bt_suggestion_term a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    AND a.owner_type = #{ownerType}
+    AND a.term_content IN
+    <foreach item="termContent" collection="termContents" open="(" separator="," close=")">
+      #{termContent}
+    </foreach>
+    <if test="ownerType == 'BOT'">
+      AND a.bot_id = #{ownerId}
+    </if>
+    <if test="ownerType == 'SCENE'">
+      AND a.scene_id = #{ownerId}
+    </if>
+  </select>
+
+  <select id="selectSuggestionTermListForExport" resultType="com.iwhalecloud.bote.dto.suggestion.SuggestionTermDTO">
+    SELECT
+    a.term_id,
+    a.bot_id,
+    a.scene_id,
+    a.tenant_id,
+    a.term_content,
+    a.term_type,
+    a.owner_type,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark,
+    t.tenant_name,
+    b.bot_name,
+    s.scene_name
+    FROM bt_suggestion_term a
+    LEFT JOIN bt_tenant t ON t.tenant_id = a.tenant_id AND t.status_cd = '00A'
+    LEFT JOIN bt_bot b ON b.bot_id = a.bot_id AND b.tenant_id = a.tenant_id AND b.status_cd = '00A'
+    LEFT JOIN bt_bot_scene s ON s.scene_id = a.scene_id AND s.tenant_id = a.tenant_id AND s.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+    <if test="query.termType != null and query.termType != ''">
+      AND a.term_type = #{query.termType}
+    </if>
+    <if test="query.ownerType != null and query.ownerType != ''">
+      AND a.owner_type = #{query.ownerType}
+    </if>
+    <if test="query.tenantId != null">
+      AND a.tenant_id = #{query.tenantId}
+    </if>
+    <if test="query.botId != null">
+      AND a.bot_id = #{query.botId}
+    </if>
+    <if test="query.sceneId != null">
+      AND a.scene_id = #{query.sceneId}
+    </if>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <select id="checkSuggestionTermExistsInInstance" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_suggestion_term a
+    WHERE a.status_cd = '00A'
+    AND a.tenant_id = #{tenantId}
+    AND a.owner_type = #{ownerType}
+    <if test="ownerType == 'BOT'">
+      AND a.bot_id = #{ownerId}
+    </if>
+    <if test="ownerType == 'SCENE'">
+      AND a.scene_id = #{ownerId}
+    </if>
+    <if test="ownerType == 'TENANT'">
+      AND a.tenant_id = #{ownerId}
+    </if>
+  </select>
+
+</mapper>

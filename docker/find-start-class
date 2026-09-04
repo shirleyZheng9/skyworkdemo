@@ -1,0 +1,23 @@
+#!/bin/sh
+# Usage: find-start-class META-INF/MANIFEST.MF
+# Prints Spring Boot Start-Class (or Main-Class as fallback) for java -cp ... <class>
+set -e
+mf="${1:?manifest path required}"
+if [ ! -f "$mf" ]; then
+  echo "find-start-class: not a file: $mf" >&2
+  exit 1
+fi
+# Spring Boot executable jar（MANIFEST 常为 CRLF，须去掉 \r，否则主类名无法解析）
+start=$(grep -m1 '^Start-Class:' "$mf" | sed 's/^Start-Class:[[:space:]]*//' | tr -d '\r')
+if [ -n "$start" ]; then
+  printf '%s\n' "$start"
+  exit 0
+fi
+# Plain jar fallback
+main=$(grep -m1 '^Main-Class:' "$mf" | sed 's/^Main-Class:[[:space:]]*//' | tr -d '\r')
+if [ -n "$main" ]; then
+  printf '%s\n' "$main"
+  exit 0
+fi
+echo "find-start-class: no Start-Class or Main-Class in $mf" >&2
+exit 1

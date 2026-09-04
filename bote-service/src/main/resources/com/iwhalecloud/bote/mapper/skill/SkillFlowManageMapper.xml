@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.iwhalecloud.bote.mapper.skill.SkillFlowManageMapper">
+
+  <sql id="flowColumns">
+    a.flow_id,
+    a.flow_name,
+    a.flow_code,
+    a.flow_desc,
+    a.tenant_id,
+    a.catalog_item_id,
+    a.flow_graph_json,
+    a.flow_dsl,
+    a.flow_type,
+    a.flow_explanation,
+    a.flow_step_json,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="flowParamColumns">
+    a.param_id,
+    a.flow_id,
+    a.tenant_id,
+    a.variable_json,
+    a.request_json,
+    a.response_json,
+    a.created_time,
+    a.status_cd,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    a.remark
+  </sql>
+
+  <sql id="batchQueryCondition">
+    <if test="query.flowType != null and query.flowType != ''">
+      AND a.flow_type = #{query.flowType}
+    </if>
+    <if test="query.searchContent != null and query.searchContent != ''">
+      AND (a.flow_code LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      OR a.flow_name LIKE
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      #{query.searchContent}
+      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      )
+    </if>
+    <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
+      AND a.catalog_item_id in (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
+    </if>
+    <if test="query.flowId != null">
+      AND a.flow_id = #{query.flowId}
+    </if>
+  </sql>
+
+  <select id="existsSkillFlowCode" resultType="boolean">
+    SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
+    FROM bt_skill_flow
+    WHERE status_cd = '00A'
+      AND tenant_id = #{tenantId}
+      AND flow_code = #{flowCode}
+  </select>
+
+  <select id="getSkillFlow" resultType="com.iwhalecloud.bote.dto.skill.SkillFlowDTO">
+    SELECT
+    <include refid="flowColumns"/>
+    FROM bt_skill_flow a
+    WHERE status_cd = '00A'
+      AND tenant_id in (#{tenantId}, -1)
+      AND flow_id = #{flowId}
+  </select>
+
+  <insert id="insertSkillFlow">
+    INSERT INTO bt_skill_flow (
+    flow_id,
+    flow_name,
+    flow_code,
+    flow_desc,
+    tenant_id,
+    catalog_item_id,
+    flow_graph_json,
+    flow_dsl,
+    flow_type,
+    flow_explanation,
+    flow_step_json,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.flowId},
+    #{dto.flowName},
+    #{dto.flowCode},
+    #{dto.flowDesc},
+    #{dto.tenantId},
+    #{dto.catalogItemId},
+    #{dto.flowGraphJson},
+    #{dto.flowDsl},
+    #{dto.flowType},
+    #{dto.flowExplanation},
+    #{dto.flowStepJson},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillFlow">
+    UPDATE bt_skill_flow
+    <set>
+      <if test="dto.checkFieldUpdateFlag('flowName')">
+        flow_name = #{dto.flowName},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowCode')">
+        flow_code = #{dto.flowCode},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowDesc')">
+        flow_desc = #{dto.flowDesc},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+        catalog_item_id = #{dto.catalogItemId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowGraphJson')">
+        flow_graph_json = #{dto.flowGraphJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowDsl')">
+        flow_dsl = #{dto.flowDsl},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowType')">
+        flow_type = #{dto.flowType},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowExplanation')">
+        flow_explanation = #{dto.flowExplanation},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowStepJson')">
+        flow_step_json = #{dto.flowStepJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE flow_id = #{dto.flowId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="updateSkillFlowBasicInfo">
+    UPDATE bt_skill_flow
+    SET
+    <if test="dto.checkFieldUpdateFlag('flowName')">
+      flow_name = #{dto.flowName},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('flowCode')">
+      flow_code = #{dto.flowCode},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('flowType')">
+      flow_type = #{dto.flowType},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('flowDesc')">
+      flow_desc = #{dto.flowDesc},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('catalogItemId')">
+      catalog_item_id = #{dto.catalogItemId},
+    </if>
+    <if test="dto.checkFieldUpdateFlag('flowExplanation')">
+      flow_explanation = #{dto.flowExplanation},
+    </if>
+    updator_id = #{dto.updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE flow_id = #{dto.flowId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteSkillFlow">
+    UPDATE bt_skill_flow
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE flow_id = #{flowId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="selectSkillFlowPage" resultType="com.iwhalecloud.bote.dto.skill.SkillFlowDTO">
+    SELECT a.flow_id,
+    a.flow_name,
+    a.flow_code,
+    a.flow_desc,
+    a.tenant_id,
+    a.catalog_item_id,
+    a.flow_type,
+    a.created_time,
+    a.updated_time,
+    a.creator_id,
+    a.updator_id,
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.updator_id) AS "updatorName",
+    (SELECT u.real_name FROM bt_user u WHERE u.user_id = a.creator_id) AS "creatorName"
+    FROM bt_skill_flow a
+    WHERE a.status_cd = '00A'
+    <choose>
+      <when test="query.sourceFrom == 'platform'.toString()">
+        AND a.tenant_id = -1
+      </when>
+      <when test="query.sourceFrom == 'tenant'.toString()">
+        AND a.tenant_id = #{query.tenantId}
+      </when>
+      <otherwise>
+        AND a.tenant_id IN (#{query.tenantId}, -1)
+      </otherwise>
+    </choose>
+    <include refid="batchQueryCondition"/>
+    ORDER BY a.updated_time DESC
+  </select>
+
+  <insert id="insertSkillFlowParam">
+    INSERT INTO bt_skill_flow_param (
+    param_id,
+    flow_id,
+    tenant_id,
+    variable_json,
+    request_json,
+    response_json,
+    created_time,
+    status_cd,
+    updated_time,
+    creator_id,
+    updator_id,
+    remark
+    ) VALUES (
+    #{dto.paramId},
+    #{dto.flowId},
+    #{dto.tenantId},
+    #{dto.variableJson},
+    #{dto.requestJson},
+    #{dto.responseJson},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.statusCd},
+    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.creatorId},
+    #{dto.updatorId},
+    #{dto.remark}
+    )
+  </insert>
+
+  <update id="updateSkillFlowParam">
+    UPDATE bt_skill_flow_param
+    <set>
+      <if test="dto.checkFieldUpdateFlag('paramId')">
+        param_id = #{dto.paramId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('flowId')">
+        flow_id = #{dto.flowId},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('variableJson')">
+        variable_json = #{dto.variableJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('requestJson')">
+        request_json = #{dto.requestJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('responseJson')">
+        response_json = #{dto.responseJson},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('statusCd')">
+        status_cd = #{dto.statusCd},
+      </if>
+      <if test="dto.checkFieldUpdateFlag('remark')">
+        remark = #{dto.remark},
+      </if>
+      updator_id = #{dto.updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    </set>
+    WHERE param_id = #{dto.paramId}
+    AND tenant_id = #{dto.tenantId}
+  </update>
+
+  <update id="deleteSkillFlowParam">
+    UPDATE bt_skill_flow_param
+    SET status_cd = '00X',
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE flow_id = #{flowId}
+    AND tenant_id = #{tenantId}
+  </update>
+
+  <select id="getSkillFlowParam" resultType="com.iwhalecloud.bote.dto.skill.SkillFlowParamDTO">
+    SELECT
+    <include refid="flowParamColumns"/>
+    FROM bt_skill_flow_param a
+    WHERE flow_id = #{flowId}
+    AND status_cd = '00A'
+    AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="selectUpdatedTime" resultType="java.util.Date">
+    SELECT updated_time
+    FROM bt_skill_flow
+    WHERE flow_id = #{flowId}
+      AND tenant_id = #{tenantId}
+  </select>
+
+  <select id="getFlowsByIds" resultType="com.iwhalecloud.bote.dto.skill.SkillFlowWithParamDTO">
+    SELECT
+    a.flow_id,
+    a.flow_name,
+    a.flow_explanation,
+    b.request_json,
+    b.response_json,
+    a.tenant_id
+    FROM bt_skill_flow a
+    LEFT JOIN bt_skill_flow_param b ON b.tenant_id = a.tenant_id AND b.flow_id = a.flow_id AND b.status_cd = '00A'
+    WHERE a.status_cd = '00A'
+      AND a.tenant_id IN (#{tenantId}, -1)
+      AND a.flow_id IN (<foreach collection="flowIds" item="flowId" separator=",">#{flowId}</foreach>)
+  </select>
+
+</mapper>
