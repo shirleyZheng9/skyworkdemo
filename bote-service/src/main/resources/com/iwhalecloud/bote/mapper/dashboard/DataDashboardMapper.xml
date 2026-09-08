@@ -201,6 +201,7 @@
        插件产物等 bt_file 中的非知识库文件错误计入；
     INNER JOIN bt_knowledge_base 排除已软删除的知识库及没有知识库主记录的数据；
     bt_file.file_id 为主键，因此 document -> file_info -> file 均最多匹配一条；
+    文档中心类型优先于文件扩展名，使没有实际附件扩展名的在线文档和在线表格仍能正确归类。
 
   -->
   <resultMap id="knowledgeFileTypeCountResultMap"
@@ -214,6 +215,12 @@
 
     SELECT
     CASE
+    WHEN source_data.dc_document_type = 'WORD_ONLINE'
+    THEN 'document'
+
+    WHEN source_data.dc_document_type = 'EXCEL_ONLINE'
+    THEN 'spreadsheet'
+
     WHEN source_data.file_extension IN
     ('doc', 'docx', 'pdf', 'ppt', 'pptx', 'txt', 'md', 'html', 'wps')
     THEN 'document'
@@ -238,6 +245,7 @@
 
     FROM (
     SELECT
+    dc.document_type AS dc_document_type,
     SUBSTRING_INDEX(
     LOWER(TRIM(f.file_type)),
     '.',
@@ -254,6 +262,11 @@
     LEFT JOIN bt_file f
     ON f.file_id = fi.file_id
     AND f.status_cd = '00A'
+
+    LEFT JOIN bt_dc_document dc
+    ON dc.document_id = d.dc_document_id
+    AND dc.tenant_id = d.tenant_id
+    AND dc.status_cd = '00A'
 
     WHERE d.tenant_id = #{tenantId}
     AND d.status_cd = '00A'
