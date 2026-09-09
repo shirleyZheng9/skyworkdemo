@@ -524,12 +524,12 @@ public class DataDashboardServiceImpl implements IDataDashboardService {
 
   private static Map<String, String> createOverviewMetricNames() {
     Map<String, String> names = new LinkedHashMap<>();
-    names.put("agent", "智能体总数");
-    names.put("knowledge", "知识库总数");
+    names.put("agent", "智能体数量");
+    names.put("knowledge", "知识库数量");
     // 模型来自 bt_library_large_model，统计租户自建和租户可见的平台公开模型。
-    names.put("model", "接入大模型数");
+    names.put("model", "接入大模型");
     // 工具能力合并插件和 MCP 两类资源，符合页面“插件/MCP”卡片展示。
-    names.put("tool", "插件/MCP总数");
+    names.put("tool", "插件/MCP");
     // 对外暴露只读 Map，防止运行中被误改导致卡片顺序或文案变化。
     return Collections.unmodifiableMap(names);
   }

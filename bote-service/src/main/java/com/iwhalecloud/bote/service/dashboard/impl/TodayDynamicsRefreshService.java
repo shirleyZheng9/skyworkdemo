@@ -134,7 +134,7 @@ public class TodayDynamicsRefreshService {
     long modelInvokeCount = normalizeCount(
       dataDashboardMapper.selectModelInvokeCount(tenantId, todayStart, tomorrowStart)
     );
-    // 今日知识构建文档按 process_completed_at 和构建完成状态统计，表示当天新增“已学习/构建完成”的文档。
+    // 今日知识构建文档按 parse_started_time 和构建完成状态统计，表示当天新增且已学习/构建完成的文档。
     long builtDocumentCount = normalizeCount(
       dataDashboardMapper.selectBuiltDocumentCount(
         tenantId,

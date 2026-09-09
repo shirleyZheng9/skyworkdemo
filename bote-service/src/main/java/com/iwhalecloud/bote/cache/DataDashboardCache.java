@@ -357,7 +357,7 @@ public class DataDashboardCache {
     cachedValue.setNewKnowledgeCount(value.getNewKnowledgeCount());
     // 今日大模型调用次数来自模型调用日志当前表。
     cachedValue.setModelInvokeCount(value.getModelInvokeCount());
-    // 今日知识构建文档来自知识库文档构建完成时间。
+    // 今日知识构建文档来自当天新增且已构建完成的知识库文档。
     cachedValue.setBuiltDocumentCount(value.getBuiltDocumentCount());
     // 统计时间用于前端或排查人员判断数据新鲜度。
     cachedValue.setStatTime(value.getStatTime());

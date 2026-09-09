@@ -332,10 +332,10 @@
       AND d.status_cd = '00A'
       <!-- doc_status = 10D 表示构建完成，也就是页面口径里的已学习文档。 -->
       AND d.doc_status = #{successStatus}
-      <!-- process_completed_at 使用左闭右开当天时间窗，表示今天完成构建。 -->
-      AND d.process_completed_at &gt;= #{startTime}
-      AND d.process_completed_at &lt; #{endTime}
-      <!-- 只统计仍归属于有效知识库的文档，排除知识库已删除后的残留文档。 -->
+      <!-- parse_started_time 使用左闭右开当天时间窗，表示今天新增的文档。 -->
+      AND d.parse_started_time &gt;= #{startTime}
+      AND d.parse_started_time &lt; #{endTime}
+      <!-- 只统计仍归属于有效知识库的文档，排除文档记录仍在、但所属知识库已被删除或失效的残留数据。 -->
       AND EXISTS (
         SELECT 1
         FROM bt_knowledge_base kb
