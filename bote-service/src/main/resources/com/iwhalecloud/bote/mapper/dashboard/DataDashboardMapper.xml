@@ -11,7 +11,7 @@
   </resultMap>
 
   <!--
-    2026-08-31 新增：顶部核心资源总量及今日新增。
+    2026-08-31 新增：顶部核心资源总量及较昨日净变化。
 
     一、为什么使用 UNION ALL
     1. 本查询不是把多表明细合并后再统计，而是每张资源主表独立完成 COUNT 聚合；
@@ -20,7 +20,9 @@
        也保证首屏四张卡片使用同一次请求和同一组今日时间边界。
 
     二、统计口径
-    1. 今日新增使用 created_time in [todayStart, tomorrowStart)，不是“较昨日净增长”；
+    1. today_increase 字段为兼容既有前端契约，实际表示相较今日零点的资源净变化；
+       正数表示新增，负数表示删除。今日零点的有效数量会将今天软删除
+       （status_cd = '00X' 且 updated_time >= todayStart）的历史记录计入；
     2. 智能体统计当前租户智能体列表默认可查询的有效记录，即排除 A2A 服务；
     3. 知识库统计当前租户有效知识库主记录，不额外关联文档表，避免把文件数量误当知识库数量；
     4. 模型统计当前租户自建模型 + 当前租户可见的公开平台模型，沿用模型列表的可见资源口径；
@@ -31,13 +33,14 @@
   -->
   <select id="selectOverviewMetrics" resultMap="overviewMetricCountResultMap">
     SELECT 'agent' AS metric_code,
-    COUNT(*) AS total_count,
+    COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
     <choose>
       <when test="todayStart != null and tomorrowStart != null">
-        COALESCE(SUM(CASE
-        WHEN created_time &gt;= #{todayStart}
-        AND created_time &lt; #{tomorrowStart}
-        THEN 1 ELSE 0 END), 0)
+        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
+        - COUNT(CASE
+        WHEN created_time &lt; #{todayStart}
+        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
+        THEN 1 END)
       </when>
       <otherwise>
         0
@@ -46,20 +49,20 @@
     AS today_increase
     FROM bt_bot_scene
     WHERE tenant_id = #{tenantId}
-    AND status_cd = '00A'
     AND scene_type != 'a2a'
 
     UNION ALL
 
     <!-- 知识库 -->
     SELECT 'knowledge' AS metric_code,
-    COUNT(*) AS total_count,
+    COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
     <choose>
       <when test="todayStart != null and tomorrowStart != null">
-        COALESCE(SUM(CASE
-        WHEN created_time &gt;= #{todayStart}
-        AND created_time &lt; #{tomorrowStart}
-        THEN 1 ELSE 0 END), 0)
+        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
+        - COUNT(CASE
+        WHEN created_time &lt; #{todayStart}
+        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
+        THEN 1 END)
       </when>
       <otherwise>
         0
@@ -68,19 +71,19 @@
     AS today_increase
     FROM bt_knowledge_base
     WHERE tenant_id = #{tenantId}
-    AND status_cd = '00A'
 
     UNION ALL
 
     <!-- 大模型：统计当前租户可见的模型接入资源。 -->
     SELECT 'model' AS metric_code,
-    COUNT(*) AS total_count,
+    COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
     <choose>
       <when test="todayStart != null and tomorrowStart != null">
-        COALESCE(SUM(CASE
-        WHEN created_time &gt;= #{todayStart}
-        AND created_time &lt; #{tomorrowStart}
-        THEN 1 ELSE 0 END), 0)
+        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
+        - COUNT(CASE
+        WHEN created_time &lt; #{todayStart}
+        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
+        THEN 1 END)
       </when>
       <otherwise>
         0
@@ -88,7 +91,7 @@
     </choose>
     AS today_increase
     FROM bt_library_large_model
-    WHERE status_cd = '00A'
+    WHERE 1 = 1
     <!-- data_from IS NULL 沿用模型管理列表口径，排除通用智能体等特殊来源模型。 -->
     AND data_from IS NULL
     AND (
@@ -104,13 +107,14 @@
     COALESCE(SUM(today_increase), 0) AS today_increase
     FROM (
     <!-- 插件-->
-    SELECT COUNT(*) AS total_count,
+    SELECT COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
     <choose>
       <when test="todayStart != null and tomorrowStart != null">
-        COALESCE(SUM(CASE
-        WHEN created_time &gt;= #{todayStart}
-        AND created_time &lt; #{tomorrowStart}
-        THEN 1 ELSE 0 END), 0)
+        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
+        - COUNT(CASE
+        WHEN created_time &lt; #{todayStart}
+        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
+        THEN 1 END)
       </when>
       <otherwise>
         0
@@ -118,19 +122,19 @@
     </choose>
     AS today_increase
     FROM bt_plugin
-    WHERE status_cd = '00A'
-    AND tenant_id IN (#{tenantId}, -1)
+    WHERE tenant_id IN (#{tenantId}, -1)
 
     UNION ALL
 
     <!-- MCP：统计当前租户可见的 MCP 服务。 -->
-    SELECT COUNT(*) AS total_count,
+    SELECT COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
     <choose>
       <when test="todayStart != null and tomorrowStart != null">
-        COALESCE(SUM(CASE
-        WHEN created_time &gt;= #{todayStart}
-        AND created_time &lt; #{tomorrowStart}
-        THEN 1 ELSE 0 END), 0)
+        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
+        - COUNT(CASE
+        WHEN created_time &lt; #{todayStart}
+        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
+        THEN 1 END)
       </when>
       <otherwise>
         0
@@ -138,7 +142,7 @@
     </choose>
     AS today_increase
     FROM bt_mcp_server
-    WHERE status_cd = '00A'
+    WHERE 1 = 1
     <!-- data_from IS NULL 沿用 MCP 管理列表口径，排除通用智能体来源的特殊服务。 -->
     AND data_from IS NULL
     <!-- MCP 能力对当前租户展示时包含租户自建和平台资源。 -->

@@ -9,7 +9,7 @@ import lombok.ToString;
  * 顶部资源概览卡片。
  *
  * <p>total 和 todayIncrease 均使用 Long，避免大租户资源量超过 Integer 上限。
- * 今日新增不是“较昨日净增长”，删除、恢复和状态变更不会反向扣减该值。</p>
+ * todayIncrease 为兼容既有前端字段名，实际表示相较今日零点的净变化；删除会返回负数。</p>
  *
  * @author zhengxueli
  * @since 2026-08-31
@@ -32,7 +32,7 @@ public class OverviewMetricVO {
   @Schema(description = "有效资源总量", example = "128")
   private final Long total;
 
-  /** 创建时间落在今天自然日内的资源数量，和 total 使用同一套业务过滤条件。 */
-  @Schema(description = "今日新增数量", example = "6")
+  /** 相较今日零点的资源净变化；正数表示新增，负数表示删除。 */
+  @Schema(description = "较昨日净变化（正数新增，负数删除）", example = "-1")
   private final Long todayIncrease;
 }

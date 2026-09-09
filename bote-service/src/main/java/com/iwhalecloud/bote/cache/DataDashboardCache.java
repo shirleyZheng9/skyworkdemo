@@ -82,7 +82,10 @@ public class DataDashboardCache {
 
   private static final String CACHE_VERSION = "v2";
 
-  /** 顶部概览 key 中的日期格式，使用自然日隔离“今日新增”。 */
+  /** 顶部概览统计口径升级为净变化后使用新 key，避免读到旧口径缓存。 */
+  private static final String OVERVIEW_METRICS_CACHE_VERSION = "v3";
+
+  /** 顶部概览 key 中的日期格式，使用自然日隔离“较昨日净变化”。 */
   private static final DateTimeFormatter OVERVIEW_DATE_FORMATTER =
     DateTimeFormatter.BASIC_ISO_DATE;
 
@@ -158,7 +161,7 @@ public class DataDashboardCache {
   /**
    * 查询顶部资源概览缓存。
    *
-   * <p>缓存 key 包含统计日期，因此 0 点后会自动切换到新 key，不会把昨天的“今日新增”
+   * <p>缓存 key 包含统计日期，因此 0 点后会自动切换到新 key，不会把昨天的“较昨日净变化”
    * 展示到今天。命中逻辑过期缓存时，调用方仍可立即返回旧值并触发后台刷新。</p>
    */
   @Nullable
@@ -455,7 +458,8 @@ public class DataDashboardCache {
 
   /** 构造按租户、日期、口径版本隔离的顶部概览缓存键。 */
   private String buildOverviewMetricsKey(Long tenantId, LocalDate statisticsDate) {
-    return tenantId + ":" + statisticsDate.format(OVERVIEW_DATE_FORMATTER) + ":" + CACHE_VERSION;
+    return tenantId + ":" + statisticsDate.format(OVERVIEW_DATE_FORMATTER)
+      + ":" + OVERVIEW_METRICS_CACHE_VERSION;
   }
 
   /** 构造按租户、结束日期、口径版本隔离的每日消息趋势缓存键。 */

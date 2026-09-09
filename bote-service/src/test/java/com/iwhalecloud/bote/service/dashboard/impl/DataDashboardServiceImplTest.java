@@ -114,7 +114,7 @@ class DataDashboardServiceImplTest {
   }
 
   @Test
-  void normalizesNullAndNegativeOverviewCounts() {
+  void normalizesInvalidTotalsButPreservesNegativeOverviewChanges() {
     when(dataDashboardCache.getOverviewMetrics(any(), any())).thenReturn(null);
     when(overviewMetricsRefreshService.loadCurrentMetrics(any(), any())).thenReturn(List.of(
       overview("agent", null, -1L),
@@ -126,7 +126,7 @@ class DataDashboardServiceImplTest {
 
     assertEquals(List.of(0L, 0L, 0L, 0L),
       result.stream().map(OverviewMetricVO::getTotal).toList());
-    assertEquals(List.of(0L, 0L, 0L, 0L),
+    assertEquals(List.of(-1L, 0L, 0L, 0L),
       result.stream().map(OverviewMetricVO::getTodayIncrease).toList());
   }
 

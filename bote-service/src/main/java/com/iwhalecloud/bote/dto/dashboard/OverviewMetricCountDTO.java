@@ -31,8 +31,8 @@ public class OverviewMetricCountDTO {
   private Long total;
 
   /**
-   * 今日新增数量。
-   * <p>与 total 使用完全相同的过滤口径，只额外增加 created_time 的左闭右开时间边界。</p>
+   * 相较今日零点的资源净变化。
+   * <p>为兼容既有接口字段名保留 todayIncrease；正数表示新增，负数表示删除。</p>
    */
   private Long todayIncrease;
 }

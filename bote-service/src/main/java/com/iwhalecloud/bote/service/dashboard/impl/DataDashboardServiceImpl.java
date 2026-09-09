@@ -100,7 +100,7 @@ public class DataDashboardServiceImpl implements IDataDashboardService {
 
     /*
      * 缓存 key 按自然日隔离。这样 0 点后会读取新的 yyyyMMdd key，不会把昨天的
-     * “今日新增”继续展示到今天。真实数据库查询的 todayStart/tomorrowStart 也由同一个statisticsDate 推导，保证 key 和统计口径一致。
+     * “较昨日净变化”继续展示到今天。真实数据库查询的 todayStart/tomorrowStart 也由同一个statisticsDate 推导，保证 key 和统计口径一致。
      */
     LocalDate statisticsDate = LocalDate.now();
 
@@ -175,8 +175,8 @@ public class DataDashboardServiceImpl implements IDataDashboardService {
         entry.getValue(),
         // total：null 或异常负数统一归零，避免页面展示脏数据。
         normalizeCount(count == null ? null : count.getTotal()),
-        // todayIncrease：同样做归零保护；它表示今日创建量，不表示净增长。
-        normalizeCount(count == null ? null : count.getTodayIncrease())
+        // todayIncrease 为兼容字段名，实际表示较昨日净变化，必须保留负数。
+        count == null || count.getTodayIncrease() == null ? 0L : count.getTodayIncrease()
       ));
     }
     // 返回不可变副本，避免后续调用方误修改 Service 组装好的结果。
