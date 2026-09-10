@@ -82,8 +82,8 @@ public class DataDashboardCache {
 
   private static final String CACHE_VERSION = "v2";
 
-  /** 顶部概览统计口径升级为净变化后使用新 key，避免读到旧口径缓存。 */
-  private static final String OVERVIEW_METRICS_CACHE_VERSION = "v3";
+  /** 顶部概览插件数量改为外部市场口径后使用新 key，避免读到旧口径缓存。 */
+  private static final String OVERVIEW_METRICS_CACHE_VERSION = "v4";
 
   /** 顶部概览 key 中的日期格式，使用自然日隔离“较昨日净变化”。 */
   private static final DateTimeFormatter OVERVIEW_DATE_FORMATTER =

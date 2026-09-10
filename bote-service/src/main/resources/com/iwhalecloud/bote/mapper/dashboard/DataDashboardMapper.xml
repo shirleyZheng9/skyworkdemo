@@ -26,7 +26,8 @@
     2. 智能体统计当前租户智能体列表默认可查询的有效记录，即排除 A2A 服务；
     3. 知识库统计当前租户有效知识库主记录，不额外关联文档表，避免把文件数量误当知识库数量；
     4. 模型统计当前租户自建模型 + 当前租户可见的公开平台模型，沿用模型列表的可见资源口径；
-    5. 插件/MCP合并为一个卡片，统计当前租户可见的全部有效插件与 MCP 服务。
+    5. 插件/MCP合并为一个卡片；本查询只统计当前租户可见的 MCP 服务，插件数量由业务层
+       调用外部插件市场分页接口取得 total 后合并，且该卡片不统计较昨日净变化。
 
     三、性能边界
     若未来单租户资源量大到索引 COUNT 仍不能稳定满足 2 秒，再升级为汇总表或短 TTL 缓存。
@@ -101,53 +102,16 @@
 
     UNION ALL
 
-    <!-- 插件/MCP：页面合并展示为一个工具能力卡片，SQL 中先分别统计再求和。 -->
+    <!-- 插件/MCP：SQL 只统计 MCP；外部插件市场总数由业务层合并。 -->
     SELECT 'tool' AS metric_code,
-    COALESCE(SUM(total_count), 0) AS total_count,
-    COALESCE(SUM(today_increase), 0) AS today_increase
-    FROM (
-    <!-- 插件-->
-    SELECT COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
-    <choose>
-      <when test="todayStart != null and tomorrowStart != null">
-        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
-        - COUNT(CASE
-        WHEN created_time &lt; #{todayStart}
-        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
-        THEN 1 END)
-      </when>
-      <otherwise>
-        0
-      </otherwise>
-    </choose>
-    AS today_increase
-    FROM bt_plugin
-    WHERE tenant_id IN (#{tenantId}, -1)
-
-    UNION ALL
-
-    <!-- MCP：统计当前租户可见的 MCP 服务。 -->
-    SELECT COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
-    <choose>
-      <when test="todayStart != null and tomorrowStart != null">
-        COUNT(CASE WHEN status_cd = '00A' THEN 1 END)
-        - COUNT(CASE
-        WHEN created_time &lt; #{todayStart}
-        AND (status_cd = '00A' OR (status_cd = '00X' AND updated_time &gt;= #{todayStart}))
-        THEN 1 END)
-      </when>
-      <otherwise>
-        0
-      </otherwise>
-    </choose>
-    AS today_increase
+    COUNT(CASE WHEN status_cd = '00A' THEN 1 END) AS total_count,
+    0 AS today_increase
     FROM bt_mcp_server
     WHERE 1 = 1
     <!-- data_from IS NULL 沿用 MCP 管理列表口径，排除通用智能体来源的特殊服务。 -->
     AND data_from IS NULL
     <!-- MCP 能力对当前租户展示时包含租户自建和平台资源。 -->
     AND tenant_id IN (#{tenantId}, -1)
-    ) tool_source
   </select>
 
   <!-- 今日动态资源新增量 -->

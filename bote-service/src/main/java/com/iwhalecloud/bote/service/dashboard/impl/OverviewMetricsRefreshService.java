@@ -1,12 +1,17 @@
 package com.iwhalecloud.bote.service.dashboard.impl;
 
+import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.cache.DataDashboardCache;
 import com.iwhalecloud.bote.doc.common.tenant.ThreadContextRunner;
 import com.iwhalecloud.bote.dto.dashboard.OverviewMetricCountDTO;
+import com.iwhalecloud.bote.dto.plugin.request.QueryPluginRequest;
+import com.iwhalecloud.bote.dto.plugin.response.PluginDefinition;
 import com.iwhalecloud.bote.mapper.dashboard.DataDashboardMapper;
 import com.iwhalecloud.bote.service.dashboard.support.DashboardRefreshCoordinator;
+import com.iwhalecloud.bote.service.plugin.IPluginManageService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,14 +44,18 @@ public class OverviewMetricsRefreshService {
 
   private final DashboardRefreshCoordinator refreshCoordinator;
 
+  private final IPluginManageService pluginManageService;
+
   public OverviewMetricsRefreshService(
     DataDashboardMapper dataDashboardMapper,
     DataDashboardCache dataDashboardCache,
-    DashboardRefreshCoordinator refreshCoordinator
+    DashboardRefreshCoordinator refreshCoordinator,
+    IPluginManageService pluginManageService
   ) {
     this.dataDashboardMapper = dataDashboardMapper;
     this.dataDashboardCache = dataDashboardCache;
     this.refreshCoordinator = refreshCoordinator;
+    this.pluginManageService = pluginManageService;
   }
 
   /**
@@ -111,6 +120,43 @@ public class OverviewMetricsRefreshService {
   private List<OverviewMetricCountDTO> loadMetrics(Long tenantId, LocalDate statisticsDate) {
     LocalDateTime todayStart = statisticsDate.atStartOfDay();
     LocalDateTime tomorrowStart = todayStart.plusDays(1);
-    return dataDashboardMapper.selectOverviewMetrics(tenantId, todayStart, tomorrowStart);
+    List<OverviewMetricCountDTO> metrics = new ArrayList<>(
+      dataDashboardMapper.selectOverviewMetrics(tenantId, todayStart, tomorrowStart)
+    );
+    mergeExternalPluginCount(tenantId, metrics);
+    return metrics;
+  }
+
+  /** 将外部插件市场的授权插件总数合并到本地 MCP 数量中。 */
+  private void mergeExternalPluginCount(Long tenantId, List<OverviewMetricCountDTO> metrics) {
+    OverviewMetricCountDTO toolMetric = metrics.stream()
+      .filter(metric -> metric != null && "tool".equals(metric.getCode()))
+      .findFirst()
+      .orElseGet(() -> {
+        OverviewMetricCountDTO metric = new OverviewMetricCountDTO();
+        metric.setCode("tool");
+        metric.setTotal(0L);
+        metrics.add(metric);
+        return metric;
+      });
+
+    long mcpCount = toolMetric.getTotal() == null ? 0L : Math.max(toolMetric.getTotal(), 0L);
+    toolMetric.setTotal(mcpCount);
+    // 插件/MCP 卡片不再统计较昨日变化，兼容现有返回字段并固定为 0。
+    toolMetric.setTodayIncrease(0L);
+
+    QueryPluginRequest request = new QueryPluginRequest();
+    request.setTenantId(tenantId);
+    request.setPageNum(1);
+    request.setPageSize(1);
+    try {
+      PageInfo<PluginDefinition> pluginPage = pluginManageService.queryAuthPluginPage(request);
+      long pluginCount = pluginPage == null ? 0L : Math.max(pluginPage.getTotal(), 0L);
+      toolMetric.setTotal(mcpCount + pluginCount);
+    }
+    catch (RuntimeException e) {
+      // 外部市场不可用时仍返回本地 MCP 数量，避免拖挂整个数据看板。
+      logger.warn("查询外部插件市场总数失败，仅返回本地 MCP 数量，tenantId={}", tenantId, e);
+    }
   }
 }
