@@ -20,6 +20,8 @@
     <!-- 博特 -->
     <bote.version>1.0.0-SNAPSHOT</bote.version>
     <bote.skills.version>1.0.0-SNAPSHOT</bote.skills.version>
+    <!-- 天工 Servlet/Jakarta OIDC starter；版本来自工具包 README。 -->
+    <tg.version>3.9.3-SNAPSHOT</tg.version>
 
     <!-- https://github.com/knuddelsgmbh/jtokkit/releases -->
     <jtokkit.version>1.1.0</jtokkit.version>

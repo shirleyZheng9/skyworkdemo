@@ -145,12 +145,15 @@ public final class BaseConsts {
   public static final String PORTAL_TYPE_CAS = "cas";
   /** 门户类型: oauth2 */
   public static final String PORTAL_TYPE_OAUTH2 = "oauth2";
+  /** 门户类型: 天工共享 Cookie。大小写需与门户配置保存值 TGPortal 保持一致。 */
+  public static final String PORTAL_TYPE_TG_PORTAL = "TGPortal";
   /** 门户类型: 无 */
   public static final String PORTAL_TYPE_NONE = "none";
   /** 门户系统编码: 默认（自带门户） */
   public static final String PORTAL_SYSTEM_CODE_DEFAULT = "default";
-  /** 外部门户类型列表 */
-  public static final List<String> EXTERNAL_PORTAL_TYPES = ImmutableList.of(PORTAL_TYPE_UPORTAL, PORTAL_TYPE_NGPORTAL, PORTAL_TYPE_BASIC_CENTER, PORTAL_TYPE_NONE, PORTAL_TYPE_SSO, PORTAL_TYPE_OAUTH2);
+  /** 外部门户类型列表。门户保存时会使用该集合校验 portalType，因此新门户必须加入这里。 */
+  public static final List<String> EXTERNAL_PORTAL_TYPES = ImmutableList.of(PORTAL_TYPE_UPORTAL, PORTAL_TYPE_NGPORTAL,
+    PORTAL_TYPE_BASIC_CENTER, PORTAL_TYPE_NONE, PORTAL_TYPE_SSO, PORTAL_TYPE_OAUTH2, PORTAL_TYPE_TG_PORTAL);
 
   /** 租户用户角色: 管理 */
   public static final String ROLE_MANAGE = "MANAGE";

@@ -10,6 +10,7 @@ import com.iwhalecloud.bote.portal.adapter.CasPortalAuthProvider;
 import com.iwhalecloud.bote.portal.adapter.NgportalAuthProvider;
 import com.iwhalecloud.bote.portal.adapter.OAuth2PortalAuthProvider;
 import com.iwhalecloud.bote.portal.adapter.SsoPortalAuthProvider;
+import com.iwhalecloud.bote.portal.adapter.TGPortalAuthProvider;
 import com.iwhalecloud.bote.portal.adapter.UportalAuthProvider;
 import com.iwhalecloud.bote.portal.config.properties.AbstractPortalProperties;
 import com.iwhalecloud.bote.portal.config.properties.BasicCenterProperties;
@@ -17,7 +18,9 @@ import com.iwhalecloud.bote.portal.config.properties.CasPortalProperties;
 import com.iwhalecloud.bote.portal.config.properties.NgportalProperties;
 import com.iwhalecloud.bote.portal.config.properties.OAuth2PortalProperties;
 import com.iwhalecloud.bote.portal.config.properties.SsoPortalProperties;
+import com.iwhalecloud.bote.portal.config.properties.TGPortalProperties;
 import com.iwhalecloud.bote.portal.config.properties.UportalProperties;
+import com.iwhalecloud.bote.portal.tg.TGAuthService;
 import com.iwhalecloud.bss.litchi.cache.helper.BaseLocalCache;
 import java.util.List;
 import java.util.Map.Entry;
@@ -41,6 +44,12 @@ import org.springframework.lang.Nullable;
 @SuppressWarnings("PMD.GuardLogStatement")
 public class PortalAdapterCache extends BaseLocalCache<Pair<Long, IAuthProvider>> implements TenantCacheMarker {
   private final ExternalPortalMapper externalPortalMapper;
+  /**
+   * starter 适配实现采用可选注入，保证本地缺少 starter 时原有门户仍可启动和使用。
+   * 只有实际加载 TGPortal 配置时才要求该实现存在。
+   */
+  @Nullable
+  private final TGAuthService tgAuthService;
 
   @Override
   public String getCacheName() {
@@ -118,6 +127,29 @@ public class PortalAdapterCache extends BaseLocalCache<Pair<Long, IAuthProvider>
         BasicCenterProperties properties = new BasicCenterProperties();
         fillPortalProperties(properties, portal);
         return new BasicCenterAuthProvider(properties);
+      case BaseConsts.PORTAL_TYPE_TG_PORTAL: {
+        if (tgAuthService == null) {
+          // 明确失败而不是降级为未验签登录，防止在缺少 starter 时绕过认证。
+          logger.error("[TGPortal] 门户适配器创建失败，天工认证服务未启用: portalId={}, portalCode={}",
+            portal.getId(), portal.getPortalCode());
+          throw new IllegalStateException("TGPortal 不可用: tg-common-oidc-starter 接入实现尚未配置");
+        }
+        logger.info("[TGPortal] 开始创建门户适配器: portalId={}, portalCode={}, cookieName={}, defaultTenantId={}, "
+            + "defaultRole={}, autoCreateTenant={}",
+          portal.getId(), portal.getPortalCode(), portal.getCookieName(), portal.getDefaultTenantId(),
+          portal.getDefaultRole(), BaseConsts.TRUE.equals(portal.getAutoCreateTenant()));
+        tgAuthService.assertPortalCookieName(portal.getCookieName());
+        // 复用 bt_external_portal 现有字段，保持不同环境只改数据库配置即可切换。
+        TGPortalProperties tgProperties = new TGPortalProperties();
+        tgProperties.setCookieName(portal.getCookieName());
+        tgProperties.setLoginUrl(portal.getLoginUrl());
+        tgProperties.setDefaultTenantId(portal.getDefaultTenantId());
+        tgProperties.setDefaultRole(portal.getDefaultRole());
+        tgProperties.setAutoCreateTenant(BaseConsts.TRUE.equals(portal.getAutoCreateTenant()));
+        logger.info("[TGPortal] 门户适配器创建成功: portalId={}, portalCode={}",
+          portal.getId(), portal.getPortalCode());
+        return new TGPortalAuthProvider(tgProperties, tgAuthService);
+      }
       default:
         logger.warn("Unknown portal type: id={}, type={}", portal.getId(), portal.getPortalType());
         return null;

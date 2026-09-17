@@ -249,6 +249,17 @@
       <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
 
+    <!--
+      天工统一 OIDC Token starter（Spring MVC / Jakarta 版）。
+      starter 负责共享 Cookie、JWT 验签、临期续签及续签后的 Cookie 回写；
+      AADP 只负责把认证结果映射到现有多门户业务模型。
+    -->
+    <dependency>
+      <groupId>com.sy4cloud</groupId>
+      <artifactId>tg-common-oidc-starter</artifactId>
+      <version>${tg.version}</version>
+    </dependency>
+
     <!-- ZXing 二维码生成 -->
     <dependency>
       <groupId>com.google.zxing</groupId>
