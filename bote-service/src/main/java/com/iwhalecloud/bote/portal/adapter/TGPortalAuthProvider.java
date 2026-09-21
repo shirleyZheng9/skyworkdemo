@@ -1,6 +1,7 @@
 package com.iwhalecloud.bote.portal.adapter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
 import com.iwhalecloud.bote.portal.config.properties.TGPortalProperties;
 import com.iwhalecloud.bote.portal.tg.TGAuthService;
@@ -155,6 +156,9 @@ public class TGPortalAuthProvider extends AbstractAuthProvider {
     attributes.put("extSpaceId", String.valueOf(userInfo.getCurrentTenantId()));
     attributes.put("spaceName", userInfo.getCurrentTenantName());
     attributes.put("autoCreateTenant", autoCreateTenant);
+    // 要求：TGPortal 解析不到有效 projectId 时必须去掉默认租户兜底，
+    // 不创建项目、不绑定 tenant_id=0，/logged 也不返回默认项目。
+    attributes.put(BaseConsts.ATTR_SKIP_DEFAULT_TENANT_FALLBACK, Boolean.TRUE);
 
     // 保持 systemCode=tiangong-noheader + extUserId=userId，才能命中 OAuth2 时期的存量用户。
     String externalUserId = String.valueOf(userInfo.getUserId());
@@ -166,7 +170,6 @@ public class TGPortalAuthProvider extends AbstractAuthProvider {
       .userName(externalUserId)
       .realName(realName)
       .phoneNo(userInfo.getPhoneNo())
-      .defaultTenantId(properties.getDefaultTenantId())
       .attributes(attributes);
     if (syncProjectTenant) {
       // extTenantId 按天工项目稳定判重；项目改名时仍能复用并更新原 AADP tenant。
@@ -175,9 +178,9 @@ public class TGPortalAuthProvider extends AbstractAuthProvider {
         .tenantName(projectContext.projectName);
     }
     logger.info("[TGPortal] 登录信息映射完成: userId={}, currentTenantId={}, projectId={}, "
-        + "extTenantId={}, defaultTenantId={}, autoCreateTenant={}",
+        + "extTenantId={}, autoCreateTenant={}, skipDefaultTenantFallback=true",
       userInfo.getUserId(), userInfo.getCurrentTenantId(), projectContext.projectId,
-      extTenantId, properties.getDefaultTenantId(), autoCreateTenant);
+      extTenantId, autoCreateTenant);
     return builder.build();
   }
 

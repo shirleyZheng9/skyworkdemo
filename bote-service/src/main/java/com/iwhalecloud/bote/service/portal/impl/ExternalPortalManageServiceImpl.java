@@ -104,8 +104,7 @@ public class ExternalPortalManageServiceImpl implements IExternalPortalManageSer
       // TGPortal 不调用 loggedUrl 或 Groovy 脚本，只依赖共享 Cookie 和失效后的登录跳转地址。
       Assert.hasText(portal.getCookieName(), "TGPortal Cookie 名称不能为空");
       Assert.hasText(portal.getLoginUrl(), "TGPortal 登录地址不能为空");
-      // targetPlatforms 不允许创建 tenant 时会回退到该默认项目，因此必须有明确值（方案约定为 0）。
-      Assert.notNull(portal.getDefaultTenantId(), "TGPortal 默认项目不能为空");
+      // TGPortal 没有有效项目时不允许回退到默认租户，因此不要求配置 defaultTenantId。
       if (StringUtils.isNotEmpty(portal.getDefaultRole())) {
         Assert.isTrue(BaseConsts.ROLES.contains(portal.getDefaultRole()), () -> "未知的默认角色: " + portal.getDefaultRole());
       }

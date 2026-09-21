@@ -154,8 +154,8 @@ public class MultiPortalAdapter {
   @Nullable
   private Long syncTenant(LoginInfo loginInfo, UserEntity user, @Nullable Long workSpaceId) {
     if (MapUtils.isEmpty(loginInfo.getAttributes()) || !BooleanUtils.isTrue(MapUtils.getBoolean(loginInfo.getAttributes(), "autoCreateTenant"))) {
-      // 无开启自动创建租户功能，直接跳出
-      return loginInfo.getDefaultTenantId() == null ? BaseConsts.DEFAULT_TENANT_ID : loginInfo.getDefaultTenantId();
+      // 未开启自动创建时按门户策略处理；TGPortal 明确禁止回退到默认租户 0。
+      return getDefaultTenantFallback(loginInfo);
     }
     String tenantCode = loginInfo.getTenantCode();
     String tenantName = loginInfo.getTenantName();
@@ -174,10 +174,11 @@ public class MultiPortalAdapter {
         PortalLockConsts.PORTAL_TENANT_SYNC_LOCK,
         LockHelper.formatBizLockKey(loginInfo.getSystemCode(), String.valueOf(loginInfo.getExtTenantId())));
       // 非阻塞抢锁:抢不到锁时降级为返回默认租户,避免页面报错
+      // 0921修改 非阻塞抢锁：抢不到锁时按门户策略处理；TGPortal 不得降级绑定默认租户 0。
       boolean locked = tenantLock.tryLock();
       if (!locked) {
         logger.warn("租户同步锁未获取到: systemCode={}, extTenantId={}", loginInfo.getSystemCode(), loginInfo.getExtTenantId());
-        return loginInfo.getDefaultTenantId() == null ? BaseConsts.DEFAULT_TENANT_ID : loginInfo.getDefaultTenantId();
+        return getDefaultTenantFallback(loginInfo);
       }
       try {
         return doSyncTenant(loginInfo, user, tenantCode, tenantName, workSpaceId);
@@ -187,6 +188,16 @@ public class MultiPortalAdapter {
       }
     }
     return doSyncTenant(loginInfo, user, tenantCode, tenantName, workSpaceId);
+  }
+
+  @Nullable
+  static Long getDefaultTenantFallback(LoginInfo loginInfo) {
+    // TGPortal 的业务要求：没有有效项目时去掉兜底，不能创建或返回默认租户 0。
+    if (BooleanUtils.isTrue(MapUtils.getBoolean(loginInfo.getAttributes(),
+      BaseConsts.ATTR_SKIP_DEFAULT_TENANT_FALLBACK))) {
+      return null;
+    }
+    return loginInfo.getDefaultTenantId() == null ? BaseConsts.DEFAULT_TENANT_ID : loginInfo.getDefaultTenantId();
   }
 
   /**

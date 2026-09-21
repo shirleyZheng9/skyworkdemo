@@ -1,5 +1,6 @@
 package com.iwhalecloud.bote.portal.adapter;
 
+import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
 import com.iwhalecloud.bote.portal.config.properties.TGPortalProperties;
 import com.iwhalecloud.bote.portal.tg.TGAuthService;
@@ -49,6 +50,9 @@ class TGPortalAuthProviderTest {
     assertEquals("2001", loginInfo.getAttributes().get("extSpaceId"));
     assertEquals("研发团队", loginInfo.getAttributes().get("spaceName"));
     assertTrue((Boolean) loginInfo.getAttributes().get("autoCreateTenant"));
+    assertEquals(Boolean.TRUE,
+      loginInfo.getAttributes().get(BaseConsts.ATTR_SKIP_DEFAULT_TENANT_FALLBACK));
+    assertNull(loginInfo.getDefaultTenantId());
     assertEquals(1, authService.validateCount);
     assertEquals(1, authService.userInfoCount);
   }
@@ -75,6 +79,7 @@ class TGPortalAuthProviderTest {
     assertFalse((Boolean) loginInfo.getAttributes().get("autoCreateTenant"));
     assertNull(loginInfo.getExtTenantId());
     assertNull(loginInfo.getTenantCode());
+    assertNull(loginInfo.getDefaultTenantId());
   }
 
   @Test
@@ -88,6 +93,7 @@ class TGPortalAuthProviderTest {
     assertNull(loginInfo.getExtTenantId());
     assertNull(loginInfo.getTenantCode());
     assertNull(loginInfo.getTenantName());
+    assertNull(loginInfo.getDefaultTenantId());
   }
 
   @Test

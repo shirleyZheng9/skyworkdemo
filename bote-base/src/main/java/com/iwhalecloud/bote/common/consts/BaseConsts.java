@@ -39,6 +39,8 @@ public final class BaseConsts {
   public static final Long PLATFORM_TENANT_ID = -1L;
   /** 默认租户 ID */
   public static final Long DEFAULT_TENANT_ID = 0L;
+  /** 登录信息属性：没有有效项目时跳过默认租户兜底，避免错误绑定 tenant_id=0。 */
+  public static final String ATTR_SKIP_DEFAULT_TENANT_FALLBACK = "skipDefaultTenantFallback";
   /** 平台助手租户 ID */
   public static final Long COPILOT_TENANT_ID = 1L;
   /** 资产租户 ID */
