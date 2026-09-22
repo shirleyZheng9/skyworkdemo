@@ -5,9 +5,7 @@ import com.sy4cloud.tg.common.oidc.OidcProperties;
 import com.sy4cloud.tg.common.oidc.TenantExtInfo;
 import com.sy4cloud.tg.common.oidc.UserInfo;
 import com.sy4cloud.tg.common.oidc.OidcUtil;
-import com.sy4cloud.tg.common.oidc.support.AesUtils;
 import com.sy4cloud.tg.common.oidc.support.OidcExtInfo;
-import com.sy4cloud.tg.common.oidc.support.OidcTokenGenerator;
 import com.sy4cloud.tg.common.oidc.support.OidcTokenRenewClient;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -118,9 +116,9 @@ public class TGOidcAuthService implements TGAuthService {
 
       TGUserInfo userInfo = TGUserInfo.builder()
         .userId(userId)
-        // 3.9.3 starter 的 UserInfo 暂无 nickname，Provider 会按映射规则回退到 username。
-        .username(decryptNullable(user.getUsername(), "username"))
-        .phoneNo(decryptNullable(user.getPhone(), "phone"))
+        // extinfo 实际按明文返回 username/phone；Provider 在 username 为空时会回退到用户 ID。
+        .username(user.getUsername())
+        .phoneNo(user.getPhone())
         .currentTenantId(currentTenantId)
         .currentTenantName(currentTenant.getTenantName())
         .roleType(StringUtils.defaultIfBlank(user.getRoleType(), currentTenant.getRoleType()))
@@ -128,7 +126,7 @@ public class TGOidcAuthService implements TGAuthService {
       LOGGER.info("[TGPortal] extinfo 用户扩展信息映射完成: userId={}, currentTenantId={}, tenantCount={}, "
           + "usernamePresent={}, phonePresent={}, roleType={}",
         userId, currentTenantId, extInfo.getTenantInfoList() == null ? 0 : extInfo.getTenantInfoList().size(),
-        StringUtils.isNotBlank(userInfo.getUsername()), StringUtils.isNotBlank(userInfo.getPhoneNo()),
+        userInfo.getUsername(), userInfo.getPhoneNo(),
         userInfo.getRoleType());
       return userInfo;
     }
@@ -163,21 +161,6 @@ public class TGOidcAuthService implements TGAuthService {
       }
     }
     return null;
-  }
-
-  @Nullable
-  private String decryptNullable(@Nullable String encryptedValue, String fieldName) {
-    if (StringUtils.isBlank(encryptedValue)) {
-      return null;
-    }
-    try {
-      return AesUtils.decrypt(encryptedValue, OidcTokenGenerator.DEFAULT_ISSUER);
-    }
-    catch (RuntimeException e) {
-      // 不把无法解密的密文当成用户名/手机号落库。
-      LOGGER.warn("[TGPortal] 用户敏感字段解密失败: field={}", fieldName, e);
-      return null;
-    }
   }
 
   private String expectedCookieName() {
