@@ -39,6 +39,10 @@ public interface UserManageMapper {
   @Nullable
   UserEntity getUserBySystemCodeAndExtUserId(@Param("systemCode") String systemCode, @Param("extUserId") String extUserId);
 
+  /** 查询指定外部用户标识的全部记录，供天工同步拒绝歧义数据。 */
+  List<UserEntity> selectUsersBySystemCodeAndExtUserId(@Param("systemCode") String systemCode,
+                                                        @Param("extUserId") String extUserId);
+
   /**
    * 根据用户主键更新密码
    *

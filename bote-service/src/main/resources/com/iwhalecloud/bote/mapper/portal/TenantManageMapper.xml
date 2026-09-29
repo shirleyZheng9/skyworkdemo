@@ -90,6 +90,29 @@
     <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
+  <!-- 天工专用同步必须看到全部匹配项，不能沿用带 LIMIT 1 的通用查重 SQL。 -->
+  <select id="selectActiveTenantsByExternalSpaceAndProject" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT t.tenant_id, t.tenant_code, t.tenant_name, t.tenant_use, t.tenant_icon, t.prologue,
+      t.question_setting_info, t.bot_setting_info, t.app_id, t.system_type, t.space_id, t.status_cd,
+      t.creator_id, t.created_time, t.updator_id, t.updated_time, t.remark, t.ext_tenant_id
+    FROM bt_tenant t
+    INNER JOIN bt_workspace w ON w.space_id = t.space_id AND w.status_cd = '00A'
+    WHERE t.status_cd = '00A'
+      AND w.ext_space_id = #{externalSpaceId}
+      AND t.ext_tenant_id = #{externalProjectId}
+    ORDER BY t.tenant_id ASC
+  </select>
+
+  <update id="bindCreatorIfAllowed">
+    UPDATE bt_tenant
+    SET creator_id = #{creatorId},
+      updator_id = #{syncUserId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00A'
+      AND (creator_id IS NULL OR creator_id = #{syncUserId} OR creator_id = #{creatorId})
+  </update>
+
   <update id="reactivateTenant">
     UPDATE bt_tenant
     SET status_cd = '00A',

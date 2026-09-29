@@ -44,6 +44,14 @@ public interface TenantManageMapper {
   TenantDTO getTenantByExtTenantIdAndSpace(@Param("extTenantId") Long extTenantId,
                                            @Param("spaceId") @Nullable Long spaceId);
 
+  /** 按外部空间与项目精确查询有效租户，不截断结果，供天工同步识别脏数据。 */
+  List<TenantDTO> selectActiveTenantsByExternalSpaceAndProject(@Param("externalSpaceId") String externalSpaceId,
+                                                                 @Param("externalProjectId") Long externalProjectId);
+
+  /** 仅在租户创建人为空、仍是技术同步账号或已经是目标用户时绑定创建人。 */
+  int bindCreatorIfAllowed(@Param("tenantId") Long tenantId, @Param("creatorId") Long creatorId,
+                           @Param("syncUserId") Long syncUserId);
+
   /** 复活软删租户并改名:status_cd → 00A,tenant_name 更新。 */
   int reactivateTenant(@Param("tenantId") Long tenantId,
                        @Param("tenantName") String tenantName,

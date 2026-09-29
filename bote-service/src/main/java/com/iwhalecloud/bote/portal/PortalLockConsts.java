@@ -18,6 +18,9 @@ public final class PortalLockConsts {
    */
   public static final String PORTAL_TENANT_SYNC_LOCK = "portal_tenant_sync_lock";
 
+  /** 天工项目成员同步锁（同一项目的成员和创建人变更互斥） */
+  public static final String TIANGONG_PROJECT_USER_SYNC_LOCK = "tiangong_project_user_sync_lock";
+
   private PortalLockConsts() {
     throw new IllegalStateException();
   }

@@ -252,6 +252,26 @@ public class TenantManageServiceImpl implements ITenantManageService {
       return ResultVO.fail("无权操作该租户的成员信息");
     }
 
+    return saveTenantUserInternal(tenantUserList);
+  }
+
+  /**
+   * 受控系统集成新增成员的内部入口。
+   *
+   * <p>专用同步服务已经完成调用方身份和项目归属校验；这里仅复用成员落库的公共副作用，
+   * 避免技术同步账号被页面权限模型误拒绝。</p>
+   */
+  @Override
+  @Transactional
+  public ResultVO<List<TenantUserDTO>> saveTenantUserForInternalIntegration(List<TenantUserDTO> tenantUserList) {
+    if (CollectionUtils.isEmpty(tenantUserList)) {
+      return ResultVO.success(tenantUserList);
+    }
+    return saveTenantUserInternal(tenantUserList);
+  }
+
+  /** 页面与受控集成共用成员落库逻辑，确保默认租户、权限日志和机器人授权处理一致。 */
+  private ResultVO<List<TenantUserDTO>> saveTenantUserInternal(List<TenantUserDTO> tenantUserList) {
     for (TenantUserDTO tenantUser : tenantUserList) {
       if (tenantUser.getTenantUserId() == null) {
         if (tenantManageMapper.existsTenantUser(tenantUser.getTenantId(), tenantUser.getUserId())) {
@@ -326,6 +346,25 @@ public class TenantManageServiceImpl implements ITenantManageService {
       return ResultVO.fail("无权操作该租户的成员信息");
     }
 
+    return deleteTenantUserInternal(tenantId, userIds);
+  }
+
+  /**
+   * 受控系统集成移除成员的内部入口。
+   *
+   * <p>页面权限由专用同步服务的技术账号校验替代；成员删除后的审计和默认租户清理仍与页面操作保持一致。</p>
+   */
+  @Override
+  @Transactional
+  public ResultVO<Void> deleteTenantUserForInternalIntegration(Long tenantId, List<Long> userIds) {
+    if (CollectionUtils.isEmpty(userIds)) {
+      return ResultVO.success();
+    }
+    return deleteTenantUserInternal(tenantId, userIds);
+  }
+
+  /** 页面与受控集成共用移除后的审计及默认租户清理逻辑。 */
+  private ResultVO<Void> deleteTenantUserInternal(Long tenantId, List<Long> userIds) {
     // 记录用户权限变更日志
     batchSaveDelAccountEventLog(tenantId, userIds);
 

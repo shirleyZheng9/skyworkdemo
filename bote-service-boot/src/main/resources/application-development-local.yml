@@ -25,3 +25,9 @@ bote.tg.ai-gateway.token:
 bote.tg.ai-gateway.access-url: 
 bote.tg.ai-gateway.page-size: 100
 bote.tg.ai-gateway.sync-interval-seconds: 300
+
+# 天工 MQ 项目成员同步技术账号与业务用户门户；生产环境应通过同名配置覆盖默认值。
+integration.tiangong.sync-user-id: 1
+integration.tiangong.sync-user-system-code: DEFAULT
+integration.tiangong.business-user-system-code: tiangong-noheader
+integration.tiangong.max-batch-size: 200

@@ -78,6 +78,15 @@
     LIMIT 1
   </select>
 
+  <!-- 专用同步需要自行判断重复、禁用和软删，不能使用通用查询的有效记录 LIMIT 1 语义。 -->
+  <select id="selectUsersBySystemCodeAndExtUserId" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT <include refid="userColumns"/>
+    FROM bt_user a
+    WHERE a.system_code = #{systemCode}
+      AND a.ext_user_id = #{extUserId}
+    ORDER BY a.user_id ASC
+  </select>
+
   <update id="updateUserPassword">
     UPDATE bt_user
     SET password = #{password},
