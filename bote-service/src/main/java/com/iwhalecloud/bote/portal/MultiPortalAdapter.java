@@ -27,6 +27,7 @@ import com.iwhalecloud.bote.mapper.skill.ServiceGatewayManageMapper;
 import com.iwhalecloud.bote.mapper.skill.ServicePlatformManageMapper;
 import com.iwhalecloud.bote.mapper.workspace.WorkspaceManageMapper;
 import com.iwhalecloud.bote.service.organization.IOrganizationManageService;
+import com.iwhalecloud.bss.litchi.base.exception.BssException;
 import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -203,16 +204,43 @@ public class MultiPortalAdapter {
   /**
    * 执行租户同步:判重 + 新建/改名/复活。
    *
-   * <p>判重优先按 {@code ext_tenant_id (+ space_id)}(含软删 00X,优先 00A),
-   * 修复"项目改名 / 软删后再次登录建重租户"的缺陷;{@code ext_tenant_id} 为空时
-   * 退回原 {@code (tenant_code, tenant_name)} 判重,保持旧行为。</p>
+   * <p>天工有效项目登录按 {@code ext_tenant_id} 返回全部候选并阻断多候选；其他场景继续按
+   * {@code ext_tenant_id (+ space_id)} 判重（含软删 00X，优先 00A）。{@code ext_tenant_id}
+   * 为空时退回原 {@code (tenant_code, tenant_name)} 判重，保持旧行为。</p>
    */
   private Long doSyncTenant(LoginInfo loginInfo, UserEntity user, String tenantCode, String tenantName, @Nullable Long workSpaceId) {
     logger.info("======> 检查租户是否已存在 <=======");
-    // 判重:有 ext_tenant_id 走 ext_id(+space_id, 含软删 00X, 优先 00A);否则走原 (code, name)
-    TenantDTO tenant = loginInfo.getExtTenantId() != null
-      ? tenantManageMapper.getTenantByExtTenantIdAndSpace(loginInfo.getExtTenantId(), workSpaceId)
-      : tenantManageMapper.getTenantByCodeAndName(tenantCode, tenantName);
+    TenantDTO tenant;
+    boolean tiangongProjectLogin = isTiangongProjectLogin(loginInfo);
+    if (tiangongProjectLogin) {
+      if (workSpaceId == null) {
+        logger.error("天工项目工作空间同步失败，阻止同步租户: extTenantId={}", loginInfo.getExtTenantId());
+        throw new BssException("天工团队工作空间同步失败，请稍后重试");
+      }
+      // 天工 projectId 是项目稳定标识，不能因用户从不同团队进入而附加 space_id。
+      List<TenantDTO> candidates = tenantManageMapper.listTenantCandidatesByExtTenantId(loginInfo.getExtTenantId());
+      if (CollectionUtils.size(candidates) > 1) {
+        logger.error("天工项目租户候选不唯一，阻止同步建租户: extTenantId={}, workSpaceId={}, tenantIds={}",
+          loginInfo.getExtTenantId(), workSpaceId,
+          candidates.stream().map(TenantDTO::getTenantId).toList());
+        throw new BssException("天工项目存在多个租户记录，请完成历史数据治理后重试");
+      }
+      tenant = CollectionUtils.isEmpty(candidates) ? null : candidates.getFirst();
+      if (tenant != null && !Objects.equals(tenant.getSpaceId(), workSpaceId)) {
+        logger.error("天工项目租户归属其他团队，阻止跨团队复用或复活: extTenantId={}, tenantId={}, statusCd={}, tenantSpaceId={}, currentWorkSpaceId={}",
+          loginInfo.getExtTenantId(), tenant.getTenantId(), tenant.getStatusCd(), tenant.getSpaceId(), workSpaceId);
+        if (BaseConsts.STATUS_CD_INVALID.equals(tenant.getStatusCd())) {
+          throw new BssException("该项目存在其他团队的历史数据，请联系管理员完成项目迁移");
+        }
+        throw new BssException("该项目已存在于其他团队");
+      }
+    }
+    else {
+      // 非天工项目登录继续使用原有 ext_id(+space_id) 判重；ext_tenant_id 为空时走原 (code, name) 判重。
+      tenant = loginInfo.getExtTenantId() != null
+        ? tenantManageMapper.getTenantByExtTenantIdAndSpace(loginInfo.getExtTenantId(), workSpaceId)
+        : tenantManageMapper.getTenantByCodeAndName(tenantCode, tenantName);
+    }
     if (tenant == null) {
       logger.info("======> 创建新租户 <=======");
       tenant = createNewTenant(loginInfo, user, tenantCode, tenantName, workSpaceId);
@@ -230,7 +258,20 @@ public class MultiPortalAdapter {
     else if (BaseConsts.STATUS_CD_INVALID.equals(tenant.getStatusCd())) {
       // 命中软删(00X)→ 复活 + 改名 + 同步网关 + 重新授权
       logger.info("======> 复活软删租户: tenantId={}, tenantName={} <=======", tenant.getTenantId(), tenantName);
-      tenantManageMapper.reactivateTenant(tenant.getTenantId(), tenantName, user.getUserId());
+      // 天工软删项目仅允许在原 workspace 内复活，严禁登录同步隐式迁移历史业务数据。
+      if (tiangongProjectLogin) {
+        int updated = tenantManageMapper.reactivateTiangongTenant(tenant.getTenantId(), tenantName, workSpaceId,
+          user.getUserId());
+        if (updated != 1) {
+          logger.error("天工软删租户复活失败: extTenantId={}, tenantId={}, workSpaceId={}, updated={}",
+            loginInfo.getExtTenantId(), tenant.getTenantId(), workSpaceId, updated);
+          throw new BssException("天工项目租户状态已发生变化，请重试");
+        }
+      }
+      // 其他门户继续使用原通用复活逻辑，不改变其空间归属。
+      else {
+        tenantManageMapper.reactivateTenant(tenant.getTenantId(), tenantName, user.getUserId());
+      }
       tenant.setStatusCd(BaseConsts.STATUS_CD_VALID);
       tenant.setTenantName(tenantName);
       handleGatewaySync(loginInfo, tenant, user.getUserId());
@@ -249,6 +290,13 @@ public class MultiPortalAdapter {
       }
     }
     return tenant.getTenantId();
+  }
+
+  static boolean isTiangongProjectLogin(LoginInfo loginInfo) {
+    return loginInfo.getExtTenantId() != null
+      // 仅接受 TGPortal 写入的 Boolean.TRUE，不能让字符串或通用属性意外触发专属规则。
+      && loginInfo.getAttributes() != null
+      && Boolean.TRUE.equals(loginInfo.getAttributes().get(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN));
   }
 
   private TenantDTO createNewTenant(LoginInfo loginInfo, UserEntity user, String tenantCode, String tenantName, @Nullable Long workSpaceId) {

@@ -90,6 +90,16 @@
     <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
+  <!-- 天工项目 ID 专属判重：必须返回全部有效/软删候选，禁止 LIMIT 1 随机复用历史脏数据。 -->
+  <select id="listTenantCandidatesByExtTenantId" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>
+    FROM bt_tenant a
+    WHERE ext_tenant_id = #{extTenantId}
+      AND status_cd IN ('00A', '00X')
+    ORDER BY (CASE status_cd WHEN '00A' THEN 0 ELSE 1 END), tenant_id
+  </select>
+
   <!-- 天工专用同步必须看到全部匹配项，不能沿用带 LIMIT 1 的通用查重 SQL。 -->
   <select id="selectActiveTenantsByExternalSpaceAndProject" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
     SELECT t.tenant_id, t.tenant_code, t.tenant_name, t.tenant_use, t.tenant_icon, t.prologue,
@@ -120,6 +130,18 @@
     updator_id = #{updatorId},
     updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
+  </update>
+
+  <!-- 天工专用：软删项目只能在原 workspace 内复活，禁止登录过程隐式迁移关联业务数据。 -->
+  <update id="reactivateTiangongTenant">
+    UPDATE bt_tenant
+    SET status_cd = '00A',
+      tenant_name = #{tenantName},
+      updator_id = #{updatorId},
+      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+      AND status_cd = '00X'
+      AND space_id = #{spaceId}
   </update>
 
   <update id="updateTenantName">

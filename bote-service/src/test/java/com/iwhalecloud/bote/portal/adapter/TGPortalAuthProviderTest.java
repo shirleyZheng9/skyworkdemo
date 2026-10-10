@@ -52,6 +52,8 @@ class TGPortalAuthProviderTest {
     assertTrue((Boolean) loginInfo.getAttributes().get("autoCreateTenant"));
     assertEquals(Boolean.TRUE,
       loginInfo.getAttributes().get(BaseConsts.ATTR_SKIP_DEFAULT_TENANT_FALLBACK));
+    assertEquals(Boolean.TRUE,
+      loginInfo.getAttributes().get(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN));
     assertNull(loginInfo.getDefaultTenantId());
     assertEquals(1, authService.validateCount);
     assertEquals(1, authService.userInfoCount);
@@ -79,7 +81,21 @@ class TGPortalAuthProviderTest {
     assertFalse((Boolean) loginInfo.getAttributes().get("autoCreateTenant"));
     assertNull(loginInfo.getExtTenantId());
     assertNull(loginInfo.getTenantCode());
+    assertNull(loginInfo.getAttributes().get(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN));
     assertNull(loginInfo.getDefaultTenantId());
+  }
+
+  @Test
+  void disabledAutoCreationDoesNotSetTiangongMarker() {
+    TGPortalAuthProvider provider = provider(false);
+    authService.result = validUser().build();
+
+    LoginInfo loginInfo = provider.getLoginInfo(
+      requestWithTokenAndState("token", "3001", "智能体项目", "agent"));
+
+    assertFalse((Boolean) loginInfo.getAttributes().get("autoCreateTenant"));
+    assertNull(loginInfo.getExtTenantId());
+    assertNull(loginInfo.getAttributes().get(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN));
   }
 
   @Test
@@ -93,6 +109,7 @@ class TGPortalAuthProviderTest {
     assertNull(loginInfo.getExtTenantId());
     assertNull(loginInfo.getTenantCode());
     assertNull(loginInfo.getTenantName());
+    assertNull(loginInfo.getAttributes().get(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN));
     assertNull(loginInfo.getDefaultTenantId());
   }
 
@@ -116,6 +133,16 @@ class TGPortalAuthProviderTest {
   }
 
   @Test
+  void invalidTokenCannotLoadLoginInfoDirectly() {
+    TGPortalAuthProvider provider = provider(true);
+    authService.result = null;
+
+    assertNull(provider.getLoginInfo(requestWithToken("invalid-token")));
+    assertEquals(1, authService.validateCount);
+    assertEquals(0, authService.userInfoCount);
+  }
+
+  @Test
   void rejectsMissingCurrentTenant() {
     TGPortalAuthProvider provider = provider(true);
     authService.result = validUser().currentTenantId(0L).build();
@@ -131,6 +158,20 @@ class TGPortalAuthProviderTest {
 
     assertThrows(BssException.class, () -> provider.getLoginInfo(
       requestWithTokenAndState("token", "not-a-number", "智能体项目", "agent")));
+  }
+
+  @Test
+  void rejectsNonPositiveProjectWhenAutoCreationIsEnabled() {
+    TGPortalAuthProvider provider = provider(true);
+    authService.result = validUser().build();
+
+    BssException zero = assertThrows(BssException.class, () -> provider.getLoginInfo(
+      requestWithTokenAndState("token", "0", "智能体项目", "agent")));
+    BssException negative = assertThrows(BssException.class, () -> provider.getLoginInfo(
+      requestWithTokenAndState("token", "-1", "智能体项目", "agent")));
+
+    assertEquals("天工统一登录失败: projectId 必须为正整数", zero.getMessage());
+    assertEquals("天工统一登录失败: projectId 必须为正整数", negative.getMessage());
   }
 
   @Test

@@ -159,6 +159,11 @@ public class TGPortalAuthProvider extends AbstractAuthProvider {
     // 要求：TGPortal 解析不到有效 projectId 时必须去掉默认租户兜底，
     // 不创建项目、不绑定 tenant_id=0，/logged 也不返回默认项目。
     attributes.put(BaseConsts.ATTR_SKIP_DEFAULT_TENANT_FALLBACK, Boolean.TRUE);
+    // 该标识只能由已验签的 TGPortal 在解析出有效项目后写入，
+    // MultiPortalAdapter 据此走天工项目专属判重，不能用通用 autoCreateTenant 代替。
+    if (syncProjectTenant) {
+      attributes.put(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN, Boolean.TRUE);
+    }
 
     // 保持 systemCode=tiangong-noheader + extUserId=userId，才能命中 OAuth2 时期的存量用户。
     String externalUserId = String.valueOf(userInfo.getUserId());

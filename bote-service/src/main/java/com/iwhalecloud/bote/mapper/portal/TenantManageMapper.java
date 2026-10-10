@@ -44,6 +44,12 @@ public interface TenantManageMapper {
   TenantDTO getTenantByExtTenantIdAndSpace(@Param("extTenantId") Long extTenantId,
                                            @Param("spaceId") @Nullable Long spaceId);
 
+  /**
+   * 天工项目专属候选查询：项目 ID 在天工范围内唯一，不能叠加当前空间过滤，
+   * 也不能截断结果；调用方必须在出现多条候选时阻断同步。
+   */
+  List<TenantDTO> listTenantCandidatesByExtTenantId(@Param("extTenantId") Long extTenantId);
+
   /** 按外部空间与项目精确查询有效租户，不截断结果，供天工同步识别脏数据。 */
   List<TenantDTO> selectActiveTenantsByExternalSpaceAndProject(@Param("externalSpaceId") String externalSpaceId,
                                                                  @Param("externalProjectId") Long externalProjectId);
@@ -56,6 +62,12 @@ public interface TenantManageMapper {
   int reactivateTenant(@Param("tenantId") Long tenantId,
                        @Param("tenantName") String tenantName,
                        @Param("updatorId") Long updatorId);
+
+  /** 天工软删项目仅在仍归属当前空间时复活，不执行跨空间迁移。 */
+  int reactivateTiangongTenant(@Param("tenantId") Long tenantId,
+                               @Param("tenantName") String tenantName,
+                               @Param("spaceId") Long spaceId,
+                               @Param("updatorId") Long updatorId);
 
   /** 仅更新租户名称(命中 00A 且名称变化时)。专用方法,绕开 DataDifference flag。 */
   int updateTenantName(@Param("tenantId") Long tenantId,
