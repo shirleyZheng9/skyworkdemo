@@ -50,9 +50,12 @@ public interface TenantManageMapper {
    */
   List<TenantDTO> listTenantCandidatesByExtTenantId(@Param("extTenantId") Long extTenantId);
 
-  /** 按外部空间与项目精确查询有效租户，不截断结果，供天工同步识别脏数据。 */
-  List<TenantDTO> selectActiveTenantsByExternalSpaceAndProject(@Param("externalSpaceId") String externalSpaceId,
-                                                                 @Param("externalProjectId") Long externalProjectId);
+  /** 按天工项目 ID 查询全部有效租户，不叠加空间条件或截断结果。 */
+  List<TenantDTO> selectActiveTiangongTenantsByProjectId(@Param("externalProjectId") Long externalProjectId);
+
+  /** 查询有效租户所属有效工作空间的外部空间 ID，供天工请求做归属一致性校验。 */
+  @Nullable
+  String selectActiveExternalSpaceIdByTenantId(@Param("tenantId") Long tenantId);
 
   /** 仅在租户创建人为空、仍是技术同步账号或已经是目标用户时绑定创建人。 */
   int bindCreatorIfAllowed(@Param("tenantId") Long tenantId, @Param("creatorId") Long creatorId,

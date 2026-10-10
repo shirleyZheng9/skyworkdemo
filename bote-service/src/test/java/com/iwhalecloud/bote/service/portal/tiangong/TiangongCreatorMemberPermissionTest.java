@@ -78,8 +78,9 @@ class TiangongCreatorMemberPermissionTest {
       properties);
 
     AtomicReference<Long> creatorId = new AtomicReference<>(TECHNICAL_USER_ID);
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenAnswer(invocation -> List.of(tenant(creatorId.get())));
+    when(tenantManageMapper.selectActiveExternalSpaceIdByTenantId(TENANT_ID)).thenReturn("team-1");
     when(tenantManageMapper.getTenant(TENANT_ID)).thenAnswer(invocation -> tenant(creatorId.get()));
 
     UserEntity creator = new UserEntity();

@@ -55,13 +55,14 @@ class TiangongProjectUserSyncWorkerTest {
       userManageService,
       tenantManageService,
       properties);
+    when(tenantManageMapper.selectActiveExternalSpaceIdByTenantId(9001L)).thenReturn("team-1");
   }
 
   @Test
   void existingManageMember_isNotDowngraded_andResponseMatchesContract() {
     TenantDTO tenant = tenant(9001L, 501L);
     UserEntity user = user(501L, "u1");
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1"))
       .thenReturn(List.of(user));
@@ -80,7 +81,7 @@ class TiangongProjectUserSyncWorkerTest {
 
   @Test
   void conflictingUserName_returnsStableBusinessError() {
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant(9001L, 1L)));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1"))
       .thenReturn(List.of());
@@ -94,10 +95,10 @@ class TiangongProjectUserSyncWorkerTest {
 
   @Test
   void missingOrAmbiguousProject_returnsStableBusinessErrorsWithoutWrites() {
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L)).thenReturn(List.of());
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L)).thenReturn(List.of());
     assertCode("TG_PROJECT_NOT_FOUND", () -> worker.upsert(upsertRequest()));
 
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant(9001L, 1L), tenant(9002L, 1L)));
     assertCode("TG_PROJECT_AMBIGUOUS", () -> worker.upsert(upsertRequest()));
 
@@ -107,7 +108,7 @@ class TiangongProjectUserSyncWorkerTest {
 
   @Test
   void mismatchedInternalTenant_returnsStableBusinessErrorWithoutWrites() {
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant(9999L, 1L)));
 
     assertCode("TG_TENANT_MISMATCH", () -> worker.upsert(upsertRequest()));
@@ -117,8 +118,20 @@ class TiangongProjectUserSyncWorkerTest {
   }
 
   @Test
+  void mismatchedProjectSpace_returnsStableBusinessErrorWithoutWrites() {
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
+      .thenReturn(List.of(tenant(9001L, 1L)));
+    when(tenantManageMapper.selectActiveExternalSpaceIdByTenantId(9001L)).thenReturn("team-2");
+
+    assertCode("TG_PROJECT_SPACE_MISMATCH", () -> worker.upsert(upsertRequest()));
+
+    verify(userManageService, never()).saveUser(any());
+    verify(tenantManageService, never()).saveTenantUserForInternalIntegration(anyList());
+  }
+
+  @Test
   void ambiguousOrDisabledBusinessUser_returnsStableBusinessErrors() {
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant(9001L, 1L)));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1"))
       .thenReturn(List.of(user(501L, "u1"), user(502L, "u1")));
@@ -135,7 +148,7 @@ class TiangongProjectUserSyncWorkerTest {
 
   @Test
   void userCreateFailureOrMissingReadBack_returnsStableBusinessError() {
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant(9001L, 1L)));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of());
     when(userManageMapper.existsUserName("tiangong-noheader", "u1")).thenReturn(false);
@@ -152,7 +165,7 @@ class TiangongProjectUserSyncWorkerTest {
   void memberUpsertFailure_doesNotAttemptCreatorBinding() {
     TenantDTO tenant = tenant(9001L, 1L);
     UserEntity user = user(501L, "u1");
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L)).thenReturn(List.of(tenant));
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L)).thenReturn(List.of(tenant));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of(user));
     when(tenantManageMapper.getTenantUserByTenantIdAndUserId(9001L, 501L)).thenReturn(null);
     when(tenantManageService.saveTenantUserForInternalIntegration(anyList())).thenReturn(ResultVO.fail("member failed"));
@@ -166,7 +179,7 @@ class TiangongProjectUserSyncWorkerTest {
   void creatorConflict_returnsStableBusinessErrorAfterMemberResolution() {
     TenantDTO tenant = tenant(9001L, 700L);
     UserEntity user = user(501L, "u1");
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L)).thenReturn(List.of(tenant));
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L)).thenReturn(List.of(tenant));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of(user));
     when(tenantManageMapper.getTenantUserByTenantIdAndUserId(9001L, 501L)).thenReturn(new TenantUserDTO());
     when(tenantManageMapper.bindCreatorIfAllowed(9001L, 501L, 1L)).thenReturn(0);
@@ -176,7 +189,7 @@ class TiangongProjectUserSyncWorkerTest {
 
   @Test
   void removeMissingUserOrMembership_isIdempotentNotFound() {
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L))
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L))
       .thenReturn(List.of(tenant(9001L, 1L)));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of());
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u2"))
@@ -194,7 +207,7 @@ class TiangongProjectUserSyncWorkerTest {
   void removeCreatorOrDeleteFailure_returnsStableBusinessErrors() {
     TenantDTO tenant = tenant(9001L, 501L);
     UserEntity user = user(501L, "u1");
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L)).thenReturn(List.of(tenant));
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L)).thenReturn(List.of(tenant));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of(user));
     when(tenantManageMapper.getTenantUserByTenantIdAndUserId(9001L, 501L)).thenReturn(new TenantUserDTO());
     assertCode("TG_CREATOR_REMOVE_FORBIDDEN", () -> worker.remove(removeRequest("u1")));
@@ -209,7 +222,7 @@ class TiangongProjectUserSyncWorkerTest {
   void successfulRemove_returnsRemoved() {
     TenantDTO tenant = tenant(9001L, 1L);
     UserEntity user = user(501L, "u1");
-    when(tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject("team-1", 101L)).thenReturn(List.of(tenant));
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L)).thenReturn(List.of(tenant));
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of(user));
     when(tenantManageMapper.getTenantUserByTenantIdAndUserId(9001L, 501L)).thenReturn(new TenantUserDTO());
     when(tenantManageService.deleteTenantUserForInternalIntegration(eq(9001L), anyList()))

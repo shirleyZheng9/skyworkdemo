@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -128,19 +129,23 @@ public class TiangongProjectUserSyncWorker {
   }
 
   /**
-   * 外部空间和外部项目必须唯一映射到一个有效租户；请求携带的内部租户 ID 仅用于交叉校验。
+   * 天工项目 ID 必须唯一映射到一个有效租户；外部空间和内部租户 ID 仅用于归属交叉校验。
    */
   private TenantDTO resolveTenant(String externalSpaceId, Long externalProjectId, Long boteTenantId) {
-    List<TenantDTO> tenants = tenantManageMapper.selectActiveTenantsByExternalSpaceAndProject(externalSpaceId, externalProjectId);
+    List<TenantDTO> tenants = tenantManageMapper.selectActiveTiangongTenantsByProjectId(externalProjectId);
     if (tenants.isEmpty()) {
-      throw new TiangongProjectSyncException("TG_PROJECT_NOT_FOUND", "未找到天工空间和项目对应的 AADP 租户");
+      throw new TiangongProjectSyncException("TG_PROJECT_NOT_FOUND", "未找到天工项目对应的 AADP 租户");
     }
     if (tenants.size() > 1) {
-      throw new TiangongProjectSyncException("TG_PROJECT_AMBIGUOUS", "天工空间和项目映射到多个 AADP 租户");
+      throw new TiangongProjectSyncException("TG_PROJECT_AMBIGUOUS", "天工项目映射到多个 AADP 租户");
     }
     TenantDTO tenant = tenants.getFirst();
     if (boteTenantId != null && !boteTenantId.equals(tenant.getTenantId())) {
       throw new TiangongProjectSyncException("TG_TENANT_MISMATCH", "请求中的 boteTenantId 与项目映射不一致");
+    }
+    String mappedExternalSpaceId = tenantManageMapper.selectActiveExternalSpaceIdByTenantId(tenant.getTenantId());
+    if (!Objects.equals(externalSpaceId, mappedExternalSpaceId)) {
+      throw new TiangongProjectSyncException("TG_PROJECT_SPACE_MISMATCH", "请求中的 externalSpaceId 与项目所属空间不一致");
     }
     return tenant;
   }

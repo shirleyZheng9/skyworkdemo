@@ -11,14 +11,14 @@ import lombok.Setter;
  * @author zhengxueli
  * @since 2024-09-23
  * <p>
- * externalSpaceId 与 externalProjectId 共同定位 AADP 项目；creatorExtUserId 必须属于 users。
+ * externalProjectId 定位 AADP 项目，externalSpaceId 校验项目归属；creatorExtUserId 必须属于 users。
  */
 @Getter
 @Setter
 public class TiangongProjectUserUpsertRequest {
   @Schema(description = "消息唯一标识")
   private String requestId;
-  @Schema(description = "天工空间 ID")
+  @Schema(description = "天工空间 ID，用于校验项目归属")
   private String externalSpaceId;
   @Schema(description = "天工项目 ID")
   private Long externalProjectId;

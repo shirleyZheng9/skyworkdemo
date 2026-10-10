@@ -16,6 +16,7 @@ import com.iwhalecloud.bote.dto.portal.LoginInfo;
 import com.iwhalecloud.bote.dto.portal.tiangong.TiangongProjectUserItem;
 import com.iwhalecloud.bote.dto.portal.tiangong.TiangongProjectUserRemoveRequest;
 import com.iwhalecloud.bote.dto.portal.tiangong.TiangongProjectUserUpsertRequest;
+import com.iwhalecloud.bote.portal.PortalLockConsts;
 import com.iwhalecloud.bote.portal.config.properties.TiangongProjectSyncProperties;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -100,6 +101,20 @@ class TiangongProjectUserSyncServiceImplTest {
     verify(worker, never()).upsert(org.mockito.ArgumentMatchers.any());
   }
 
+  @Test
+  void projectLock_isScopedByProjectIdInsteadOfExternalSpace() {
+    DistributedLockFactory lockFactory = mock(DistributedLockFactory.class);
+    DistributedLock lock = mock(DistributedLock.class);
+    TiangongProjectUserSyncWorker worker = mock(TiangongProjectUserSyncWorker.class);
+    when(lockFactory.getBizLock(anyString(), anyString())).thenReturn(lock);
+    when(lock.tryLock()).thenReturn(true);
+
+    TiangongProjectUserSyncServiceImpl service = service(lockFactory, worker);
+    assertWithTechnicalSession(() -> service.upsert(validUpsert()));
+
+    verify(lockFactory).getBizLock(PortalLockConsts.TIANGONG_PROJECT_USER_SYNC_LOCK, "project:101");
+  }
+
   private static TiangongProjectUserSyncServiceImpl service(
     DistributedLockFactory lockFactory, TiangongProjectUserSyncWorker worker) {
     return new TiangongProjectUserSyncServiceImpl(lockFactory, worker, new TiangongProjectSyncProperties());
@@ -113,6 +128,16 @@ class TiangongProjectUserSyncServiceImplTest {
       sessionUtil.when(SessionUtil::getLoginInfo).thenReturn(loginInfo);
       TiangongProjectSyncException error = assertThrows(TiangongProjectSyncException.class, executable);
       assertEquals(expectedCode, error.getCode());
+    }
+  }
+
+  private static void assertWithTechnicalSession(Executable executable) {
+    LoginInfo loginInfo = new LoginInfo();
+    loginInfo.setUserId(1L);
+    loginInfo.setSystemCode("DEFAULT");
+    try (MockedStatic<SessionUtil> sessionUtil = mockStatic(SessionUtil.class)) {
+      sessionUtil.when(SessionUtil::getLoginInfo).thenReturn(loginInfo);
+      org.junit.jupiter.api.Assertions.assertDoesNotThrow(executable);
     }
   }
 

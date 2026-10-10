@@ -41,7 +41,7 @@ public class TiangongProjectUserSyncServiceImpl implements ITiangongProjectUserS
     //校验当前请求是不是一个合法的“技术会话”或者受信任调用。
     verifyTechnicalSession();
     validateUpsert(request);
-    return withLocks(request.getExternalSpaceId(), request.getExternalProjectId(), request.getUsers().stream()
+    return withLocks(request.getExternalProjectId(), request.getUsers().stream()
       .map(TiangongProjectUserItem::getExtUserId).toList(), () -> worker.upsert(request));
   }
 
@@ -50,7 +50,7 @@ public class TiangongProjectUserSyncServiceImpl implements ITiangongProjectUserS
   public TiangongProjectUserSyncResponse remove(TiangongProjectUserRemoveRequest request) {
     verifyTechnicalSession();
     validateRemove(request);
-    return withLocks(request.getExternalSpaceId(), request.getExternalProjectId(), request.getExtUserIds(), () -> worker.remove(request));
+    return withLocks(request.getExternalProjectId(), request.getExtUserIds(), () -> worker.remove(request));
   }
 
   /**
@@ -116,7 +116,7 @@ public class TiangongProjectUserSyncServiceImpl implements ITiangongProjectUserS
     request.setRequestId(request.getRequestId().trim());
   }
 
-  /** 两类请求共用项目定位字段；缺少任一字段时不能猜测目标项目。 */
+  /** 项目 ID 用于定位，空间 ID 用于归属校验；两类请求均必须携带这些字段。 */
   private void validateProject(String requestId, String externalSpaceId, Long externalProjectId) {
     if (StringUtils.isBlank(requestId) || StringUtils.isBlank(externalSpaceId) || externalProjectId == null) {
       throw new TiangongProjectSyncException("TG_REQUEST_INVALID", "requestId、externalSpaceId 和 externalProjectId 均不能为空");
@@ -127,7 +127,7 @@ public class TiangongProjectUserSyncServiceImpl implements ITiangongProjectUserS
    * 固定顺序获取项目锁和用户锁，工作器事务提交后再反向释放。
    * 取锁失败返回可重试错误，并释放此前已取得的锁。
    */
-  private TiangongProjectUserSyncResponse withLocks(String externalSpaceId, Long externalProjectId, List<String> extUserIds,
+  private TiangongProjectUserSyncResponse withLocks(Long externalProjectId, List<String> extUserIds,
                                                      SyncOperation operation) {
     //项目锁 + 每个用户的用户锁：同一个用户可能同时被多个不同项目同步
     List<DistributedLock> locks = new ArrayList<>();
@@ -135,7 +135,7 @@ public class TiangongProjectUserSyncServiceImpl implements ITiangongProjectUserS
       // 先锁项目，再按外部用户 ID 的固定顺序加锁，避免多成员消息产生死锁。
       //创建一个“项目成员同步锁”，并放到 locks 集合里
       locks.add(distributedLockFactory.getBizLock(PortalLockConsts.TIANGONG_PROJECT_USER_SYNC_LOCK,
-        LockHelper.formatBizLockKey(externalSpaceId, String.valueOf(externalProjectId))));
+        LockHelper.formatBizLockKey("project", String.valueOf(externalProjectId))));
       extUserIds.stream().sorted(Comparator.naturalOrder()).forEach(extUserId -> locks.add(distributedLockFactory.getBizLock(
         PortalLockConsts.PORTAL_USER_SYNC_LOCK, LockHelper.formatBizLockKey(properties.getBusinessUserSystemCode(), extUserId))));
       for (DistributedLock lock : locks) {

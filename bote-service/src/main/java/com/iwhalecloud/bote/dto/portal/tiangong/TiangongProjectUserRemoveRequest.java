@@ -18,7 +18,7 @@ import lombok.Setter;
 public class TiangongProjectUserRemoveRequest {
   @Schema(description = "消息唯一标识")
   private String requestId;
-  @Schema(description = "天工空间 ID")
+  @Schema(description = "天工空间 ID，用于校验项目归属")
   private String externalSpaceId;
   @Schema(description = "天工项目 ID")
   private Long externalProjectId;
