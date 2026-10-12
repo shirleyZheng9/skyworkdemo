@@ -138,12 +138,38 @@ class TiangongProjectUserSyncWorkerTest {
     assertCode("TG_USER_AMBIGUOUS", () -> worker.upsert(upsertRequest()));
 
     UserEntity disabled = user(501L, "u1");
-    disabled.setUserState("disabled");
+    disabled.setUserState(BaseConsts.USER_STATE_DISABLE);
     when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1"))
       .thenReturn(List.of(disabled));
     assertCode("TG_USER_DISABLED", () -> worker.upsert(upsertRequest()));
 
+    UserEntity deleted = user(501L, "u1");
+    deleted.setStatusCd("00X");
+    when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1"))
+      .thenReturn(List.of(deleted));
+    assertCode("TG_USER_DISABLED", () -> worker.upsert(upsertRequest()));
+
     verify(tenantManageService, never()).saveTenantUserForInternalIntegration(anyList());
+  }
+
+  @Test
+  void existingUserWithNullUserState_isTreatedAsEnabled() {
+    // 天工登录自动创建的存量用户 user_state 为空，应与登录校验一致视为在用：正常加入成员并绑定创建人
+    TenantDTO tenant = tenant(9001L, 1L);
+    UserEntity user = user(501L, "u1");
+    user.setUserState(null);
+    when(tenantManageMapper.selectActiveTiangongTenantsByProjectId(101L)).thenReturn(List.of(tenant));
+    when(userManageMapper.selectUsersBySystemCodeAndExtUserId("tiangong-noheader", "u1")).thenReturn(List.of(user));
+    when(tenantManageMapper.getTenantUserByTenantIdAndUserId(9001L, 501L)).thenReturn(null);
+    when(tenantManageService.saveTenantUserForInternalIntegration(anyList())).thenReturn(ResultVO.success(List.<TenantUserDTO>of()));
+    when(tenantManageMapper.bindCreatorIfAllowed(9001L, 501L, 1L)).thenReturn(1);
+
+    TiangongProjectUserSyncResponse response = worker.upsert(upsertRequest());
+
+    assertEquals("CREATED", response.getUsers().getFirst().getMemberAction());
+    assertEquals(501L, response.getUsers().getFirst().getUserId());
+    assertEquals("BOUND", response.getCreatorAction());
+    verify(userManageService, never()).saveUser(any());
   }
 
   @Test

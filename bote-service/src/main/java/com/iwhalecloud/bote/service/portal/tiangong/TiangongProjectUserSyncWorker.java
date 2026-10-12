@@ -196,7 +196,9 @@ public class TiangongProjectUserSyncWorker {
       throw new TiangongProjectSyncException("TG_USER_AMBIGUOUS", "天工外部用户 ID 对应多条 AADP 用户记录");
     }
     UserEntity user = users.getFirst();
-    if (!BaseConsts.STATUS_CD_VALID.equals(user.getStatusCd()) || !BaseConsts.USER_STATE_ENABLE.equals(user.getUserState())) {
+    // 与 AADP 登录校验（LitchiLoginServiceImpl#checkUserValid）保持一致：只有 user_state = X 才视为禁用。
+    // 天工登录自动创建的 tiangong-noheader 用户 user_state 为空，属于在用账号，不能当作禁用拒绝同步。
+    if (!BaseConsts.STATUS_CD_VALID.equals(user.getStatusCd()) || BaseConsts.USER_STATE_DISABLE.equals(user.getUserState())) {
       throw new TiangongProjectSyncException("TG_USER_DISABLED", "天工业务用户已禁用或删除");
     }
     return user;
