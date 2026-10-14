@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.knowledge.docchain.DocChainExtraCfgDTO;
 import com.iwhalecloud.bote.dto.knowledge.docchain.DocChainExtraDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.DocumentManageMapper;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeBaseManageMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;

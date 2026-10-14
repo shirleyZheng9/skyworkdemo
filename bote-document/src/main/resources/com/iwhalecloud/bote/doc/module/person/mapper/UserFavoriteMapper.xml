@@ -22,8 +22,8 @@
       #{favorite.favoritePinOrder},
       #{favorite.creatorId},
       #{favorite.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{favorite.statusCd}
     )
   </insert>
@@ -36,7 +36,7 @@
         is_favorite_pinned = #{favorite.isFavoritePinned},
         favorite_pin_order = #{favorite.favoritePinOrder},
         updator_id = #{favorite.updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         status_cd = #{favorite.statusCd}
     WHERE favorite_id = #{favorite.favoriteId}
   </update>
@@ -44,7 +44,7 @@
   <update id="deleteByFavoriteId">
     UPDATE bt_dc_user_favorite
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE favorite_id = #{favoriteId}
   </update>
 

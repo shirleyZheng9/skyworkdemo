@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;

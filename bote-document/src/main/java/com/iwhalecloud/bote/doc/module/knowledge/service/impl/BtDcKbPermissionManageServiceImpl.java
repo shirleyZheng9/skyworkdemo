@@ -22,8 +22,8 @@ import com.iwhalecloud.bote.doc.module.knowledge.service.IBtDcKbPermissionManage
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.BtDcKbPermissionHelper;
 import com.iwhalecloud.bote.doc.module.user.service.IDcOrgService;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

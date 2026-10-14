@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.chat;
 import com.iwhalecloud.bote.dto.chat.ChatRequestDTO;
 import com.iwhalecloud.bote.dto.chat.SearchResultDTO;
 import com.iwhalecloud.bote.dto.chat.query.SearchQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 /**

@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.base.SimpleFlowStepDTO;
 import com.iwhalecloud.bote.dto.orchestration.SceneDslDTO;
 import com.iwhalecloud.bote.dto.scene.SimpleDslInfoDTO;
 import com.iwhalecloud.bote.mapper.skill.FlowQueryMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

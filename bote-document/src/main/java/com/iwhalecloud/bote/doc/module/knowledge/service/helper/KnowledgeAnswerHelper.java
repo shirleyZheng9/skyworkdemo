@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.dto.knowledge.KnowledgeInfoDTO;
 import com.iwhalecloud.bote.dto.knowledge.SimpleKnowledgeDTO;
 import com.iwhalecloud.bote.llm.client.dto.CustomModelConfig;
 import com.iwhalecloud.bote.llm.client.util.LlmTraceUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 import java.util.ArrayList;
 import java.util.HashMap;

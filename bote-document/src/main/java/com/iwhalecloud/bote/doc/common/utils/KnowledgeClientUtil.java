@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.common.utils;
 import com.iwhalecloud.bote.doc.module.knowledge.adapter.client.KnowledgeCallObserver;
 import com.iwhalecloud.bote.doc.module.knowledge.adapter.client.KnowledgeClient;
 import com.iwhalecloud.bote.doc.module.knowledge.adapter.client.ObservingKnowledgeClient;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.IterableUtils;

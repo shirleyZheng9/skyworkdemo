@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.skill;
 
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

@@ -60,6 +60,8 @@ public enum ChatMessageType {
 
   /** 应用信息（用于向前端返回识别智能应用的结果） */
   BOT("bot", false),
+  /** 会话 ID */
+  SESSION_ID("sessionId", false),
   /** 上下文 ID */
   CONTEXT_ID("contextId", false),
   /** 场景信息(用于向前端返回意图识别的结果) */

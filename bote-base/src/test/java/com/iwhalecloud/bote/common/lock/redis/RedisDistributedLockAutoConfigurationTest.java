@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.iwhalecloud.bote.common.lock.DistributedLockFactory;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import org.junit.jupiter.api.Test;
 
 /**

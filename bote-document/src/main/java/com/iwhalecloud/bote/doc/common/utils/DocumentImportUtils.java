@@ -46,7 +46,7 @@ import com.iwhalecloud.bote.doc.common.utils.converter.DocumentConversionImageHa
 import com.iwhalecloud.bote.doc.common.utils.converter.SafeWordToHtmlConverter;
 import com.iwhalecloud.bote.doc.common.utils.converter.UploadingPicturesManager;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 /**
  * 文档导入工具类 提供文档格式转换功能，用于将本地文档转换为在线文档格式

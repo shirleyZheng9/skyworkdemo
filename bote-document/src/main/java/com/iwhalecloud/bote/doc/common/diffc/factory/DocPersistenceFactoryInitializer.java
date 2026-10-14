@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.common.diffc.factory;
 
 import com.iwhalecloud.bote.doc.common.diffc.persist.impl.knowledge.KnowledgeBaseDifferencePersistence;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO;
-import com.iwhalecloud.bss.litchi.diffc.factory.BatchPersistenceFactory;
+import com.cmsr.tiangong.diffc.factory.BatchPersistenceFactory;
 import org.springframework.stereotype.Component;
 
 /**

@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.service.helper.DocChainDocument
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.DocChainLoginHelper;
 import com.iwhalecloud.bote.dto.knowledge.docchain.DocChainChunkDTO;
 import com.iwhalecloud.bote.dto.knowledge.docchain.DocChainDocumentWithContentDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

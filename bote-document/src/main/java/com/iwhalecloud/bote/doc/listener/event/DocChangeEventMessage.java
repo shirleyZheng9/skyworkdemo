@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.doc.listener.event;
 
 import com.iwhalecloud.bote.doc.consts.DocumentActionTypeEnum;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorObject;
+import com.cmsr.tiangong.disruptor.DisruptorObject;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

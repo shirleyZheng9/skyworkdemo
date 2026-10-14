@@ -11,7 +11,7 @@
       #{dto.content},
       #{dto.tenantId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 

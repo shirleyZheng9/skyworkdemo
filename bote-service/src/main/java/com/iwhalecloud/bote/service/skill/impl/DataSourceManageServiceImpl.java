@@ -23,8 +23,8 @@ import com.iwhalecloud.bote.mapper.skill.DataSourceManageMapper;
 import com.iwhalecloud.bote.service.base.ICatalogManageService;
 import com.iwhalecloud.bote.service.element.IResourceElementService;
 import com.iwhalecloud.bote.service.skill.IDataSourceManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
 
 import java.util.Collections;
 import java.util.List;

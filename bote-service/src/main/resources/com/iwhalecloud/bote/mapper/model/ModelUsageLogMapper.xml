@@ -41,7 +41,7 @@
       #{log.responseJson},
       #{log.traceId},
       #{log.sourceFrom},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -50,7 +50,7 @@
     FROM bt_model_usage_log
     WHERE start_time &lt; #{maxDate}
     ORDER BY start_time
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
   <insert id="archiveByLogIds">
@@ -189,7 +189,7 @@
       SELECT log_id
       FROM bt_model_usage_log_his
       WHERE start_time &lt; #{maxDate}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
     )
   </delete>
 
@@ -197,6 +197,6 @@
     DELETE
     FROM bt_model_usage_log_his
     WHERE start_time &lt; #{maxDate}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </delete>
 </mapper>

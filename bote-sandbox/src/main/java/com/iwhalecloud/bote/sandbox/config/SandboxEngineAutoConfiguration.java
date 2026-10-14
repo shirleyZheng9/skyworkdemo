@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.sandbox.pool.AgentPoolBackendFactory;
 import com.iwhalecloud.bote.sandbox.pool.OpenSandboxBackendFactory;
 import com.iwhalecloud.bote.sandbox.pool.SandboxBackendFactory;
 import com.iwhalecloud.bote.sandbox.session.CacheBasedUserSandboxBindingRepository;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
+import com.cmsr.tiangong.cache.CacheFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

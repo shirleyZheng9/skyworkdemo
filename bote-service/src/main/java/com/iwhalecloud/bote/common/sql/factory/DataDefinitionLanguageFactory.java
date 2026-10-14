@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.common.sql.convert.OracleDdlConverter;
 import com.iwhalecloud.bote.common.sql.convert.PanweiSqlDdlConverter;
 import com.iwhalecloud.bote.common.sql.convert.PostgreSqlDdlConverter;
 import com.iwhalecloud.bote.common.util.DatabaseUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**

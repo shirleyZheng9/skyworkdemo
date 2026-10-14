@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.config.properties.SignProperties;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

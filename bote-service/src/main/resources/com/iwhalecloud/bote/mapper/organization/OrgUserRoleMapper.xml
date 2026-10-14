@@ -36,9 +36,9 @@
       #{entity.spaceId},
       #{entity.statusCd},
       #{entity.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.remark}
     )
     </foreach>
@@ -65,9 +65,9 @@
       #{entity.spaceId},
       #{entity.statusCd},
       #{entity.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.remark}
       )
     </foreach>
@@ -85,7 +85,7 @@
       AND a.org_role = #{query.orgRole}
     </if>
     <if test="query.userName != null and query.userName != ''">
-      AND u.real_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND u.real_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -126,7 +126,7 @@
     UPDATE bt_org_user_role
     SET status_cd = '00X',
       updator_id = #{updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND space_id = #{spaceId}
       AND user_id = #{userId}
@@ -136,7 +136,7 @@
     UPDATE bt_org_user_role
     SET status_cd = '00X',
       updator_id = #{updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND space_id = #{spaceId}
       AND user_id IN (<foreach collection="userIds" item="userId" separator=", ">#{userId}</foreach>)
@@ -155,7 +155,7 @@
     UPDATE bt_org_user_role
     SET org_role = #{dto.orgRole},
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND space_id = #{dto.spaceId}
       AND user_id = #{dto.userId}

@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.entity.model;
 
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorObject;
+import com.cmsr.tiangong.disruptor.DisruptorObject;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

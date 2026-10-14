@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptEva
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptConvertor;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptEvaluatorRefConvertor;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

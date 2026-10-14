@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.job;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.job.JobLogDTO;
 import com.iwhalecloud.bote.dto.job.query.JobQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.job.JobDTO;
 import java.util.List;
 

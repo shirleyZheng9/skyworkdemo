@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.portal.UserImportDTO;
 import com.iwhalecloud.bote.dto.portal.query.ModifyPasswordParams;
 import com.iwhalecloud.bote.dto.portal.query.UserQueryParams;
 import com.iwhalecloud.bote.entity.portal.UserEntity;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;

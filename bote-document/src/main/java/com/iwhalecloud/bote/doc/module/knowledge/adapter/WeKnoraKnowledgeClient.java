@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.req.WeKnoraSearchRequest;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraChatChunk;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraSearchResultDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 import lombok.RequiredArgsConstructor;
 import okhttp3.sse.EventSource;

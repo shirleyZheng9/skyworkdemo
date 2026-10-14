@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.control.base.role.ControlRole;
 import com.iwhalecloud.bote.doc.module.control.base.role.ControlRoleManager;
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentPermissionSetDTO;
 import com.iwhalecloud.bote.doc.module.document.dto.PermissionDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;

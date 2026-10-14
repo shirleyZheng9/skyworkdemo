@@ -66,9 +66,9 @@
     #{dto.catalogItemId},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark},
     #{dto.dataFrom}
     )
@@ -91,7 +91,7 @@
       AND a.creator_id = #{query.creatorId}
     </if>
     <if test="query.searchContent != null and query.searchContent !=''">
-      AND b.bot_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND b.bot_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.created_time DESC
   </select>
@@ -110,7 +110,7 @@
       AND a.audit_status = #{query.auditStatus}
     </if>
     <if test="query.searchContent != null and query.searchContent !=''">
-      AND b.bot_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND b.bot_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.created_time DESC
   </select>
@@ -150,7 +150,7 @@
         audit_content = #{params.auditContent},
         audit_user_id = #{params.auditUserId},
         updator_id = #{params.auditUserId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE apply_id = #{params.applyId}
   </update>
 

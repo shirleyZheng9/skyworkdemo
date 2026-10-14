@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.publish.PublishGatewayDTO;
 import com.iwhalecloud.bote.dto.publish.PublishGatewayQueryParams;
 import com.iwhalecloud.bote.dto.publish.PublishGatewaySimpleDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 在线环境维护服务

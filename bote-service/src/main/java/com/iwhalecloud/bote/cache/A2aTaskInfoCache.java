@@ -2,9 +2,9 @@ package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.dto.a2a.A2aTaskInfo;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.a2a.spec.Task;
 import io.a2a.spec.TaskState;
 import java.util.concurrent.TimeUnit;

@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.doc.module.knowledge.service.helper;
 
 import com.iwhalecloud.bote.doc.module.library.service.IDocumentLibraryInitService;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 
 public final class DocumentLibraryInitServiceHelper {
   private static volatile IDocumentLibraryInitService documentLibraryInitService;

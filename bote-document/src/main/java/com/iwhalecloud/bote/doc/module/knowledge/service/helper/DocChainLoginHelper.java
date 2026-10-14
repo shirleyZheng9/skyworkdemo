@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.config.properties.DocChainProperties;
 import com.iwhalecloud.bote.dto.knowledge.docchain.response.GenerateApiKeyResponse;
 import com.iwhalecloud.bote.dto.knowledge.docchain.response.QueryApiKeyResponse;
 import com.iwhalecloud.bote.dto.tenant.setting.SimpleTenantSettingInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.net.HttpCookie;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;

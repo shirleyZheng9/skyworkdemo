@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.base;
 
 import com.iwhalecloud.bote.dto.base.EditLockInfoDTO;
 import com.iwhalecloud.bote.dto.base.LockResultDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 
 /**

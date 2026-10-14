@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.service.orchestration.reply.ReplyHandler;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.A2aStreamReplyHandler;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.NonStreamFlowReplyHandler;
 import com.iwhalecloud.bote.service.scene.ISceneChatService;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshCacheService;
+import com.cmsr.tiangong.cache.refresh.IRefreshCacheService;
 import io.a2a.A2A;
 import io.a2a.server.agentexecution.AgentExecutor;
 import io.a2a.server.agentexecution.RequestContext;

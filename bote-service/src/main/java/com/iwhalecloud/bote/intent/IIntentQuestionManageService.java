@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.intent.IntentQuestionDTO;
 import com.iwhalecloud.bote.dto.intent.IntentQuestionImportDTO;
 import com.iwhalecloud.bote.dto.intent.query.IntentQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.io.File;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.generator.flow.node.ServiceNodeData;
 import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
 import com.iwhalecloud.bote.generator.flow.context.FlowConverterContext;
 import com.iwhalecloud.bote.generator.flow.converter.AbstractNodeConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**

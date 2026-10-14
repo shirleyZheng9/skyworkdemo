@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.mapper.dashboard;
-
 import com.iwhalecloud.bote.dto.dashboard.AgentModeCountDTO;
 import com.iwhalecloud.bote.dto.dashboard.ConversationMessageTrendCountDTO;
 import com.iwhalecloud.bote.dto.dashboard.KnowledgeFileTypeCountDTO;
@@ -20,14 +19,14 @@ public interface DataDashboardMapper {
   /**
    * 查询顶部资源概览。
    *
-   * <p>每类资源只做一次当前总量 + 较昨日净变化条件聚合，不读取列表字段，不关联用户、目录等展示表。
-   * 调用方传入同一组今日时间边界，保证页面所有净变化指标处在同一个自然日口径内。
+   * <p>每类资源只做一次总量 + 今日新增条件聚合，不读取列表字段，不关联用户、目录等展示表。
+   * 调用方传入同一组今日时间边界，保证页面所有“今日新增”指标处在同一个自然日口径内。
    * 如果该方法未来被其他接口复用且未传时间边界，SQL 会把 todayIncrease 返回为 0，
    * 不会用半截时间条件统计。</p>
    *
    * @param tenantId 当前租户 ID
-   * @param todayStart 今日零点，按应用部署时区计算；为空时不统计较昨日净变化
-   * @param tomorrowStart 明日零点，用于校验完整自然日边界；为空时不统计较昨日净变化
+   * @param todayStart 今日零点，按应用部署时区计算；为空时不统计今日新增
+   * @param tomorrowStart 明日零点，作为今日查询的右开边界；为空时不统计今日新增
    * @return agent、knowledge、model、tool 四类资源统计
    */
   List<OverviewMetricCountDTO> selectOverviewMetrics(

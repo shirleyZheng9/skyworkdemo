@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.dto.organization;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.entity.organization.OrganizationFieldConfigEntity;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Getter;

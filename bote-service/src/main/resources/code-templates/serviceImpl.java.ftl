@@ -1,7 +1,7 @@
 package ${package.serviceimpl};
 
 import com.github.pagehelper.PageInfo;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
 import com.iwhalecloud.bote.common.util.SessionUtil;
 import ${package.dto}.${dtoName};

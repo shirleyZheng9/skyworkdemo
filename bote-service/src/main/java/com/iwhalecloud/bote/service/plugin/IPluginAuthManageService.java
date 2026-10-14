@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.plugin;
 
 import com.iwhalecloud.bote.dto.plugin.PluginAuthDTO;
 import com.iwhalecloud.bote.dto.plugin.params.PluginAuthQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

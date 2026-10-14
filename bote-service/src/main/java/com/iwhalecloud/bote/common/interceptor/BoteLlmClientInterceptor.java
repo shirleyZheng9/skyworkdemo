@@ -21,7 +21,7 @@ import com.iwhalecloud.bote.llm.client.util.LlmTraceUtil;
 import com.iwhalecloud.bote.llm.interceptor.LlmClientInterceptor;
 import com.iwhalecloud.bote.observability.LangfuseTracingService;
 import com.iwhalecloud.bote.service.model.IModelUsageLogService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

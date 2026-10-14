@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.entity.loop.data.dataset.DatasetEntity;
 import com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListDatasetsParams;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.DatasetDAO;
 import com.iwhalecloud.bote.mapper.loop.data.dataset.DatasetMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 import java.util.Collections;
 import java.util.List;

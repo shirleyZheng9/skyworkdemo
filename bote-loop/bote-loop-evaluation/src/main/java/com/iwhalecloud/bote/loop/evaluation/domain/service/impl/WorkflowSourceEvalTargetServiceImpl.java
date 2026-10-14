@@ -25,7 +25,7 @@ import com.iwhalecloud.bote.loop.infra.session.SessionContext;
 import com.iwhalecloud.bote.service.orchestration.IOrchestrationEngine;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.NonStreamFlowReplyHandler;
 import com.iwhalecloud.bote.service.skill.ISkillFlowManageService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

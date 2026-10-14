@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 
 import com.iwhalecloud.bote.doc.consts.DocumentTypeEnum;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;

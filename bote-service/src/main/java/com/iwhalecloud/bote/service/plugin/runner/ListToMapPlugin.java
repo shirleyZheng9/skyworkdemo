@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.PluginConsts;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.params.ListToMapPluginParams;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.Collections;

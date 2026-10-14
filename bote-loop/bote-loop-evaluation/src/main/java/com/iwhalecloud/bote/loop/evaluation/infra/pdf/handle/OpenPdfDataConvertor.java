@@ -45,7 +45,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.ItemInfo;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.OpenPdfData;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.ReportInfo;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.ScoreDistributionInfo;
-import com.iwhalecloud.bss.litchi.util.DateUtil;
+import com.cmsr.tiangong.util.DateUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.compress.utils.Lists;

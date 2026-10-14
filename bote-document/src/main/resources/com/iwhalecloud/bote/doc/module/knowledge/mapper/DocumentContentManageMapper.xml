@@ -195,9 +195,9 @@
     #{dto.statusCd},
     #{dto.creatorId},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusTime},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
   </insert>
@@ -325,9 +325,9 @@
       #{dto.statusCd},
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusTime},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -456,9 +456,9 @@
       #{dto.statusCd},
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusTime},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -639,7 +639,7 @@
       <if test="dto.checkFieldUpdateFlag('statusTime')">
         status_time = #{dto.statusTime},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       <if test="dto.checkFieldUpdateFlag('remark')">
         remark = #{dto.remark},
       </if>
@@ -825,7 +825,7 @@
         <if test="dto.checkFieldUpdateFlag('statusTime')">
           status_time = #{dto.statusTime},
         </if>
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         <if test="dto.checkFieldUpdateFlag('remark')">
           remark = #{dto.remark},
         </if>
@@ -838,7 +838,7 @@
     UPDATE bt_document_content
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND tenant_id = #{tenantId}
   </update>
@@ -867,7 +867,7 @@
     UPDATE bt_document_content
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE content_id IN (<foreach collection="dto.contentIds" item="contentId" separator=",">#{contentId}</foreach>)
     AND document_id = #{dto.documentId}
     AND tenant_id = #{tenantId}

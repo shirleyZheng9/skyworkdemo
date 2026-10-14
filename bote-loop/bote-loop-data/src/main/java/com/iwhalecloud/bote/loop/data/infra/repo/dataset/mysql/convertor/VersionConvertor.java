@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.Dataset;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetVersion;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.SnapshotProgress;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.SnapshotStatus;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 /**
  * 版本转换器

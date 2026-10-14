@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.model.request.FinetuneRequest;
 import com.iwhalecloud.bote.dto.model.request.PredictRequest;
 import com.iwhalecloud.bote.dto.model.response.PredictResponse;
 import com.iwhalecloud.bote.dto.model.response.PredictResponse.PredictInfo;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.math.BigDecimal;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;

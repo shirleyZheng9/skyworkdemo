@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.pdf.OpenPdfContext;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.handle.ScoreLabelGenerator;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.OpenPdfData;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.ScoreDistributionInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import org.apache.commons.collections4.MapUtils;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;

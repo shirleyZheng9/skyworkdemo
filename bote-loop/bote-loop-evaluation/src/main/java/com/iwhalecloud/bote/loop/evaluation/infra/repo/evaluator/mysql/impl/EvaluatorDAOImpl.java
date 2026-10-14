@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.repo.dto.ListEvaluatorParam;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.EvaluatorDAO;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.dto.ListEvaluatorResponse;
 import com.iwhalecloud.bote.mapper.loop.evaluation.EvaluatorMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;

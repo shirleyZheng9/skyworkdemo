@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO;
 import com.iwhalecloud.bote.doc.module.document.mapper.DocumentMapper;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
 import com.iwhalecloud.bote.doc.common.utils.DocumentImportUtils;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

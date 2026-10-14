@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.module.collaboration.pubsub.redis;
 
 import com.iwhalecloud.bote.doc.module.collaboration.pubsub.MessagePubSubTemplate;
 import com.iwhalecloud.bote.doc.module.collaboration.pubsub.MessageSubscriber;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.UUID;

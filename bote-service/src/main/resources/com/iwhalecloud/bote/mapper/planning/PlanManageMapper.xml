@@ -94,9 +94,9 @@
     #{dto.failedStepName},
     #{dto.failReason},
     #{dto.sceneDsl},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -116,7 +116,7 @@
     </if>
     end_time = #{dto.endTime},
     spent_time = #{dto.spentTime},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE plan_id = #{dto.planId}
       AND tenant_id = #{dto.tenantId}
   </update>
@@ -125,7 +125,7 @@
     UPDATE bt_plan_record
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE plan_id = #{planId}
       AND tenant_id = #{tenantId}
   </update>
@@ -190,9 +190,9 @@
       #{dto.stepIndex},
       #{dto.failReason},
       #{dto.flowStepJson},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -251,9 +251,9 @@
       #{dto.stepIndex},
       #{dto.failReason},
       #{dto.flowStepJson},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -325,7 +325,7 @@
       <if test="dto.checkFieldUpdateFlag('remark')">
         remark = #{dto.remark},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE step_id = #{dto.stepId}
       AND tenant_id = #{dto.tenantId}
@@ -351,7 +351,7 @@
     <if test="dto.spentTime != null">
       spent_time = #{dto.spentTime},
     </if>
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE step_id = #{dto.stepId}
       AND step_index = #{dto.stepIndex}
       AND tenant_id = #{dto.tenantId}
@@ -361,7 +361,7 @@
     UPDATE bt_plan_step
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE step_id = #{stepId}
       AND tenant_id = #{tenantId}
   </update>

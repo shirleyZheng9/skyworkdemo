@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.base.dto.MergeChunkRequest;
 import com.iwhalecloud.bote.doc.module.base.dto.UnifiedUploadRequest;
 import com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO;
 import com.iwhalecloud.bote.doc.module.document.dto.DcDocumentTreeDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.multipart.MultipartFile;

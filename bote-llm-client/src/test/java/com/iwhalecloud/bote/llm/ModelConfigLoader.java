@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.llm;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import com.iwhalecloud.bote.llm.client.config.LlmProperties;
 import java.io.IOException;
 import java.io.InputStream;

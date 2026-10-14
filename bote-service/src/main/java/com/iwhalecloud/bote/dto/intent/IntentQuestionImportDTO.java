@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.dto.intent;
 
-import com.iwhalecloud.bss.litchi.transform.imports.importers.dto.ImportFailedColumn;
+import com.cmsr.tiangong.transform.imports.importers.dto.ImportFailedColumn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

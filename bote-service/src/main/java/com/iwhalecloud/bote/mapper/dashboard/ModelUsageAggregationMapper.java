@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.mapper.dashboard;
-
 import com.iwhalecloud.bote.dto.dashboard.ModelUsageAggregationCheckpointDTO;
 import com.iwhalecloud.bote.dto.dashboard.ModelUsageLogIncrementDTO;
 import com.iwhalecloud.bote.dto.dashboard.ModelUsageStatusCandidateDTO;

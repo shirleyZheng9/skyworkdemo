@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.skill.ServiceMockParams;
 import com.iwhalecloud.bote.dto.skill.SimpleSkillServiceDTO;
 import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
 import com.iwhalecloud.bote.dto.skill.query.SkillQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;

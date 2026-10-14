@@ -21,7 +21,7 @@ import com.iwhalecloud.bote.service.publish.step.eval.UpdateEvalStatusStep;
 import com.iwhalecloud.bote.service.publish.step.intent.CallFinetuneStep;
 import com.iwhalecloud.bote.service.publish.step.intent.InitializeFinetuneStep;
 import com.iwhalecloud.bote.service.publish.step.intent.UpdateFinetuneStatusStep;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;

@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.common.util.IconUtil;
 import com.iwhalecloud.bote.dto.publish.PublishGatewayDTO;
 import com.iwhalecloud.bote.dto.publish.PublishGatewayQueryParams;
 import com.iwhalecloud.bote.service.publish.IPublishGatewayManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

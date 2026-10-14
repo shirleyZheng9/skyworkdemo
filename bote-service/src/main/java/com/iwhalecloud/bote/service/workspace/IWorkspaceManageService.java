@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO;
 import com.iwhalecloud.bote.dto.workspace.SpaceIdMappingDTO;
 import com.iwhalecloud.bote.dto.workspace.WorkspaceDTO;
 import com.iwhalecloud.bote.dto.workspace.query.WorkspaceQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import java.util.List;
 

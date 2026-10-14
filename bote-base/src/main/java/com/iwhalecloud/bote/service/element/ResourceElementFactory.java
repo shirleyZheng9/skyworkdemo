@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.element;
 
 import com.iwhalecloud.bote.common.consts.ResourceElementConsts;
 import com.iwhalecloud.bote.common.enums.OperClassEnum;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.util.Assert;

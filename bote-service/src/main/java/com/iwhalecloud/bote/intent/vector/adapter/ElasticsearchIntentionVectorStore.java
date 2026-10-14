@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.common.elasticsearch.ElasticsearchHelper;
 import com.iwhalecloud.bote.dto.intent.IntentionEmbeddingDTO;
 import com.iwhalecloud.bote.dto.intent.IntentionMatchItemDTO;
 import com.iwhalecloud.bote.intent.vector.IntentionVectorStore;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

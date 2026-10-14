@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.orchestration.IfCondition;
 import com.iwhalecloud.bote.dto.orchestration.step.IfStep.BranchSpec;
 import com.iwhalecloud.bote.generator.flow.context.FlowConverterContext;
 import com.iwhalecloud.bote.generator.flow.converter.AbstractNodeConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

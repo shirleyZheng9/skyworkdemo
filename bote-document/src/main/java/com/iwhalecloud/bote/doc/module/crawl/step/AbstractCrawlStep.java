@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.iwhalecloud.bote.doc.module.crawl.dto.CrawlResult;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 步骤执行器：爬取抽象类

@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.chat.SceneIntentResultDTO;
 import com.iwhalecloud.bote.dto.intent.IntentStrategyDTO;
 import com.iwhalecloud.bote.dto.intent.IntentionMatchItemWithSceneDTO;
 import com.iwhalecloud.bote.intent.IIntentEmbeddingService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;

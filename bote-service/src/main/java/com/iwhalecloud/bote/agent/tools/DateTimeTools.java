@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.agent.tools;
 
 import com.iwhalecloud.bote.agent.annotation.Tool;
-import com.iwhalecloud.bss.litchi.util.DateUtil;
+import com.cmsr.tiangong.util.DateUtil;
 
 /**
  * 日期时间工具

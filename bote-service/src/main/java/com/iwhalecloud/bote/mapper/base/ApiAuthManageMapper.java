@@ -89,4 +89,20 @@ public interface ApiAuthManageMapper {
    * @return 发布列表
    */
   List<AppPublishDTO> selectAppPublishList(@Param("tenantId") Long tenantId, @Param("botName") String botName, @Param("botId") Long botId);
+
+  /**
+   * 根据主键获取有效的智能体发布信息
+   *
+   * @param publishId 主键 ID
+   * @return 发布信息，不存在时返回 null
+   */
+  AppPublishDTO getAppPublish(@Param("publishId") Long publishId);
+
+  /**
+   * 查询指定发布密钥的发布记录状态
+   *
+   * @param token 发布密钥
+   * @return 发布记录状态集合
+   */
+  List<String> selectAppPublishStatusByToken(@Param("token") String token);
 }

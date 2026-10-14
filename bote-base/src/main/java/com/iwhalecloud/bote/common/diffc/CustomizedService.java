@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.diffc;
 
 import com.iwhalecloud.bote.common.consts.CommonConsts;
-import com.iwhalecloud.bss.litchi.diffc.ICustomizedService;
+import com.cmsr.tiangong.diffc.ICustomizedService;
 import com.iwhalecloud.bote.common.util.SessionUtil;
 import org.springframework.stereotype.Component;
 

@@ -56,10 +56,10 @@ import com.iwhalecloud.bote.service.chat.IChatSessionService;
 import com.iwhalecloud.bote.service.chat.helper.QuerySessionMsgHelper;
 import com.iwhalecloud.bote.service.chat.helper.RuntimeSessionHelper;
 import com.iwhalecloud.bote.service.chat.helper.SessionMessageExportHelper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
@@ -163,6 +163,7 @@ public class ChatSessionServiceImpl implements IChatSessionService {
     if (BooleanUtils.isTrue(params.getIsTest())) {
       session.setIsTest(BaseConsts.TRUE);
     }
+    session.setPublishId(params.getPublishId());
     session.setStatusCd(BaseConsts.STATUS_CD_VALID);
     session.setCreatorId(userId);
     session.setUpdatorId(userId);
@@ -172,10 +173,14 @@ public class ChatSessionServiceImpl implements IChatSessionService {
 
   @Transactional
   @Override
-  public ResultVO<Void> deleteSession(Long sessionId) {
+  public ResultVO<Void> deleteSession(Long sessionId, @Nullable Long publishId) {
     SessionDTO session = sessionMapper.getSession(sessionId);
     // 校验会话创建人
     if (session == null || !Objects.equals(session.getCreatorId(), SessionUtil.getLoginInfo().getUserId())) {
+      return ResultVO.fail("会话不存在");
+    }
+    // 发布链接场景：校验会话归属的发布记录，避免跨发布删除（历史会话无发布记录时不做校验）
+    if (publishId != null && session.getPublishId() != null && !Objects.equals(publishId, session.getPublishId())) {
       return ResultVO.fail("会话不存在");
     }
     archiveMessageService.archiveSession(sessionId);
@@ -389,7 +394,7 @@ public class ChatSessionServiceImpl implements IChatSessionService {
   }
 
   private void addDedupedSessionGroup(List<SimpleSessionGroupDTO> list, SessionDTO session, List<SimpleBotDTO> bots,
-    List<SimplePlatBotInfoDTO> platBots) {
+                                      List<SimplePlatBotInfoDTO> platBots) {
     boolean exists = IterableUtils.matchesAny(list,
       p -> Objects.equals(p.getBotId(), session.getBotId()) && Objects.equals(p.getPlatBotId(), session.getPlatBotId()));
     if (exists) {
@@ -544,7 +549,7 @@ public class ChatSessionServiceImpl implements IChatSessionService {
    */
   @SuppressWarnings("UnstableApiUsage")
   private void doExportExcel(HttpServletResponse response, String fileName, ChatMessageQueryParams params,
-    BiConsumer<ExcelWriter, List<Object>> exporter) {
+                             BiConsumer<ExcelWriter, List<Object>> exporter) {
     // 直接写入响应的输出流存在问题：
     //    1.出错时可能已经写入一些数据，无法再内部转发到导出错误页面，无法向用户展示错误信息
     //    2.有些导出器会自动关闭输出流，有些不会。而输出流关闭之后就无法再设置或修改响应头

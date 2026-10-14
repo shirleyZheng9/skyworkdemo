@@ -8,10 +8,10 @@ import com.iwhalecloud.bote.dto.base.PublishStepDTO;
 import com.iwhalecloud.bote.dto.datasync.query.DataSyncParams;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncDirUtil;
 import com.iwhalecloud.bote.service.publish.step.datasync.AbstractDataSyncStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
-import com.iwhalecloud.bss.litchi.file.vo.UploadConfigVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.UploadConfigVO;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.io.File;
 import org.apache.commons.lang3.BooleanUtils;
 

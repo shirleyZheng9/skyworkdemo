@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaltarget.mysql.EvalTarg
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaltarget.mysql.convertor.EvalTargetConvertor;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaltarget.mysql.convertor.EvalTargetRecordConvertor;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 import java.util.ArrayList;
 import java.util.Collections;

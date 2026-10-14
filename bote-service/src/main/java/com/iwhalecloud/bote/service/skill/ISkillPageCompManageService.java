@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.skill;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.skill.SkillPageCompDTO;
 import com.iwhalecloud.bote.dto.skill.SkillPageCompQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 技能：页面组件服务

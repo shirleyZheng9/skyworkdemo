@@ -17,13 +17,13 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
   </sql>
@@ -44,8 +44,8 @@
     #{dto.kbId},
     #{dto.tenantId},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd}
     )
   </insert>
@@ -68,8 +68,8 @@
       #{dto.kbId},
       #{dto.tenantId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -93,8 +93,8 @@
       #{dto.kbId},
       #{dto.tenantId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -102,12 +102,12 @@
   </insert>
 
   <update id="deleteBtDcQaRecordKbRel">
-    update bt_dc_qa_record_kb_rel set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
+    update bt_dc_qa_record_kb_rel set status_cd='00X',updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
   </update>
 
   <update id="deleteBtDcQaRecordKbRelByKnowledgeId">
     update bt_dc_qa_record_kb_rel 
-    set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> 
+    set status_cd='00X',updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/> 
     where qa_id=#{qaId} and kb_id=#{knowledgeId} and tenant_id = #{tenantId}
   </update>
 

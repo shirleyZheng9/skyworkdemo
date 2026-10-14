@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.common.sse.SseUtil;
 import com.iwhalecloud.bote.llm.client.LlmClient;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionRequest;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.lang.reflect.Type;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

@@ -26,28 +26,28 @@
     AND a.status_cd = '00A'
     <if test="query.clientCode != null and query.clientCode != ''">
       AND a.client_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.clientCode}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.clientName != null and query.clientName != ''">
       AND a.client_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.clientName}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.enabled != null and query.enabled != ''">
       AND a.enabled = #{query.enabled}
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.client_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.client_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
   </sql>
@@ -123,8 +123,8 @@
     #{dto.statusCd},
     #{dto.creatorId},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
   </insert>
@@ -165,8 +165,8 @@
     #{dto.statusCd},
     #{dto.creatorId},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
     </foreach>
@@ -208,8 +208,8 @@
       #{dto.statusCd},
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -253,7 +253,7 @@
       remark = #{dto.remark},
     </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE client_id = #{dto.clientId}
   </update>
@@ -262,7 +262,7 @@
     UPDATE bt_oauth2_client
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE client_id = #{clientId}
   </update>
 

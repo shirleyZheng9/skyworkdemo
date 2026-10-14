@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.service.datasync.util;
 
-import com.iwhalecloud.bss.litchi.util.DateUtil;
+import com.cmsr.tiangong.util.DateUtil;
 import com.iwhalecloud.bote.dto.datasync.DataSyncTableDefinition;
 import java.util.Date;
 import java.util.List;

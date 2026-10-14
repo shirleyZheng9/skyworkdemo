@@ -12,9 +12,9 @@ import com.iwhalecloud.bote.dto.orchestration.step.ToolboxStep;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.dto.skill.SimpleFunctionSkillDTO;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 
 import java.util.List;
 import java.util.Map;

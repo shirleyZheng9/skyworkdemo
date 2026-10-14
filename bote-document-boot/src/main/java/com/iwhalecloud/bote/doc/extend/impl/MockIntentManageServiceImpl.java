@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.extend.impl;
 
 import com.iwhalecloud.bote.dto.intent.IntentStrategyDTO;
 import com.iwhalecloud.bote.service.intent.IIntentManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.stereotype.Component;
 
 /**

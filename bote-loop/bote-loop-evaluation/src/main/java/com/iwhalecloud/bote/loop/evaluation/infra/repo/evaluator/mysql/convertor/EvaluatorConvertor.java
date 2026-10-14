@@ -10,8 +10,8 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.Evaluator;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvaluatorType;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.PromptEvaluatorVersion;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.UserInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 
 import java.time.Instant;
 import java.util.Collections;

@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.Session;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.QuotaRepo;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.dto.QuotaUpdateResult;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.QuotaService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.consts.PlanConsts;
 import com.iwhalecloud.bote.dto.base.SimpleFlowStepDTO;
 import com.iwhalecloud.bote.entity.planning.PlanStepEntity;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.List;

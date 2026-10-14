@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineRequest;
 import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineResponse;
 import com.iwhalecloud.bote.dto.orchestration.SceneDslDTO;
 import com.iwhalecloud.bote.service.orchestration.IOrchestrationEngine;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.a2a.common.A2AHeaders;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

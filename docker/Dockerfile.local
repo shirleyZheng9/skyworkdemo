@@ -1,0 +1,18 @@
+# 本地测验用 aadp 镜像（eclipse-temurin，不依赖内网 Java 底包）
+# 构建：cd aadp && mvn -pl bote-service-boot -am package -DskipTests
+#        docker build -f docker/Dockerfile.local -t aadp:manager-block .
+FROM eclipse-temurin:21-jre-jammy
+
+WORKDIR /app
+
+ENV ZSMART_HOME=/opt/ZSMART_HOME \
+    JAVA_OPTS="-XX:MaxRAMPercentage=70.0 -Djava.awt.headless=true -Dfile.encoding=UTF-8" \
+    TZ=Asia/Shanghai
+
+RUN mkdir -p /opt/ZSMART_HOME/etc /opt/config /log/k8sapplication
+
+COPY bote-service-boot/target/bote-service-boot.jar /app/app.jar
+
+EXPOSE 8080
+
+CMD ["sh", "-c", "exec java $JAVA_OPTS -jar /app/app.jar"]

@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.adapter.juzhi2.helper;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.function.BiConsumer;

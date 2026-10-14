@@ -23,10 +23,10 @@ import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallTextItem;
 import com.iwhalecloud.bote.dto.knowledge.ReferenceChunkDTO;
 import com.iwhalecloud.bote.dto.knowledge.ReferenceDocumentDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
-import com.iwhalecloud.bss.litchi.util.DateUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.database.util.TransactionUtil;
+import com.cmsr.tiangong.util.DateUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -71,7 +71,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.mapper.BtDcQaRecordManageMapper
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.IBtDcQaKnowledgeVectorService;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IBtDcQaRecordManageService;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.dto.skill;
 
-import com.iwhalecloud.bss.litchi.transform.dto.BatchImportDTO;
+import com.cmsr.tiangong.transform.dto.BatchImportDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

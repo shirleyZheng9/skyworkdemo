@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.service.plugin;
 
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 public interface IPluginRemoteService {
 

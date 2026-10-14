@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.knowledge;
 
 import com.iwhalecloud.bote.dto.knowledge.CorpusInfoDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.CorpusInfoManageMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.lock.DistributedLock;
 import com.iwhalecloud.bote.common.lock.DistributedLockException;
 import com.iwhalecloud.bote.common.lock.DistributedLockFactory;
 import com.iwhalecloud.bote.common.lock.LockHelper;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.time.Duration;
 import java.util.Map;

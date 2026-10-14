@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.VersionDAO;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.convertor.VersionConvertor;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.redis.RedisVersionDAO;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.stream.Collectors;
 

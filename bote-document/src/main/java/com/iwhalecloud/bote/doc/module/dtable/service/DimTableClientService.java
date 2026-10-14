@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.doc.config.properties.DimTableServerProperties;
 import com.iwhalecloud.bote.doc.module.dtable.dto.DimTableCreateRO;
 import com.iwhalecloud.bote.doc.module.dtable.dto.DimTableCreateResultDTO;
 import com.iwhalecloud.bote.doc.module.dtable.dto.ResponseData;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.apache.hc.client5.http.config.RequestConfig;

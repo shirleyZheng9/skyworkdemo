@@ -10,8 +10,8 @@ import com.iwhalecloud.bote.dto.plugin.params.EChartsGeneratorParams;
 import com.iwhalecloud.bote.llm.client.LlmClient;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionRequest;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 

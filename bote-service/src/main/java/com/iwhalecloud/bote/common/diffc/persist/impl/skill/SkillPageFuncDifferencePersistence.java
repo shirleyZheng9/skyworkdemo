@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.diffc.persist.impl.skill;
 
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO;
 import com.iwhalecloud.bote.mapper.skill.SkillPageFuncManageMapper;
 import org.springframework.stereotype.Component;

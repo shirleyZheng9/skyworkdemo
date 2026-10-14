@@ -2,9 +2,9 @@ package com.iwhalecloud.bote.loop.data.domain.dataset.service.impl;
 
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.FileStoreService;
 import com.iwhalecloud.bote.loop.data.domain.entity.Provider;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreService;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.file.service.IFileStoreService;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import java.io.File;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

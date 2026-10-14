@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.doc.job;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.IBtDcQaKnowledgeVectorService;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 知识库问答记录向量化与 standard_question 回填

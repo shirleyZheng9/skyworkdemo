@@ -44,6 +44,12 @@ public final class McpConsts {
   public static final String CONTENT_TYPE_TEXT = "text";
   /** 工具执行结果的内容类型: 图片 */
   public static final String CONTENT_TYPE_IMAGE = "image";
+  /** 工具执行结果的内容类型: 音频 */
+  public static final String CONTENT_TYPE_AUDIO = "audio";
+  /** 工具执行结果的内容类型: 嵌入资源 */
+  public static final String CONTENT_TYPE_RESOURCE = "resource";
+  /** 工具执行结果的内容类型: 资源链接 */
+  public static final String CONTENT_TYPE_RESOURCE_LINK = "resource_link";
 
   // ---------------------------
   // 方法名称
@@ -58,6 +64,8 @@ public final class McpConsts {
   public static final String METHOD_TOOLS_LIST = "tools/list";
   /** 调用工具 */
   public static final String METHOD_TOOLS_CALL = "tools/call";
+  /** 读取资源 */
+  public static final String METHOD_RESOURCES_READ = "resources/read";
   /** 工具列表变化 */
   public static final String METHOD_NOTIFICATION_TOOLS_LIST_CHANGED = "notifications/tools/list_changed";
   /** 设置日志级别 */

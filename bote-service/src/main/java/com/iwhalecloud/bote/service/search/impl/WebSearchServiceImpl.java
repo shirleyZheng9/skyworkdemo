@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.dto.search.WebPageInfo;
 import com.iwhalecloud.bote.service.search.IWebSearchService;
 import com.iwhalecloud.bote.service.search.adapter.IWebSearchAdapter;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

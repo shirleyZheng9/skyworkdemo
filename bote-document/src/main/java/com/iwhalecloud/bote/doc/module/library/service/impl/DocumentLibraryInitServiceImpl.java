@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.doc.module.library.dto.DocumentLibraryDTO;
 import com.iwhalecloud.bote.doc.module.library.mapper.DocumentLibraryMapper;
 import com.iwhalecloud.bote.doc.module.library.service.IDocumentLibraryInitService;
 import com.iwhalecloud.bote.doc.common.utils.DcIdUtils;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;

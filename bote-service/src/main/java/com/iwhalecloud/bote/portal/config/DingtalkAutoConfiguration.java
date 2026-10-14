@@ -15,8 +15,8 @@ import com.iwhalecloud.bote.portal.adapter.DefaultPortalAuthProvider;
 import com.iwhalecloud.bote.portal.config.properties.DingTalkLoginProperties;
 import com.iwhalecloud.bote.portal.support.DingTalkDockClient;
 import com.iwhalecloud.bote.portal.support.DingtalkAuthSupport;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 
 /**
  * 集成钉钉登录配置类

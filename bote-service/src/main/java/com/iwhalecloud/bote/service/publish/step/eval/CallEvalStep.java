@@ -8,10 +8,10 @@ import com.iwhalecloud.bote.dto.model.request.EvalRequest;
 import com.iwhalecloud.bote.service.model.IModelFinetuneManageService;
 import com.iwhalecloud.bote.service.model.helper.SmallModelAnswerHelper;
 import com.iwhalecloud.bote.service.publish.step.AbstractPublishStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.springframework.util.Assert;
 
 /**

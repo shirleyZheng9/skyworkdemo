@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.document.mapper.DocumentActivityMapper;
 import com.iwhalecloud.bote.doc.module.document.mapper.DocumentExportSnapshotMapper;
 import com.iwhalecloud.bote.doc.module.document.mapper.WorkbookContentHistoryMapper;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentHistoryCleanupService;
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreService;
+import com.cmsr.tiangong.file.service.IFileStoreService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;

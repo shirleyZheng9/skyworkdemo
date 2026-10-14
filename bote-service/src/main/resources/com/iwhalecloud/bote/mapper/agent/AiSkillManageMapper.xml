@@ -19,13 +19,13 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
   </sql>
@@ -58,9 +58,9 @@
     #{dto.spaceId},
     #{dto.botId},
     #{dto.skillId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -79,7 +79,7 @@
     <if test="dto.checkFieldUpdateFlag('remark')">
       remark = #{dto.remark},
     </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId},
     </set>
     WHERE id = #{dto.id}
@@ -89,7 +89,7 @@
     UPDATE bt_ai_skill
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -111,9 +111,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (
-        a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        a.skill_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         OR
-        a.skill_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        a.skill_code LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     ORDER BY a.updated_time DESC
@@ -137,9 +137,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (
-      a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      a.skill_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
-      a.skill_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      a.skill_code LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     ORDER BY a.updated_time DESC
@@ -185,9 +185,9 @@
       #{item.spaceId},
       #{item.botId},
       #{item.skillId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{item.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{item.creatorId},
       #{item.updatorId},
       #{item.remark}
@@ -215,9 +215,9 @@
       #{item.spaceId},
       #{item.botId},
       #{item.skillId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{item.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{item.creatorId},
       #{item.updatorId},
       #{item.remark}
@@ -230,7 +230,7 @@
     UPDATE bt_ai_skill
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id IN
     <foreach collection="ids" item="id" open="(" separator="," close=")">
       #{id}

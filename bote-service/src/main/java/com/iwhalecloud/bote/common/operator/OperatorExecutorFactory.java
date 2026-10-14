@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.operator;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import com.iwhalecloud.bote.common.operator.impl.binary.BetweenOperatorExecutor;
 import com.iwhalecloud.bote.common.operator.impl.binary.EnumInOperatorExecutor;
 import com.iwhalecloud.bote.common.operator.impl.binary.EqualsOperatorExecutor;

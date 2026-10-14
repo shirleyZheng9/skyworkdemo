@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.portal.KnowledgeGraphAccountSettingDTO;
 import com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO;
 import com.iwhalecloud.bote.dto.portal.WeKnoraAccountSettingDTO;
 import com.iwhalecloud.bote.dto.portal.query.TenantQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 import org.springframework.lang.Nullable;

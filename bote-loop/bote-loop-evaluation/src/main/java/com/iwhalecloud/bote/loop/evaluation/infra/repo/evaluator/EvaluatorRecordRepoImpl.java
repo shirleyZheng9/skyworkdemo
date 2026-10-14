@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvaluatorRecord;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IEvaluatorRecordRepo;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.EvaluatorRecordDAO;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.convertor.EvaluatorRecordConvertor;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;

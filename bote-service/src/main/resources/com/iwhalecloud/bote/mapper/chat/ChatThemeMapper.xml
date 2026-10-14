@@ -25,7 +25,7 @@
   <sql id="batchQueryCondition">
     AND a.status_cd = '00A'
     <if test="query.themeName != null and query.themeName != ''">
-      AND a.theme_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.themeName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND a.theme_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.themeName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.tenantId != null">
       AND a.tenant_id = #{query.tenantId}
@@ -83,10 +83,10 @@
     #{dto.themeTag},
     #{dto.isUsing},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
   </insert>
@@ -131,7 +131,7 @@
         remark = #{dto.remark},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE id = #{dto.id}
   </update>
@@ -139,7 +139,7 @@
   <update id="deleteChatTheme">
     UPDATE bt_chat_theme
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND theme_id = #{themeId}
       AND bot_id = #{botId}
@@ -167,7 +167,7 @@
   <update id="updateThemeUsingStatus">
     UPDATE bt_chat_theme
     SET is_using = #{isUsing},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
       AND bot_id = #{botId}
       AND theme_id = #{themeId}
@@ -177,7 +177,7 @@
   <update id="batchUpdateThemeNotUsing">
     UPDATE bt_chat_theme
     SET is_using = 'F',
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND bot_id = #{botId}
       AND tenant_id = #{tenantId}

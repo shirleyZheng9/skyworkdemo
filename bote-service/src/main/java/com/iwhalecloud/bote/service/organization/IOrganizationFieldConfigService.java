@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.organization;
 
 import com.iwhalecloud.bote.dto.organization.OrganizationFieldConfigDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 import java.util.List;
 import java.util.Map;

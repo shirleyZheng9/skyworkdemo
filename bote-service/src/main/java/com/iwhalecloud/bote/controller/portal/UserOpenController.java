@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.base.SimpleApiAuthDTO;
 import com.iwhalecloud.bote.dto.portal.UserDTO;
 import com.iwhalecloud.bote.dto.portal.query.UserBatchQueryParam;
 import com.iwhalecloud.bote.service.portal.IUserManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

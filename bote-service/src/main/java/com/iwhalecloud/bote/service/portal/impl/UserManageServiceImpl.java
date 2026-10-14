@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.service.portal.impl;
 
 import com.github.pagehelper.PageInfo;
-import com.iwhalecloud.bassc.basiccenter.dto.LitchiLogDTO;
-import com.iwhalecloud.bassc.basiccenter.service.ILitchiAuthLogService;
-import com.iwhalecloud.bassc.basiccenter.service.impl.LitchiAuthLogServiceImpl;
+import com.iwhalecloud.bassc.basiccenter.dto.TiangongLogDTO;
+import com.iwhalecloud.bassc.basiccenter.service.ITiangongAuthLogService;
+import com.iwhalecloud.bassc.basiccenter.service.impl.TiangongAuthLogServiceImpl;
 import com.iwhalecloud.bassc.basiccenter.util.PasswordRuleUtil;
 import com.iwhalecloud.bote.common.consts.AccountEventTypeEnum;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
@@ -35,12 +35,12 @@ import com.iwhalecloud.bote.portal.adapter.DefaultPortalAuthProvider;
 import com.iwhalecloud.bote.service.base.IAccountEventLogService;
 import com.iwhalecloud.bote.service.organization.IOrganizationMemberService;
 import com.iwhalecloud.bote.service.portal.IUserManageService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.DataDifferenceStarter;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.DataDifferenceStarter;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -90,7 +90,7 @@ public class UserManageServiceImpl implements IUserManageService {
   private final UserManageMapper userManageMapper;
   private final PasswordEncoder passwordEncoder;
   private final TenantManageMapper tenantManageMapper;
-  private final ILitchiAuthLogService authLogService;
+  private final ITiangongAuthLogService authLogService;
   private final IAccountEventLogService accountEventLogService;
   private final UserPwdHisMapper userPwdHisMapper;
   private final IOrganizationMemberService orgMemberService;
@@ -170,7 +170,7 @@ public class UserManageServiceImpl implements IUserManageService {
         lastUserId = userList.get(userList.size() - 1).getUserId();
         for (UserEntity user : userList) {
           // 检查用户最后一次登录时间至今是否超过未登录时间上限
-          LitchiLogDTO logDTO = getUserLastLoginLog(user.getUserId());
+          TiangongLogDTO logDTO = getUserLastLoginLog(user.getUserId());
           if (logDTO != null && (now - logDTO.getLogDate().getTime() > timeoutDay * DAY_TIME)) {
             log.info("Disable user:{}-{}, user invalid time:{}, user last login time:{}", user.getUserId(), user.getUserName(), timeoutDay, logDTO.getLogDate());
             userManageMapper.updateUserState(user.getUserId(), BaseConsts.USER_STATE_DISABLE);
@@ -982,11 +982,11 @@ public class UserManageServiceImpl implements IUserManageService {
    * 获取最后一次登录成功日志
    */
   @Nullable
-  private LitchiLogDTO getUserLastLoginLog(Long userId) {
-    LitchiLogDTO queryParam = new LitchiLogDTO();
-    queryParam.setEventCode(LitchiAuthLogServiceImpl.LitchiLogEvent.LOGIN_SUCCESS.getEventCode());
+  private TiangongLogDTO getUserLastLoginLog(Long userId) {
+    TiangongLogDTO queryParam = new TiangongLogDTO();
+    queryParam.setEventCode(TiangongAuthLogServiceImpl.TiangongLogEvent.LOGIN_SUCCESS.getEventCode());
     queryParam.setPartyId(userId);
-    PageInfo<LitchiLogDTO> page = authLogService.queryAuthLogPage(queryParam, 1, 1);
+    PageInfo<TiangongLogDTO> page = authLogService.queryAuthLogPage(queryParam, 1, 1);
     return CollectionUtils.isNotEmpty(page.getList()) ? page.getList().get(0) : null;
   }
 

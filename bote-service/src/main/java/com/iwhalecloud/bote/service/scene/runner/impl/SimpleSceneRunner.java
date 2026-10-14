@@ -22,7 +22,7 @@ import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.service.orchestration.SceneStepRegistry;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
 import com.iwhalecloud.bote.service.scene.runner.AbstractSceneRunner;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Optional;

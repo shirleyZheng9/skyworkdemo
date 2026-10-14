@@ -82,7 +82,7 @@
       <if test="user.email != null and user.email != ''">
         email = #{user.email},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE user_id = #{user.userId}
   </update>
@@ -185,9 +185,9 @@
     WHERE status_cd = '00A'
       AND url IS NOT NULL
       AND url NOT LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       'accessToken'
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
   </select>
 
   <update id="updateAppPublishUrl">
@@ -235,8 +235,8 @@
       #{contributor.contributorScore},
       #{contributor.creatorId},
       #{contributor.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{contributor.statusCd}
     )
     </foreach>
@@ -265,8 +265,8 @@
       #{contributor.contributorScore},
       #{contributor.creatorId},
       #{contributor.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{contributor.tenantId},
       #{contributor.statusCd}
       )

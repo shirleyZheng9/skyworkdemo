@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.iwhalecloud.bote.loop.data.pkg.json.JSONSchemaSpec;
 import com.iwhalecloud.bote.loop.data.pkg.json.JSONSchemaSpecChecker;
 import com.iwhalecloud.bote.loop.data.pkg.json.JsonNodeChecker;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 

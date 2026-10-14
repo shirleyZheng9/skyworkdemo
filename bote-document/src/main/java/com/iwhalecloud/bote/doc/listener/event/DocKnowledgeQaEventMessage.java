@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
 import com.iwhalecloud.bote.dto.knowledge.ReferenceDocumentDTO;
 import java.util.List;
 
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorObject;
+import com.cmsr.tiangong.disruptor.DisruptorObject;
 
 import lombok.Getter;
 import lombok.Setter;

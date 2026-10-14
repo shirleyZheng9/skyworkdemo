@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.iwhalecloud.bote.common.sse.event.SseEvent;
 import com.iwhalecloud.bote.dto.chat.AnswerDTO;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;

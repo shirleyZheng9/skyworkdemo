@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.common.lock.redis;
 
 import com.iwhalecloud.bote.common.lock.DistributedLockFactory;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;

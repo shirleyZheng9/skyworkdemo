@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.module.document.service;
 
 import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.listener.event.DocumentPathChangedEvent;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorUtil;
+import com.cmsr.tiangong.disruptor.DisruptorUtil;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

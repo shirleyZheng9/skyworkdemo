@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.sandbox.dto.UserSandboxBinding;
 import com.iwhalecloud.bote.sandbox.pool.SandboxBackendFactory;
 import com.iwhalecloud.bote.sandbox.runtime.SandboxRuntime;
 import com.iwhalecloud.bote.sandbox.session.UserSandboxBindingRepository;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;

@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.document.service.impl;
 import com.iwhalecloud.bote.doc.module.document.entity.WorkbookChangesetEntity;
 import com.iwhalecloud.bote.doc.module.document.mapper.WorkbookChangesetMapper;
 import com.iwhalecloud.bote.doc.module.document.service.IWorkbookChangesetService;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

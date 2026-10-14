@@ -8,9 +8,10 @@ import com.iwhalecloud.bote.dto.dashboard.OverviewMetricCountDTO;
 import com.iwhalecloud.bote.dto.dashboard.OverviewMetricsCacheDTO;
 import com.iwhalecloud.bote.dto.dashboard.TodayDynamicsCacheDTO;
 import com.iwhalecloud.bote.dto.dashboard.TodayDynamicsVO;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.JsonUtil;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
@@ -45,7 +47,6 @@ import org.springframework.util.Assert;
  */
 @Component
 public class DataDashboardCache {
-
   /**
    * 单次缓存读取的不可变结果。
    *
@@ -56,13 +57,12 @@ public class DataDashboardCache {
    * <p>{@code record} 会由编译器生成构造方法、{@link #value()}、
    * {@link #refreshRequired()}、equals、hashCode 和 toString；此处不需要手写样板代码。</p>
    *
-   * @param value 从 Redis 读取并完成清洗后的业务数据
+   * @param value           从 Redis 读取并完成清洗后的业务数据
    * @param refreshRequired {@code true} 表示数据可立即返回，但应在返回后提交后台刷新
-   * @param <T> 当前缓存保存的业务数据类型
+   * @param <T>             当前缓存保存的业务数据类型
    */
   public record CacheSnapshot<T>(T value, boolean refreshRequired) {
   }
-
   /**
    * CacheFactory 会负责拼接缓存分组和此前缀，业务方法只需再提供 tenantId 与版本号。
    * v2 用于文件类型新增“音视频”后平滑切换缓存，不必扫描并删除旧键。
@@ -161,7 +161,7 @@ public class DataDashboardCache {
   /**
    * 查询顶部资源概览缓存。
    *
-   * <p>缓存 key 包含统计日期，因此 0 点后会自动切换到新 key，不会把昨天的“较昨日净变化”
+   * <p>缓存 key 包含统计日期，因此 0 点后会自动切换到新 key，不会把昨天的“今日新增”
    * 展示到今天。命中逻辑过期缓存时，调用方仍可立即返回旧值并触发后台刷新。</p>
    */
   @Nullable

@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.mcp.dto.Implementation;
 import com.iwhalecloud.bote.mcp.dto.McpTool;
 import com.iwhalecloud.bote.mcp.dto.StdioServerParameters;
 import com.iwhalecloud.bote.mcp.dto.response.LoggingMessageNotification;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;

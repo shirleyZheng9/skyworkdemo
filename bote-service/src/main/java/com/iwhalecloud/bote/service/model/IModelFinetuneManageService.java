@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.model.ModelFinetuneDTO;
 import com.iwhalecloud.bote.dto.model.query.ModelFinetuneQueryParams;
 import com.iwhalecloud.bote.dto.model.response.PredictResponse.PredictInfo;
 import com.iwhalecloud.bote.dto.model.response.UpdatePublishStatusResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

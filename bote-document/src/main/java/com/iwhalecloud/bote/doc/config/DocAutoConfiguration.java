@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.doc.listener.DocumentChangeRebuildListener;
 import com.iwhalecloud.bote.doc.listener.DocumentPathChangeListener;
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.IKnowledgeQuestionEmbeddingService;
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.impl.FallbackKnowledgeQuestionEmbeddingService;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorUtil;
+import com.cmsr.tiangong.disruptor.DisruptorUtil;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.event.ApplicationReadyEvent;

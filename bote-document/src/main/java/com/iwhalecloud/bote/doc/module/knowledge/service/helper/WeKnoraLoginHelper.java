@@ -38,8 +38,8 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraSession
 import com.iwhalecloud.bote.dto.portal.TenantSettingInfoDTO;
 import com.iwhalecloud.bote.dto.portal.WeKnoraAccountSettingDTO;
 import com.iwhalecloud.bote.mapper.portal.TenantSettingInfoManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 
 import lombok.RequiredArgsConstructor;
 

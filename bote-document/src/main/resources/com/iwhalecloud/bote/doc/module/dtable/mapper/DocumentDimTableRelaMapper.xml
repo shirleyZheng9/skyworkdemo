@@ -23,8 +23,8 @@
     ) VALUES (
     #{rela.id}, #{rela.documentId}, #{rela.tableSpaceId}, #{rela.rootNodeId},
     #{rela.creatorId}, #{rela.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{rela.statusCd}
     )
   </insert>
@@ -33,7 +33,7 @@
     UPDATE bt_dc_document_dtable_rela
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
     AND status_cd = '00A'
   </update>

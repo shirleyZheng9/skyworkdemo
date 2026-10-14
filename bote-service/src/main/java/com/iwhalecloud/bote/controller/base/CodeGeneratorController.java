@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.controller.base;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.base.query.TableParams;
 import com.iwhalecloud.bote.service.base.ICodeGeneratorService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.nio.charset.StandardCharsets;

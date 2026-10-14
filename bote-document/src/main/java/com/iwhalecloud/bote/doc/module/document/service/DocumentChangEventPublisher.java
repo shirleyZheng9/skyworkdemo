@@ -5,8 +5,8 @@ import com.iwhalecloud.bote.doc.common.space.SpaceContextHolder;
 import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.consts.DocumentActionTypeEnum;
 import com.iwhalecloud.bote.doc.listener.event.DocChangeEventMessage;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorUtil;
-import com.iwhalecloud.bss.litchi.util.IPUtil;
+import com.cmsr.tiangong.disruptor.DisruptorUtil;
+import com.cmsr.tiangong.util.IPUtil;
 import java.util.Date;
 import org.springframework.stereotype.Service;
 

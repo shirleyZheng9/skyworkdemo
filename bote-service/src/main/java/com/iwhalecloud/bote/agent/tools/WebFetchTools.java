@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.agent.annotation.ToolParam;
 import com.iwhalecloud.bote.agent.tool.exception.ToolExecutionException;
 import com.iwhalecloud.bote.doc.module.crawl.CrawlStepFactory;
 import com.iwhalecloud.bote.doc.module.crawl.dto.CrawlResult;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.util.Assert;

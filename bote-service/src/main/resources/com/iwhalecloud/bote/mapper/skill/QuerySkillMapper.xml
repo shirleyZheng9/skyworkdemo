@@ -36,14 +36,14 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.service_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.service_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -108,14 +108,14 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.service_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.service_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -160,13 +160,13 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.api_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.api_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
@@ -240,14 +240,14 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.func_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.func_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -319,14 +319,14 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.flow_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.flow_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -386,14 +386,14 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.page_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.page_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -456,14 +456,14 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.func_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.func_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)

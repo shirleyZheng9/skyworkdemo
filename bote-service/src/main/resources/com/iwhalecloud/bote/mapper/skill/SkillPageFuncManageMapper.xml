@@ -22,14 +22,14 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.func_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       a.func_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.terminalType != null and query.terminalType != ''">
@@ -66,9 +66,9 @@
     #{dto.catalogItemId},
     #{dto.tenantId},
     #{dto.terminalType},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -102,7 +102,7 @@
       <if test="dto.checkFieldUpdateFlag('terminalType')">
         terminal_type = #{dto.terminalType},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     </set>
     WHERE page_func_id = #{dto.pageFuncId}
@@ -180,7 +180,7 @@
     UPDATE bt_skill_page_func
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE page_func_id = #{pageFuncId}
       AND tenant_id = #{tenantId}
   </update>

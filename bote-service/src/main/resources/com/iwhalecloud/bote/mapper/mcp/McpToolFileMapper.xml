@@ -24,7 +24,7 @@
             #{dto.mcpToolName},
             #{dto.statusCd},
             #{dto.creatorId},
-            <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>)
+            <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>)
   </insert>
 
   <select id="selectFileIdsBySessionIds" resultType="java.lang.Long">
@@ -37,7 +37,7 @@
   <update id="disableFilesBySessionIds" timeout="120">
     UPDATE bt_file
     SET status_cd = '00D',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND file_id IN (
         SELECT file_id
@@ -50,7 +50,7 @@
   <update id="deleteBySessionIds" timeout="120">
     UPDATE bt_mcp_tool_file
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND session_id IN (<foreach collection="sessionIds" item="sessionId" separator=",">#{sessionId}</foreach>)
   </update>
@@ -58,7 +58,7 @@
   <update id="disableTestFiles" timeout="120">
     UPDATE bt_file
     SET status_cd = '00D',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND file_id IN (
         SELECT file_id
@@ -72,7 +72,7 @@
   <update id="deleteTestFiles" timeout="120">
     UPDATE bt_mcp_tool_file
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND session_id = #{sessionId}
       AND created_time &lt;= #{maxCreatedTime}

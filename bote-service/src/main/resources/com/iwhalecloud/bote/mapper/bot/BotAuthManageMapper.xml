@@ -28,9 +28,9 @@
     AND a.user_id in (#{query.userId}, -1)
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.catalogItemId != null">
       AND a.catalog_item_id = #{query.catalogItemId}
@@ -90,16 +90,16 @@
     #{dto.userId},
     #{dto.orgId},
     #{dto.catalogItemId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark},
     #{dto.authPublisher},
     #{dto.authStatus},
     #{dto.authOperator},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.dataFrom}
     )
   </insert>
@@ -140,16 +140,16 @@
       #{dto.userId},
       #{dto.orgId},
       #{dto.catalogItemId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark},
       #{dto.authPublisher},
       #{dto.authStatus},
       #{dto.authOperator},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.dataFrom}
       )
     </foreach>
@@ -191,16 +191,16 @@
       #{dto.userId},
       #{dto.orgId},
       #{dto.catalogItemId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark},
       #{dto.authPublisher},
       #{dto.authStatus},
       #{dto.authOperator},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.dataFrom}
       )
     </foreach>
@@ -252,7 +252,7 @@
       <if test="dto.checkFieldUpdateFlag('remark')">
         remark = #{dto.remark},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE auth_id = #{dto.authId}
   </update>
@@ -261,7 +261,7 @@
     UPDATE bt_bot_auth
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE auth_id = #{authId}
   </update>
 
@@ -283,7 +283,7 @@
     UPDATE bt_bot_auth
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE auth_id IN (<foreach collection="list" item="authId" index="index"  separator=",">
     #{authId}
   </foreach>)
@@ -314,7 +314,7 @@
     UPDATE bt_bot_auth
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
     AND bot_id = #{botId}
   </update>
@@ -323,7 +323,7 @@
     UPDATE bt_bot_auth
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE bot_id = #{botId}
       AND status_cd = '00A'
   </update>
@@ -341,7 +341,7 @@
       <if test="dto.checkFieldUpdateFlag('botDesc')">
         bot_desc = #{dto.botDesc},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE auth_id IN (<foreach collection="dto.authIds" item="authId" index="index" separator=",">#{authId}</foreach>)
   </update>
@@ -351,9 +351,9 @@
     WHERE status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.catalogItemId != null">
       AND catalog_item_id = #{query.catalogItemId}
@@ -378,7 +378,7 @@
     UPDATE bt_bot_auth
     SET auth_status = #{authStatus},
         auth_operator = #{authOperator},
-        auth_operate_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        auth_operate_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND bot_id = #{botId}
   </update>
@@ -386,7 +386,7 @@
   <update id="updateAuthOperateInfo">
     UPDATE bt_bot_auth
     SET auth_operator = #{authOperator},
-      auth_operate_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      auth_operate_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND bot_id = #{botId}
   </update>
@@ -404,9 +404,9 @@
         catalog_item_id = #{dto.catalogItemId},
       </if>
       auth_operator = #{dto.authOperator},
-      auth_operate_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      auth_operate_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.authOperator},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE status_cd = '00A'
       AND bot_id = #{dto.botId}

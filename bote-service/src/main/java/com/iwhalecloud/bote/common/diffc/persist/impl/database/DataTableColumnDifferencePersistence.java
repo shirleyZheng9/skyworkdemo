@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.database;
 import com.iwhalecloud.bote.common.util.SessionUtil;
 import com.iwhalecloud.bote.dto.database.DataTableColumnDTO;
 import com.iwhalecloud.bote.mapper.database.DataTableColumnMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Component;
 

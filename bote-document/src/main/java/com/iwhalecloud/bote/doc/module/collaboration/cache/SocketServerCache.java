@@ -7,9 +7,9 @@ import com.iwhalecloud.bote.doc.module.collaboration.doc.listener.DocsMessageSub
 import com.iwhalecloud.bote.doc.module.collaboration.doc.vo.SocketTokenVO;
 import com.iwhalecloud.bote.doc.module.collaboration.pubsub.MessagePubSubTemplate;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.auth.UserAuthInfo;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.JsonUtil;
 import jakarta.annotation.PreDestroy;
 import java.time.LocalDateTime;
 import java.time.ZoneId;

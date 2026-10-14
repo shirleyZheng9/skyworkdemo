@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.service.publish.SdkConnectionManager;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

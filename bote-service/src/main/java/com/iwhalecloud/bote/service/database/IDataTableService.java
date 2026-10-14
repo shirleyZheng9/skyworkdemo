@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.database.DataTableColumnDTO;
 import com.iwhalecloud.bote.dto.database.DataTableDTO;
 import com.iwhalecloud.bote.dto.database.SimpleDataTableDTO;
 import com.iwhalecloud.bote.dto.database.query.DataTableQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import java.util.List;
 import java.util.Map;

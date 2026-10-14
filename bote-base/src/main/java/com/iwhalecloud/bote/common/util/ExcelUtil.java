@@ -152,7 +152,7 @@ public final class ExcelUtil {
 
         // 如果是日期类型，用指定格式输出
         if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-          cellValue = com.iwhalecloud.bss.litchi.util.DateUtil.format(cell.getDateCellValue());
+          cellValue = com.cmsr.tiangong.util.DateUtil.format(cell.getDateCellValue());
         }
       }
 

@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.chat;
 
 import com.iwhalecloud.bote.entity.chat.ChatGroupCfgEntity;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import java.util.Map;

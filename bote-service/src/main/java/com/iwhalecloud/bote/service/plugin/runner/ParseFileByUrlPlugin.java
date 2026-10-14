@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.common.util.OcrUtil;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.params.ParseFileByUrlParams;
 import com.iwhalecloud.bote.util.FileUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;

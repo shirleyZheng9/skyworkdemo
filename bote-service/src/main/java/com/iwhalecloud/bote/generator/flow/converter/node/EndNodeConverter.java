@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.generator.flow.node.EndNodeData;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphNodeDTO;
 import com.iwhalecloud.bote.generator.flow.context.FlowConverterContext;
 import com.iwhalecloud.bote.generator.flow.converter.AbstractNodeConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

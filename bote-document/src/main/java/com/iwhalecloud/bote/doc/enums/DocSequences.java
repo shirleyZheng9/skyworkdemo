@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.doc.enums;
 
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

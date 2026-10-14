@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.dtable.entity.DocumentDimTableRelaEntity;
 import com.iwhalecloud.bote.doc.module.dtable.mapper.DocumentDimTableRelaMapper;
 import com.iwhalecloud.bote.doc.module.dtable.service.DimTableClientService;
 import com.iwhalecloud.bote.doc.module.dtable.service.IDocumentDimTableRelaService;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

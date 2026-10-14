@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO;
 import com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO;
 import com.iwhalecloud.bote.mapper.oauth.OAuth2ClientManageMapper;
 import com.iwhalecloud.bote.mapper.oauth.OAuth2ClientRedirectUriMapper;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
 
 /**
  * OAuth2客户端配置缓存

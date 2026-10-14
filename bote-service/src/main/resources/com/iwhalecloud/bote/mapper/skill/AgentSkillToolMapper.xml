@@ -22,7 +22,7 @@
     UPDATE bt_agent_skill_tool
     SET status_cd = '00X',
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
   </update>
 
@@ -33,8 +33,8 @@
     ) VALUES
     <foreach collection="list" item="dto" separator=",">
       (#{dto.id}, #{dto.tenantId}, #{dto.skillId}, #{dto.toolId}, #{dto.toolCode}, #{dto.toolName}, #{dto.toolType}, #{dto.statusCd},
-       <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-       <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+       <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+       <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
        #{dto.creatorId}, #{dto.updatorId}, #{dto.remark})
     </foreach>
   </insert>
@@ -47,8 +47,8 @@
       created_time, updated_time, creator_id, updator_id, remark
       ) VALUES (
       #{dto.id}, #{dto.tenantId}, #{dto.skillId}, #{dto.toolId}, #{dto.toolCode}, #{dto.toolName}, #{dto.toolType}, #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId}, #{dto.updatorId}, #{dto.remark})
     </foreach>
     SELECT 1 FROM dual

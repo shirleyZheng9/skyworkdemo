@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.module.collaboration.workbook.dto.socket;
 
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.UniverCmdType;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.model.CmdMessage;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;

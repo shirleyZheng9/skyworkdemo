@@ -206,7 +206,7 @@
     ORDER BY etrf.item_idx
     <if test="cond.page != null">
       <if test="cond.page.limit != null and cond.page.limit > 0">
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
         #{cond.page.limit}
       </if>
       <if test="cond.page.offset != null and cond.page.offset > 0">

@@ -9,8 +9,8 @@
     ) VALUES (
       #{dto.skillFileId}, #{dto.dirId}, #{dto.skillId}, #{dto.tenantId}, #{dto.fileName}, #{dto.fileType},
       #{dto.fileContent}, #{dto.fileInfoId}, #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
     )
   </insert>
@@ -31,7 +31,7 @@
       file_info_id = #{dto.fileInfoId},
     </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_file_id = #{dto.skillFileId} AND tenant_id = #{dto.tenantId}
   </update>
 
@@ -97,21 +97,21 @@
   <update id="deleteBySkillFileId">
     UPDATE bt_agent_skill_file
     SET status_cd = '00X', updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND skill_file_id = #{skillFileId} AND status_cd = '00A'
   </update>
 
   <update id="deleteAllByDirId">
     UPDATE bt_agent_skill_file
     SET status_cd = '00X', updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
   </update>
 
   <update id="deleteAllBySkillId">
     UPDATE bt_agent_skill_file
     SET status_cd = '00X', updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
   </update>
 </mapper>

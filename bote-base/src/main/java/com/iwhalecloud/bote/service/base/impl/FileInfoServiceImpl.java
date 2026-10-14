@@ -1,11 +1,11 @@
 package com.iwhalecloud.bote.service.base.impl;
 
 import com.iwhalecloud.bote.mapper.base.BoteFileInfoMapper;
-import com.iwhalecloud.bss.litchi.file.service.IFileInfoService;
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreProcessor;
-import com.iwhalecloud.bss.litchi.file.util.FileStoreUtils;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.file.service.IFileInfoService;
+import com.cmsr.tiangong.file.service.IFileStoreProcessor;
+import com.cmsr.tiangong.file.util.FileStoreUtils;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

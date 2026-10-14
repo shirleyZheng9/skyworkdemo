@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.annotation.IgnoreSign;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.dto.base.PlatformVersionInfoDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;

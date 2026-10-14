@@ -21,6 +21,10 @@ public class ListEvaluationSetsParam {
   private String name;
   private List<String> creators;
   private String catalogItemId;
+  /**
+   * 目录ID列表（当前目录及其所有子目录）
+   */
+  private List<Long> catalogItemIds;
   private Integer pageNumber;
   private Integer pageSize;
   private String pageToken;

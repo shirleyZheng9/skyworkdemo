@@ -18,7 +18,7 @@ import com.iwhalecloud.bote.doc.module.document.enums.RecordTypeEnum;
 import com.iwhalecloud.bote.doc.module.document.enums.ReviewStatusEnum;
 import com.iwhalecloud.bote.doc.module.document.service.DocumentChangEventPublisher;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentCommentService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

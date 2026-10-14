@@ -23,7 +23,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListIOJobsParams;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.DatasetDomainService;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.DatasetWithSchema;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

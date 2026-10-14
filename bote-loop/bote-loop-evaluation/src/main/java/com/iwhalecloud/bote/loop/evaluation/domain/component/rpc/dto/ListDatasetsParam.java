@@ -67,6 +67,11 @@ public class ListDatasetsParam {
   private String catalogItemId;
 
   /**
+   * 目录ID列表（当前目录及其所有子目录）
+   */
+  private List<Long> catalogItemIds;
+
+  /**
    * 页码
    * 迁移对应关系: Go语言ListDatasetsParam.PageNumber
    */

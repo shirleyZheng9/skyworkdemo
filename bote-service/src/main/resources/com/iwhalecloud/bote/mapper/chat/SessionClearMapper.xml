@@ -15,6 +15,7 @@
     begin_time,
     end_time,
     is_test,
+    publish_id,
     status_cd,
     creator_id,
     created_time,
@@ -71,14 +72,14 @@
     SELECT session_id
     FROM bt_bot_session
     WHERE updated_time &lt; #{maxUpdatedTime}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
   <select id="selectHistorySessionIdsForClear" resultType="java.lang.Long">
     SELECT session_id
     FROM bt_bot_session_his
     WHERE updated_time &lt; #{maxUpdatedTime}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
   <update id="archiveSession" timeout="120">
@@ -139,24 +140,25 @@
     VALUES
     <foreach collection="sessionList" item="session" separator=",">
       (
-        #{session.sessionId},
-        #{session.tenantId},
-        #{session.botId},
-        #{session.botTenantId},
-        #{session.extSystemId},
-        #{session.platBotId},
-        #{session.spaceId},
-        #{session.sessionTitle},
-        #{session.prologue},
-        #{session.beginTime},
-        #{session.endTime},
-        #{session.isTest},
-        #{session.statusCd},
-        #{session.creatorId},
-        #{session.createdTime},
-        #{session.updatorId},
-        #{session.updatedTime},
-        #{session.remark}
+      #{session.sessionId},
+      #{session.tenantId},
+      #{session.botId},
+      #{session.botTenantId},
+      #{session.extSystemId},
+      #{session.platBotId},
+      #{session.spaceId},
+      #{session.sessionTitle},
+      #{session.prologue},
+      #{session.beginTime},
+      #{session.endTime},
+      #{session.isTest},
+      #{session.publishId},
+      #{session.statusCd},
+      #{session.creatorId},
+      #{session.createdTime},
+      #{session.updatorId},
+      #{session.updatedTime},
+      #{session.remark}
       )
     </foreach>
   </insert>
@@ -167,28 +169,28 @@
     VALUES
     <foreach collection="msgList" item="msg" separator=",">
       (
-        #{msg.msgId},
-        #{msg.sessionId},
-        #{msg.transactionId},
-        #{msg.sceneId},
-        #{msg.botId},
-        #{msg.planId},
-        #{msg.contextId},
-        #{msg.refMsgId},
-        #{msg.msgType},
-        #{msg.role},
-        #{msg.likeType},
-        #{msg.beginTime},
-        #{msg.endTime},
-        #{msg.sort},
-        #{msg.msgStatus},
-        #{msg.memorized},
-        #{msg.statusCd},
-        #{msg.creatorId},
-        #{msg.createdTime},
-        #{msg.updatorId},
-        #{msg.updatedTime},
-        #{msg.remark}
+      #{msg.msgId},
+      #{msg.sessionId},
+      #{msg.transactionId},
+      #{msg.sceneId},
+      #{msg.botId},
+      #{msg.planId},
+      #{msg.contextId},
+      #{msg.refMsgId},
+      #{msg.msgType},
+      #{msg.role},
+      #{msg.likeType},
+      #{msg.beginTime},
+      #{msg.endTime},
+      #{msg.sort},
+      #{msg.msgStatus},
+      #{msg.memorized},
+      #{msg.statusCd},
+      #{msg.creatorId},
+      #{msg.createdTime},
+      #{msg.updatorId},
+      #{msg.updatedTime},
+      #{msg.remark}
       )
     </foreach>
   </insert>
@@ -199,15 +201,15 @@
     VALUES
     <foreach collection="msgTextList" item="msg" separator=",">
       (
-        #{msg.msgId},
-        #{msg.msgText},
-        #{msg.extParams},
-        #{msg.memoryContent},
-        #{msg.downloadType},
-        #{msg.downloadContent},
-        #{msg.contentType},
-        #{msg.paragraphGroup},
-        #{msg.paragraphSortby}
+      #{msg.msgId},
+      #{msg.msgText},
+      #{msg.extParams},
+      #{msg.memoryContent},
+      #{msg.downloadType},
+      #{msg.downloadContent},
+      #{msg.contentType},
+      #{msg.paragraphGroup},
+      #{msg.paragraphSortby}
       )
     </foreach>
   </insert>
@@ -218,10 +220,10 @@
     VALUES
     <foreach collection="msgFileList" item="msg" separator=",">
       (
-        #{msg.relaId},
-        #{msg.msgId},
-        #{msg.sessionId},
-        #{msg.fileId}
+      #{msg.relaId},
+      #{msg.msgId},
+      #{msg.sessionId},
+      #{msg.fileId}
       )
     </foreach>
   </insert>
@@ -242,7 +244,7 @@
     <if test="botTenantId != null">
       AND bot_tenant_id = #{botTenantId}
     </if>
-      AND creator_id = #{creatorId}
+    AND creator_id = #{creatorId}
   </select>
 
   <delete id="deleteSessionBySessionIds" timeout="120">
@@ -296,9 +298,9 @@
   <update id="disableFilesByHistorySessionIds" timeout="120">
     UPDATE bt_file
     SET status_cd = '00D',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
-      AND file_id IN (SELECT file_id FROM bt_bot_session_msg_file_his WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>))
+    AND file_id IN (SELECT file_id FROM bt_bot_session_msg_file_his WHERE session_id IN (<foreach collection="sessionIds" item="sessionId" separator=","> #{sessionId}</foreach>))
   </update>
 
   <delete id="deleteArchiveFailingSession" timeout="120">
@@ -345,3 +347,4 @@
   </delete>
 
 </mapper>
+

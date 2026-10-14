@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultFilterEntity;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptTurnResultFilterEntityDO;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ItemRunState;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptEvaluatorVersionRe
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptStatus;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptType;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.SourceType;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

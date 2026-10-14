@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.app.WebAppRecordDTO;
 import com.iwhalecloud.bote.dto.app.query.WebAppRecordQueryParams;
 import com.iwhalecloud.bote.mapper.app.WebAppRecordMapper;
 import com.iwhalecloud.bote.service.app.IWebAppRecordService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

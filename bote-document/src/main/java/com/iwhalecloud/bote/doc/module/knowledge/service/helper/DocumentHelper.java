@@ -4,7 +4,7 @@ import com.google.common.base.CaseFormat;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContentDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentParameterDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.DocumentManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.List;

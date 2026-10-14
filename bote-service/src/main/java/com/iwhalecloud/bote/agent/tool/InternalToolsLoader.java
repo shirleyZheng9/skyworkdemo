@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.agent.tools.WebSearchTools;
 import com.iwhalecloud.bote.agent.tools.shell.ShellTools;
 import com.iwhalecloud.bote.common.enums.SandboxMode;
 import com.iwhalecloud.bote.llm.client.dto.Tool;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;

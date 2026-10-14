@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.util.DcPublicUtil;
 import com.iwhalecloud.bote.entity.base.DcPublicEntity;
-import com.iwhalecloud.bss.litchi.database.consts.DatabaseType;
+import com.cmsr.tiangong.database.consts.DatabaseType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

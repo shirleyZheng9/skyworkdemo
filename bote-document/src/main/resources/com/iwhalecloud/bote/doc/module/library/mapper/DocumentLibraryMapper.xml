@@ -60,12 +60,12 @@
       #{entity.lastAccessTime},
       #{entity.tenantId},
       #{entity.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.statusCd},
       #{entity.color},
       #{entity.isBuiltin},
       #{entity.spaceId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -80,7 +80,7 @@
         access_count = #{entity.accessCount},
         last_access_time = #{entity.lastAccessTime},
         color = #{entity.color},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE library_id = #{entity.libraryId}
       AND status_cd = '00A'
   </update>
@@ -88,7 +88,7 @@
   <update id="deleteByPrimaryKey">
     UPDATE bt_dc_document_library
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE library_id = #{libraryId}
       AND status_cd = '00A'
   </update>
@@ -172,9 +172,9 @@
     )
     <if test="param.keywordLike != null and param.keywordLike != ''">
       AND l.library_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{param.keywordLike}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <choose>
       <when test="param.sortBy == 'updated_time' and param.sortOrder == 'asc'.toString()">
@@ -237,9 +237,9 @@
       </if>
       <if test="param.keywordLike != null and param.keywordLike != ''">
         AND l.library_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
             #{param.keywordLike}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       </if>
     <choose>
       <when test="param.sortBy == 'updated_time' and param.sortOrder == 'asc'.toString()">
@@ -373,7 +373,7 @@
     UPDATE bt_dc_document_library
     SET status_cd = '00R',
         updator_id = #{optUserId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE library_id = #{libraryId}
       AND space_id = #{spaceId}
       AND status_cd = '00A'

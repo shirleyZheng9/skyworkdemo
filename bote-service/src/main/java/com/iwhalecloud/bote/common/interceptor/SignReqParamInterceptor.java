@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.common.util.SignCreateUtil;
 import com.iwhalecloud.bote.common.util.SignUtil;
 import com.iwhalecloud.bote.config.properties.SignProperties;
 import com.iwhalecloud.bote.dto.base.SimpleAttrDTO;
-import com.iwhalecloud.bss.litchi.util.IPUtil;
+import com.cmsr.tiangong.util.IPUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 /** 汇总表模型状态校准项。 */
 public class ModelUsageStatusCandidateDTO {
   /** 汇总记录所属租户。 */

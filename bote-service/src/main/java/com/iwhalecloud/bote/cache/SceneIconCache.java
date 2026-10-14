@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.common.consts.SceneConsts;
 import com.iwhalecloud.bote.entity.bot.BotSceneEntity;
 import com.iwhalecloud.bote.mapper.scene.SceneQueryMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.io.InputStream;
 import org.apache.commons.io.IOUtils;

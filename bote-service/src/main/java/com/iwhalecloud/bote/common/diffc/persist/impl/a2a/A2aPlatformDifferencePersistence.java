@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.a2a;
 
 import com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO;
 import com.iwhalecloud.bote.mapper.a2a.A2aPlatformMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

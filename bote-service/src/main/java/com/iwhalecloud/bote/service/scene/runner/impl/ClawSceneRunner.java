@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineResponse;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.service.chat.context.ChatContext;
 import com.iwhalecloud.bote.service.scene.runner.AbstractSceneRunner;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Date;
 import org.springframework.stereotype.Service;
 

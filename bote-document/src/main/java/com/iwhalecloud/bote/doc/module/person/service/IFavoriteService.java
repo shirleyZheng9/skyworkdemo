@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.doc.module.person.dto.favorite.FavoritePinnedDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.favorite.PinFavoriteRequestDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.favorite.RemoveFavoriteRequestDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.favorite.UnpinFavoriteRequestDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.base.EnvVariableDTO;
 import com.iwhalecloud.bote.dto.base.EnvVariableValDTO;
 import com.iwhalecloud.bote.dto.base.query.EnvVariableQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 
 import java.util.List;

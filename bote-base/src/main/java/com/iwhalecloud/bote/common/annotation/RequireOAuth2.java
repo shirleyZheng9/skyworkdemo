@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
  * 方法级别注解优先级高于类级别注解。
  * </p>
  * <p>
- * Tips: 由于底层litchi包中SpringSecurity的配置拦截未判断元数据类，此处的@IgnoreSession无效，必须单独在实现接口类中增加
+ * Tips: 由于底层tiangong包中SpringSecurity的配置拦截未判断元数据类，此处的@IgnoreSession无效，必须单独在实现接口类中增加
  * </p>
  * <p>
  * 使用示例：

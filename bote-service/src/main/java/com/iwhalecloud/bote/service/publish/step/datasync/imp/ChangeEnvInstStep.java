@@ -16,9 +16,9 @@ import com.iwhalecloud.bote.mapper.skill.DataSourceManageMapper;
 import com.iwhalecloud.bote.mapper.skill.ServiceGatewayManageMapper;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncDirUtil;
 import com.iwhalecloud.bote.service.publish.step.datasync.AbstractDataSyncStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,23 +113,25 @@ public class ChangeEnvInstStep extends AbstractDataSyncStep<List<EnvInstParamete
    */
   private List<EnvInstParameterSpec> collectInst(DataSyncParams params) {
     List<EnvInstParameterSpec> insts = new ArrayList<>();
+    // 跨租户导入场景下，以实际目标租户查询环境实例
+    Long tenantId = params.getResetTenantId() != null ? params.getResetTenantId() : params.getTenantId();
     // 收集 API 网关信息
-    collectGatewayInst(params, insts);
+    collectGatewayInst(params, tenantId, insts);
     // 收集数据源信息
-    collectDataSourceInst(params, insts);
+    collectDataSourceInst(params, tenantId, insts);
     // 收集门户适配信息
-    collectPortalInst(params, insts);
+    collectPortalInst(params, tenantId, insts);
     return insts;
   }
 
   /**
    * 收集 API 网关环境信息
    */
-  private void collectGatewayInst(DataSyncParams params, List<EnvInstParameterSpec> insts) {
+  private void collectGatewayInst(DataSyncParams params, Long tenantId, List<EnvInstParameterSpec> insts) {
     // 第一步，读取数据库中的 API 网关实例
     List<EnvInstParameterSpec> dbInsts = new ArrayList<>();
     ServiceGatewayManageMapper mapper = SpringUtil.getBean(ServiceGatewayManageMapper.class);
-    List<ServiceGatewayDTO> datas = mapper.selectGatewayByEnvCode(params.getTenantId(), EnvUtil.getEnvCode());
+    List<ServiceGatewayDTO> datas = mapper.selectGatewayByEnvCode(tenantId, EnvUtil.getEnvCode());
     for (ServiceGatewayDTO dto : CollectionUtils.emptyIfNull(datas)) {
       dbInsts.add(createGatewaySpec(dto.getPlatformCode(), dto.getPlatformName(), dto.getGatewayId(), "url", "环境地址", dto.getUrl()));
       dbInsts.add(
@@ -179,11 +181,11 @@ public class ChangeEnvInstStep extends AbstractDataSyncStep<List<EnvInstParamete
   /**
    * 收集数据源信息
    */
-  private void collectDataSourceInst(DataSyncParams params, List<EnvInstParameterSpec> insts) {
+  private void collectDataSourceInst(DataSyncParams params, Long tenantId, List<EnvInstParameterSpec> insts) {
     // 第一步，读取数据库中的数据源实例
     List<EnvInstParameterSpec> dbInsts = new ArrayList<>();
     DataSourceManageMapper mapper = SpringUtil.getBean(DataSourceManageMapper.class);
-    List<DataSourceInstDTO> datas = mapper.selectDataSourceInstByEnvCode(params.getTenantId(), EnvUtil.getEnvCode());
+    List<DataSourceInstDTO> datas = mapper.selectDataSourceInstByEnvCode(tenantId, EnvUtil.getEnvCode());
     for (DataSourceInstDTO dto : CollectionUtils.emptyIfNull(datas)) {
       dbInsts.add(createDbSpec(dto.getDataSourceCode(), dto.getDataSourceName(), dto.getDataSourceInstId(), "url", "地址", dto.getUrl()));
       dbInsts.add(
@@ -236,11 +238,11 @@ public class ChangeEnvInstStep extends AbstractDataSyncStep<List<EnvInstParamete
   /**
    * 收集门户适配信息
    */
-  private void collectPortalInst(DataSyncParams params, List<EnvInstParameterSpec> insts) {
+  private void collectPortalInst(DataSyncParams params, Long tenantId, List<EnvInstParameterSpec> insts) {
     // 第一步，读取数据库中的门户适配
     List<EnvInstParameterSpec> dbInsts = new ArrayList<>();
     ExternalPortalMapper mapper = SpringUtil.getBean(ExternalPortalMapper.class);
-    List<ExternalPortalDTO> datas = mapper.selectAllPortalList(params.getTenantId());
+    List<ExternalPortalDTO> datas = mapper.selectAllPortalList(tenantId);
     for (ExternalPortalDTO dto : CollectionUtils.emptyIfNull(datas)) {
       Long id = dto.getId();
       String code = dto.getPortalCode();
@@ -298,7 +300,7 @@ public class ChangeEnvInstStep extends AbstractDataSyncStep<List<EnvInstParamete
   }
 
   private EnvInstParameterSpec createGatewaySpec(String parentCode, String parentName, Long instId, String attrCode, String attrName,
-    String attrValue) {
+                                                 String attrValue) {
     EnvInstParameterSpec spec = new EnvInstParameterSpec();
     spec.setDataSyncCode("SERVICE_PLATFORM");
     spec.setTableCode("bt_service_gateway");
@@ -333,7 +335,7 @@ public class ChangeEnvInstStep extends AbstractDataSyncStep<List<EnvInstParamete
   }
 
   private EnvInstParameterSpec createPortalSpec(String parentCode, String parentName, Long instId, String attrCode, String attrName,
-    String attrValue) {
+                                                String attrValue) {
     EnvInstParameterSpec spec = new EnvInstParameterSpec();
     spec.setDataSyncCode("EXTERNAL_PORTAL");
     spec.setTableCode("bt_external_portal");

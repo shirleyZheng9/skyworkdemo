@@ -24,7 +24,7 @@
     AND status_cd = '00A'
     ORDER BY created_time DESC
     <if test="limit != null">
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
       #{limit}
     </if>
   </select>
@@ -43,7 +43,7 @@
     </if>
     ORDER BY created_time DESC
     <if test="limit != null">
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
       #{limit}
     </if>
   </select>
@@ -62,7 +62,7 @@
     </if>
     ORDER BY created_time DESC
     <if test="limit != null">
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
       #{limit}
     </if>
   </select>
@@ -81,7 +81,7 @@
     </if>
     ORDER BY created_time DESC
     <if test="limit != null">
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
       #{limit}
     </if>
   </select>

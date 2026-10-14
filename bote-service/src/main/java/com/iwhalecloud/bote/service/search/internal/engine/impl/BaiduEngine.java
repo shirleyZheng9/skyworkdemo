@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.service.search.internal.engine.BaseEngineAdapter;
 import com.iwhalecloud.bote.service.search.internal.engine.HttpRequest;
 import com.iwhalecloud.bote.service.search.internal.model.SearchQuery;
 import com.iwhalecloud.bote.service.search.internal.model.SearchResult;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 
 import java.time.Instant;
 import java.util.ArrayList;

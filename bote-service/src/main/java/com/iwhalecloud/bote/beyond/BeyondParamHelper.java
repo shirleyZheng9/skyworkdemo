@@ -15,8 +15,8 @@ import com.iwhalecloud.bote.dto.bot.BotSceneDTO;
 import com.iwhalecloud.bote.dto.mcp.McpServerDTO;
 import com.iwhalecloud.bote.dto.skill.SkillFlowWithParamDTO;
 import com.iwhalecloud.bote.llm.client.dto.schema.JsonSchemaNode;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**

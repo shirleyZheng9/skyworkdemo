@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.llm.client.ModelClient;
 import com.iwhalecloud.bote.llm.client.config.EmbeddingProperties;
 import com.iwhalecloud.bote.llm.client.config.LlmProperties;
 import com.iwhalecloud.bote.mapper.model.LargeModelManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.ExecutionException;

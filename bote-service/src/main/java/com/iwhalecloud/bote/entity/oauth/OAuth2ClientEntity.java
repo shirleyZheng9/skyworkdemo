@@ -2,11 +2,11 @@ package com.iwhalecloud.bote.entity.oauth;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffId;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.diffc.annotations.DiffField;
+import com.cmsr.tiangong.diffc.annotations.DiffId;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

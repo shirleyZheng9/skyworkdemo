@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.agent.skill;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

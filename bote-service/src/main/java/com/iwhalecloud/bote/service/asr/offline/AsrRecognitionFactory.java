@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.service.asr.offline;
 
 import com.iwhalecloud.bote.common.enums.SystemParameter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;

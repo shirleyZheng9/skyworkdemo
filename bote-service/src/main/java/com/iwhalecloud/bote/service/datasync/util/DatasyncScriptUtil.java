@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.dto.database.TableModelItemDTO;
 import com.iwhalecloud.bote.dto.datasync.query.DataSyncParams;
 import com.iwhalecloud.bote.entity.database.TableModelItemEntity;
 import com.iwhalecloud.bote.mapper.database.TableModelItemMapper;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -102,6 +102,11 @@ public class ListDatasetsParams {
   private Long catalogItemId;
 
   /**
+   * 目录ID列表（当前目录及其所有子目录）
+   */
+  private List<Long> catalogItemIds;
+
+  /**
    * 构造分页参数
    */
   public RowBounds buildRowBounds() {

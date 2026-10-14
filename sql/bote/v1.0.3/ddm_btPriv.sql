@@ -1,0 +1,1 @@
+ALTER TABLE bt_priv MODIFY COLUMN priv_url varchar(500) NULL DEFAULT NULL COMMENT '权限菜单地址'

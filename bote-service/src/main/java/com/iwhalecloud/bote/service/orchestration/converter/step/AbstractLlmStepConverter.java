@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.scene.graph.SceneGraphNodeDTO;
 import com.iwhalecloud.bote.dto.skill.LlmSkillItem;
 import com.iwhalecloud.bote.mapper.skill.SkillQueryMapper;
 import com.iwhalecloud.bote.service.orchestration.converter.AbstractStepConverter;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;

@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
 import com.iwhalecloud.bote.dto.skill.SkillSqlDTO;
 import com.iwhalecloud.bote.mapper.bot.BotSceneRelaManageMapper;
 import com.iwhalecloud.bote.mapper.skill.SkillQueryMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.entity.workspace;
 
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

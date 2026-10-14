@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.intent;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.intent.IntentLogDTO;
 import com.iwhalecloud.bote.dto.intent.query.IntentQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 意图识别日志管理服务

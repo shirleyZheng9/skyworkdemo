@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.doc.module.control.model.ControlRoleInfo;
 import com.iwhalecloud.bote.doc.module.control.model.NodeBaseInfoDTO;
 import com.iwhalecloud.bote.doc.module.control.model.SimpleNodeInfo;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentPermissionService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;

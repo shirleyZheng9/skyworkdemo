@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.skill.SimpleSkillSqlDTO;
 import com.iwhalecloud.bote.dto.skill.SkillSqlDTO;
 import com.iwhalecloud.bote.dto.skill.SqlOperaParams;
 import com.iwhalecloud.bote.dto.skill.query.SkillQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO;
 import com.iwhalecloud.bote.dto.bot.TemplateBotDTO;
 import com.iwhalecloud.bote.dto.bot.query.PlatBotInfoQueryParams;
 import com.iwhalecloud.bote.service.bot.IPlatBotInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -101,10 +101,10 @@
     #{dto.objId},
     #{dto.input},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
   </insert>
@@ -147,10 +147,10 @@
       #{dto.input},
       #{dto.outputJson},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -194,10 +194,10 @@
       #{dto.input},
       #{dto.outputJson},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -226,19 +226,19 @@
     <if test="dto.spentTime != null">
     spent_time = #{dto.spentTime},
     </if>
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{dto.id}
   </update>
 
   <update id="updateRecordForRetry">
     UPDATE bt_publish_record SET
     publish_status = 0,
-    start_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    start_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     end_time = NULL,
     spent_time = NULL,
     failed_step_name = NULL,
     fail_reason = NULL,
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -252,7 +252,7 @@
     input = NULL,
     output_json = NULL,
     step_status = '0',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE publish_id = #{publishId}
   </update>
 
@@ -276,7 +276,7 @@
     <if test="dto.outputJson != null and dto.outputJson != ''">
       output_json = #{dto.outputJson},
     </if>
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{dto.id}
   </update>
 
@@ -314,9 +314,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND b.tenant_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -366,9 +366,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND c.model_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -377,7 +377,7 @@
     UPDATE bt_publish_record
     SET publish_status = -1,
         fail_reason = '中断',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE publish_status = 1
       AND updated_time &lt; #{maxUpdatedTime}
   </update>

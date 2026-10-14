@@ -85,9 +85,9 @@
     #{dto.tenantId},
     #{dto.question},
     #{dto.attribute},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -115,9 +115,9 @@
       #{dto.tenantId},
       #{dto.question},
       #{dto.attribute},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -146,9 +146,9 @@
       #{dto.tenantId},
       #{dto.question},
       #{dto.attribute},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -173,7 +173,7 @@
         remark = #{dto.remark},
       </if>
       attribute = #{dto.attribute},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId},
     </set>
     WHERE question_id = #{dto.questionId}
@@ -184,7 +184,7 @@
     UPDATE bt_intention_question
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE question_id = #{id}
     AND tenant_id = #{tenantId}
   </update>
@@ -208,9 +208,9 @@
     <include refid="batchQueryCondition"/>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.question LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -246,7 +246,7 @@
     UPDATE bt_intention_question
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE question = #{question}
     AND tenant_id = #{tenantId}
   </update>

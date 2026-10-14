@@ -20,14 +20,16 @@ import com.iwhalecloud.bote.mcp.dto.message.JsonRpcResponse;
 import com.iwhalecloud.bote.mcp.dto.request.CallToolRequest;
 import com.iwhalecloud.bote.mcp.dto.request.InitializeRequest;
 import com.iwhalecloud.bote.mcp.dto.request.PaginatedRequest;
+import com.iwhalecloud.bote.mcp.dto.request.ReadResourceRequest;
 import com.iwhalecloud.bote.mcp.dto.request.SetLevelRequest;
 import com.iwhalecloud.bote.mcp.dto.response.CallToolResult;
 import com.iwhalecloud.bote.mcp.dto.response.InitializeResult;
 import com.iwhalecloud.bote.mcp.dto.response.ListToolsResult;
 import com.iwhalecloud.bote.mcp.dto.response.LoggingMessageNotification;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.iwhalecloud.bote.mcp.dto.response.ReadResourceResult;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -372,6 +374,32 @@ public class McpClient implements AutoCloseable {
     catch (Exception e) {
       logger.debug("MCP tool call observer failed: {}", e.getMessage());
     }
+  }
+
+  /**
+   * 读取资源内容
+   *
+   * @param uri 资源 URI（通常来自资源链接或资源模板）
+   */
+  public ReadResourceResult readResource(String uri) {
+    ReadResourceResult result;
+    try {
+      result = sendRequest(McpConsts.METHOD_RESOURCES_READ, new ReadResourceRequest(uri), ReadResourceResult.class).block();
+    }
+    catch (Exception e) {
+      Throwable cause = Exceptions.unwrap(e);
+      if (cause instanceof BssException) {
+        throw (BssException) cause;
+      }
+      if (cause instanceof TimeoutException) {
+        logger.error("Failed to read MCP resource, timeout: client={}, uri={}", clientId, uri);
+        throw new BssException("读取 MCP 资源超时: " + uri, e);
+      }
+      logger.error("Failed to read MCP resource: client={}, uri={}", clientId, uri, cause);
+      throw new BssException("读取 MCP 资源失败: " + ExpUtil.getMsg(cause), e);
+    }
+    Assert.notNull(result, "读取 MCP 资源失败");
+    return result;
   }
 
   /**

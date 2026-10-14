@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.model.GatewayModelSyncResult;
 import com.iwhalecloud.bote.dto.model.LargeModelDTO;
 import com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO;
 import com.iwhalecloud.bote.dto.model.query.LargeModelQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 

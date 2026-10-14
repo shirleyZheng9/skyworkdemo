@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.dto.skill.SkillSquareItemVO;
 import com.iwhalecloud.bote.dto.skill.query.SkillInstallLogQueryParams;
 import com.iwhalecloud.bote.dto.skill.query.SkillSquareAdminQueryParams;
 import com.iwhalecloud.bote.dto.skill.query.SkillSquareQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -4,6 +4,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.common.consts.ChatConsts;
 import com.iwhalecloud.bote.common.consts.ChatMessageType;
+import com.iwhalecloud.bote.common.enums.Sequences;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.sse.SseUtil;
 import com.iwhalecloud.bote.common.util.ChatContextUtil;
@@ -23,8 +24,8 @@ import com.iwhalecloud.bote.llm.client.util.LlmTraceUtil;
 import com.iwhalecloud.bote.observability.LangfuseTracingService;
 import com.iwhalecloud.bote.service.asr.realtime.RealtimeAsrFactory;
 import com.iwhalecloud.bote.service.chat.IChatService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshCacheService;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.cache.refresh.IRefreshCacheService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.File;
@@ -79,6 +80,10 @@ public class ChatV1Controller {
   @PostMapping(path = "/completions", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
   public SseEmitter completions(@RequestBody ChatRequestDTO request) {
     return SseUtil.createSseEmitter(request.getClientId(), true, false, sseEmitter -> {
+      if(request.getSessionId() == null) {
+        request.setSessionId(Sequences.BOT_SESSION_ID.next());
+      }
+
       try {
         validateRequest(request);
       }

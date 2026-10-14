@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.a2a.helper;
 import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
 import com.iwhalecloud.bote.llm.client.util.OkHttpUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.a2a.client.http.A2AHttpClient;
 import io.a2a.client.http.A2AHttpResponse;

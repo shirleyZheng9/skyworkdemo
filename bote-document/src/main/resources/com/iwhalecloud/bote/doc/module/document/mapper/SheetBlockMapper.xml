@@ -27,8 +27,8 @@
       #{entity.size},
       #{entity.fileId},
       #{entity.tenantId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.statusCd}
     )
   </insert>
@@ -36,7 +36,7 @@
   <update id="deleteByPrimaryKey">
     UPDATE bt_dc_sheet_block
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE block_id = #{blockId}
       AND status_cd = '00A'
   </update>

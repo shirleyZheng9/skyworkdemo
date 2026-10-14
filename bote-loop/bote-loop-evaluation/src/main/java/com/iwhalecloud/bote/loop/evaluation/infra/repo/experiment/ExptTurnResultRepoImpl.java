@@ -18,7 +18,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.converto
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptTurnResultConvertor;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptTurnResultRunLogConvertor;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

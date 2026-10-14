@@ -16,7 +16,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.ItemSnapshotService
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.SnapshotContext;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.JobUtils;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.Paginator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

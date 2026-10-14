@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.llm.client.dto.ToolCall;
 import com.iwhalecloud.bote.llm.client.dto.message.AssistantMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.llm.client.dto.schema.JsonSchemaNode;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;

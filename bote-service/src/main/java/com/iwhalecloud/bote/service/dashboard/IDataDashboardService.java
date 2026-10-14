@@ -14,12 +14,11 @@ import java.util.List;
  * @since 2026-08-28
  */
 public interface IDataDashboardService {
-
   /**
    * 查询顶部资源概览。
    *
    * <p>该接口返回当前租户可见的核心资源总量和相较今日零点的净变化。为兼容既有前端
-   * 契约，该净变化仍使用 todayIncrease 字段返回。</p>
+   *    * 契约，该净变化仍使用 todayIncrease 字段返回。</p>
    *
    * @param tenantId 当前租户 ID
    */

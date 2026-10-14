@@ -49,9 +49,9 @@
     #{dto.embeddingModelId},
     #{dto.embeddingScoreThreshold},
     #{dto.slmEnabled},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -82,7 +82,7 @@
       <if test="dto.remark != null and dto.remark != ''">
         remark = #{dto.remark},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId},
     </set>
     WHERE id = #{dto.id}

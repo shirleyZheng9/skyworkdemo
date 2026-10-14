@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies.SnakeCaseStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.iwhalecloud.bote.llm.client.consts.MessageRole;
 import com.iwhalecloud.bote.llm.client.dto.ToolCall;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

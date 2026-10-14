@@ -1,6 +1,7 @@
 package com.iwhalecloud.bote.loop.prompt.application;
 
 import com.google.common.collect.Maps;
+import com.iwhalecloud.bote.common.consts.CatalogConsts;
 import com.iwhalecloud.bote.loop.client.prompt.domain.prompt.CommitInfoDTO;
 import com.iwhalecloud.bote.loop.client.prompt.domain.prompt.DraftInfoDTO;
 import com.iwhalecloud.bote.loop.client.prompt.domain.prompt.PromptBasicDTO;
@@ -51,9 +52,10 @@ import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.ListCommitResult;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.ListPromptParam;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.ListPromptResult;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.UpdatePromptParam;
+import com.iwhalecloud.bote.service.base.ICatalogManageService;
 import com.iwhalecloud.bote.service.element.IResourceElementService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,6 +96,7 @@ public class LoopPromptManageServiceImpl implements PromptManageService {
   private final IConfigProvider configProvider;
   private final IUserProvider userProvider;
   private final IResourceElementService resourceElementService;
+  private final ICatalogManageService catalogManageService;
 
   @Override
   public boolean existsPromptKey(Long workspaceId, String promptKey) {
@@ -379,7 +382,11 @@ public class LoopPromptManageServiceImpl implements PromptManageService {
     listPromptParam.setPageSize(request.getPageSize());
     listPromptParam.setOrderBy(listPromptOrderBy(request.getOrderBy()));
     listPromptParam.setAsc(request.getAsc());
-    listPromptParam.setCatalogItemId(request.getCatalogItemId());
+    // 目录查询需包含子目录：将目录ID展开为当前目录及其所有子目录的ID列表
+    if (request.getCatalogItemId() != null) {
+      listPromptParam.setCatalogItemIds(catalogManageService.queryChildrenCatalogIds(
+        request.getTenantId(), request.getCatalogItemId(), CatalogConsts.TYPE_PROMPT));
+    }
     // 转换 promptType: PromptType 枚举 -> String
     if (request.getPromptType() != null) {
       listPromptParam.setPromptType(request.getPromptType().getValue());

@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.doc.consts.DocumentTypeEnum;
 import com.iwhalecloud.bote.doc.common.utils.DcIdUtils;
 import com.iwhalecloud.bote.dto.datasync.DataSyncTableDefinition;
 import com.iwhalecloud.bote.dto.datasync.query.DataSyncParams;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.publish;
 
 import com.iwhalecloud.bote.dto.publish.PublishGatewayDTO;
 import com.iwhalecloud.bote.mapper.publish.PublishGatewayManageMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

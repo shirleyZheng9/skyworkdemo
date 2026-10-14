@@ -126,7 +126,7 @@ public class TGOidcAuthService implements TGAuthService {
       LOGGER.info("[TGPortal] extinfo 用户扩展信息映射完成: userId={}, currentTenantId={}, tenantCount={}, "
           + "usernamePresent={}, phonePresent={}, roleType={}",
         userId, currentTenantId, extInfo.getTenantInfoList() == null ? 0 : extInfo.getTenantInfoList().size(),
-        userInfo.getUsername(), userInfo.getPhoneNo(),
+        StringUtils.isNotBlank(userInfo.getUsername()), StringUtils.isNotBlank(userInfo.getPhoneNo()),
         userInfo.getRoleType());
       return userInfo;
     }
@@ -162,6 +162,7 @@ public class TGOidcAuthService implements TGAuthService {
     }
     return null;
   }
+
 
   private String expectedCookieName() {
     return StringUtils.defaultString(oidcProperties.getTokenPrefix())

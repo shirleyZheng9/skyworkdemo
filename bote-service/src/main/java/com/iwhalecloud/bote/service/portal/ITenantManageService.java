@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.portal.TenantDTO;
 import com.iwhalecloud.bote.dto.portal.TenantUserDTO;
 import com.iwhalecloud.bote.dto.portal.query.TenantQueryParams;
 import com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 
@@ -106,6 +106,18 @@ public interface ITenantManageService {
    * @return 结果
    */
   ResultVO<Void> deleteTenantUser(Long tenantId, List<Long> userIds);
+
+  /**
+   * 供受控的系统集成调用新增成员，保留默认租户、权限日志和机器人授权清理等副作用。
+   * 调用方必须自行完成身份校验和业务授权，不能暴露给页面接口。
+   */
+  ResultVO<List<TenantUserDTO>> saveTenantUserForInternalIntegration(List<TenantUserDTO> tenantUserList);
+
+  /**
+   * 供受控的系统集成调用移除成员，保留权限日志和默认租户清理等副作用。
+   * 调用方必须自行完成身份校验和业务授权，不能暴露给页面接口。
+   */
+  ResultVO<Void> deleteTenantUserForInternalIntegration(Long tenantId, List<Long> userIds);
 
   /**
    * 保存租户成员（通过userCode，用于Beyond系统）

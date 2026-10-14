@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 import com.iwhalecloud.bote.common.lock.DistributedLock;
 import com.iwhalecloud.bote.common.lock.DistributedLock.LockType;
 import com.iwhalecloud.bote.common.lock.DistributedLockException;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

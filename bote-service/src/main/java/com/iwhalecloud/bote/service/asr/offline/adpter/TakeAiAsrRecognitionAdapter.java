@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.dto.asr.AudioTranscriptionResp;
 import com.iwhalecloud.bote.dto.asr.SentenceDTO;
 import com.iwhalecloud.bote.service.asr.offline.AbstractAsrRecognitionAdapter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.File;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;

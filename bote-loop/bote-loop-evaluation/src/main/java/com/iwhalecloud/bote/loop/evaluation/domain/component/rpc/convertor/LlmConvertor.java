@@ -19,7 +19,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.ReplyItem;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.TokenUsage;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ToolCall;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ToolType;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.math.BigDecimal;

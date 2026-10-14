@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.dto.tenant.setting.TenantSuggestionSettingDTO;
 import com.iwhalecloud.bote.dto.tenant.setting.TenantWatermarkSettingDTO;
 import com.iwhalecloud.bote.mapper.portal.TenantSettingInfoManageMapper;
 import com.iwhalecloud.bote.service.intent.IIntentManageService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.apache.commons.codec.binary.Base64;

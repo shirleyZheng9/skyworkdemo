@@ -36,9 +36,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND  a.doc_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.docStatus != null and query.docStatus != ''">
       AND  a.doc_status = #{query.docStatus}
@@ -142,9 +142,9 @@
     #{dto.documentType},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -194,9 +194,9 @@
       #{dto.documentType},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
   </insert>
@@ -245,9 +245,9 @@
       #{dto.documentType},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
     SELECT 1 FROM dual
@@ -301,7 +301,7 @@
       <if test="dto.checkFieldUpdateFlag('documentType')">
         document_type = #{dto.documentType},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE document_id = #{dto.documentId}
     AND tenant_id = #{dto.tenantId}
@@ -311,7 +311,7 @@
     UPDATE bt_document
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
     AND tenant_id = #{tenantId}
   </update>
@@ -371,7 +371,7 @@
       parse_started_time = #{doc.parseStartedTime},
     </if>
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{doc.docId}
     AND tenant_id = #{tenantId}
   </update>
@@ -380,8 +380,8 @@
     UPDATE bt_document
     SET doc_status = #{docStatus},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    parse_started_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    parse_started_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE knowledge_id = #{knowledgeId}
       AND tenant_id = #{tenantId}
       AND status_cd = '00A'
@@ -514,7 +514,7 @@
   </select>
   <update id="updateDocumentExtSystemId">
     update bt_document set updator_id = #{updatorId},doc_status = #{docStatus},ext_system_id=null,updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
     AND tenant_id = #{tenantId}
   </update>
@@ -564,11 +564,11 @@
       AND library_name = #{libraryName}
       AND visibility_scope = #{visibilityScope}
       AND status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
   <update id="updateDocumentHasUpdate">
     update bt_document set doc_name=#{docName},has_update='1',updator_id = #{currentLoginUserId},updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
     AND tenant_id = #{tenantId}
   </update>
@@ -612,7 +612,7 @@
    UPDATE bt_document
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id in (<foreach collection="documentIds" item="id" separator=",">#{id}</foreach>)
     AND tenant_id = #{tenantId}
   </update>

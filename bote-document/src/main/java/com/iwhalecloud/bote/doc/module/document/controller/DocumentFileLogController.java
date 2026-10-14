@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO;
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentFileLogInfoDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentFileLogService;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

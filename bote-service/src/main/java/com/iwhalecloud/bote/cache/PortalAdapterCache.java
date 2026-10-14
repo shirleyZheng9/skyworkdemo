@@ -21,7 +21,7 @@ import com.iwhalecloud.bote.portal.config.properties.SsoPortalProperties;
 import com.iwhalecloud.bote.portal.config.properties.TGPortalProperties;
 import com.iwhalecloud.bote.portal.config.properties.UportalProperties;
 import com.iwhalecloud.bote.portal.tg.TGAuthService;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseLocalCache;
+import com.cmsr.tiangong.cache.helper.BaseLocalCache;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;

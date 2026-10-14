@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.doc.common.model.SpaceBaseRO;
 import com.iwhalecloud.bote.doc.common.model.TenantBaseRO;
 import com.iwhalecloud.bote.doc.common.space.annotation.IgnoreSpace;
 import com.iwhalecloud.bote.doc.common.utils.SecurityAspectUtils;
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;

@@ -15,10 +15,10 @@ import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iwhalecloud.bote.doc.module.base.dto.FileChunkInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import com.google.common.cache.CacheBuilder;
 import java.util.LinkedHashMap;
 import java.util.List;

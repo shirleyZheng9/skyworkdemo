@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.doc.module.document.entity.WorkbookContentEntity;
 import com.iwhalecloud.bote.doc.module.document.mapper.DocumentMapper;
 import com.iwhalecloud.bote.doc.module.document.mapper.WorkbookContentMapper;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 
 /**
  * 工作簿导入服务实现类 用于将Excel文件转换为在线表格

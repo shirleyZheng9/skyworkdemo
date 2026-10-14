@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.CommonConsts;
 import com.iwhalecloud.bote.dto.knowledge.CorpusInfoDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.CorpusQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.service.ICorpusInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

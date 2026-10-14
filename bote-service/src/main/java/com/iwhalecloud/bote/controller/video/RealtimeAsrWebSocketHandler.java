@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.asr.RealtimeAsrRequestDTO;
 import com.iwhalecloud.bote.dto.asr.RealtimeAsrResultDTO;
 import com.iwhalecloud.bote.service.asr.realtime.RealtimeAsrHandler;
 import com.iwhalecloud.bote.service.asr.realtime.RealtimeAsrFactory;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.HashMap;

@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.Evaluator
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.EvaluatorVersionDAO;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.evaluator.mysql.convertor.EvaluatorConvertor;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

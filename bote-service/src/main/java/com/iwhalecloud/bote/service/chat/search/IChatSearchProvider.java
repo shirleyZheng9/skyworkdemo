@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.chat.search;
 
 import com.iwhalecloud.bote.dto.chat.SearchResultDTO;
 import com.iwhalecloud.bote.dto.chat.query.SearchQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * AI 门户通用搜索

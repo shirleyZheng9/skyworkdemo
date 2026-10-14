@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.publish.step.datasync.copy.helper;
 
 import com.iwhalecloud.bote.common.enums.DataSyncCodeEnum;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

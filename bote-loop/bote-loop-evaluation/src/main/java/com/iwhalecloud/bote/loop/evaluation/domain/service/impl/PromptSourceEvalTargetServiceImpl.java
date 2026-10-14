@@ -36,7 +36,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.UserInfo;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.VariableVal;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.ISourceEvalTargetOperateService;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

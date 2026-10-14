@@ -2,10 +2,10 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.service.external.JuzhiDictClient;
 import com.iwhalecloud.bote.service.external.JuzhiOcrClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreService;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.file.service.IFileStoreService;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.springframework.util.Assert;
 
 import java.io.File;

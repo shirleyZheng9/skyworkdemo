@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.collaboration.socket.auth.UserAuthInfo;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.session.ChannelSessionManager;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.session.SessionInfo;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.util.ClientUtils;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInboundHandlerAdapter;

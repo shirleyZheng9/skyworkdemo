@@ -4,12 +4,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-
 /**
  * 顶部资源概览卡片。
  *
  * <p>total 和 todayIncrease 均使用 Long，避免大租户资源量超过 Integer 上限。
- * todayIncrease 为兼容既有前端字段名，实际表示相较今日零点的净变化；删除会返回负数。</p>
+ * 今日新增不是“较昨日净增长”，删除、恢复和状态变更不会反向扣减该值。</p>
  *
  * @author zhengxueli
  * @since 2026-08-31
@@ -19,7 +18,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Schema(description = "顶部资源概览卡片")
 public class OverviewMetricVO {
-
   /** 前端用于区分卡片和绑定图标的稳定编码，不使用中文名称做程序判断。 */
   @Schema(description = "指标编码", example = "agent")
   private final String code;

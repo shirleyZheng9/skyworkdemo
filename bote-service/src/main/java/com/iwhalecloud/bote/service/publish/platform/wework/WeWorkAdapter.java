@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.publish.StandardMessage;
 import com.iwhalecloud.bote.mapper.publish.ResourcePublishRecordMapper;
 import com.iwhalecloud.bote.service.publish.platform.PlatformAdapter;
 import com.iwhalecloud.bote.wechat.WechatParamHelper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;

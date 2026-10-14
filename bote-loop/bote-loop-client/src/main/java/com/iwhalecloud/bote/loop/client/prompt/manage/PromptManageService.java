@@ -22,7 +22,7 @@ import com.iwhalecloud.bote.loop.client.prompt.manage.dto.SaveDraftRequest;
 import com.iwhalecloud.bote.loop.client.prompt.manage.dto.SaveDraftResponse;
 import com.iwhalecloud.bote.loop.client.prompt.manage.dto.UpdatePromptRequest;
 import com.iwhalecloud.bote.loop.client.prompt.manage.dto.UpdatePromptResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * Prompt管理服务接口

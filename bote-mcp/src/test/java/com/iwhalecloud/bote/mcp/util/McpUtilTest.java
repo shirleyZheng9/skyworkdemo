@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.mcp.dto.message.JsonRpcMessage;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcNotification;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcRequest;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcResponse;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import okhttp3.sse.EventSource.Factory;
 import org.junit.jupiter.api.Test;
 

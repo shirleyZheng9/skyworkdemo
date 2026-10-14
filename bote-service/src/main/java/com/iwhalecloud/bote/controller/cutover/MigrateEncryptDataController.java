@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.common.util.FieldEncryptUtil;
 import com.iwhalecloud.bote.entity.portal.UserEntity;
 import com.iwhalecloud.bote.mapper.cutover.CutOverMapper;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
+import com.cmsr.tiangong.database.util.TransactionUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;

@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineRequest;
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
 import com.iwhalecloud.bote.dto.orchestration.step.StartStep;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Map;
 import org.apache.commons.collections4.MapUtils;
 

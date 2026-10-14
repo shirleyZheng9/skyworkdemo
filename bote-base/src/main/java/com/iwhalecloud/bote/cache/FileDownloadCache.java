@@ -2,10 +2,10 @@ package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.dto.base.FileDownloadToken;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;

@@ -65,7 +65,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluatorService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.ExptResultService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.IEvalTargetService;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;

@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.cache.DcPublicCache;
 import com.iwhalecloud.bote.entity.base.DcPublicEntity;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.util.Assert;

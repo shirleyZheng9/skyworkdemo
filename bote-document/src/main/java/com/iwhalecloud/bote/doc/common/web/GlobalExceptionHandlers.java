@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.doc.common.web;
 
 import com.iwhalecloud.bote.common.util.ExpUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;

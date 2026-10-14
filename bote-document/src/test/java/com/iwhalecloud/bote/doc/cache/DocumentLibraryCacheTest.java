@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.module.library.dto.DocumentLibraryDTO;
 import com.iwhalecloud.bote.doc.module.library.service.DocumentLibraryService;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

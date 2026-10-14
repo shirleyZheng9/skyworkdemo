@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.dto.publish.ResourcePublishRecordQueryParams;
 import com.iwhalecloud.bote.dto.publish.ResourcePublishRequest;
 import com.iwhalecloud.bote.dto.publish.ResourceUnpublishRequest;
 import com.iwhalecloud.bote.service.publish.IPublishResourceService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

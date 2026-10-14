@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.query.BtDcQaRecordQueryPara
 import com.iwhalecloud.bote.dto.chat.KnowledgeChatParamsDTO;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
 import com.iwhalecloud.bote.dto.knowledge.ReferenceDocumentDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.knowledge.access.query.KnowledgeFileQueryParams;
 import com.iwhalecloud.bote.dto.knowledge.access.query.KnowledgeQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.strategy.IKnowledgeAccessStrategy;
 import com.iwhalecloud.bote.doc.module.knowledge.strategy.KnowledgeAccessStrategyEntry;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

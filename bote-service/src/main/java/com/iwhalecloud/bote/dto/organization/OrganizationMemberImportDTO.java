@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.dto.organization;
 
-import com.iwhalecloud.bss.litchi.transform.imports.importers.dto.ImportFailedColumn;
+import com.cmsr.tiangong.transform.imports.importers.dto.ImportFailedColumn;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

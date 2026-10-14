@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.event.ExptEventPublisher;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IEvaluatorRecordRepo;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluatorRecordService;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

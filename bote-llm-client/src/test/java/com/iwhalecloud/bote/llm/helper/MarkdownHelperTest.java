@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.llm.client.LlmClient;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionRequest;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
 import com.iwhalecloud.bote.llm.client.dto.message.AssistantMessage;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 

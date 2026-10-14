@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.common.util.DcPublicUtil;
 import com.iwhalecloud.bote.config.properties.PlatformDatabaseProperties;
 import com.iwhalecloud.bote.dto.base.DataSourceProperties;
 import com.iwhalecloud.bote.entity.base.DcPublicEntity;
-import com.iwhalecloud.bss.litchi.base.annotation.ExtendPoint;
+import com.cmsr.tiangong.base.annotation.ExtendPoint;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;

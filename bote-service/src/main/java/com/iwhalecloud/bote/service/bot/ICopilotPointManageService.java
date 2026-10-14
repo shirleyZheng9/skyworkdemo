@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.bot.CopilotPointDTO;
 import com.iwhalecloud.bote.dto.bot.SimpleCopilotPointDTO;
 import com.iwhalecloud.bote.dto.bot.query.CopilotPointParams;
 import com.iwhalecloud.bote.dto.bot.query.PointQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

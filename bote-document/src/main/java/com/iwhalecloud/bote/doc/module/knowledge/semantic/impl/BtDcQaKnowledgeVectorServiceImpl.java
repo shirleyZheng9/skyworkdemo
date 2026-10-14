@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.semantic.IBtDcQaKnowledgeVector
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.dto.IndexDocDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.dto.KnowledgeQuestionDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.dto.PendingKnowledgeQuestionDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

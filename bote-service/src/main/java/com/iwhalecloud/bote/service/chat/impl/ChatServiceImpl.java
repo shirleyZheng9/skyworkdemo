@@ -30,8 +30,8 @@ import com.iwhalecloud.bote.service.chat.helper.CallSceneHelper;
 import com.iwhalecloud.bote.service.chat.helper.IntentRecognizeHelper;
 import com.iwhalecloud.bote.service.chat.search.IChatSearchProvider;
 import com.iwhalecloud.bote.service.planning.IPlanService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +68,8 @@ public class ChatServiceImpl implements IChatService {
   @Override
   public void completions(ChatRequestDTO request, SseEmitter sseEmitter) {
     ChatContext context = new ChatContext(request, sseEmitter, SessionUtil.getOptionalUserId());
+    // 发送会话 ID
+    SseUtil.sendText(sseEmitter, ChatMessageType.SESSION_ID, String.valueOf(context.getSessionId()));
     // 通用智能体或自定义BoteClaw
     if (generaAgentIdCache.isBoteClaw(request.getBotId())) {
       try {

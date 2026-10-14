@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.skill.AgentSkillDTO;
 import com.iwhalecloud.bote.mapper.agent.AiSkillManageMapper;
 import com.iwhalecloud.bote.service.agent.IAiSkillManageService;
 import com.iwhalecloud.bote.service.skill.IAgentSkillManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

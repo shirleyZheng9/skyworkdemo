@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.event.ExptEventPublisher;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.ExptAggrResultService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.ExptItemEvalEventService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.ExptSchedulerEventService;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.time.Duration;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

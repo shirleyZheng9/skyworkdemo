@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.publish.platform.wework;
 
 import com.iwhalecloud.bote.common.util.HttpUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;

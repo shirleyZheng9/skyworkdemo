@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.common.util.LarkAuthUtil;
 import com.iwhalecloud.bote.dto.plugin.lark.LarkResultDTO;
 import com.iwhalecloud.bote.dto.plugin.params.AbstractLarkPluginParams;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

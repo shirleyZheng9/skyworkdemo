@@ -10,9 +10,9 @@
               #{dto.wordContent},
               #{dto.statusCd},
               #{dto.creatorId},
-              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+              <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
               #{dto.creatorId},
-              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+              <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
               #{dto.remark}
            )
   </insert>
@@ -30,7 +30,7 @@
       remark = #{dto.remark},
     </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE word_id = #{dto.wordId}
   </update>
 
@@ -38,7 +38,7 @@
     UPDATE bt_sensitive_word
     SET status_cd = '00X',
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE word_id = #{wordId}
   </update>
 
@@ -65,7 +65,7 @@
       AND a.is_black = #{query.isBlack}
     </if>
     <if test="query.keyword != null and query.keyword != ''">
-      AND a.word_content LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND a.word_content LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>

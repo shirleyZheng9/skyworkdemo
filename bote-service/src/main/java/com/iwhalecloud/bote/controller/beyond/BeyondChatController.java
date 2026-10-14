@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineResponse;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.SceneTestReplyHandler;
 import com.iwhalecloud.bote.service.scene.ISceneChatService;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;

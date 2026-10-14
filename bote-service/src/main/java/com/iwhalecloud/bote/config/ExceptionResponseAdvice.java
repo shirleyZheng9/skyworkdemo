@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.config;
 
 import com.iwhalecloud.bote.common.consts.BaseConsts;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;

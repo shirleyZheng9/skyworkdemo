@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
 import com.iwhalecloud.bote.common.util.ParamUtil;
 import com.iwhalecloud.bote.dto.skill.ParseSqlNodeResult;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;

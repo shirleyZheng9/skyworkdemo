@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.service.publish.IPublishResourceService;
 import com.iwhalecloud.bote.service.publish.IPublishWebhookService;
 import com.iwhalecloud.bote.service.publish.SdkConnectionManager;
 import com.iwhalecloud.bote.service.publish.platform.PlatformAdapter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

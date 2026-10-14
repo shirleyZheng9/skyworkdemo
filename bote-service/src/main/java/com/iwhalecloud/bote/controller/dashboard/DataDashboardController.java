@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.dashboard.ModelUsageDistributionItemVO;
 import com.iwhalecloud.bote.dto.dashboard.OverviewMetricVO;
 import com.iwhalecloud.bote.dto.dashboard.TodayDynamicsVO;
 import com.iwhalecloud.bote.service.dashboard.IDataDashboardService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
@@ -25,12 +25,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author zhengxueli
  * @since 2026-08-28
  */
+
 @RestController
 @RequestMapping(path = BaseConsts.API_PREFIX + "manager/dataDashboard", produces = MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 @Tag(name = "数据引擎：数据概览看板")
 public class DataDashboardController {
-
   private final IDataDashboardService dataDashboardService;
 
   /**
@@ -46,6 +46,7 @@ public class DataDashboardController {
     // Service 负责统计口径、固定展示顺序和异常数据清洗，Controller 只做入口编排。
     return ResultVO.success(dataDashboardService.queryOverviewMetrics(currentTenantId));
   }
+
 
   /**
    * 查询智能体模式分布。

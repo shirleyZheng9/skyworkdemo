@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseBatchPermissionRequestDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBasePermissionRequestDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.BtDcKbPermissionQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import jakarta.validation.Valid;
 import java.util.List;
 

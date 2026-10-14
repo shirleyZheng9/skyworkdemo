@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvaluationSetItem;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ListEvaluationSetItemsParam;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.Turn;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluationSetItemService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

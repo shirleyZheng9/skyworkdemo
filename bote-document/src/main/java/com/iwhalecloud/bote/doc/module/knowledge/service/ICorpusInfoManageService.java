@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.knowledge.service;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.knowledge.CorpusInfoDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.CorpusQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 

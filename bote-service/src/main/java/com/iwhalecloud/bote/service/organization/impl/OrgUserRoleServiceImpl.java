@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.entity.organization.OrgUserRoleEntity;
 import com.iwhalecloud.bote.mapper.organization.OrgUserRoleMapper;
 import com.iwhalecloud.bote.mapper.organization.OrganizationMemberMapper;
 import com.iwhalecloud.bote.service.organization.IOrgUserRoleService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseLocalCache;
-import com.iwhalecloud.bss.litchi.database.inspect.DatabaseInspector;
-import com.iwhalecloud.bss.litchi.database.inspect.definition.Table;
+import com.cmsr.tiangong.cache.helper.BaseLocalCache;
+import com.cmsr.tiangong.database.inspect.DatabaseInspector;
+import com.cmsr.tiangong.database.inspect.definition.Table;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;

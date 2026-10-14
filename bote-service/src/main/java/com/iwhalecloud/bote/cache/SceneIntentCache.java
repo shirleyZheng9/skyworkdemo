@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.intent.IntentQuestionDTO;
 import com.iwhalecloud.bote.dto.intent.query.IntentQueryParams;
 import com.iwhalecloud.bote.mapper.intent.IntentQuestionManageMapper;
 import com.iwhalecloud.bote.mapper.scene.SceneQueryMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;

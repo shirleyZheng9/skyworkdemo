@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.util.SessionUtil;
 import com.iwhalecloud.bote.doc.cache.DocumentAttachmentCache;
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentAttachmentDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreService;
+import com.cmsr.tiangong.file.service.IFileStoreService;
 import java.io.InputStream;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

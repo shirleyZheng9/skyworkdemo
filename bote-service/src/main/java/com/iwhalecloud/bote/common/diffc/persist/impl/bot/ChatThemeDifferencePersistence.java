@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.bot;
 
 import com.iwhalecloud.bote.dto.chat.ChatThemeDTO;
 import com.iwhalecloud.bote.mapper.chat.ChatThemeMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

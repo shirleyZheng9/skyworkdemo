@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.util.SessionUtil;
 import com.iwhalecloud.bote.dto.bot.BotFavorDTO;
 import com.iwhalecloud.bote.mapper.bot.BotFavorManageMapper;
 import com.iwhalecloud.bote.service.bot.IBotFavorManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

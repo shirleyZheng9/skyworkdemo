@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.dto.plugin.lark.LarkUserAuthInfoDTO;
 import com.iwhalecloud.bote.service.plugin.ILarkAuthService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;

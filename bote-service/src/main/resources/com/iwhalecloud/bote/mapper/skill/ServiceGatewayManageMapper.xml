@@ -39,9 +39,9 @@
       #{dto.url},
       #{dto.headerJson},
       #{dto.tenantId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -72,9 +72,9 @@
       #{dto.url},
       #{dto.headerJson},
       #{dto.tenantId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -98,7 +98,7 @@
       <if test="dto.checkFieldUpdateFlag('statusCd')">
         status_cd = #{dto.statusCd},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     </set>
     WHERE gateway_id = #{dto.gatewayId}

@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.dto.knowledge.access.platform.KnowledgeTokenDTO;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;

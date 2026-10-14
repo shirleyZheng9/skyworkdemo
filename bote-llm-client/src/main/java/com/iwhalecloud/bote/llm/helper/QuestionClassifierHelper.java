@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.llm.helper;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.client.dto.message.SystemMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.UserMessage;

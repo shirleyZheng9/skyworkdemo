@@ -162,6 +162,7 @@ public class DatasetRPCAdapterImpl implements IDatasetRPCAdapter {
     req.setOrderBys(DatasetRpcConvertor.convert2DatasetOrderBys(param.getOrderBys()));
     req.setCategory(DatasetCategoryDTO.EVALUATION);
     req.setCatalogItemId(param.getCatalogItemId());
+    req.setCatalogItemIds(param.getCatalogItemIds());
 
     PageInfo<DatasetDTO> pageInfo = datasetApplicationService.listDatasets(req);
     return pageInfo.convert(DatasetRpcConvertor::convert2EvaluationSet);

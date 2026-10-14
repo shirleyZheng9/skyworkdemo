@@ -34,8 +34,8 @@
     #{evaluatorRecord.id}, #{evaluatorRecord.spaceId}, #{evaluatorRecord.evaluatorVersionId}, #{evaluatorRecord.experimentId},
     #{evaluatorRecord.experimentRunId}, #{evaluatorRecord.itemId}, #{evaluatorRecord.turnId},
     #{evaluatorRecord.logId}, #{evaluatorRecord.traceId}, #{evaluatorRecord.score}, #{evaluatorRecord.status},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{evaluatorRecord.inputData}, #{evaluatorRecord.outputData},
     #{evaluatorRecord.createdBy}, #{evaluatorRecord.updatedBy}, #{evaluatorRecord.ext}
     )
@@ -58,7 +58,7 @@
     input_data = #{evaluatorRecord.inputData},
     output_data = #{evaluatorRecord.outputData},
     updated_by = #{evaluatorRecord.updatedBy},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     ext = #{evaluatorRecord.ext}
     WHERE id = #{evaluatorRecord.id}
     AND deleted_at IS NULL

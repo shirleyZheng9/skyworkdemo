@@ -58,8 +58,8 @@
     #{entity.fileExtension},
     #{entity.creatorId},
     #{entity.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{entity.statusCd}
     )
   </insert>
@@ -68,7 +68,7 @@
     UPDATE bt_dc_attachments
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
     AND status_cd = '00A'
   </update>

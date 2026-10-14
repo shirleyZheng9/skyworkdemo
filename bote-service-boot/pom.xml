@@ -54,8 +54,8 @@
       <id>fdfs</id>
       <dependencies>
         <dependency>
-          <groupId>com.iwhalecloud.bss.litchi</groupId>
-          <artifactId>litchi-file-fdfs</artifactId>
+          <groupId>com.cmsr.tiangong</groupId>
+          <artifactId>tiangong-file-fdfs</artifactId>
         </dependency>
       </dependencies>
     </profile>
@@ -63,8 +63,8 @@
       <id>ftp</id>
       <dependencies>
         <dependency>
-          <groupId>com.iwhalecloud.bss.litchi</groupId>
-          <artifactId>litchi-file-ftp</artifactId>
+          <groupId>com.cmsr.tiangong</groupId>
+          <artifactId>tiangong-file-ftp</artifactId>
         </dependency>
       </dependencies>
     </profile>
@@ -72,8 +72,8 @@
       <id>hdfs</id>
       <dependencies>
         <dependency>
-          <groupId>com.iwhalecloud.bss.litchi</groupId>
-          <artifactId>litchi-file-hdfs</artifactId>
+          <groupId>com.cmsr.tiangong</groupId>
+          <artifactId>tiangong-file-hdfs</artifactId>
         </dependency>
       </dependencies>
     </profile>
@@ -81,8 +81,8 @@
       <id>oss</id>
       <dependencies>
         <dependency>
-          <groupId>com.iwhalecloud.bss.litchi</groupId>
-          <artifactId>litchi-file-oss</artifactId>
+          <groupId>com.cmsr.tiangong</groupId>
+          <artifactId>tiangong-file-oss</artifactId>
         </dependency>
       </dependencies>
     </profile>
@@ -90,8 +90,8 @@
       <id>sdfs</id>
       <dependencies>
         <dependency>
-          <groupId>com.iwhalecloud.bss.litchi</groupId>
-          <artifactId>litchi-file-sdfs</artifactId>
+          <groupId>com.cmsr.tiangong</groupId>
+          <artifactId>tiangong-file-sdfs</artifactId>
         </dependency>
       </dependencies>
     </profile>
@@ -99,8 +99,8 @@
       <id>sftp</id>
       <dependencies>
         <dependency>
-          <groupId>com.iwhalecloud.bss.litchi</groupId>
-          <artifactId>litchi-file-sftp</artifactId>
+          <groupId>com.cmsr.tiangong</groupId>
+          <artifactId>tiangong-file-sftp</artifactId>
         </dependency>
       </dependencies>
     </profile>

@@ -3,6 +3,7 @@ package com.iwhalecloud.bote.service.bot.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
+import com.iwhalecloud.bote.common.consts.SceneConsts;
 import com.iwhalecloud.bote.common.diffc.DataDifferenceStarter;
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
 import com.iwhalecloud.bote.common.enums.DataSyncCodeEnum;
@@ -24,10 +25,10 @@ import com.iwhalecloud.bote.service.bot.IBotSceneManageService;
 import com.iwhalecloud.bote.service.bot.IPlatSceneInfoManageService;
 import com.iwhalecloud.bote.service.datasync.IDataSyncService;
 import com.iwhalecloud.bote.service.publish.IPublishService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -260,6 +261,8 @@ public class PlatSceneInfoManageServiceImpl implements IPlatSceneInfoManageServi
     if (MapUtils.isNotEmpty(primaryKeyMappings) && primaryKeyMappings.containsKey(tableCode)) {
       Long newSceneId = primaryKeyMappings.get(tableCode).get(platSceneInfo.getSceneId());
       if (newSceneId != null) {
+        // 模板多为已启用，创建到租户后重置为未启用（与普通新建/拷贝一致）
+        sceneManageService.publishScene(SceneConsts.SCENE_STATUS_UNPUBLISH, newSceneId, tenantId);
         scene = sceneManageService.getScene(tenantId, newSceneId, false);
       }
     }

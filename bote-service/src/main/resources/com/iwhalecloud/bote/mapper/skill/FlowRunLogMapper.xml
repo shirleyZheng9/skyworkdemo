@@ -36,7 +36,7 @@
       #{log.contextId},
       #{log.tenantId},
       #{log.userId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -120,7 +120,7 @@
         SELECT log_id
         FROM bt_flow_run_log
         WHERE start_time &lt; #{maxDate}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
        )
   </delete>
 
@@ -129,6 +129,6 @@
     DELETE
     FROM bt_flow_run_log
     WHERE start_time &lt; #{maxDate}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </delete>
 </mapper>

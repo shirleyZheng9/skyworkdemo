@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.base.SyncFileInfoRequest;
 import com.iwhalecloud.bote.dto.base.query.FileInfoQueryParams;
 import com.iwhalecloud.bote.dto.knowledge.query.UpdateFileParams;
 import com.iwhalecloud.bote.dto.knowledge.query.UploadFileParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;

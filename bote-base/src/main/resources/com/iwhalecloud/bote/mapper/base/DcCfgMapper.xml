@@ -26,7 +26,7 @@
     UPDATE bt_dc_param
     SET param_val = #{paramVal},
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE param_code = #{paramCode}
       AND status_cd = '00A'
   </update>

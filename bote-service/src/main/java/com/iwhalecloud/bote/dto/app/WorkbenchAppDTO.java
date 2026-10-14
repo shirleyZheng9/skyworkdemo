@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.iwhalecloud.bote.dto.bot.SimpleBotDTO;
 import com.iwhalecloud.bote.dto.organization.OrganizationUserDTO;
 import com.iwhalecloud.bote.entity.app.WorkbenchAppEntity;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

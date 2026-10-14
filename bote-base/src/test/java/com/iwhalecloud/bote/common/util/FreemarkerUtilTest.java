@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.common.util;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 

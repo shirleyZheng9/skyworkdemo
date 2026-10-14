@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.dto.bot;
 
 import com.iwhalecloud.bote.dto.base.LabelObjectRelDTO;
 import com.iwhalecloud.bote.entity.bot.PlatSceneInfoEntity;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
+import com.cmsr.tiangong.diffc.annotations.DiffField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Getter;

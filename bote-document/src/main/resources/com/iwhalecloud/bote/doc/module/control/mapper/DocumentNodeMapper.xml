@@ -264,7 +264,7 @@
         INNER JOIN bt_dc_document bdd2 ON bdd2.document_id = bdd.prev_document_id
         SET bdd.prev_document_id = bdd2.prev_document_id,
         bdd.updated_time =
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
         WHERE bdd.parent_id = #{parentId}
         AND bdd.prev_document_id = #{preNodeId}
         AND bdd.status_cd = '00A'
@@ -273,7 +273,7 @@
         UPDATE bt_dc_document bdd
         SET prev_document_id = bdd2.prev_document_id,
         updated_time =
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
         FROM bt_dc_document bdd2
         WHERE bdd2.document_id = bdd.prev_document_id
         AND bdd.parent_id = #{parentId}
@@ -303,7 +303,7 @@
         INNER JOIN bt_dc_document bdd2 ON bdd2.document_id = bdd.prev_document_id
         SET bdd.prev_document_id = bdd2.prev_document_id,
         bdd.updated_time =
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
         WHERE bdd.parent_id = #{parentId}
         AND bdd.prev_document_id = #{preNodeId}
         AND bdd.status_cd = '00A'
@@ -314,7 +314,7 @@
     UPDATE bt_dc_document bdd
     SET prev_document_id = #{newPreNodeId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE parent_id = #{parentId}
     <choose>
       <when test="originPreNodeId != null">
@@ -331,7 +331,7 @@
     UPDATE bt_dc_document bdd
     SET prev_document_id = #{newPreNodeId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE bdd.document_id = #{nodeId}
     AND status_cd = '00A'
   </update>
@@ -341,7 +341,7 @@
     parent_id =#{parentId},
     updator_id = #{userId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE bdd.document_id = #{nodeId}
     AND status_cd = '00A'
   </update>
@@ -359,7 +359,7 @@
       </otherwise>
     </choose>
     AND status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 
@@ -384,11 +384,11 @@
     from bt_dc_document
     where library_id = #{libraryId}
     and document_name like
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
     #{keyword}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     and status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     #{limit}
   </select>
   <select id="selectRootNodeIdDcDocumentEntityByLibraryId" resultType="com.iwhalecloud.bote.doc.module.document.entity.DcDocumentEntity">

@@ -102,7 +102,7 @@
     direct_manager_id, status_cd, permissions, ext_fields, creator_id, created_time
     ) VALUES (
     #{dto.memberId}, #{dto.userId}, #{dto.orgId}, #{dto.spaceId}, #{dto.memberRole}, #{dto.memberType}, #{dto.joinDate}, #{dto.leaveDate},
-    #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -115,7 +115,7 @@
     <foreach collection="list" item="dto" index="index" separator=", ">
       (
       #{dto.memberId}, #{dto.userId}, #{dto.orgId}, #{dto.spaceId}, #{dto.memberRole}, #{dto.memberType}, #{dto.joinDate}, #{dto.leaveDate},
-      #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
   </insert>
@@ -129,7 +129,7 @@
       direct_manager_id, status_cd, permissions, ext_fields, creator_id, created_time
       ) VALUES (
       #{dto.memberId}, #{dto.userId}, #{dto.orgId}, #{dto.spaceId}, #{dto.memberRole}, #{dto.memberType}, #{dto.joinDate}, #{dto.leaveDate},
-      #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      #{dto.directManagerId}, #{dto.statusCd}, #{dto.permissions}, #{dto.extFields}, #{dto.creatorId}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
     SELECT 1 FROM dual
@@ -151,7 +151,7 @@
     permissions = #{dto.permissions},
     ext_fields = #{dto.extFields},
     updator_id = #{dto.updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE member_id = #{dto.memberId}
   </update>
 
@@ -160,7 +160,7 @@
     UPDATE bt_organization_member
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE member_id = #{memberId}
   </update>
 
@@ -169,7 +169,7 @@
     UPDATE bt_organization_member
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE space_id = #{spaceId}
     AND member_id = #{memberId}
   </update>
@@ -179,7 +179,7 @@
     UPDATE bt_organization_member
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE space_id = #{spaceId}
     AND member_id IN (<foreach item="item" collection="memberIds" separator=",">#{item}</foreach>)
   </update>
@@ -201,9 +201,9 @@
     </if>
     <if test="query.realName != null and query.realName != ''">
       AND u.real_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.realName}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY COALESCE(om.updated_time, om.created_time) DESC
   </select>
@@ -233,15 +233,15 @@
     </if>
     <if test="query.userName != null and query.userName != ''">
       AND u.user_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.userName}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.realName != null and query.realName != ''">
       AND u.real_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.realName}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY om.created_time DESC
   </select>
@@ -373,7 +373,7 @@
     UPDATE bt_organization_member
     SET status_cd = '00X',
       updator_id = #{updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND space_id = #{spaceId}
       AND user_id = #{userId}

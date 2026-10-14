@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.base.LabelObjectRelDTO;
 import com.iwhalecloud.bote.entity.mcp.McpServerEntity;
 import com.iwhalecloud.bote.llm.client.dto.HeaderItem;
 import com.iwhalecloud.bote.mcp.consts.McpConsts;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;

@@ -15,6 +15,7 @@
     a.begin_time,
     a.end_time,
     a.is_test,
+    a.publish_id,
     a.created_time,
     a.status_cd,
     a.updated_time,
@@ -28,7 +29,7 @@
     <include refid="sessionColumns"/>
     FROM bt_bot_session a
     WHERE session_id = #{id}
-      AND status_cd = '00A'
+    AND status_cd = '00A'
   </select>
 
   <select id="selectBotIdBySessionId" resultType="java.lang.Long">
@@ -59,6 +60,7 @@
     begin_time,
     end_time,
     is_test,
+    publish_id,
     created_time,
     status_cd,
     updated_time,
@@ -78,9 +80,10 @@
     #{dto.beginTime},
     #{dto.endTime},
     #{dto.isTest},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{dto.publishId},
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -100,7 +103,7 @@
         end_time = #{dto.endTime},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE session_id = #{dto.sessionId}
   </update>
@@ -119,7 +122,7 @@
       ORDER BY updated_time DESC
     ) TMP
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="listSessions" resultType="com.iwhalecloud.bote.dto.chat.SessionDTO">
@@ -142,12 +145,16 @@
     <if test="query.spaceId != null">
       AND a.space_id = #{query.spaceId}
     </if>
-      AND a.creator_id = #{query.userId}
+    AND a.creator_id = #{query.userId}
+    <!-- 发布链接场景：仅展示该发布记录的会话；未记录发布记录的历史会话（旧数据）不受隔离影响，仍全部展示 -->
+    <if test="query.publishId != null">
+      AND (a.publish_id = #{query.publishId} OR a.publish_id IS NULL)
+    </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.session_title LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.extSystemId != null">
       AND a.ext_system_id = #{query.extSystemId}
@@ -194,6 +201,10 @@
     <if test="query.botId != null">
       AND a.bot_id = #{query.botId}
     </if>
+    <!-- 发布链接场景：仅展示该发布记录的会话；未记录发布记录的历史会话（旧数据）不受隔离影响，仍全部展示 -->
+    <if test="query.publishId != null">
+      AND (a.publish_id = #{query.publishId} OR a.publish_id IS NULL)
+    </if>
     <if test="query.isMark">
       AND exists(select 1 from bt_chat_bot_cfg b
                 WHERE a.space_id = b.space_id
@@ -230,7 +241,7 @@
       AND space_id = #{spaceId}
     </if>
       AND status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectSessionScenePage" resultType="com.iwhalecloud.bote.dto.chat.export.SessionSceneDTO">

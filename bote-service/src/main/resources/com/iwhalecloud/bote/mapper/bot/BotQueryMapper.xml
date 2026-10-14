@@ -24,9 +24,9 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.tenantId != null">
@@ -141,7 +141,7 @@
     WHERE status_cd = '00A'
       AND tenant_id = #{tenantId}
       AND is_default = 'T'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="getFirstBot" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
@@ -149,7 +149,7 @@
     FROM bt_bot
     WHERE status_cd = '00A'
       AND tenant_id = #{tenantId}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="existsBotFavor" resultType="boolean">
@@ -198,9 +198,9 @@
     </if>
     <if test="query.strategyType != null and query.strategyType != ''">
       AND (a.agent_strategy LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.strategyType}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         <if test="query.strategyTypeNone">
           OR a.agent_strategy IS NULL
         </if>
@@ -227,9 +227,9 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.tenantId != null">
@@ -303,13 +303,13 @@
         WHERE a.status_cd = '00A'
         <if test="query.keyword != null and query.keyword != ''">
           AND (a.bot_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           OR a.bot_use LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           )
         </if>
         <if test="query.status != null and !query.status.isEmpty()">
@@ -364,13 +364,13 @@
         WHERE a.status_cd = '00A'
         <if test="query.keyword != null and query.keyword != ''">
           AND (a.scene_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           OR a.scene_desc LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           )
         </if>
         <if test="query.status != null and !query.status.isEmpty()">
@@ -416,13 +416,13 @@
         WHERE a.status_cd = '00A'
         <if test="query.keyword != null and query.keyword != ''">
           AND (a.bot_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           OR a.bot_use LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           )
         </if>
         <if test="query.tenantId != null">
@@ -458,13 +458,13 @@
         WHERE a.status_cd = '00A'
         <if test="query.keyword != null and query.keyword != ''">
           AND (a.scene_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           OR a.scene_desc LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{query.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           )
         </if>
         <if test="query.tenantId != null">
@@ -490,9 +490,9 @@
       AND a.tenant_id = #{query.tenantId}
     <if test="query.name != null and query.name != ''">
       AND a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.name}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.status != null and query.status != ''">
       AND a.bot_status = #{query.status}
@@ -541,7 +541,7 @@
     </if>
     ORDER BY b.updated_time DESC) TMP
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 10
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 10
   </select>
 
   <select id="selectPopularBotList" resultType="com.iwhalecloud.bote.dto.bot.BotDTO">
@@ -555,7 +555,7 @@
     AND a.is_popular = 'T'
     ORDER BY a.updated_time DESC) TMP
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 4
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 4
   </select>
 
   <select id="selectBotListForIntent" resultType="com.iwhalecloud.bote.dto.bot.SimpleBotDTO">
@@ -638,9 +638,9 @@
     </choose>
     <if test="params.searchContent != null and params.searchContent != ''">
       AND a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{params.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="params.filterRelated">
       AND NOT EXISTS(SELECT 1 FROM bt_workbench_app_rel b
@@ -676,13 +676,13 @@
       AND a.bot_status = '1'
     <if test="params.keyword != null and params.keyword != ''">
       AND (a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{params.keyword}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.bot_use LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{params.keyword}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     ORDER BY a.updated_time DESC
@@ -697,9 +697,9 @@
       AND a.creator_id = #{params.userId}
     <if test="params.searchContent != null and params.searchContent != ''">
       AND a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{params.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
   </select>
 
@@ -756,9 +756,9 @@
         AND a.creator_id = #{query.userId}
       <if test="query.searchContent != null and query.searchContent != ''">
         AND a.bot_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       </if>
       UNION ALL
       SELECT a.bot_id, MAX(b.bot_name) as bot_name, MAX(b.bot_use) as bot_use, MAX(a.owner_tenant_id) as tenant_id, 'F' AS isCreator
@@ -776,9 +776,9 @@
       </if>
       <if test="query.searchContent != null and query.searchContent != ''">
         AND b.bot_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       </if>
       GROUP BY a.bot_id
     ) temp_result
@@ -790,6 +790,6 @@
     WHERE status_cd = '00A'
       AND bot_id = #{botId}
       AND data_from = '10A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 </mapper>

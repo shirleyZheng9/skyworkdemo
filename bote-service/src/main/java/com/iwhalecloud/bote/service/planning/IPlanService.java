@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.planning.PlanRequest;
 import com.iwhalecloud.bote.dto.planning.PlanResponse;
 import com.iwhalecloud.bote.dto.planning.SimplePlanDTO;
 import com.iwhalecloud.bote.service.chat.context.ChatContext;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 计划服务管理

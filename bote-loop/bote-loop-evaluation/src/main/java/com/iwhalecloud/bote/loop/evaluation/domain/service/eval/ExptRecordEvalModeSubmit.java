@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.TurnRunState;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.event.ExptItemEvalEvent;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExptTurnResultRepo;
 import com.iwhalecloud.bote.loop.infra.idgen.IIDGenerator;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
 import com.iwhalecloud.bote.dto.base.CodeGenerateDefinition;
 import com.iwhalecloud.bote.dto.base.TableColumnDefinition;
 import com.iwhalecloud.bote.dto.base.TableDefinition;
-import com.iwhalecloud.bss.litchi.util.DateUtil;
+import com.cmsr.tiangong.util.DateUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import freemarker.template.Configuration;
 import freemarker.template.Template;

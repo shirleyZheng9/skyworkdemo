@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.data.domain.dataset.service.impl;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetOpType;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetOperation;
 import com.iwhalecloud.bote.loop.data.domain.dataset.repo.IDatasetAPI;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;

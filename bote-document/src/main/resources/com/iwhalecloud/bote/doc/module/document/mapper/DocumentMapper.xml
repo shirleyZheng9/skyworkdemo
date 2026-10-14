@@ -133,8 +133,8 @@
     #{document.spaceId},
     #{document.creatorId},
     #{document.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{document.statusCd},
     #{document.released},
     #{document.dataUrl}
@@ -169,8 +169,8 @@
       #{document.spaceId},
       #{document.creatorId},
       #{document.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{document.statusCd},
       #{document.released},
       #{document.dataUrl}
@@ -206,8 +206,8 @@
       #{document.spaceId},
       #{document.creatorId},
       #{document.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{document.statusCd},
       #{document.released},
       #{document.dataUrl}
@@ -233,7 +233,7 @@
     tenant_id = #{document.tenantId},
     space_id = #{document.spaceId},
     updator_id = #{document.updatorId},
-    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     status_cd = #{document.statusCd}
     WHERE document_id = #{document.documentId}
     AND tenant_id = #{document.tenantId}
@@ -246,7 +246,7 @@
     library_id = #{document.libraryId},
     parent_id = #{document.parentId},
     prev_document_id = #{document.prevDocumentId},
-    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{document.documentId}
     AND tenant_id = #{document.tenantId}
   </update>
@@ -255,7 +255,7 @@
     UPDATE bt_dc_document
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
   </update>
   <update id="updateSiblingPreDocumentId">
@@ -269,7 +269,7 @@
     set document_name = #{documentName},
     updator_id = #{userId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId}
   </update>
 
@@ -280,7 +280,7 @@
     updator_id = #{userId},
     revision = revision + 1,
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId} and content_source = 'UPLOAD' and status_cd = '00A'
   </update>
 
@@ -289,7 +289,7 @@
     SET status_cd = '00R',
     updator_id= #{optUserId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id in
     <foreach item="item" index="index" collection="documentId" open="(" separator="," close=")">
       #{item}
@@ -309,7 +309,7 @@
     )
     AND status_cd = '00A'
     ORDER BY created_time DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 
@@ -331,7 +331,7 @@
     tenant_id = #{document.tenantId},
     space_id = #{document.spaceId},
     updator_id = #{document.updatorId},
-    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     status_cd = #{document.statusCd}
     WHERE document_id = #{document.documentId}
     AND tenant_id = #{document.tenantId}
@@ -341,7 +341,7 @@
     update bt_dc_document
     set document_name = #{libraryName},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where library_id = #{libraryId}
     and document_type = 'ROOT'
     and status_cd = '00A'
@@ -351,7 +351,7 @@
     set updator_id = #{updatorId},
     revision = revision + 1,
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId}
     and status_cd = '00A'
   </update>
@@ -378,7 +378,7 @@
     set permission_mode = #{permissionMode},
     updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId}
     and status_cd = '00A'
   </update>
@@ -402,7 +402,7 @@
         content_source = 'ONLINE',
         is_convert = 'T',
         updator_id = #{userId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND status_cd = '00A'
   </update>
@@ -413,7 +413,7 @@
         content_source = 'ONLINE',
         is_convert = 'T',
         updator_id = #{userId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND status_cd = '00A'
   </update>
@@ -421,7 +421,7 @@
    UPDATE bt_dc_document
     SET
     library_id = #{libraryId},
-    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id in <foreach item="item" index="index" collection="documentIds" open="(" separator="," close=")">
       #{item}
     </foreach>
@@ -430,7 +430,7 @@
   <update id="updateReleasedType">
     UPDATE bt_dc_document
     SET released = #{releasedType},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND status_cd = '00A'
   </update>
@@ -451,7 +451,7 @@
   <update id="updatePreDocumentId">
   UPDATE bt_dc_document
     SET prev_document_id = #{documentId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE prev_document_id = #{prevDocumentId}
       AND status_cd = '00A'
   </update>

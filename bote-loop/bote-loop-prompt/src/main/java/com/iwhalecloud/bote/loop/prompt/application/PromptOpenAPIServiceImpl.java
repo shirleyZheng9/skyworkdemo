@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.GetPromptParam;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.PromptKeyVersionPair;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.PromptOptions;
 import com.iwhalecloud.bote.loop.prompt.domain.service.IPromptService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

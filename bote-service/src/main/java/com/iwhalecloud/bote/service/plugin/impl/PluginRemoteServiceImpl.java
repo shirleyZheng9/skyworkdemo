@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.plugin.impl;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.service.plugin.IPluginRemoteService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.ParameterizedTypeReference;

@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.common.diffc.factory;
 
 import com.iwhalecloud.bote.doc.enums.DocSequences;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO;
-import com.iwhalecloud.bss.litchi.diffc.factory.IDSupplierFactory;
+import com.cmsr.tiangong.diffc.factory.IDSupplierFactory;
 import org.springframework.stereotype.Component;
 
 /**

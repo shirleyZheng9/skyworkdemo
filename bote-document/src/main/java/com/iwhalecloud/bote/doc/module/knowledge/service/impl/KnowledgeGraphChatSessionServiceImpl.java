@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.knowledge.service.impl;
 import com.iwhalecloud.bote.doc.module.knowledge.entity.KnowledgeGraphSessionRelEntity;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeGraphChatSessionMapper;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IKnowledgeGraphChatSessionService;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.Date;
 import java.util.function.Supplier;
 import lombok.RequiredArgsConstructor;

@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.pdf.page.HomePage;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.page.ItemDetailPage;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.page.ItemPage;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.page.ScoreDistributionPage;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.AllArgsConstructor;
 import org.openpdf.text.Document;
 import org.openpdf.text.PageSize;

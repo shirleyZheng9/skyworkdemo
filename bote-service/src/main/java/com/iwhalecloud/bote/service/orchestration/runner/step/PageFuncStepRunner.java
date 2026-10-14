@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.orchestration.step.PageFuncStep;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.dto.skill.SimplePageFuncDTO;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;

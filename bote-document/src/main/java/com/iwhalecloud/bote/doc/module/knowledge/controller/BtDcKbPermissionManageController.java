@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseBatchPermissio
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBasePermissionRequestDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.BtDcKbPermissionQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IBtDcKbPermissionManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

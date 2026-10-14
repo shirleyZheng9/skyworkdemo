@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.diffc.persist.impl;
 
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import com.iwhalecloud.bote.dto.base.LabelDTO;
 import com.iwhalecloud.bote.mapper.base.LabelManageMapper;
 import org.springframework.stereotype.Component;

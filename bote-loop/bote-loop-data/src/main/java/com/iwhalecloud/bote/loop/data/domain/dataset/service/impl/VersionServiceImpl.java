@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.DatasetWithSche
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.VersionWithDatasetResult;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.JobUtils;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.VersionUtils;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

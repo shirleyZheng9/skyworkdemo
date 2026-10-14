@@ -64,9 +64,9 @@
     #{dto.memoryType},
     #{dto.tenantId},
     #{dto.sceneId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -100,9 +100,9 @@
       #{dto.memoryType},
       #{dto.tenantId},
       #{dto.sceneId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -137,9 +137,9 @@
         #{dto.memoryType},
         #{dto.tenantId},
         #{dto.sceneId},
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         #{dto.statusCd},
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         #{dto.creatorId},
         #{dto.updatorId},
         #{dto.remark}
@@ -161,7 +161,7 @@
     <if test="dto.checkFieldUpdateFlag('remark')">
       remark = #{dto.remark},
     </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     </set>
     WHERE id = #{dto.id}
@@ -195,7 +195,7 @@
       AND bot_id = #{botId}
       AND creator_id = #{userId}
       AND file_name = #{fileName}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectIdByFileName" resultType="java.lang.Long">
@@ -206,13 +206,13 @@
       AND bot_id = #{botId}
       AND creator_id = #{userId}
       AND file_name = #{fileName}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <update id="updateFileContentById">
     UPDATE bt_ai_workspace
     SET file_content = #{fileContent},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -251,7 +251,7 @@
     <if test="sceneId != null">
       AND scene_id = #{sceneId}
     </if>
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectMemoryAiWorkspacePage" resultType="com.iwhalecloud.bote.dto.agent.AiWorkspaceDTO">

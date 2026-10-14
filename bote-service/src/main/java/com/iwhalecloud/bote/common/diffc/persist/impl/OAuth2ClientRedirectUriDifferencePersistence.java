@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO;
 import com.iwhalecloud.bote.mapper.oauth.OAuth2ClientRedirectUriMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 
 /**
  * 数据差异保存服务：OAuth2客户端 授权URL

@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.agent.SimpleAiEnvVariableDTO;
 import com.iwhalecloud.bote.dto.bot.SimpleBotDTO;
 import com.iwhalecloud.bote.mapper.agent.GeneralAgentQueryMapper;
 import com.iwhalecloud.bote.mapper.bot.BotQueryMapper;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseLocalCache;
+import com.cmsr.tiangong.cache.helper.BaseLocalCache;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;

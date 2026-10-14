@@ -61,7 +61,7 @@
   <update id="updateMemoryContent">
     UPDATE bt_bot_session_msg_text
     SET memory_content = #{memoryContent},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE msg_id = #{msgId}
   </update>
 

@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.bot.SimpleBotSceneRelDTO;
 import com.iwhalecloud.bote.dto.chat.ChatThemeDTO;
 import com.iwhalecloud.bote.mapper.bot.BotQueryMapper;
 import com.iwhalecloud.bote.mapper.bot.BotRelaManageMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

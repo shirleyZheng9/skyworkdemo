@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.doc.module.control.base.permission.NodePermission;
 import com.iwhalecloud.bote.doc.module.control.base.role.ControlRole;
 import com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

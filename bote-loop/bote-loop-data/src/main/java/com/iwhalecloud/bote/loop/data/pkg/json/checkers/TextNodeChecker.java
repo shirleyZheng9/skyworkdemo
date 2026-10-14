@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.data.pkg.json.checkers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.iwhalecloud.bote.loop.data.pkg.json.JSONSchemaSpec;
 import com.iwhalecloud.bote.loop.data.pkg.json.JsonNodeChecker;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 public class TextNodeChecker implements JsonNodeChecker {
   @Override

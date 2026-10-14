@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.base.OperLogDTO;
 import com.iwhalecloud.bote.dto.base.OperLogDetailDTO;
 import com.iwhalecloud.bote.dto.base.query.OperLogQueryParams;
 import com.iwhalecloud.bote.service.base.IOperLogService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

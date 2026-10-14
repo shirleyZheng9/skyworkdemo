@@ -21,7 +21,7 @@ import com.iwhalecloud.bote.mapper.chat.SessionMsgMapper;
 import com.iwhalecloud.bote.service.chat.context.ChatContext;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.ChatReplyHandler;
 import com.iwhalecloud.bote.service.scene.ISceneChatService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;

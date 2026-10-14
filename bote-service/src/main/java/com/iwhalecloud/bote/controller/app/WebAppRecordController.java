@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.app.WebAppRecordDTO;
 import com.iwhalecloud.bote.dto.app.query.WebAppRecordQueryParams;
 import com.iwhalecloud.bote.service.app.IWebAppRecordService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -27,7 +27,8 @@ import com.iwhalecloud.bote.mcp.dto.response.CallToolResult;
 import com.iwhalecloud.bote.mcp.dto.response.InitializeResult;
 import com.iwhalecloud.bote.mcp.dto.response.ListToolsResult;
 import com.iwhalecloud.bote.mcp.dto.response.LoggingMessageNotification;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.iwhalecloud.bote.mcp.dto.response.ReadResourceResult;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
@@ -277,6 +278,50 @@ class McpClientTest {
     feedResponse = false; // 不回送响应 → 超时
 
     assertThatThrownBy(() -> client.callTool(new CallToolRequest("slowTool", null)))
+      .isInstanceOf(BssException.class)
+      .hasMessageContaining("超时");
+  }
+
+  // ----------------------------------------------------------------------
+  // readResource
+  // ----------------------------------------------------------------------
+
+  @Test
+  void readResource_success_returnsContents() {
+    McpClient client = newInitializedClient();
+    // 模拟服务端返回的原始 JSON 结构，覆盖文本资源与二进制资源
+    responder = req -> new JsonRpcResponse(req.getId(), Map.of("contents", List.of(
+      Map.of("uri", "file:///a.txt", "mimeType", "text/plain", "text", "hello"),
+      Map.of("uri", "file:///a.png", "mimeType", "image/png", "blob", "aGVsbG8="))));
+
+    ReadResourceResult result = client.readResource("file:///a.txt");
+
+    assertThat(result.getContents()).hasSize(2);
+    assertThat(result.getContents().get(0).getUri()).isEqualTo("file:///a.txt");
+    assertThat(result.getContents().get(0).getText()).isEqualTo("hello");
+    assertThat(result.getContents().get(0).getBlob()).isNull();
+    assertThat(result.getContents().get(1).getBlob()).isEqualTo("aGVsbG8=");
+    assertThat(result.getContents().get(1).getText()).isNull();
+  }
+
+  @Test
+  void readResource_errorResponse_throwsBssException() {
+    McpClient client = newInitializedClient();
+    responder = req -> new JsonRpcResponse(req.getId(),
+      new JsonRpcError(McpErrorCodes.INTERNAL_ERROR, "boom"));
+
+    assertThatThrownBy(() -> client.readResource("file:///a.txt"))
+      .isInstanceOf(BssException.class)
+      .hasMessageContaining("处理 MCP 请求失败");
+  }
+
+  @Test
+  void readResource_timeout_throwsBssException() {
+    McpClient client = newClient(Duration.ofSeconds(5), Duration.ofMillis(50));
+    client.initialize();
+    feedResponse = false; // 不回送响应 → 超时
+
+    assertThatThrownBy(() -> client.readResource("file:///a.txt"))
       .isInstanceOf(BssException.class)
       .hasMessageContaining("超时");
   }

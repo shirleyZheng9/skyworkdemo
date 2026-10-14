@@ -1,9 +1,8 @@
 package com.iwhalecloud.bote.job;
-
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.iwhalecloud.bote.service.dashboard.IModelUsageAggregationService;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 数据概览看板模型累计使用量汇总任务。
@@ -16,7 +15,7 @@ import com.iwhalecloud.bss.litchi.util.SpringUtil;
  * <p>该任务不提供外部调用接口。多节点同时触发时，由检查点行锁串行化日志消费，
  * 防止同一批日志被重复统计。</p>
  */
-public class AggregateModelUsageDashboardJob extends AbstractSimpleJob {
+public class AggregateModelUsageDashboardJob extends AbstractSimpleJob{
   /**
    * 单次调度最多处理 100 批，每批 2000 条，即最多追赶 20 万条日志。
    * 设置上限可避免积压期间一个任务长期占用线程，剩余数据由后续周期继续处理。

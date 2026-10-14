@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.listener.event.DocumentPathChangedEvent;
 import com.iwhalecloud.bote.doc.listener.event.DocumentPathChangedEvent.PathChangeType;
 import com.iwhalecloud.bote.doc.module.control.service.DocumentNodeService;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorEventListener;
+import com.cmsr.tiangong.disruptor.DisruptorEventListener;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

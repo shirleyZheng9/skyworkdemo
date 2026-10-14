@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.mcp.McpServerDTO;
 import com.iwhalecloud.bote.mapper.agent.AiMcpManageMapper;
 import com.iwhalecloud.bote.service.agent.IAiMcpManageService;
 import com.iwhalecloud.bote.service.mcp.IMcpServerManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

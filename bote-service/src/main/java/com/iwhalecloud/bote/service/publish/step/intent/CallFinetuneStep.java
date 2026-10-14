@@ -7,8 +7,8 @@ import com.iwhalecloud.bote.dto.base.PublishStepDTO;
 import com.iwhalecloud.bote.dto.model.request.FinetuneRequest;
 import com.iwhalecloud.bote.service.model.helper.SmallModelAnswerHelper;
 import com.iwhalecloud.bote.service.publish.step.AbstractPublishStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 步骤执行器：执行微调训练

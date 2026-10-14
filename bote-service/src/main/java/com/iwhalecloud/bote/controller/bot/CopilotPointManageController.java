@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.bot.SimpleCopilotPointDTO;
 import com.iwhalecloud.bote.dto.bot.query.CopilotPointParams;
 import com.iwhalecloud.bote.dto.bot.query.PointQueryParams;
 import com.iwhalecloud.bote.service.bot.ICopilotPointManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;

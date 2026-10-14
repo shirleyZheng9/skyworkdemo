@@ -27,7 +27,7 @@ import com.iwhalecloud.bote.loop.client.prompt.manage.dto.SaveDraftResponse;
 import com.iwhalecloud.bote.loop.client.prompt.manage.dto.UpdatePromptRequest;
 import com.iwhalecloud.bote.loop.client.prompt.manage.dto.UpdatePromptResponse;
 import com.iwhalecloud.bote.loop.prompt.application.PromptMigrationService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -38,8 +38,8 @@
     #{entity.creatorId},
     #{entity.updatorId},
     #{entity.tenantId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{entity.statusCd}
     )
   </insert>
@@ -50,7 +50,7 @@
     ydoc = #{entity.ydoc},
     text_content = #{entity.textContent},
     updator_id = #{entity.updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{entity.id}
     AND status_cd = '00A'
   </update>
@@ -58,7 +58,7 @@
   <update id="deleteByPrimaryKey">
     UPDATE bt_dc_doc_content
     SET status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
     AND status_cd = '00A'
   </update>

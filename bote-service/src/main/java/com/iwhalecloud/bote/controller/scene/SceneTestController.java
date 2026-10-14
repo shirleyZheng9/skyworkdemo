@@ -25,7 +25,7 @@ import com.iwhalecloud.bote.service.orchestration.helper.NodeParamConvertHelper;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.SceneTestReplyHandler;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
 import com.iwhalecloud.bote.service.scene.ISceneChatService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

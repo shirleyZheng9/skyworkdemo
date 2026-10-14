@@ -19,9 +19,10 @@ import com.iwhalecloud.bote.service.datasync.util.DataSyncDocumentUtil;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncFileUtil;
 import com.iwhalecloud.bote.service.datasync.util.DatasyncScriptUtil;
 import com.iwhalecloud.bote.service.element.IResourceElementService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.database.util.DbUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.database.util.DbUtil;
+import com.cmsr.tiangong.database.util.TransactionUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -187,7 +188,7 @@ public class DataSyncProducer {
     if (DataSyncCodeEnum.KNOWLEDGE.getCode().equals(definition.getDataConfigCode())
       && DataSyncConsts.TABLE_BT_KNOWLEDGE_BASE.equals(definition.getTableCode())
       || DataSyncCodeEnum.KNOWLEDGE.getCode().equals(definition.getDataConfigCode())
-        && DataSyncConsts.TABLE_BT_DOCUMENT.equals(definition.getTableCode())) {
+      && DataSyncConsts.TABLE_BT_DOCUMENT.equals(definition.getTableCode())) {
       List<DataSyncTableDefinition> documentCenterDefinitions = params.getDocumentCenterDefinitions();
       if (CollectionUtils.isEmpty(documentCenterDefinitions)) {
         params.setDocumentCenterDefinitions(new ArrayList<>());
@@ -284,7 +285,7 @@ public class DataSyncProducer {
    * @return 是否跳过
    */
   private boolean buildQuerySql(DataSyncParams params, DataSyncTableDefinition definition, String foreignKey,
-    Map<String, List<Object>> foreignKeyValues, StringBuilder querySql, List<Object> args) {
+                                Map<String, List<Object>> foreignKeyValues, StringBuilder querySql, List<Object> args) {
     querySql.append("SELECT * FROM ").append(definition.getTableCode()).append(" WHERE 1 = 1 ");
     if (StringUtils.isNotEmpty(definition.getSyncAllQueryCondition())) {
       String condition = definition.getSyncAllQueryCondition().replace(":tenantId", params.getTenantId().toString());
@@ -294,7 +295,7 @@ public class DataSyncProducer {
   }
 
   private boolean buildWhereCondition(DataSyncTableDefinition definition, String foreignKey, Map<String, List<Object>> foreignKeyValues,
-    StringBuilder querySql, List<Object> args) {
+                                      StringBuilder querySql, List<Object> args) {
     if (BooleanUtils.isTrue(definition.getMainTable())) {
       if (StringUtils.isEmpty(definition.getValues())) {
         return true;
@@ -326,7 +327,7 @@ public class DataSyncProducer {
   }
 
   private boolean buildOtherTableWhereCondition(DataSyncTableDefinition definition, String foreignKey, Map<String, List<Object>> foreignKeyValues,
-    StringBuilder querySql, List<Object> args) {
+                                                StringBuilder querySql, List<Object> args) {
     if (StringUtils.isEmpty(definition.getForeignKey())) {
       return false;
     }
@@ -364,17 +365,22 @@ public class DataSyncProducer {
    */
   private List<Map<String, Object>> queryTableRecord(String sql, List<Object> args, DataSyncTableDefinition definition) {
     String countSql = "SELECT COUNT(*) FROM (" + sql + ") TEMP ";
-    int total = ObjectUtils.getIfNull(jdbcTemplate.queryForObject(countSql, Integer.class, args.toArray(new Object[0])), 0);
+    Object[] params = args.toArray(new Object[0]);
+    return doQueryTableRecord(countSql, sql, params, definition);
+  }
+
+  private List<Map<String, Object>> doQueryTableRecord(String countSql, String sql, Object[] params, DataSyncTableDefinition definition) {
+    int total = ObjectUtils.getIfNull(jdbcTemplate.queryForObject(countSql, Integer.class, params), 0);
     int limit = 10000;
     if (total <= limit) {
-      return jdbcTemplate.query(sql, new LowerCaseColumnMapRowMapper(), args.toArray(new Object[0]));
+      return jdbcTemplate.query(sql, new LowerCaseColumnMapRowMapper(), params);
     }
     // 分页查询，补充主键排序条件，避免多批次查询出现数据重复
     String orderBy = " order by " + definition.getPrimaryKey() + " ";
     List<Map<String, Object>> records = new ArrayList<>();
     for (int i = 0; i < (total / limit) + 1; i++) {
       String querySql = SqlPageConvert.convert(DbUtil.getDatabaseType().name().toLowerCase(), sql + orderBy, i + 1, limit);
-      records.addAll(jdbcTemplate.query(querySql, new LowerCaseColumnMapRowMapper(), args.toArray(new Object[0])));
+      records.addAll(jdbcTemplate.query(querySql, new LowerCaseColumnMapRowMapper(), params));
     }
     return records;
   }

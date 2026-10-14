@@ -56,7 +56,7 @@
     SET contributor_score = #{contributorScore},
         updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
       AND status_cd = '00A'
   </update>
@@ -115,7 +115,7 @@
       WHEN #{update.id} THEN #{update.updatorId}
     </foreach>
     END,
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id IN
     <foreach collection="updates" item="update" open="(" separator="," close=")">
       #{update.id}
@@ -139,7 +139,7 @@
     ORDER BY contributor_score DESC, created_time DESC
     ) tmp
     where tmp.status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     #{limit}
   </select>
 
@@ -153,14 +153,14 @@
     ORDER BY contributor_score DESC, created_time DESC
     ) tmp
     where tmp.status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     #{limit}
   </select>
 
   <update id="deleteByDocumentIdAndUserId">
     update bt_dc_document_contributor
     set status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updator_id = #{updatorId}
     where document_id = #{documentId}
     and user_id = #{userId}
@@ -175,9 +175,9 @@
     AND a.tenant_id = #{query.tenantId}
     <if test="query.searchContent != null and query.searchContent != ''">
       AND u.real_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
   </select>
 </mapper>

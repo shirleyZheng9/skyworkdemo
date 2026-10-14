@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.controller.organization;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.organization.OrganizationFieldConfigDTO;
 import com.iwhalecloud.bote.service.organization.IOrganizationFieldConfigService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

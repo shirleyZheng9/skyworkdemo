@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.chat.ChatReplyThemeDTO;
 import com.iwhalecloud.bote.dto.chat.query.ChatReplyThemeQueryParams;
 import com.iwhalecloud.bote.service.chat.IChatReplyThemeManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

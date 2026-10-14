@@ -6,9 +6,9 @@ import com.iwhalecloud.bote.doc.common.tenant.ThreadContextRunner;
 import com.iwhalecloud.bote.dto.dashboard.KnowledgeFileTypeCountDTO;
 import com.iwhalecloud.bote.mapper.dashboard.DataDashboardMapper;
 import com.iwhalecloud.bote.service.dashboard.support.DashboardRefreshCoordinator;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshCacheService;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshEventListener;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
+import com.cmsr.tiangong.cache.refresh.IRefreshCacheService;
+import com.cmsr.tiangong.cache.refresh.IRefreshEventListener;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +30,7 @@ import org.springframework.util.Assert;
  * @since 2026-08-29
  */
 @Component
-public class KnowledgeFileDistributionRefreshService implements Refreshable, IRefreshEventListener {
+public class KnowledgeFileDistributionRefreshService implements Refreshable, IRefreshEventListener{
 
   private static final Logger logger =
     LoggerFactory.getLogger(KnowledgeFileDistributionRefreshService.class);

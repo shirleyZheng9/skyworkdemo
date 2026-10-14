@@ -3,8 +3,8 @@ package com.iwhalecloud.bote.doc.job;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentHistoryCleanupService;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 定时任务：清理文档历史记录

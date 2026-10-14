@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.asr.realtime;
 import com.iwhalecloud.bote.dto.asr.RealtimeAsrResultDTO;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.dto.asr.VideoProviderInfoDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;

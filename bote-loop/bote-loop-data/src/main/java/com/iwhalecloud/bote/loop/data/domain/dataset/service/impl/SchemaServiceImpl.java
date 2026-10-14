@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.repo.IDatasetAPI;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.SchemaService;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.SchemaUtils;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

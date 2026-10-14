@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import ${package.dto}.${dtoName};
 import ${package.query}.${queryParamsName};
 import ${package.service}.${serviceName};
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

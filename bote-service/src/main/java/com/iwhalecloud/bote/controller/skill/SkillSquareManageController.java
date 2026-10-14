@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.skill.SkillSquareBulkExportJobStatusVO;
 import com.iwhalecloud.bote.dto.skill.query.SkillInstallLogQueryParams;
 import com.iwhalecloud.bote.dto.skill.query.SkillSquareAdminQueryParams;
 import com.iwhalecloud.bote.service.skill.ISkillSquareService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Encoding;

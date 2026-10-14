@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.entity.chat;
 
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffId;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.diffc.annotations.DiffField;
+import com.cmsr.tiangong.diffc.annotations.DiffId;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import lombok.Getter;
@@ -57,4 +57,7 @@ public class SessionEntity extends BaseEntity {
   @DiffField(name = "IS_TEST")
   @Schema(description = "是否调试")
   private String isTest;
+  @DiffField(name = "PUBLISH_ID")
+  @Schema(description = "发布记录 ID（发布链接会话隔离）")
+  private Long publishId;
 }

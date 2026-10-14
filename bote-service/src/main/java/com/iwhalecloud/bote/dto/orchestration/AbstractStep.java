@@ -51,7 +51,7 @@ import com.iwhalecloud.bote.dto.orchestration.step.database.InsertRecordStep;
 import com.iwhalecloud.bote.dto.orchestration.step.database.QueryRecordsStep;
 import com.iwhalecloud.bote.dto.orchestration.step.database.QuerySingleRecordStep;
 import com.iwhalecloud.bote.dto.orchestration.step.database.UpdateRecordsStep;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.ObjectUtils;

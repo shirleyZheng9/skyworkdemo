@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.config.properties.TiangongAiGatewayProperties;
 import com.iwhalecloud.bote.dto.model.gateway.AimarketAiKeyResponse;
 import com.iwhalecloud.bote.dto.model.gateway.AimarketModelPageResponse;
 import com.iwhalecloud.bote.dto.model.gateway.AimarketModelRecord;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

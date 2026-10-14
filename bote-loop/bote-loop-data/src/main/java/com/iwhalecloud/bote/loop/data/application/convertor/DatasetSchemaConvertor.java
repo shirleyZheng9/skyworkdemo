@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldStatus;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.JSONSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.MultiModalSpec;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.SchemaKey;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 /**
  * 数据集模式转换器

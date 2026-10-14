@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetSpec;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetStatus;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetVisibility;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.SecurityLevel;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;

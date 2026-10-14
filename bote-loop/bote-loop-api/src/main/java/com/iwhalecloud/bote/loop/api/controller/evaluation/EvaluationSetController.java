@@ -40,7 +40,7 @@ import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluation
 import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluationSetResponse;
 import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluationSetSchemaRequest;
 import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluationSetSchemaResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -248,6 +248,10 @@ public class EvaluationSetController {
     // 如果请求体中没有 workspaceId，则使用 tenantId
     if (request.getWorkspaceId() == null && tenantId != null) {
       request.setWorkspaceId(tenantId);
+    }
+    // 如果请求体中没有 tenantId，则使用查询参数中的 tenantId（用于目录树展开子目录）
+    if (request.getTenantId() == null && tenantId != null) {
+      request.setTenantId(tenantId);
     }
     PageInfo<EvaluationSetDTO> pageInfo = evaluationSetService.listEvaluationSets(request);
     ListEvaluationSetsResponse response = new ListEvaluationSetsResponse();

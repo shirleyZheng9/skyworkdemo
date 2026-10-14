@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
-import com.iwhalecloud.bss.litchi.cache.refresh.CacheRefresherRegistry;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.cache.refresh.CacheRefresherRegistry;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

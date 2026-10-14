@@ -10,8 +10,8 @@ import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.SessionUtil;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IDocumentManageService;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 定时任务：全员文档库

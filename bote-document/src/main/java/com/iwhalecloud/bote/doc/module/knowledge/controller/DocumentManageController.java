@@ -15,9 +15,9 @@ import com.iwhalecloud.bote.doc.module.knowledge.service.IKnowledgeBaseManageSer
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.DocChainConfigHelper;
 import com.iwhalecloud.bote.dto.knowledge.docchain.DocChainDocumentDetailDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.DocChainDocumentHelper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshCacheService;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.cache.refresh.IRefreshCacheService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

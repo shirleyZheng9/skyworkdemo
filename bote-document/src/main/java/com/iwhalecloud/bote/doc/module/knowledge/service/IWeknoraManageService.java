@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.knowledge.service;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.WeKnoraTokenDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraKnowledgeBaseRespDTO;
 
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

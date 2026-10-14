@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.app.WorkbenchAppDTO;
 import com.iwhalecloud.bote.dto.app.WorkbenchAppRelDTO;
 import com.iwhalecloud.bote.dto.app.query.WorkbenchAppQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 工作台应用服务

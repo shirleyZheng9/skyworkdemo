@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.doc.module.document.dto.DocumentActivityQueryParams;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentActivityService;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentService;
 import com.iwhalecloud.bote.doc.module.library.service.DocumentLibraryPermissionService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.controller.base;
 
 import com.google.common.collect.ImmutableMap;
 import com.iwhalecloud.bote.common.util.ExpUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Hidden;
 import java.io.IOException;

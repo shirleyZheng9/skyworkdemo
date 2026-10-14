@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.LogUtil;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.LogUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.net.MalformedURLException;
 import java.net.URI;

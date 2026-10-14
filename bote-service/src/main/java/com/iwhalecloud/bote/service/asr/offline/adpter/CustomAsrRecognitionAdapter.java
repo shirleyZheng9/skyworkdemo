@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.asr.offline.adpter;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.GroovyUtil;
 import com.iwhalecloud.bote.service.asr.offline.AbstractAsrRecognitionAdapter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.File;
 import java.util.Map;
 import org.apache.commons.collections4.MapUtils;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.iwhalecloud.bote.loop.data.pkg.json.JSONSchemaSpec;
 import com.iwhalecloud.bote.loop.data.pkg.json.JSONSchemaSpecChecker;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;

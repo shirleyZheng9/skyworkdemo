@@ -4,8 +4,8 @@ import com.iwhalecloud.bote.dto.base.CatalogDTO;
 import com.iwhalecloud.bote.dto.base.LabelDTO;
 import com.iwhalecloud.bote.dto.base.LabelObjectRelDTO;
 import com.iwhalecloud.bote.dto.job.JobDTO;
-import com.iwhalecloud.bss.litchi.diffc.factory.IDSupplierFactory;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.diffc.factory.IDSupplierFactory;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import org.springframework.stereotype.Component;
 
 /**

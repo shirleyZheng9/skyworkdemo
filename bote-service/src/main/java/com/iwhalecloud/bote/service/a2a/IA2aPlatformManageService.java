@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.a2a;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO;
 import com.iwhalecloud.bote.dto.a2a.query.A2aPlatformQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

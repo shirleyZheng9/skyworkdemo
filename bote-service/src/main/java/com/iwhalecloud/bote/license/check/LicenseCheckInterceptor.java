@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.license.check;
 
 import com.iwhalecloud.bote.license.cache.LicenseCache;
 import com.iwhalecloud.bote.license.entity.LicenseExtInfoDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;

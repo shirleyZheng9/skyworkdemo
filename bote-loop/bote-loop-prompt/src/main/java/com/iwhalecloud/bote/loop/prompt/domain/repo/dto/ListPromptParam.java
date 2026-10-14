@@ -28,8 +28,8 @@ public class ListPromptParam extends PagingQueryParams {
   private Integer orderBy;
   @Schema(description = "是否升序")
   private Boolean asc;
-  @Schema(description = "目录ID")
-  private Long catalogItemId;
+  @Schema(description = "目录ID列表（当前目录及其所有子目录）")
+  private List<Long> catalogItemIds;
   @Schema(description = "Prompt类型")
   private String promptType;
 }

@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.planning.SimplePlanDTO;
 import com.iwhalecloud.bote.dto.planning.SimplePlanDTO.SimplePlanStepDTO;
 import com.iwhalecloud.bote.mapper.bot.BotQueryMapper;
 import com.iwhalecloud.bote.service.model.helper.LargeModelAnswerHelper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

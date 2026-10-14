@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.dto.portal.TenantUserDTO;
 import com.iwhalecloud.bote.dto.portal.query.TenantQueryParams;
 import com.iwhalecloud.bote.dto.workspace.SimpleWorkspaceDTO;
 import com.iwhalecloud.bote.service.portal.ITenantManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

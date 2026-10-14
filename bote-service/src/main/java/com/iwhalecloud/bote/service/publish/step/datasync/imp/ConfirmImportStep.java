@@ -11,11 +11,11 @@ import com.iwhalecloud.bote.dto.datasync.query.DataSyncParams;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncDirUtil;
 import com.iwhalecloud.bote.service.portal.ITenantManageService;
 import com.iwhalecloud.bote.service.publish.step.datasync.AbstractDataSyncStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshCacheService;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.cache.refresh.IRefreshCacheService;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
+import com.cmsr.tiangong.database.util.TransactionUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,8 +55,8 @@ public class ConfirmImportStep extends AbstractDataSyncStep<Object> {
     // 组装提示信息
     String tip = wrapTipMessage(params, result);
     DataSyncDirUtil.clearWorkspace(params);
-    // 自动纠错
-    autoRrrorCorrection(params.getTenantId(), params.getSpaceId());
+    // 自动纠错，跨租户导入场景下以实际目标租户为准
+    autoRrrorCorrection(getRealTenantId(params), params.getSpaceId());
     if (result.isSuccess()) {
       if (StringUtils.isNotEmpty(tip)) {
         step.setOutputJson(tip);
@@ -82,7 +82,7 @@ public class ConfirmImportStep extends AbstractDataSyncStep<Object> {
     // 检查当前用户是否需要加入该项目
     Long userId = SessionUtil.getLoginInfo().getUserId();
     if (!SessionUtil.isSuperAdmin(userId)) {
-      tenantManageService.addTenantUser(params.getTenantId(), userId, BaseConsts.ROLE_MANAGE);
+      tenantManageService.addTenantUser(getRealTenantId(params), userId, BaseConsts.ROLE_MANAGE);
     }
     StringBuilder message = new StringBuilder();
     List<Map<String, Object>> knowledges = DataSyncDirUtil.getDataRecords(params, "KNOWLEDGE_BASE-BT_KNOWLEDGE_BASE");
@@ -269,5 +269,13 @@ public class ConfirmImportStep extends AbstractDataSyncStep<Object> {
       params.add(tenantId);
       TransactionUtil.executeNew(() -> jdbcTemplate.update(sql, params.toArray()));
     }
+  }
+
+  /**
+   * 获取实际目标租户 ID
+   * <p>跨租户导入场景下，数据已通过复制机制重定向到 resetTenantId，纠错与加人均应以目标租户为准</p>
+   */
+  private Long getRealTenantId(DataSyncParams params) {
+    return params.getResetTenantId() != null ? params.getResetTenantId() : params.getTenantId();
   }
 }

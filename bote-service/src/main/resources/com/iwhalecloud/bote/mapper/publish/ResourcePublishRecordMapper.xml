@@ -51,9 +51,9 @@
       #{dto.callbackCode},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.tenantId},
       #{dto.lastAccessTime}
     )
@@ -67,7 +67,7 @@
     AND a.publish_channel = #{publishChannel}
     AND a.tenant_id = #{tenantId}
     AND a.status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="getRecordByExtResourceIdAndChannel" resultType="com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO">
@@ -77,7 +77,7 @@
     WHERE a.callback_code = #{callbackCode}
     AND a.publish_channel = #{publishChannel}
     AND a.status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <update id="updateResourcePublishRecord">
@@ -88,7 +88,7 @@
         publish_msg = #{dto.publishMsg},
         updator_id = #{dto.updatorId},
         callback_code = #{dto.callbackCode},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE record_id = #{dto.recordId}
     AND status_cd = '00A'
   </update>
@@ -97,7 +97,7 @@
     UPDATE bt_resource_publish_record
     SET status_cd = '00X',
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND tenant_id = #{tenantId}
       AND record_id = #{recordId}
@@ -165,17 +165,17 @@
     <if test="params.resourceName != null and params.resourceName != ''">
       AND (
         (a.resource_type = 'MCP' AND m.server_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{params.resourceName}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
         OR (a.resource_type = 'AGENT' AND s.scene_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{params.resourceName}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
         OR (a.resource_type = 'TOOL' AND f.flow_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
           #{params.resourceName}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
       )
     </if>
     ORDER BY a.updated_time DESC
@@ -183,7 +183,7 @@
 
   <update id="updateLastAccessTime">
     UPDATE bt_resource_publish_record
-    SET last_access_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    SET last_access_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE callback_code = #{callbackCode}
     AND status_cd = '00A'
   </update>
@@ -191,7 +191,7 @@
   <update id="updatePublishParams">
     UPDATE bt_resource_publish_record
     SET publish_params = #{publishParams},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE callback_code = #{callbackCode}
     AND status_cd = '00A'
   </update>

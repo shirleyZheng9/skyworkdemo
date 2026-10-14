@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.suggestion.SuggestionTermSaveDTO;
 import com.iwhalecloud.bote.dto.suggestion.SuggestionTermDTO;
 import com.iwhalecloud.bote.dto.suggestion.SuggestionTermSearchDTO;
 import com.iwhalecloud.bote.dto.suggestion.query.SuggestionTermQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletResponse;

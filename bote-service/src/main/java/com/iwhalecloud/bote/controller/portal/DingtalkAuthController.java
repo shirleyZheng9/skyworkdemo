@@ -21,8 +21,8 @@ import com.iwhalecloud.bote.dto.portal.DingTalkParameterDTO;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
 import com.iwhalecloud.bote.portal.config.properties.DingTalkLoginProperties;
 import com.iwhalecloud.bote.portal.support.DingtalkAuthSupport;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 

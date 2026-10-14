@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.base;
 
 import com.iwhalecloud.bote.dto.base.DcCfgSafeDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.base.DcCfgDTO;
 import com.iwhalecloud.bote.dto.base.DcCfgSaveRequest;
 import java.util.List;

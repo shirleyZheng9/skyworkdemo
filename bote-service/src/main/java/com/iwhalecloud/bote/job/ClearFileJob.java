@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.job;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.iwhalecloud.bote.service.base.impl.FileInfoServiceImpl;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 清理文件定时任务

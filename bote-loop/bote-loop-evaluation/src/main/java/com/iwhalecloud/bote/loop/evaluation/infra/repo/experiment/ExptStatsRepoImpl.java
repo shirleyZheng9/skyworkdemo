@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.StatsCntArithOp;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExptStatsRepo;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptStatsDAO;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptStatsConvertor;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

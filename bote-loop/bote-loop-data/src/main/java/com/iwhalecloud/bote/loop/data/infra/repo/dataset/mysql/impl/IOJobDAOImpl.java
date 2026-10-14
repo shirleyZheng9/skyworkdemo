@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.DeltaDatasetIOJob;
 import com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListIOJobsParams;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.IOJobDAO;
 import com.iwhalecloud.bote.mapper.loop.data.dataset.IOJobMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

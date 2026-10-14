@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.common.util.IconUtil;
 import com.iwhalecloud.bote.dto.app.WebAppDTO;
 import com.iwhalecloud.bote.dto.app.query.WebAppQueryParams;
 import com.iwhalecloud.bote.service.app.IWebAppService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;

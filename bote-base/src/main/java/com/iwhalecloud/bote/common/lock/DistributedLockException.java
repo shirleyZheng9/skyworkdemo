@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.lock;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.Getter;
 
 /**

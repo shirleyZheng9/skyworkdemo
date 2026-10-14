@@ -1,8 +1,7 @@
 package com.iwhalecloud.bote.service.dashboard.support;
-
 import com.iwhalecloud.bote.common.consts.CacheConsts;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;

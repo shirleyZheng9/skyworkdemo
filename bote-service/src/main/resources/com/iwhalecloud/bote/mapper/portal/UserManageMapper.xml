@@ -32,9 +32,9 @@
     AND a.status_cd = '00A'
     <if test="query.userName != null and query.userName != ''">
       AND (
-      a.user_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      a.user_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
-      a.real_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      a.real_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.userName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.systemCode != null and query.systemCode != ''">
@@ -78,13 +78,22 @@
     LIMIT 1
   </select>
 
+  <!-- 专用同步需要自行判断重复、禁用和软删，不能使用通用查询的有效记录 LIMIT 1 语义。 -->
+  <select id="selectUsersBySystemCodeAndExtUserId" resultType="com.iwhalecloud.bote.entity.portal.UserEntity">
+    SELECT <include refid="userColumns"/>
+    FROM bt_user a
+    WHERE a.system_code = #{systemCode}
+    AND a.ext_user_id = #{extUserId}
+    ORDER BY a.user_id ASC
+  </select>
+
   <update id="updateUserPassword">
     UPDATE bt_user
     SET password = #{password},
     updator_id = #{userId},
-    pwd_updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    pwd_updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
@@ -128,16 +137,16 @@
     #{dto.extUserId},
     #{dto.createTenantId},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark},
     #{dto.isLocked},
     #{dto.loginFailCount},
     #{dto.userState},
     #{dto.userExpDate},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE NOT EXISTS (
       SELECT 1
       FROM bt_user
@@ -198,7 +207,7 @@
         user_exp_date = #{dto.userExpDate},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE user_id = #{dto.userId}
   </update>
@@ -209,7 +218,7 @@
     real_name = #{dto.realName},
     phone_no = #{dto.phoneNo},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{dto.userId}
   </update>
 
@@ -217,7 +226,7 @@
     UPDATE bt_user
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
@@ -273,14 +282,14 @@
     WHERE status_cd = '00A'
       AND system_code = #{systemCode}
       AND user_name = #{userName}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <update id="updateTenantIdByUserId">
     UPDATE bt_user
     SET default_tenant_id = #{tenantId},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
@@ -297,7 +306,7 @@
     UPDATE bt_user
     SET default_tenant_id = null,
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id IN (<foreach collection="userIds" item="userId" separator=",">#{userId}</foreach>)
   </update>
 
@@ -343,12 +352,12 @@
       #{user.extUserId},
       #{user.createTenantId},
       #{user.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{user.statusCd},
       #{user.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{user.remark},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
   </insert>
@@ -388,12 +397,12 @@
       #{user.extUserId},
       #{user.createTenantId},
       #{user.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{user.statusCd},
       #{user.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{user.remark},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
     SELECT 1 FROM dual
@@ -419,10 +428,10 @@
       #{tenantUser.userId},
       #{tenantUser.userRole},
       #{tenantUser.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       '00A',
       #{tenantUser.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{tenantUser.remark}
       )
     </foreach>
@@ -448,10 +457,10 @@
       #{tenantUser.userId},
       #{tenantUser.userRole},
       #{tenantUser.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       '00A',
       #{tenantUser.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{tenantUser.remark}
       )
     </foreach>
@@ -487,21 +496,21 @@
   <update id="updateUserLoginFailCount">
     UPDATE bt_user
     SET login_fail_count = #{loginFailCount},
-    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time=<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
   <update id="updateUserLockState">
     UPDATE bt_user
     SET is_locked = #{isLocked},
-    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time=<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
   <update id="updateUserState">
     UPDATE bt_user
     SET user_state = #{userState},
-    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time=<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
@@ -534,7 +543,7 @@
   <update id="deleteDefaultTenantId">
     UPDATE bt_user
     SET default_tenant_id = null,
-    updated_time=<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time=<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE default_tenant_id = #{tenantId}
       AND status_cd = '00A'
   </update>

@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultFilterEntity;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.dto.ExptTurnResultFilterQueryCond;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.ck.IExptTurnResultFilterDAO;
 import com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnResultFilterMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

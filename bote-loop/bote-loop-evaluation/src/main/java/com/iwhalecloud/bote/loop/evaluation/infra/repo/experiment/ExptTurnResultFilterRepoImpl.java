@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.ck.IExptTurnRe
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.ck.convertor.ExptTurnResultFilterConvertor;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptTurnResultFilterKeyMappingDAO;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptTurnResultFilterKeyMappingConvertor;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

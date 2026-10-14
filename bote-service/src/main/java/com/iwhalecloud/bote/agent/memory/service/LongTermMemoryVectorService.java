@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.common.elasticsearch.ElasticsearchHelper;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.config.properties.ElasticSearchProperties;
 import com.iwhalecloud.bote.llm.client.EmbeddingClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

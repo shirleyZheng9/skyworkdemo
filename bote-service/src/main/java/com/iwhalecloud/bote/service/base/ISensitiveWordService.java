@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.base;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.base.SensitiveWordDTO;
 import com.iwhalecloud.bote.dto.base.query.SensitiveWordQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 
 /**

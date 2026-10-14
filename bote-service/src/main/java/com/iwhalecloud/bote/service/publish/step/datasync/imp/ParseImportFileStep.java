@@ -9,9 +9,9 @@ import com.iwhalecloud.bote.dto.workspace.WorkspaceDTO;
 import com.iwhalecloud.bote.service.portal.ITenantManageService;
 import com.iwhalecloud.bote.service.publish.step.datasync.AbstractDataSyncStep;
 import com.iwhalecloud.bote.service.workspace.IWorkspaceManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,17 +54,10 @@ public class ParseImportFileStep extends AbstractDataSyncStep<ImportDataParams> 
 
     ResultVO<Void> result = dataSyncService.parseImportFile(datasyncParams, tempFile);
     if (result.isSuccess()) {
-      if (!Objects.equals(params.getTenantId(), datasyncParams.getTenantId())) {
-        String validationError = validateTenantImport(params, datasyncParams);
-        if (validationError != null) {
-          return ResultVO.fail(validationError);
-        }
-      }
-      else if (params.getSpaceId() != null) {
-        String validationError = validateSpaceAndTenant(params);
-        if (validationError != null) {
-          return ResultVO.fail(validationError);
-        }
+      // 跨租户导入：目标租户与数据包租户不一致时，复用复制机制，将数据重定向到目标租户并重置主键
+      if (params.getTenantId() != null && !Objects.equals(params.getTenantId(), datasyncParams.getTenantId())) {
+        datasyncParams.setResetTenantId(params.getTenantId());
+        datasyncParams.setResetPrimaryKey(true);
       }
       datasyncParams.setFileId(params.getFileId());
       datasyncParams.setSpaceId(params.getSpaceId());

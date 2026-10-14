@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.skill.SimpleServiceMockDTO;
 import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
 import com.iwhalecloud.bote.mapper.skill.ServiceMockManageMapper;
 import com.iwhalecloud.bote.mapper.skill.SkillServiceManageMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

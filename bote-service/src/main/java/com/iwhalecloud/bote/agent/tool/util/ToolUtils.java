@@ -31,7 +31,7 @@ import com.iwhalecloud.bote.agent.annotation.ToolRequest;
 import com.iwhalecloud.bote.agent.tool.context.ToolContext;
 import com.iwhalecloud.bote.llm.client.dto.Function;
 import com.iwhalecloud.bote.llm.client.dto.schema.JsonSchemaNode;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;

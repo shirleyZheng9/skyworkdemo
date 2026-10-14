@@ -42,7 +42,7 @@
     ORDER BY CASE WHEN p.prev_pin_id IS NULL THEN 0 ELSE 1 END DESC, p.created_time ASC
     ) tmp
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 5
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 5
   </select>
 
   <!-- 查询置顶文档库列表 -->
@@ -63,7 +63,7 @@
     (SELECT d.updator_id FROM bt_dc_document d
     WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
     AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS "lastUpdaterUserId",
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS "lastUpdaterUserId",
     p.created_time AS "pinTime"
     FROM bt_dc_user_homepage_pin p
     JOIN bt_dc_document_library l ON p.target_id = l.library_id
@@ -77,7 +77,7 @@
     ORDER BY CASE WHEN p.prev_pin_id IS NULL THEN 0 ELSE 1 END DESC, p.created_time ASC
     ) tmp
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 5
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 5
   </select>
 
   <!-- 查询置顶知识库列表 -->
@@ -106,7 +106,7 @@
       AND k.status_cd = #{statusCd}
       AND k.space_id = #{spaceId}
       AND p.status_cd = #{statusCd}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 5
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 5
   </select>
 
   <!-- 检查是否存在置顶记录 -->
@@ -140,13 +140,13 @@
       AND target_type = #{targetType}
       AND status_cd = '00A'
     ORDER BY created_time DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <!-- 插入置顶记录 -->
   <insert id="insertPinRecord" useGeneratedKeys="true" keyProperty="pinId">
     INSERT INTO bt_dc_user_homepage_pin (user_id, target_id, target_type, prev_pin_id, status_cd, creator_id, created_time, updated_time)
-    VALUES (#{userId}, #{targetId}, #{targetType}, NULL, '00A', #{userId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>)
+    VALUES (#{userId}, #{targetId}, #{targetType}, NULL, '00A', #{userId}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>)
   </insert>
 
   <!-- 检查置顶记录是否存在 -->
@@ -162,7 +162,7 @@
   <update id="deletePinRecord">
     UPDATE bt_dc_user_homepage_pin
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE pin_id = #{pinId}
   </update>
 
@@ -170,7 +170,7 @@
   <update id="updatePinOrder">
     UPDATE bt_dc_user_homepage_pin
     SET prev_pin_id = #{prevPinId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE pin_id = #{pinId}
   </update>
 
@@ -187,7 +187,7 @@
   <update id="updatePrevPinIdForMovedNode">
     UPDATE bt_dc_user_homepage_pin
     SET prev_pin_id = #{newPrevPinId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE prev_pin_id = #{pinId}
       AND user_id = #{userId}
       AND status_cd = '00A'
@@ -197,7 +197,7 @@
   <update id="updatePrevPinIdForTargetPosition">
     UPDATE bt_dc_user_homepage_pin
     SET prev_pin_id = #{newPrevPinId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       <if test="prevPinId != null and prevPinId != ''">
         AND prev_pin_id = #{prevPinId}
@@ -212,7 +212,7 @@
   <update id="updatePrevPinIdForNewHead">
     UPDATE bt_dc_user_homepage_pin
     SET prev_pin_id = #{newPinId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
       AND target_type = #{targetType}
       AND prev_pin_id IS NULL
@@ -226,7 +226,7 @@
     SET status_cd = '00A',
         prev_pin_id = NULL,
         updator_id = #{userId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE pin_id = #{pinId}
       AND user_id = #{userId}
   </update>
@@ -243,7 +243,7 @@
            (SELECT d.updator_id FROM bt_dc_document d
             WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
             AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
-            <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS lastUpdaterUserId,
+            <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS lastUpdaterUserId,
            (SELECT COUNT(*) FROM bt_dc_document_activity da
             WHERE da.library_id = l.library_id
             AND da.user_id = #{userId}
@@ -268,7 +268,7 @@
         AND da.status_cd = '00A'
       )
     ORDER BY accessCount desc, lastAccessTime desc
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 7
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 7
   </select>
 
   <!-- Oracle 方言：使用子查询 + ROWNUM 处理分页，避免 ORDER BY 后直接追加 ROWNUM 造成 ORA-00933 -->
@@ -329,7 +329,7 @@
            (SELECT d.updator_id FROM bt_dc_document d
             WHERE d.library_id = l.library_id AND d.status_cd = #{statusCd}
             AND d.updated_time = (SELECT MAX(d2.updated_time) FROM bt_dc_document d2 WHERE d2.library_id = l.library_id AND d2.status_cd = #{statusCd})
-            <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS "lastUpdaterUserId",
+            <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1) AS "lastUpdaterUserId",
            (SELECT COUNT(*) FROM bt_dc_document_activity da
             WHERE da.library_id = l.library_id
             AND da.user_id = #{userId}
@@ -345,7 +345,7 @@
       AND l.owner_id = #{userId}
       AND l.space_id = #{spaceId}
       AND l.is_builtin = 'T'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <!-- 查询最近访问文件列表 -->
@@ -518,9 +518,9 @@
       AND l.status_cd = '00A'
       and d.document_type != 'ROOT'
       AND d.document_name LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
               #{queryParams.keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       <if test="queryParams.type != null and queryParams.type != ''">
         AND d.document_type = #{queryParams.type}
       </if>
@@ -536,7 +536,7 @@
       ORDER BY d.updated_time DESC
     ) tmp_docs
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 200
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 200
   </select>
 
   <!-- 批量查询置顶记录，用于重排序操作 -->
@@ -593,9 +593,9 @@
         AND p2.status_cd = '00A'
         AND p2.pin_id = p1.prev_pin_id
         AND p2.creator_id = p1.creator_id
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
     ),
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE p1.tenant_id = #{tenantId}
       AND p1.status_cd = '00A'
       AND p1.prev_pin_id IN (
@@ -626,7 +626,7 @@
         AND p2.status_cd = '00A'
     ) AS derived ON p1.pin_id = derived.pin_id
     SET p1.prev_pin_id = derived.new_prev_pin_id,
-        p1.updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        p1.updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE p1.tenant_id = #{tenantId}
       AND p1.status_cd = '00A'
   </update>
@@ -650,7 +650,7 @@
     ) derived ON (p1.pin_id = derived.pin_id)
     WHEN MATCHED THEN
       UPDATE SET p1.prev_pin_id = derived.new_prev_pin_id,
-                 p1.updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+                 p1.updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       WHERE p1.tenant_id = #{tenantId}
         AND p1.status_cd = '00A'
   </update>
@@ -659,7 +659,7 @@
   <update id="updatePinStatusToInvalidByTenant">
     UPDATE bt_dc_user_homepage_pin
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
       AND target_id = #{targetId}
       AND target_type = #{targetType}
@@ -790,7 +790,7 @@
       ORDER BY lastModifiedTime DESC
     ) tmp_docs
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 200
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 200
   </select>
 
 </mapper>

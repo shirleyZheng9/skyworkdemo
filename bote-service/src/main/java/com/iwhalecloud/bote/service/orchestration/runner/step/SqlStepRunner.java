@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.orchestration.step.SqlStep;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.service.engine.SqlSkillEngine;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.lang.Nullable;

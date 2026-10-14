@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.suggestion.SuggestionTermSaveDTO;
 import com.iwhalecloud.bote.dto.suggestion.SuggestionTermSearchDTO;
 import com.iwhalecloud.bote.dto.suggestion.query.SuggestionTermQueryParams;
 import com.iwhalecloud.bote.suggestion.ISuggestionTermManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

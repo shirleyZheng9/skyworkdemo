@@ -76,6 +76,7 @@ public class EvaluationSetServiceImpl implements EvaluationSetService {
       .spaceId(param.getSpaceId())
       .evaluationSetIds(param.getEvaluationSetIds())
       .catalogItemId(param.getCatalogItemId())
+      .catalogItemIds(param.getCatalogItemIds())
       .name(param.getName())
       .creators(param.getCreators())
       .pageNumber(param.getPageNumber())

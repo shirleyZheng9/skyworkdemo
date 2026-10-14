@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +13,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class ConversationMessageTrendCountDTO {
-
   /** yyyy-MM-dd 格式的统计日期。 */
   private String statDate;
 

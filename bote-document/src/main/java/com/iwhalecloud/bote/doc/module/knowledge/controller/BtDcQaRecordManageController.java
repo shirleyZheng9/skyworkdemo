@@ -21,7 +21,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.UpdateBtDcQaRecordDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.BtDcQaRecordNoticeBoardQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.BtDcQaRecordQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IBtDcQaRecordManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

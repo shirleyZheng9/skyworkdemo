@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.a2a;
 
 import com.iwhalecloud.bote.dto.a2a.PublishA2aAgentRequest;
 import com.iwhalecloud.bote.dto.a2a.UnpublishA2aAgentRequest;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.a2a.spec.AgentCard;
 import org.springframework.lang.Nullable;
 

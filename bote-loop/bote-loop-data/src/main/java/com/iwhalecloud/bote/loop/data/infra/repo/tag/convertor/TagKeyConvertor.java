@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.loop.data.domain.tag.entity.TagKey;
 import com.iwhalecloud.bote.loop.data.domain.tag.entity.TagStatus;
 import com.iwhalecloud.bote.loop.data.domain.tag.entity.TagTargetType;
 import com.iwhalecloud.bote.loop.data.domain.tag.entity.TagType;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.util.ApiParamUtil;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;

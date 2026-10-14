@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.search;
 
 import com.iwhalecloud.bote.dto.search.WebPageInfo;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

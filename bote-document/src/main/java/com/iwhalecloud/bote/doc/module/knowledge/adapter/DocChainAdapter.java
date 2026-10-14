@@ -33,10 +33,10 @@ import com.iwhalecloud.bote.llm.client.dto.message.AssistantMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.client.dto.message.UserMessage;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -587,11 +587,44 @@ public class DocChainAdapter {
     log.setReasoningContent(reasoningContent);
     log.setAnswerContent(answerContent);
     String prompt = docChainDocumentHelper.replaceImageUrlsWithEncodedPath(response.getChatPrompt(), tenantId);
-    Map<String, Object> promptMap = JsonUtil.parseJsonRequired(prompt, new TypeReference<>() {
-    });
-    log.setMessages(
-      MapUtils.isEmpty(promptMap) ? null : ((List<Message>) MapUtils.getObject(promptMap, "message")));
+    log.setMessages(parsePromptMessages(prompt));
     return log;
+  }
+
+  /**
+   * 解析提示词为消息列表
+   *
+   * <p>后端返回的提示词可能是对象形式 {@code {"message": [...]}}，也可能直接是消息数组 {@code [{"role": "user", ...}]}；
+   * 解析失败时只记录日志并返回 null，避免影响问题与回答的展示</p>
+   *
+   * @param prompt 提示词
+   * @return 消息列表，解析失败或没有消息时返回 null
+   */
+  @Nullable
+  private List<Message> parsePromptMessages(@Nullable String prompt) {
+    if (StringUtils.isBlank(prompt)) {
+      return null;
+    }
+    String text = prompt.trim();
+    try {
+      // 消息数组形式
+      if (text.startsWith("[")) {
+        return JsonUtil.parseJson(text, new TypeReference<List<Message>>() {
+        });
+      }
+      Map<String, Object> promptMap = JsonUtil.parseJson(text, new TypeReference<Map<String, Object>>() {
+      });
+      if (MapUtils.isEmpty(promptMap)) {
+        return null;
+      }
+      Object messages = ObjectUtils.firstNonNull(MapUtils.getObject(promptMap, "message"), MapUtils.getObject(promptMap, "messages"));
+      return messages == null ? null : JsonUtil.convert(messages, new TypeReference<List<Message>>() {
+      });
+    }
+    catch (Exception e) {
+      logger.warn("解析提示词失败: prompt={}", text, e);
+      return null;
+    }
   }
 
   /**

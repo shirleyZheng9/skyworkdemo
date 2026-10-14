@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.database;
 
 import com.iwhalecloud.bote.dto.database.DataTableDTO;
 import com.iwhalecloud.bote.mapper.database.DataTableMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

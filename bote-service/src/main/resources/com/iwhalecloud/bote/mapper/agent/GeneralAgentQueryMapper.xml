@@ -9,7 +9,7 @@
       AND space_id = #{spaceId}
       AND bot_id = #{botId}
       AND creator_id = #{userId}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="getSpaceModelId" resultType="java.lang.Long">
@@ -18,7 +18,7 @@
       AND is_enabled = 'T'
       AND tenant_id = #{spaceId}
       AND data_from IS NULL
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="getModelTenantId" resultType="java.lang.Long">
@@ -28,7 +28,7 @@
       AND (a.tenant_id IN (#{spaceId}, -1) OR
            EXISTS (SELECT 1 FROM bt_workspace b WHERE b.space_id = #{spaceId}
                                                   AND a.tenant_id = b.space_tenant_id))
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="getPlatformModelId" resultType="java.lang.Long">
@@ -36,7 +36,7 @@
     WHERE status_cd = '00A'
       AND is_enabled = 'T'
       AND tenant_id = -1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectEnvVariableList" resultType="com.iwhalecloud.bote.dto.agent.SimpleAiEnvVariableDTO">
@@ -93,7 +93,7 @@
       AND bot_id = #{botId}
       AND creator_id = #{userId}
       AND file_name = #{fileName}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectCustomPromptList" resultType="com.iwhalecloud.bote.dto.agent.SimpleAiWorkspaceDTO">

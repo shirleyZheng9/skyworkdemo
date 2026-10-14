@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.cache.SensitiveWordCache;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 敏感词工具类

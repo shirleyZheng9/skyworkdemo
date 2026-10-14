@@ -8,8 +8,8 @@ import static org.mockito.Mockito.when;
 
 import com.iwhalecloud.bote.mapper.portal.TenantQueryMapper;
 import com.iwhalecloud.bote.mapper.workspace.WorkspaceManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;

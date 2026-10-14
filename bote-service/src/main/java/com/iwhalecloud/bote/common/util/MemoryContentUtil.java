@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.util;
 
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;

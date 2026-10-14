@@ -23,6 +23,9 @@ public class ListEvaluationSetsRequest {
   @Schema(description = "工作空间ID")
   private Long workspaceId;
 
+  @Schema(description = "租户ID")
+  private Long tenantId;
+
   @Schema(description = "评测集名称（支持模糊搜索）")
   private String name;
 

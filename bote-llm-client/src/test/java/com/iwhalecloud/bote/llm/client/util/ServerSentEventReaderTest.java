@@ -6,7 +6,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.iwhalecloud.bote.llm.client.dto.ServerSentEvent;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

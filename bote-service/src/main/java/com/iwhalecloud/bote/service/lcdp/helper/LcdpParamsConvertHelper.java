@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.lcdp.helper;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.lcdp.LcdpParams;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

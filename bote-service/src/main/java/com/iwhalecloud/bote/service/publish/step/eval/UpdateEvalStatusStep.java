@@ -6,9 +6,9 @@ import com.iwhalecloud.bote.dto.base.PublishStepDTO;
 import com.iwhalecloud.bote.dto.model.response.UpdatePublishStatusResponse;
 import com.iwhalecloud.bote.mapper.model.ModelFinetuneManageMapper;
 import com.iwhalecloud.bote.service.publish.step.AbstractPublishStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.math.BigDecimal;
 
 /**

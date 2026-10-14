@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.common.util.PathUtil;
 import com.iwhalecloud.bote.common.util.VideoSplitUtil;
 import com.iwhalecloud.bote.common.util.VideoSplitUtil.SplitResult;
 import com.iwhalecloud.bote.service.asr.offline.AbstractAsrRecognitionAdapter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.io.FileUtils;

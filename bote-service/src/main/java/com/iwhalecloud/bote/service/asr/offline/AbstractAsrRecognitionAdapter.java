@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.asr.offline;
 
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

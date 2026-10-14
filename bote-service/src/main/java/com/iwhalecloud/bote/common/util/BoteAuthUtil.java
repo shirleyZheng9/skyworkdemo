@@ -1,12 +1,12 @@
 package com.iwhalecloud.bote.common.util;
 
-import com.iwhalecloud.bassc.basiccenter.service.ILitchiAuthLogService;
-import com.iwhalecloud.bassc.basiccenter.service.impl.LitchiAuthLogServiceImpl;
+import com.iwhalecloud.bassc.basiccenter.service.ITiangongAuthLogService;
+import com.iwhalecloud.bassc.basiccenter.service.impl.TiangongAuthLogServiceImpl;
 import com.iwhalecloud.bote.cache.ApiAuthCache;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.database.util.TransactionUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -28,7 +28,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 public final class BoteAuthUtil {
   private static final Logger logger = LoggerFactory.getLogger(BoteAuthUtil.class);
 
-  private static final ILitchiAuthLogService authLogService = SpringUtil.getBean(ILitchiAuthLogService.class);
+  private static final ITiangongAuthLogService authLogService = SpringUtil.getBean(ITiangongAuthLogService.class);
   private static final ApiAuthCache apiAuthCache = SpringUtil.getBean(ApiAuthCache.class);
   private static final SecurityContextRepository securityContextRepository = SpringUtil.getBean(SecurityContextRepository.class);
 
@@ -80,7 +80,7 @@ public final class BoteAuthUtil {
    */
   private static void saveLoginLog(String username) {
     try {
-      TransactionUtil.executeNew(() -> authLogService.addAuthLog(LitchiAuthLogServiceImpl.LitchiLogEvent.LOGIN_SUCCESS, username));
+      TransactionUtil.executeNew(() -> authLogService.addAuthLog(TiangongAuthLogServiceImpl.TiangongLogEvent.LOGIN_SUCCESS, username));
     }
     catch (Exception e) {
       logger.error("Failed to save login log. err={}", ExpUtil.getMsg(e));

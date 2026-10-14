@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BoteApplication (plain)" type="Application" factoryName="Application">
+    <envs>
+      <env name="ZSMART_HOME" value="$PROJECT_DIR$/ZSMART_HOME" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.iwhalecloud.bote.Application" />
+    <module name="bote-service-boot" />
+    <option name="VM_PARAMETERS" value="-DZSMART_HOME=$PROJECT_DIR$/ZSMART_HOME -Dsecurity.oidc.secret=default-oidc-key-change-it-in-production -Dsecurity.oidc.token-prefix=SIT_ -Dfile.encoding=UTF-8 -Xms512m -Xmx2g" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

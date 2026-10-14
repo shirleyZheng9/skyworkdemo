@@ -4,7 +4,7 @@ package ${package.diffcfactory};
 import ${tableParam.package.dto}.${tableParam.dtoName};
 </#list>
 import com.iwhalecloud.bote.common.enums.Sequences;
-import com.iwhalecloud.bss.litchi.diffc.factory.IDSupplierFactory;
+import com.cmsr.tiangong.diffc.factory.IDSupplierFactory;
 import org.springframework.stereotype.Component;
 
 /**

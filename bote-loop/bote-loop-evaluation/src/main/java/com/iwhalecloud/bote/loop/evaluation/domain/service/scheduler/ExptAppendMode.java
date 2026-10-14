@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.event.ExptScheduleEven
 import com.iwhalecloud.bote.loop.evaluation.domain.event.ExptEventPublisher;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExperimentRepo;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.IExptManager;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;

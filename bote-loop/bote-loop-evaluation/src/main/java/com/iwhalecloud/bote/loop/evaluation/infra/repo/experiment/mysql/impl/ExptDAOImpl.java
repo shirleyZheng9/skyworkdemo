@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptListFilter;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.OrderBy;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptDAO;
 import com.iwhalecloud.bote.mapper.loop.evaluation.ExptMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.search.WebPageInfo;
 import com.iwhalecloud.bote.service.search.internal.core.SearchResultContainer;
 import com.iwhalecloud.bote.service.search.internal.core.SearchService;
 import com.iwhalecloud.bote.service.search.internal.model.SearchResult;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

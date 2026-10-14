@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.mapper.planning.PlanManageMapper;
 import com.iwhalecloud.bote.service.chat.context.ChatContext;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.ChatReplyHandler;
 import com.iwhalecloud.bote.service.scene.ISceneChatService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

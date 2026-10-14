@@ -46,9 +46,9 @@
     #{dto.sceneName},
     #{dto.contextId},
     #{dto.chatStatus},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -58,7 +58,7 @@
   <update id="updateChatSceneStatus">
     UPDATE bt_chat_scene_process
     SET chat_status = #{dto.chatStatus},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updator_id = #{dto.updatorId}
     WHERE session_id = #{dto.sessionId}
       AND context_id = #{dto.contextId}
@@ -70,7 +70,7 @@
   <update id="updateSceneProcess">
     UPDATE bt_chat_scene_process
     SET chat_status = #{chatStatus},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE context_id = #{contextId}
       AND scene_id = #{sceneId}
   </update>
@@ -82,8 +82,8 @@
                  AND b.scene_id = r.scene_id AND r.status_cd = '00A')
     AND a.chat_status = '1'
     ORDER BY a.created_time DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_left"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_right"/>
   </select>
 
   <select id="selectDefaultSceneBySessionId" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
@@ -100,7 +100,7 @@
       AND EXISTS(SELECT 1 FROM bt_bot_scene_rel r
                  WHERE c.bot_id = r.bot_id AND c.tenant_id = r.tenant_id
                    AND b.scene_id = r.scene_id AND r.status_cd = '00A' AND r.is_default = 'T')
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectSceneListBySessionId" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
@@ -126,8 +126,8 @@
                  AND b.scene_id = r.scene_id AND r.status_cd = '00A')
     AND a.chat_status = '1'
     ORDER BY a.created_time DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 5
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_left"/> 5
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_right"/>
   </select>
 
   <select id="selectLastScene" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
@@ -139,8 +139,8 @@
       AND a.context_id = #{contextId}
     </if>
     ORDER BY a.created_time DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_left"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_right"/>
   </select>
 
   <select id="selectTop3Scene" resultType="com.iwhalecloud.bote.dto.chat.SceneProcessDTO">
@@ -168,8 +168,8 @@
       AND c.bot_id = #{botId}
     </if>
     ORDER BY a.created_time DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_left"/> 3
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.order_limit_right"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_left"/> 3
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.order_limit_right"/>
   </select>
 
   <select id="existsRunningScene" resultType="boolean">

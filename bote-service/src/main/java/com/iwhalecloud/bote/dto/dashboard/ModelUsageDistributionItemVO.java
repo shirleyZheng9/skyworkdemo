@@ -8,10 +8,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(description = "模型累计调用分布项")
 public class ModelUsageDistributionItemVO {
-  @Schema(description = "模型产品系列编码；为空表示未配置产品系列", example = "1100")
+  @Schema(description = "模型产品系列编码；无法识别产品系列的模型固定返回 other", example = "1100")
   private final String code;
 
-  @Schema(description = "模型产品系列展示值；后端暂不翻译字典，由前端按 code 匹配 MODEL_PRODUCT_TYPE", example = "通义千问")
+  @Schema(description = "模型产品系列展示值；暂不翻译字典，默认与 code 一致，other 返回自建/其他", example = "1100")
   private final String name;
 
   @Schema(description = "自统计功能上线以来的累计调用次数", example = "500")

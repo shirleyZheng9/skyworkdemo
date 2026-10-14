@@ -19,32 +19,32 @@
     </dependency>
 
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-base</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-base</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-spring</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-spring</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-mybatis</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-mybatis</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-security</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-security</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-cache</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-cache</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-cache-redis</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-cache-redis</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-cache-ctgcache</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-cache-ctgcache</artifactId>
     </dependency>
     <!-- 分布式锁（Zookeeper）：Curator -->
     <dependency>
@@ -56,24 +56,24 @@
       <artifactId>curator-recipes</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-file</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-file</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-file-minio</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-file-minio</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-diffc</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-diffc</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-import-export</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-import-export</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-job</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-job</artifactId>
     </dependency>
 
     <!-- 工具包 -->

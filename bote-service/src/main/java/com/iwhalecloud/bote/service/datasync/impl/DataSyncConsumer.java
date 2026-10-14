@@ -20,10 +20,10 @@ import com.iwhalecloud.bote.service.datasync.util.DataSyncDirUtil;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncDocumentUtil;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncFileUtil;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncReplaceUtil;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.database.inspect.definition.Table;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.database.inspect.definition.Table;
+import com.cmsr.tiangong.database.util.TransactionUtil;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -176,7 +176,9 @@ public class DataSyncConsumer {
   private void saveData(List<DataSyncTableDefinition> definitions) {
     List<Runnable> tasks = new ArrayList<>(definitions.size());
     for (DataSyncTableDefinition definition : definitions) {
-      tasks.add(() -> save(definition));
+      if(!definition.getTableCode().equals("bt_tenant")) {
+        tasks.add(() -> save(definition));
+      }
     }
     ThreadPools.invokeTasks(ThreadPools.getDatasync(), tasks);
   }

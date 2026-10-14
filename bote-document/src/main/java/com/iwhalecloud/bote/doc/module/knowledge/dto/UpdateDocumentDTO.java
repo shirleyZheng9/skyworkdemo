@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.doc.module.knowledge.dto;
 
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
+import com.cmsr.tiangong.diffc.annotations.DiffField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import lombok.Getter;

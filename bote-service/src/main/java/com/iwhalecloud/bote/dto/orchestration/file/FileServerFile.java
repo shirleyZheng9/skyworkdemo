@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.orchestration.file;
 
 import com.iwhalecloud.bote.common.util.TikaUtil;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import lombok.Getter;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;

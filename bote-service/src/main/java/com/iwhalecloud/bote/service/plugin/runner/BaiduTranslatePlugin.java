@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.consts.PluginConsts;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.params.BaiduTranslatePluginParams;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import lombok.Setter;

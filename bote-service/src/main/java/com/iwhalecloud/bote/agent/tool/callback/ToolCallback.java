@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.agent.tool.context.ToolContext;
 import com.iwhalecloud.bote.agent.tool.support.ToolExecutionResult;
 import com.iwhalecloud.bote.llm.client.dto.Tool;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;

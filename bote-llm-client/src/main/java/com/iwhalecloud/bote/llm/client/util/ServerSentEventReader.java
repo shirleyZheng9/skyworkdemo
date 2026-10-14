@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.llm.client.util;
 
 import com.iwhalecloud.bote.llm.client.dto.ServerSentEvent;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.RequiredArgsConstructor;

@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.common.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.dto.plugin.params.WeChatMpAddMaterialParams.Descriptor;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;

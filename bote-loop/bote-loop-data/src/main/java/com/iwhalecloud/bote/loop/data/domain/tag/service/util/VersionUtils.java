@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.loop.data.domain.tag.service.util;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.regex.Pattern;
 import org.springframework.util.StringUtils;
 

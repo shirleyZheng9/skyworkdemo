@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.common.util.HttpCacheUtil;
 import com.iwhalecloud.bote.dto.base.SimpleDcParamDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.InputStream;

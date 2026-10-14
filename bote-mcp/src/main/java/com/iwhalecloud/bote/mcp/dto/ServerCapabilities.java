@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.mcp.dto.capability.LoggingCapabilities;
 import com.iwhalecloud.bote.mcp.dto.capability.PromptCapabilities;
 import com.iwhalecloud.bote.mcp.dto.capability.ResourceCapabilities;
 import com.iwhalecloud.bote.mcp.dto.capability.ToolCapabilities;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

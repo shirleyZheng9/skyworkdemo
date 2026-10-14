@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.collaboration.socket.session.SessionInfo;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.generic.GenericCmdType;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.generic.model.HeartbeatInfo;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.generic.model.SocketSendInfo;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

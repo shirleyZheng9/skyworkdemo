@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iwhalecloud.bote.common.consts.ChatMessageType;
 import com.iwhalecloud.bote.dto.base.FileInfoDTO;
 import com.iwhalecloud.bote.dto.knowledge.ReferenceDocumentDTO;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.lang.reflect.Field;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;

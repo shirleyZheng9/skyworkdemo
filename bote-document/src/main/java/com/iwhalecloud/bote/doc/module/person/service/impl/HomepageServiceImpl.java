@@ -41,8 +41,8 @@ import com.iwhalecloud.bote.doc.module.library.service.DocumentLibraryPermission
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
 import com.iwhalecloud.bote.doc.module.person.service.IHomepageService;
 import com.iwhalecloud.bote.doc.common.utils.PinLinkedSortHelper;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

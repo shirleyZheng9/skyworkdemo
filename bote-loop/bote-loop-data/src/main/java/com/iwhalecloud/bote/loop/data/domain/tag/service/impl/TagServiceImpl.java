@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.loop.data.domain.tag.repo.tag.ITagAPI;
 import com.iwhalecloud.bote.loop.data.domain.tag.service.ITagService;
 import com.iwhalecloud.bote.loop.data.domain.tag.service.util.VersionUtils;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;

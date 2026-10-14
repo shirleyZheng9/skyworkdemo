@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.loop.client.prompt.debug.dto.ListDebugHistoryRequest
 import com.iwhalecloud.bote.loop.client.prompt.debug.dto.ListDebugHistoryResponse;
 import com.iwhalecloud.bote.loop.client.prompt.debug.dto.SaveDebugContextRequest;
 import com.iwhalecloud.bote.loop.client.prompt.debug.dto.SaveDebugContextResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.service.base;
 
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.base.query.TableParams;
 import java.util.List;
 

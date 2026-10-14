@@ -58,7 +58,7 @@
     FROM bt_prompt_debug_context
     WHERE id = #{id,jdbcType=BIGINT}
     AND deleted_at = 0
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 

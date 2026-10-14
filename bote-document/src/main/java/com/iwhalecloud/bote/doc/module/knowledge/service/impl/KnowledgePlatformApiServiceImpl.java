@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.dto.knowledge.access.platform.response.KnowledgeSear
 import com.iwhalecloud.bote.dto.knowledge.access.platform.response.ResultResponse;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IKnowledgePlatformApiService;
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.KnowledgePlatformApiHelper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

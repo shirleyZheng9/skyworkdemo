@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.util.TenantIdUtil;
 import com.iwhalecloud.bote.config.properties.DocChainProperties;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IDocChainApiService;
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.DocChainLoginHelper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;

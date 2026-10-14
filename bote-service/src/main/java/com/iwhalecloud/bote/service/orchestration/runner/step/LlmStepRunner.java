@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.llm.client.dto.ChatCompletionRequest;
 import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
 import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.client.dto.message.MessageContent;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

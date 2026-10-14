@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.common.util.IconUtil;
 import com.iwhalecloud.bote.dto.skill.SkillPageCompDTO;
 import com.iwhalecloud.bote.dto.skill.SkillPageCompQueryParams;
 import com.iwhalecloud.bote.service.skill.ISkillPageCompManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

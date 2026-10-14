@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.common.util;
 import com.iwhalecloud.bote.common.sse.SseUtil;
 import com.iwhalecloud.bote.common.thread.ThreadPools;
 import com.iwhalecloud.bote.llm.client.util.OkHttpUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;

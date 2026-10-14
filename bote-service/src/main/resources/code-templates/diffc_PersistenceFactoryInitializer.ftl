@@ -6,7 +6,7 @@ import ${tableParam.package.diffcpersistimpl}.${tableParam.diffcPersistName};
 <#list tableParams as tableParam>
 import ${tableParam.package.dto}.${tableParam.dtoName};
 </#list>
-import com.iwhalecloud.bss.litchi.diffc.factory.BatchPersistenceFactory;
+import com.cmsr.tiangong.diffc.factory.BatchPersistenceFactory;
 import org.springframework.stereotype.Component;
 
 /**

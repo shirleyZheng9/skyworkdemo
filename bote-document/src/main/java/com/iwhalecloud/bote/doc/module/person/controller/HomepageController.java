@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.doc.module.person.dto.homepage.UnpinResourceRequestD
 import com.iwhalecloud.bote.doc.module.person.dto.homepage.query.RecentFileQueryParams;
 import com.iwhalecloud.bote.doc.module.person.dto.homepage.query.SearchDocumentQueryParams;
 import com.iwhalecloud.bote.doc.module.person.service.IHomepageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

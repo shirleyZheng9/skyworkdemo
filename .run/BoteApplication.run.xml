@@ -1,0 +1,14 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="BoteApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="bote-service-boot" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.iwhalecloud.bote.Application" />
+    <option name="VM_PARAMETERS" value="-DZSMART_HOME=$PROJECT_DIR$/ZSMART_HOME -Dsecurity.oidc.secret=default-oidc-key-change-it-in-production -Dsecurity.oidc.token-prefix=SIT_ -Dfile.encoding=UTF-8 -Xms512m -Xmx2g" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <envs>
+      <env name="ZSMART_HOME" value="/Users/apple/Desktop/ydwork/aadp-dev/ZSMART_HOME" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

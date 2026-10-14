@@ -46,7 +46,7 @@
     FROM bt_expt_stats
     WHERE expt_id = #{exptId}
     AND space_id = #{spaceId}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 

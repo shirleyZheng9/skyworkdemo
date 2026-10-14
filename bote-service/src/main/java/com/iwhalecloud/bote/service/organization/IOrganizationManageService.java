@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.organization.OrganizationTreeNodeDTO;
 import com.iwhalecloud.bote.dto.organization.SimpleOrganizationDTO;
 import com.iwhalecloud.bote.dto.organization.query.OrganizationQueryParams;
 import com.iwhalecloud.bote.dto.organization.request.OrganizationSearchRequest;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

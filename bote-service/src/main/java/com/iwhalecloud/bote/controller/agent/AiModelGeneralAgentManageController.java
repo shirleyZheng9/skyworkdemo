@@ -16,8 +16,8 @@ import com.iwhalecloud.bote.common.util.SessionUtil;
 import com.iwhalecloud.bote.dto.agent.AiModelDTO;
 import com.iwhalecloud.bote.dto.agent.query.AiQueryParams;
 import com.iwhalecloud.bote.service.agent.IAiModelManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshCacheService;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.cache.refresh.IRefreshCacheService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

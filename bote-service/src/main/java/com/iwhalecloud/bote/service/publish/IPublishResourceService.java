@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.dto.publish.ResourcePublishRequest;
 import com.iwhalecloud.bote.dto.publish.ResourcePublishRecordDTO;
 import com.iwhalecloud.bote.dto.publish.ResourcePublishRecordQueryParams;
 import com.iwhalecloud.bote.dto.publish.ResourceUnpublishRequest;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 
 import java.util.List;

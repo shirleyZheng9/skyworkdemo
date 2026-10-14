@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.util.MemoryContentUtil;
 import com.iwhalecloud.bote.dto.SystemReminder;
 import com.iwhalecloud.bote.entity.chat.SessionMsgEntity;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Getter;

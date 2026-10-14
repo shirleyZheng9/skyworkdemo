@@ -127,7 +127,7 @@ import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
 import com.iwhalecloud.bote.dto.skill.SkillSqlDTO;
 import com.iwhalecloud.bote.dto.skill.SkillTextDTO;
 import com.iwhalecloud.bote.entity.suggestion.SuggestionTermEntity;
-import com.iwhalecloud.bss.litchi.diffc.factory.BatchPersistenceFactory;
+import com.cmsr.tiangong.diffc.factory.BatchPersistenceFactory;
 import org.springframework.stereotype.Component;
 
 /**

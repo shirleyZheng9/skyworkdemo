@@ -9,9 +9,9 @@ import com.iwhalecloud.bote.dto.publish.PublishGatewaySimpleDTO;
 import com.iwhalecloud.bote.service.datasync.util.DataSyncDirUtil;
 import com.iwhalecloud.bote.service.publish.IPublishGatewayManageService;
 import com.iwhalecloud.bote.service.publish.step.datasync.AbstractDataSyncStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 /**

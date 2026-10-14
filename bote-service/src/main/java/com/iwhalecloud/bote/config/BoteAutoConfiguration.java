@@ -8,9 +8,9 @@ import com.iwhalecloud.bote.common.requestcache.RequestCacheableParamResolver;
 import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.service.chat.helper.FlowRunLogDisruptorListener;
 import com.iwhalecloud.bote.service.chat.helper.ModelUsageLogDisruptorListener;
-import com.iwhalecloud.bss.litchi.diffc.config.LitchiDiffcAutoConfiguration;
-import com.iwhalecloud.bss.litchi.diffc.mapper.DataMapper;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorUtil;
+import com.cmsr.tiangong.diffc.config.TiangongDiffcAutoConfiguration;
+import com.cmsr.tiangong.diffc.mapper.DataMapper;
+import com.cmsr.tiangong.disruptor.DisruptorUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -50,7 +50,7 @@ import org.springframework.web.servlet.LocaleResolver;
  * @since 2024-07-31
  */
 @AutoConfiguration(before = {
-  LitchiDiffcAutoConfiguration.class,
+  TiangongDiffcAutoConfiguration.class,
   WebMvcAutoConfiguration.class // 避免 LocaleResolver bean 注册失败
 })
 @ComponentScan(basePackages = "com.iwhalecloud.bote", excludeFilters = @Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class))
@@ -59,7 +59,7 @@ import org.springframework.web.servlet.LocaleResolver;
 public class BoteAutoConfiguration {
 
   /**
-   * 覆盖 bean: {@link LitchiDiffcAutoConfiguration#litchiDataMapper}
+   * 覆盖 bean: {@link TiangongDiffcAutoConfiguration#tiangongDataMapper}
    */
   @Bean
   public DataMapper customDataMapper(JdbcTemplate jdbcTemplate) {

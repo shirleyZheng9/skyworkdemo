@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.skill;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.skill.SkillPublishApplyDTO;
 import com.iwhalecloud.bote.dto.skill.query.SkillPublishApplyQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 技能发布申请服务接口

@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.llm.client.util.LlmTraceUtil;
 import com.iwhalecloud.bote.mcp.client.McpToolCallObserver;
 import com.iwhalecloud.bote.mcp.dto.request.CallToolRequest;
 import com.iwhalecloud.bote.mcp.dto.response.CallToolResult;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;

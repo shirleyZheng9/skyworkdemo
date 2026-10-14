@@ -4,7 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.common.diffc.DataDifferenceStarter;
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
+import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.SessionUtil;
+import com.iwhalecloud.bote.common.util.TenantIdUtil;
 import com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO;
 import com.iwhalecloud.bote.dto.bot.TemplateBotDTO;
 import com.iwhalecloud.bote.dto.bot.query.PlatBotInfoQueryParams;
@@ -15,13 +17,14 @@ import com.iwhalecloud.bote.mapper.bot.PlatBotInfoManageMapper;
 import com.iwhalecloud.bote.mapper.organization.OrganizationMemberMapper;
 import com.iwhalecloud.bote.mapper.portal.TenantManageMapper;
 import com.iwhalecloud.bote.service.bot.IPlatBotInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -95,11 +98,48 @@ public class PlatBotInfoManageServiceImpl implements IPlatBotInfoManageService {
   public PageInfo<TemplateBotDTO> queryPlatAndUserBotPage(PlatBotInfoQueryParams queryParams) {
     Long userId = SessionUtil.getLoginInfo().getUserId();
     queryParams.setUserId(userId);
+    // 兜底租户ID：请求参数 -> 前端已传的 selectedTenantId -> 当前会话租户
+    Long tenantId = queryParams.getTenantId();
+    if (tenantId == null) {
+      tenantId = queryParams.getSelectedTenantId();
+    }
+    if (tenantId == null) {
+      tenantId = TenantIdUtil.getTenantIdOptional();
+    }
+    queryParams.setTenantId(tenantId);
     queryParams.setOrgIdList(getUserOrgIds(userId, queryParams.getTenantId()).stream().toList());
     queryParams.setIsAdmin(SessionUtil.isSuperAdmin(userId));
     RowBounds rowBounds = queryParams.buildRowBounds();
     // noinspection resource
-    return platBotInfoManageMapper.queryPlatAndUserBotPage(queryParams, rowBounds).toPageInfo();
+    PageInfo<TemplateBotDTO> pageInfo = platBotInfoManageMapper.queryPlatAndUserBotPage(queryParams, rowBounds).toPageInfo();
+    fillSelfBotReqUrl(pageInfo.getList(), queryParams.getTenantId());
+    return pageInfo;
+  }
+
+  /**
+   * 补全本租户自己发布应用的访问地址（平台模板、广场授权应用保持原样）
+   *
+   * @param bots 应用列表
+   * @param tenantId 当前租户 ID
+   */
+  private void fillSelfBotReqUrl(List<TemplateBotDTO> bots, Long tenantId) {
+    if (CollectionUtils.isEmpty(bots) || tenantId == null) {
+      return;
+    }
+    String webUrl = SystemParameter.BOTE_WEB_URL.getValueFromEnv();
+    if (StringUtils.isEmpty(webUrl)) {
+      return;
+    }
+    String prefix = webUrl.endsWith("/") ? webUrl : webUrl + "/";
+    for (TemplateBotDTO bot : bots) {
+      // 只处理本租户自己发布的应用：无授权租户、非平台模板
+      if (bot.getBotId() == null || bot.getAuthTenantId() != null || BaseConsts.TRUE.equals(bot.getIsPlatformPublish())) {
+        continue;
+      }
+      bot.setReqUrl(prefix + "#/application/driver?botId=" + bot.getBotId()
+        + "&ownerTenantId=" + bot.getOwnerTenantId()
+        + "&publishId&tenantId=" + tenantId);
+    }
   }
 
   /**

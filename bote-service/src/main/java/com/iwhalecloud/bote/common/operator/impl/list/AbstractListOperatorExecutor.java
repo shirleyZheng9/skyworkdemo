@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.operator.impl.list;
 
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.SpringUtil;
 import com.iwhalecloud.bote.common.operator.AbstractOperatorExecutor;
 import java.util.ArrayList;
 import java.util.Arrays;

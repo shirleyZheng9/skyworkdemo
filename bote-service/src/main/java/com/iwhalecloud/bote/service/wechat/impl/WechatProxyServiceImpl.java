@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.service.scene.ISceneChatService;
 import com.iwhalecloud.bote.service.wechat.IWechatProxyService;
 import com.iwhalecloud.bote.wechat.WechatApiClient;
 import com.iwhalecloud.bote.wechat.WechatParamHelper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.StringReader;
 import java.util.ArrayList;

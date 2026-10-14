@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.common.util;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;

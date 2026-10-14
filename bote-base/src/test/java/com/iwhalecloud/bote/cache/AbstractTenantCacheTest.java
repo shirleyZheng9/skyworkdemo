@@ -10,8 +10,8 @@ import static org.mockito.Mockito.when;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.iwhalecloud.bss.litchi.cache.helper.keyset.IKeySetManager;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.helper.keyset.IKeySetManager;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.a2a.A2aPlatformDTO;
 import com.iwhalecloud.bote.dto.a2a.query.A2aPlatformQueryParams;
 import com.iwhalecloud.bote.service.a2a.IA2aPlatformManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

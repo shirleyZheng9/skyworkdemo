@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.portal.IAuthProvider;
 import com.iwhalecloud.bote.portal.MultiPortalAdapter;
 import com.iwhalecloud.bote.portal.adapter.DefaultPortalAuthProvider;
 import com.iwhalecloud.bote.service.portal.ISingleLoginService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

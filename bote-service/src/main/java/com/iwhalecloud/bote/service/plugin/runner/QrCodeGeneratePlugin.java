@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.common.consts.PluginConsts;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.params.QrCodeGeneratePluginParams;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;

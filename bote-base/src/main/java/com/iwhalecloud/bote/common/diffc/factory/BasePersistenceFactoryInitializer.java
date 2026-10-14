@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.base.CatalogDTO;
 import com.iwhalecloud.bote.dto.base.LabelDTO;
 import com.iwhalecloud.bote.dto.base.LabelObjectRelDTO;
 import com.iwhalecloud.bote.dto.job.JobDTO;
-import com.iwhalecloud.bss.litchi.diffc.factory.BatchPersistenceFactory;
+import com.cmsr.tiangong.diffc.factory.BatchPersistenceFactory;
 import org.springframework.stereotype.Component;
 
 /**

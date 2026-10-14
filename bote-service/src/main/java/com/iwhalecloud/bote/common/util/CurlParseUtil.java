@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.dto.skill.CurlParamsDTO;
 import com.iwhalecloud.bote.dto.skill.CurlParseResultDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;

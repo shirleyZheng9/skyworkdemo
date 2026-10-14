@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.chat;
 
 import com.iwhalecloud.bote.common.consts.BaseConsts;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Date;
 import lombok.Getter;
 import lombok.Setter;

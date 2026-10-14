@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.datasync.DataSyncReturnByBackupDTO;
 import com.iwhalecloud.bote.dto.datasync.DataSyncReturnRecordDTO;
 import com.iwhalecloud.bote.dto.datasync.query.DataSyncBackupPageQuery;
 import com.iwhalecloud.bote.dto.datasync.query.DataSyncReturnRecordPageQuery;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 数据同步备份服务

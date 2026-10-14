@@ -65,8 +65,8 @@
     #{dto.documentUrl},
     #{dto.tenantId},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd}
     )
   </insert>
@@ -105,8 +105,8 @@
       #{dto.documentUrl},
       #{dto.tenantId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -146,8 +146,8 @@
       #{dto.documentUrl},
       #{dto.tenantId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -196,7 +196,7 @@
       <if test="dto.checkFieldUpdateFlag('creatorId')">
         creator_id = #{dto.creatorId},
       </if>
-      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       <if test="dto.checkFieldUpdateFlag('statusCd')">
         status_cd = #{dto.statusCd},
       </if>
@@ -214,13 +214,13 @@
     WHERE a.qa_id=#{qaId} and a.status_cd='00A' and a.tenant_id = #{tenantId}
   </select>
   <update id="deleteBtDcQaChunkReference">
-    update bt_dc_qa_chunk_reference set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
+    update bt_dc_qa_chunk_reference set status_cd='00X',updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
   </update>
   <select id="selectBtDcQaChunkReferenceListByknowledgeId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcQaChunkReferenceDTO">
      SELECT <include refid="btDcQaChunkReferenceColumns"/> FROM bt_dc_qa_chunk_reference a WHERE a.status_cd = '00A' and a.doc_id = #{extSystemId} and a.tenant_id = #{tenantId}
   </select>
   <update id="deleteBtDcQaChunkReferenceByExtSystemId">
-    update bt_dc_qa_chunk_reference set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId} and doc_id = #{extSystemId}
+    update bt_dc_qa_chunk_reference set status_cd='00X',updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId} and doc_id = #{extSystemId}
   </update>
 
 </mapper>

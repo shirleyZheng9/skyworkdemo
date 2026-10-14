@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.doc.module.document.service.IDocumentFileLogService;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
 import com.iwhalecloud.bote.dto.base.FileInfoDTO;
 import com.iwhalecloud.bote.mapper.base.FileInfoManageMapper;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;

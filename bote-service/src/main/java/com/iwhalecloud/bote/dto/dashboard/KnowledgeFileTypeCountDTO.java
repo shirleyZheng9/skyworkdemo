@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -18,7 +17,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class KnowledgeFileTypeCountDTO {
-
   /** 页面文件大类编码：document、spreadsheet、image、audioVideo 或 other。 */
   private String code;
 

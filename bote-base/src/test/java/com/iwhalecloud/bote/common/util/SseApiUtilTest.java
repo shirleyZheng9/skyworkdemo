@@ -6,8 +6,8 @@ import static org.mockito.Mockito.mockStatic;
 
 import com.iwhalecloud.bote.cache.SseEmitterCache;
 import com.iwhalecloud.bote.common.thread.ThreadPools;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

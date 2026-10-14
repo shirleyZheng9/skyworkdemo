@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.orchestration.context;
 
 import com.iwhalecloud.bote.common.jdbc.ConnectionWrapper;
-import com.iwhalecloud.bss.litchi.database.consts.DatabaseType;
+import com.cmsr.tiangong.database.consts.DatabaseType;
 import javax.sql.DataSource;
 import lombok.Getter;
 import lombok.Setter;

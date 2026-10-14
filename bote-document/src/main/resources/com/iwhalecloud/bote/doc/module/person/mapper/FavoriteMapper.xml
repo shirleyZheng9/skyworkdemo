@@ -446,7 +446,7 @@
       AND target_id = #{targetId}
       AND target_type = #{targetType}
       AND status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <!-- 插入收藏记录 -->
@@ -509,7 +509,7 @@
   <update id="deleteFavorite">
     UPDATE bt_dc_user_favorite
     SET status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE favorite_id = #{favoriteId}
     AND user_id = #{userId}
     AND status_cd = '00A'
@@ -519,7 +519,7 @@
   <update id="deleteFavoriteByTarget">
     UPDATE bt_dc_user_favorite
     SET status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
     AND space_id = #{spaceId}
     AND target_id = #{targetId}
@@ -532,7 +532,7 @@
   <update id="deleteTenantFavoriteByTarget">
     UPDATE bt_dc_user_favorite
     SET status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
     AND target_id = #{targetId}
     AND target_type = #{targetType}
@@ -547,7 +547,7 @@
     UPDATE bt_dc_user_favorite
     SET is_favorite_pinned = #{isPinned},
     favorite_pin_order = #{pinOrder},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE favorite_id = #{favoriteId}
     AND user_id = #{userId}
     AND tenant_id = #{tenantId}
@@ -581,7 +581,7 @@
   <update id="restoreFavorite">
     UPDATE bt_dc_user_favorite
     SET status_cd = '00A',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE favorite_id = #{favoriteId}
     AND user_id = #{userId}
     AND status_cd = '00X'
@@ -608,7 +608,7 @@
       AND tenant_id = #{tenantId}
       AND target_id = #{targetId}
       AND target_type = #{targetType}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
 </mapper>

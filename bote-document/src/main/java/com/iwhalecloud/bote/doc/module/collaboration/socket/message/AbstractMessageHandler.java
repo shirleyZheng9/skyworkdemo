@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.collaboration.socket.message;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.session.ChannelSessionManager;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.session.SessionInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.netty.channel.ChannelHandlerContext;
 import java.io.Serial;

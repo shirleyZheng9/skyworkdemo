@@ -67,7 +67,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.RunEvaluatorParam;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluatorRecordService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluatorService;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

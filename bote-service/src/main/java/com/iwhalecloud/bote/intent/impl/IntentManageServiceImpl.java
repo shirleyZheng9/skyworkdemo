@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.intent.IntentStrategyDTO;
 import com.iwhalecloud.bote.service.intent.IIntentManageService;
 import com.iwhalecloud.bote.mapper.intent.IntentManageMapper;
 import com.iwhalecloud.bote.mapper.model.ModelFinetuneManageMapper;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;

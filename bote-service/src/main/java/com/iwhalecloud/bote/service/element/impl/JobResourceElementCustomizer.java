@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.enums.DataSyncCodeEnum;
 import com.iwhalecloud.bote.dto.base.ResourceElementDTO;
 import com.iwhalecloud.bote.dto.job.JobDTO;
 import com.iwhalecloud.bote.mapper.job.JobManageMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

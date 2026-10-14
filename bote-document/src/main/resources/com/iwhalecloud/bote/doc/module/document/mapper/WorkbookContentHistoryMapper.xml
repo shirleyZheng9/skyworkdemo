@@ -35,7 +35,7 @@
     WHERE document_id = #{documentId}
     AND status_cd = '00A'
     ORDER BY revision DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 
@@ -50,8 +50,8 @@
     #{entity.revision},
     #{entity.creatorId},
     #{entity.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{entity.statusCd},
     #{entity.tenantId}
     )
@@ -61,7 +61,7 @@
     UPDATE bt_dc_workbook_content_his
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -69,7 +69,7 @@
     UPDATE bt_dc_workbook_content_his
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
   </update>
 
@@ -88,7 +88,7 @@
   <update id="deleteByDocumentIdAndRevisionLessThan">
     UPDATE bt_dc_workbook_content_his
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND revision &lt; #{maxRevision}
       AND status_cd = '00A'

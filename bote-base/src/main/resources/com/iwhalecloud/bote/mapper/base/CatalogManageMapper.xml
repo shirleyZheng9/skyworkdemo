@@ -56,8 +56,8 @@
     #{dto.statusCd},
     #{dto.creatorId},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
   </insert>
@@ -87,7 +87,7 @@
         bot_id = #{dto.botId},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE catalog_id = #{dto.catalogId}
     AND tenant_id = #{dto.tenantId}
@@ -97,7 +97,7 @@
     UPDATE bt_catalog
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE catalog_id = #{catalogId}
       AND tenant_id IN (#{tenantId}, -1)
   </update>
@@ -119,9 +119,9 @@
     </if>
     <if test="query.catalogName != null and query.catalogName != ''">
       AND catalog_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.catalogName}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.botId != null">
       AND bot_id in (#{query.botId}, -1)
@@ -140,9 +140,9 @@
     </if>
     AND catalog_type = #{catalogType}
     AND catalog_path LIKE
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
     #{catalogId}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
   </select>
 
   <select id="existsData" resultType = "boolean" databaseId="oracle">

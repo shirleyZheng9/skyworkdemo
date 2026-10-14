@@ -23,8 +23,8 @@
       created_time, status_cd, updated_time, creator_id, updator_id, remark
     ) VALUES (
       #{dto.id}, #{dto.tenantId}, #{dto.sceneId}, #{dto.fileName}, #{dto.fileContent}, #{dto.memoryType},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
     )
   </insert>
 
@@ -37,8 +37,8 @@
     <foreach collection="list" item="dto" separator=",">
       (
         #{dto.id}, #{dto.tenantId}, #{dto.sceneId}, #{dto.fileName}, #{dto.fileContent}, #{dto.memoryType},
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
       )
     </foreach>
   </insert>
@@ -51,8 +51,8 @@
         created_time, status_cd, updated_time, creator_id, updator_id, remark
       ) VALUES (
         #{dto.id}, #{dto.tenantId}, #{dto.sceneId}, #{dto.fileName}, #{dto.fileContent}, #{dto.memoryType},
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, #{dto.statusCd},
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>, #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
       )
     </foreach>
     SELECT 1 FROM dual
@@ -76,7 +76,7 @@
       <if test="dto.checkFieldUpdateFlag('remark')">
         remark = #{dto.remark},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     </set>
     WHERE id = #{dto.id}

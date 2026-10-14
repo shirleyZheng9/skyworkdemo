@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.intent.IIntentLogManageService;
 import com.iwhalecloud.bote.intent.IIntentQuestionManageService;
 import com.iwhalecloud.bote.mapper.intent.IntentLogManageMapper;
 import com.iwhalecloud.bote.mapper.intent.IntentQuestionManageMapper;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;

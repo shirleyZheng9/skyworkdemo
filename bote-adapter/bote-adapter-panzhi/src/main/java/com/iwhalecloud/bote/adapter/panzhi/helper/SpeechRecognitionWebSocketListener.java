@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.adapter.panzhi.helper;
 
 import com.iwhalecloud.bote.adapter.panzhi.dto.SpeechRecognitionDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import okhttp3.Response;

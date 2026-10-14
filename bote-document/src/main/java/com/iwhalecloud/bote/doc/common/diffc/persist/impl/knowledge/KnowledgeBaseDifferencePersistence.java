@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.common.diffc.persist.impl.knowledge;
 
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeBaseManageMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.agent.AiMcpDTO;
 import com.iwhalecloud.bote.dto.agent.query.AiQueryParams;
 import com.iwhalecloud.bote.dto.mcp.McpServerDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 新增表记录启用mcp管理服务

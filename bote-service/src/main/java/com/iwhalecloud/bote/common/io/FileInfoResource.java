@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.common.io;
 
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreService;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.file.service.IFileStoreService;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.springframework.core.io.AbstractResource;
 
 import java.io.InputStream;

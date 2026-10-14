@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.skill.SkillFlowDTO;
 import com.iwhalecloud.bote.mapper.skill.SkillFlowManageMapper;
 import com.iwhalecloud.bote.service.element.helper.EntityRelationParseUtil;
 import com.iwhalecloud.bote.service.element.helper.StepElementConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

@@ -39,13 +39,13 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.tenant_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.tenant_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.userId != null">
@@ -76,7 +76,7 @@
     WHERE tenant_code = #{code}
     AND tenant_name = #{name}
     AND status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="getTenantByExtTenantIdAndSpace" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
@@ -87,23 +87,74 @@
     <if test="spaceId != null"> AND space_id = #{spaceId} </if>
     AND status_cd IN ('00A', '00X')
     ORDER BY (CASE status_cd WHEN '00A' THEN 0 ELSE 1 END)
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
+  <!-- 天工项目 ID 专属判重：必须返回全部有效/软删候选，禁止 LIMIT 1 随机复用历史脏数据。 -->
+  <select id="listTenantCandidatesByExtTenantId" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT
+    <include refid="tenantColumns"/>
+    FROM bt_tenant a
+    WHERE ext_tenant_id = #{extTenantId}
+    AND status_cd IN ('00A', '00X')
+    ORDER BY (CASE status_cd WHEN '00A' THEN 0 ELSE 1 END), tenant_id
+  </select>
+
+  <!-- 天工项目 ID 全局定位：必须返回全部有效匹配项，空间只在定位后用于归属校验。 -->
+  <select id="selectActiveTiangongTenantsByProjectId" resultType="com.iwhalecloud.bote.dto.portal.TenantDTO">
+    SELECT t.tenant_id, t.tenant_code, t.tenant_name, t.tenant_use, t.tenant_icon, t.prologue,
+    t.question_setting_info, t.bot_setting_info, t.app_id, t.system_type, t.space_id, t.status_cd,
+    t.creator_id, t.created_time, t.updator_id, t.updated_time, t.remark, t.ext_tenant_id
+    FROM bt_tenant t
+    WHERE t.status_cd = '00A'
+    AND t.ext_tenant_id = #{externalProjectId}
+    ORDER BY t.tenant_id ASC
+  </select>
+
+  <select id="selectActiveExternalSpaceIdByTenantId" resultType="java.lang.String">
+    SELECT w.ext_space_id
+    FROM bt_tenant t
+    INNER JOIN bt_workspace w ON w.space_id = t.space_id
+    WHERE t.tenant_id = #{tenantId}
+    AND t.status_cd = '00A'
+    AND w.status_cd = '00A'
+  </select>
+
+  <update id="bindCreatorIfAllowed">
+    UPDATE bt_tenant
+    SET creator_id = #{creatorId},
+    updator_id = #{syncUserId},
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00A'
+    AND (creator_id IS NULL OR creator_id = #{syncUserId} OR creator_id = #{creatorId})
+  </update>
   <update id="reactivateTenant">
     UPDATE bt_tenant
     SET status_cd = '00A',
     tenant_name = #{tenantName},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
+  </update>
+
+  <!-- 天工专用：软删项目只能在原 workspace 内复活，禁止登录过程隐式迁移关联业务数据。 -->
+  <update id="reactivateTiangongTenant">
+    UPDATE bt_tenant
+    SET status_cd = '00A',
+    tenant_name = #{tenantName},
+    updator_id = #{updatorId},
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
+    WHERE tenant_id = #{tenantId}
+    AND status_cd = '00X'
+    AND space_id = #{spaceId}
   </update>
 
   <update id="updateTenantName">
     UPDATE bt_tenant
     SET tenant_name = #{tenantName},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
   </update>
 
@@ -156,9 +207,9 @@
     #{dto.spaceId},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.extTenantId},
     #{dto.remark}
     )
@@ -204,7 +255,7 @@
         system_type = #{dto.systemType},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE tenant_id = #{dto.tenantId}
   </update>
@@ -213,7 +264,7 @@
     UPDATE bt_tenant
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
   </update>
 
@@ -227,13 +278,13 @@
       AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.tenant_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.tenant_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.spaceId != null">
@@ -280,9 +331,9 @@
     #{dto.userRole},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     WHERE NOT EXISTS (
       SELECT 1
@@ -313,9 +364,9 @@
     #{dto.userRole},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     FROM dual
     WHERE NOT EXISTS (
@@ -349,9 +400,9 @@
       #{dto.userRole},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -378,9 +429,9 @@
       #{dto.userRole},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -406,7 +457,7 @@
         remark = #{dto.remark},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE tenant_user_id = #{dto.tenantUserId}
   </update>
@@ -416,7 +467,7 @@
     SET status_cd = '00X',
     updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
     AND user_id IN (<foreach collection="userIds" item="id" separator=",">#{id}</foreach>)
   </update>
@@ -426,7 +477,7 @@
     SET status_cd = '00X',
     updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE user_id = #{userId}
   </update>
 
@@ -446,13 +497,13 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (u.user_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR u.real_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     AND a.tenant_id = #{query.tenantId}

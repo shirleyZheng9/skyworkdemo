@@ -44,10 +44,35 @@ public interface TenantManageMapper {
   TenantDTO getTenantByExtTenantIdAndSpace(@Param("extTenantId") Long extTenantId,
                                            @Param("spaceId") @Nullable Long spaceId);
 
+  /**
+   * 天工项目专属候选查询：项目 ID 在天工范围内唯一，不能叠加当前空间过滤，
+   * 也不能截断结果；调用方必须在出现多条候选时阻断同步。
+   */
+  List<TenantDTO> listTenantCandidatesByExtTenantId(@Param("extTenantId") Long extTenantId);
+
+
+  /** 按天工项目 ID 查询全部有效租户，不叠加空间条件或截断结果。 */
+  List<TenantDTO> selectActiveTiangongTenantsByProjectId(@Param("externalProjectId") Long externalProjectId);
+
+  /** 查询有效租户所属有效工作空间的外部空间 ID，供天工请求做归属一致性校验。 */
+  @Nullable
+  String selectActiveExternalSpaceIdByTenantId(@Param("tenantId") Long tenantId);
+
+  /** 仅在租户创建人为空、仍是技术同步账号或已经是目标用户时绑定创建人。 */
+  int bindCreatorIfAllowed(@Param("tenantId") Long tenantId, @Param("creatorId") Long creatorId,
+                           @Param("syncUserId") Long syncUserId);
+
   /** 复活软删租户并改名:status_cd → 00A,tenant_name 更新。 */
   int reactivateTenant(@Param("tenantId") Long tenantId,
                        @Param("tenantName") String tenantName,
                        @Param("updatorId") Long updatorId);
+
+  /** 天工软删项目仅在仍归属当前空间时复活，不执行跨空间迁移。 */
+  int reactivateTiangongTenant(@Param("tenantId") Long tenantId,
+                               @Param("tenantName") String tenantName,
+                               @Param("spaceId") Long spaceId,
+                               @Param("updatorId") Long updatorId);
+
 
   /** 仅更新租户名称(命中 00A 且名称变化时)。专用方法,绕开 DataDifference flag。 */
   int updateTenantName(@Param("tenantId") Long tenantId,

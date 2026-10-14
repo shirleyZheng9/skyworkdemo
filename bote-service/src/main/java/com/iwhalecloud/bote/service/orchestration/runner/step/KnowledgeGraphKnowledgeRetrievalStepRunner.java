@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
 import com.iwhalecloud.bote.dto.orchestration.step.KnowledgeGraphKnowledgeRetrievalStep;
 import com.iwhalecloud.bote.doc.module.knowledge.adapter.client.KnowledgeClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Map;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;

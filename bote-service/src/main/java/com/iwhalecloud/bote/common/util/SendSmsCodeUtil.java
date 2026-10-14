@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.service.sms.BillSmsClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 发送SMS短信验证码工具类

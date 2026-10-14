@@ -16,7 +16,7 @@ import com.iwhalecloud.bote.mcp.dto.message.JsonRpcMessage;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcNotification;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcRequest;
 import com.iwhalecloud.bote.mcp.util.McpUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;

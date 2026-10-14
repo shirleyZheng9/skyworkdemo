@@ -30,4 +30,6 @@ public class CreateSessionParams {
   private Long platBotId;
   /** 是否调试 */
   private Boolean isTest;
+  /** 发布记录 ID */
+  private Long publishId;
 }

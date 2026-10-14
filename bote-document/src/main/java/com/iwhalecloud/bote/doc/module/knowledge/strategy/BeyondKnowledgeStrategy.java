@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.dto.knowledge.access.KnowledgeFileDTO;
 import com.iwhalecloud.bote.dto.knowledge.access.query.KnowledgeDocumentParams;
 import com.iwhalecloud.bote.dto.knowledge.access.query.KnowledgeFileQueryParams;
 import com.iwhalecloud.bote.dto.knowledge.access.query.KnowledgeQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

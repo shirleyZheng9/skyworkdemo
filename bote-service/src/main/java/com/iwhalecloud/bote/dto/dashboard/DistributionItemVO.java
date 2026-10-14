@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
@@ -18,7 +17,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Schema(description = "看板分布统计项")
 public class DistributionItemVO {
-
   @Schema(description = "分类编码", example = "scene")
   private final String code;
 

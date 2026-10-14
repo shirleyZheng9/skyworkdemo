@@ -41,27 +41,27 @@
     <if test="keyword != null and keyword != ''">
       AND (
       skill_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR skill_desc LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR
       <choose>
         <when test="_databaseId == 'postgresql'">
           CAST(tags AS TEXT) LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         </when>
         <when test="_databaseId == 'oracle'">
           TO_CHAR(tags) LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         </when>
         <otherwise>
           CAST(tags AS CHAR) LIKE
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-          <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+          <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         </otherwise>
       </choose>
       )
@@ -82,11 +82,11 @@
     <if test="keyword != null and keyword != ''">
       AND (
       skill_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR skill_desc LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{keyword}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
   </sql>
@@ -99,8 +99,8 @@
     #{skillId}, #{skillCode}, #{skillName}, #{skillDesc}, #{skillType}, #{tags}, #{version},
     COALESCE(#{installCount}, 0), #{skillContent}, #{fileInfoId}, #{source},
     COALESCE(#{onlineStatus}, 'T'), COALESCE(#{statusCd}, '00A'),
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{ownerUserId},
     #{ownerTenantId}
     )
@@ -118,7 +118,7 @@
       <if test="fileInfoId != null">file_info_id = #{fileInfoId},</if>
       <if test="onlineStatus != null">online_status = #{onlineStatus},</if>
       updated_time =
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE skill_id = #{skillId}
   </update>
@@ -127,7 +127,7 @@
     UPDATE bt_agent_skill_square
     SET online_status = #{onlineStatus},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{skillId}
   </update>
 
@@ -135,7 +135,7 @@
     UPDATE bt_agent_skill_square
     SET status_cd = #{statusCd},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{skillId}
   </update>
 
@@ -143,7 +143,7 @@
     UPDATE bt_agent_skill_square
     SET install_count = install_count + 1,
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{skillId}
   </update>
 

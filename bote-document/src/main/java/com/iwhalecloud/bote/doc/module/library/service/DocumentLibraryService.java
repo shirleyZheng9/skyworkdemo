@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.doc.module.library.dto.LibraryBatchPermissionRequest
 import com.iwhalecloud.bote.doc.module.library.dto.LibraryPermissionRequestDTO;
 import com.iwhalecloud.bote.doc.module.library.dto.LibrarySettingsRequestDTO;
 import com.iwhalecloud.bote.doc.module.library.dto.LibrarySettingsResponseDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 文档库服务

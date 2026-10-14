@@ -16,13 +16,13 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         <#noparse>#</#noparse>{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         <#noparse>#</#noparse>{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
   </sql>
@@ -58,13 +58,13 @@
     <#list table.fields as field>
       <#if field_has_next>
         <#if field.isCreatedTimeKey || field.isUpdatedTimeKey>
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         <#else>
     <#noparse>#{</#noparse>dto.${field.paramName}},
         </#if>
       <#else>
         <#if field.isCreatedTimeKey || field.isUpdatedTimeKey>
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
         <#else>
     <#noparse>#{</#noparse>dto.${field.paramName}}
         </#if>
@@ -88,13 +88,13 @@
     <#list table.fields as field>
       <#if field_has_next>
         <#if field.isCreatedTimeKey || field.isUpdatedTimeKey>
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         <#else>
     <#noparse>#{</#noparse>dto.${field.paramName}},
         </#if>
       <#else>
         <#if field.isCreatedTimeKey || field.isUpdatedTimeKey>
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
         <#else>
     <#noparse>#{</#noparse>dto.${field.paramName}}
         </#if>
@@ -119,13 +119,13 @@
       <#list table.fields as field>
         <#if field_has_next>
           <#if field.isCreatedTimeKey || field.isUpdatedTimeKey>
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
           <#else>
       <#noparse>#{</#noparse>dto.${field.paramName}},
           </#if>
         <#else>
           <#if field.isCreatedTimeKey || field.isUpdatedTimeKey>
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
           <#else>
       <#noparse>#{</#noparse>dto.${field.paramName}}
           </#if>
@@ -146,7 +146,7 @@
     </if>
       </#if>
       <#if field.isUpdatedTimeKey>
-    ${field.columnName} = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    ${field.columnName} = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       </#if>
     </#list>
     </set>
@@ -157,7 +157,7 @@
     UPDATE ${table.name}
     SET status_cd = '00X',
     updator_id = <#noparse>#</#noparse>{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE ${table.primaryKey.columnName} = <#noparse>#</#noparse>{${table.primaryKey.paramName}}
   </update>
 

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.bot.BotSceneDTO;
 import com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO;
 import com.iwhalecloud.bote.dto.bot.query.PlatSceneInfoQueryParams;
 import com.iwhalecloud.bote.dto.scene.SimpleSceneDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

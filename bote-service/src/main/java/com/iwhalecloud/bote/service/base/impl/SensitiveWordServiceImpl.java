@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.base.SensitiveWordDTO;
 import com.iwhalecloud.bote.dto.base.query.SensitiveWordQueryParams;
 import com.iwhalecloud.bote.mapper.base.SensitiveWordMapper;
 import com.iwhalecloud.bote.service.base.ISensitiveWordService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

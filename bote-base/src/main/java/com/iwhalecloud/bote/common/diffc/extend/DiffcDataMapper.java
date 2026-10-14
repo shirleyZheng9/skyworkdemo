@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.diffc.extend;
 
-import com.iwhalecloud.bss.litchi.database.util.DbUtil;
-import com.iwhalecloud.bss.litchi.diffc.mapper.DataMapper;
+import com.cmsr.tiangong.database.util.DbUtil;
+import com.cmsr.tiangong.diffc.mapper.DataMapper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;

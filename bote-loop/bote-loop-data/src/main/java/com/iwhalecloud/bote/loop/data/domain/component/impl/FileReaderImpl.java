@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.loop.data.domain.component.impl;
 
 import com.iwhalecloud.bote.loop.data.domain.component.IFileReader;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FileFormat;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

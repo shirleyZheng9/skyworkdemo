@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.llm.client.LlmClientFactory;
 import com.iwhalecloud.bote.llm.client.config.EmbeddingProperties;
 import com.iwhalecloud.bote.llm.client.config.LlmProperties;
 import com.iwhalecloud.bote.llm.client.util.ModelValidationUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Map;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;

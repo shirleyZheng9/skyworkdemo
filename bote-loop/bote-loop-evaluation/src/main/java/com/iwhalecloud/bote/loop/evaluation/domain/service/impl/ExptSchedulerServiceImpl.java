@@ -24,7 +24,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.service.scheduler.ExptSchedul
 import com.iwhalecloud.bote.loop.evaluation.domain.service.scheduler.SchedulerChain;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.scheduler.SchedulerEndPoint;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.scheduler.SchedulerModeFactory;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;

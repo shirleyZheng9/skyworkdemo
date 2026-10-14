@@ -11,7 +11,7 @@
   </resultMap>
 
   <!--
-    2026-08-31 新增：顶部核心资源总量及较昨日净变化。
+    2026-08-31 新增：顶部核心资源总量及今日新增。
 
     一、为什么使用 UNION ALL
     1. 本查询不是把多表明细合并后再统计，而是每张资源主表独立完成 COUNT 聚合；
@@ -20,7 +20,7 @@
        也保证首屏四张卡片使用同一次请求和同一组今日时间边界。
 
     二、统计口径
-    1. today_increase 字段为兼容既有前端契约，实际表示相较今日零点的资源净变化；
+     1. today_increase 字段为兼容既有前端契约，实际表示相较今日零点的资源净变化；
        正数表示新增，负数表示删除。今日零点的有效数量会将今天软删除
        （status_cd = '00X' 且 updated_time >= todayStart）的历史记录计入；
     2. 智能体统计当前租户智能体列表默认可查询的有效记录，即排除 A2A 服务；
@@ -203,7 +203,7 @@
 
     WHEN source_data.file_extension IN
     ('mp3', 'wav', 'm4a', 'aac', 'flac', 'ogg', 'wma',
-     'mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg')
+    'mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm', 'mpeg', 'mpg')
     THEN 'audioVideo'
 
     ELSE 'other'
@@ -253,16 +253,19 @@
   </select>
 
   <resultMap id="modelUsageStatResultMap" type="com.iwhalecloud.bote.dto.dashboard.ModelUsageStatDTO">
+    <result property="modelId" column="model_id"/>
+    <result property="modelName" column="model_name"/>
     <result property="productType" column="product_type"/>
     <result property="count" column="invoke_count"/>
+    <result property="separatelyDisplayable" column="separately_displayable"/>
   </resultMap>
 
   <!--
-    模型累计使用分布查询：
-    1. 只读取当前租户汇总记录，调用量必须大于 0；
-    2. product_type 由定时汇总与状态校准任务维护，查询接口不再关联模型主表或字典表；
-    3. 查询只按 product_type 分组汇总，展示名称交由前端根据 MODEL_PRODUCT_TYPE 字典翻译。
-  -->
+     模型累计使用分布查询：
+     1. 只读取当前租户汇总记录，调用量必须大于 0；
+     2. product_type 由定时汇总与状态校准任务维护，查询接口不再关联模型主表或字典表；
+     3. 查询只按 product_type 分组汇总，展示名称交由前端根据 MODEL_PRODUCT_TYPE 字典翻译。
+   -->
   <select id="selectModelUsageTotals" resultMap="modelUsageStatResultMap">
     SELECT s.product_type AS product_type,
     SUM(s.invoke_count) AS invoke_count
@@ -281,8 +284,8 @@
     FROM bt_model_usage_log
     <!-- tenant_id 限定当前工作空间，start_time 限定当天自然日调用发生时间。 -->
     WHERE tenant_id = #{tenantId}
-      AND start_time &gt;= #{startTime}
-      AND start_time &lt; #{endTime}
+    AND start_time &gt;= #{startTime}
+    AND start_time &lt; #{endTime}
   </select>
 
   <!-- 今日知识构建完成文档数。 -->
@@ -293,20 +296,20 @@
     FROM bt_document d
     <!-- tenant_id/status_cd 保证只统计当前工作空间有效文档。 -->
     WHERE d.tenant_id = #{tenantId}
-      AND d.status_cd = '00A'
-      <!-- doc_status = 10D 表示构建完成，也就是页面口径里的已学习文档。 -->
-      AND d.doc_status = #{successStatus}
-      <!-- parse_started_time 使用左闭右开当天时间窗，表示今天新增的文档。 -->
-      AND d.parse_started_time &gt;= #{startTime}
-      AND d.parse_started_time &lt; #{endTime}
-      <!-- 只统计仍归属于有效知识库的文档，排除文档记录仍在、但所属知识库已被删除或失效的残留数据。 -->
-      AND EXISTS (
-        SELECT 1
-        FROM bt_knowledge_base kb
-        WHERE kb.knowledge_id = d.knowledge_id
-          AND kb.tenant_id = d.tenant_id
-          AND kb.status_cd = '00A'
-      )
+    AND d.status_cd = '00A'
+    <!-- doc_status = 10D 表示构建完成，也就是页面口径里的已学习文档。 -->
+    AND d.doc_status = #{successStatus}
+    <!-- parse_started_time 使用左闭右开当天时间窗，表示今天新增的文档。 -->
+    AND d.parse_started_time &gt;= #{startTime}
+    AND d.parse_started_time &lt; #{endTime}
+    <!-- 只统计仍归属于有效知识库的文档，排除文档记录仍在、但所属知识库已被删除或失效的残留数据。 -->
+    AND EXISTS (
+    SELECT 1
+    FROM bt_knowledge_base kb
+    WHERE kb.knowledge_id = d.knowledge_id
+    AND kb.tenant_id = d.tenant_id
+    AND kb.status_cd = '00A'
+    )
   </select>
 
   <resultMap id="conversationMessageTrendCountResultMap"
@@ -318,44 +321,44 @@
   <!-- 最近三十天每日对话消息量趋势：默认 MySQL 写法，只统计用户消息，当前表与历史表同时覆盖。 -->
   <select id="selectConversationMessageTrend" resultMap="conversationMessageTrendCountResultMap">
     SELECT message_source.stat_date,
-           SUM(message_source.message_count) AS message_count
+    SUM(message_source.message_count) AS message_count
     <!-- 内层当前表和历史表分别先按天聚合，减少 UNION ALL 的中间数据量。 -->
     FROM (
-      <!-- 当前会话消息表：统计尚未归档的用户消息。 -->
-      SELECT
-      <!-- MySQL 使用 DATE_FORMAT 统一输出 yyyy-MM-dd 字符串。 -->
-      DATE_FORMAT(m.created_time, '%Y-%m-%d') AS stat_date,
-      <!-- 当前表当天用户消息数先在子查询内聚合，避免外层处理明细行。 -->
-      COUNT(*) AS message_count
-      <!-- m 为消息表，s 为会话表；消息表没有 tenant_id，需要通过会话表隔离租户。 -->
-      FROM bt_bot_session_msg m
-      JOIN bt_bot_session s
-        ON s.session_id = m.session_id
-      <!-- 只统计当前租户有效用户消息；role=user 表示一条用户侧对话消息。 -->
-      WHERE s.tenant_id = #{tenantId}
-        AND m.status_cd = '00A'
-        AND m.role = 'user'
-        AND m.created_time &gt;= #{startTime}
-        AND m.created_time &lt; #{endTime}
-      <!-- 当前表按自然日聚合，日期表达式与 SELECT 保持一致。 -->
-      GROUP BY DATE_FORMAT(m.created_time, '%Y-%m-%d')
+    <!-- 当前会话消息表：统计尚未归档的用户消息。 -->
+    SELECT
+    <!-- MySQL 使用 DATE_FORMAT 统一输出 yyyy-MM-dd 字符串。 -->
+    DATE_FORMAT(m.created_time, '%Y-%m-%d') AS stat_date,
+    <!-- 当前表当天用户消息数先在子查询内聚合，避免外层处理明细行。 -->
+    COUNT(*) AS message_count
+    <!-- m 为消息表，s 为会话表；消息表没有 tenant_id，需要通过会话表隔离租户。 -->
+    FROM bt_bot_session_msg m
+    JOIN bt_bot_session s
+    ON s.session_id = m.session_id
+    <!-- 只统计当前租户有效用户消息；role=user 表示一条用户侧对话消息。 -->
+    WHERE s.tenant_id = #{tenantId}
+    AND m.status_cd = '00A'
+    AND m.role = 'user'
+    AND m.created_time &gt;= #{startTime}
+    AND m.created_time &lt; #{endTime}
+    <!-- 当前表按自然日聚合，日期表达式与 SELECT 保持一致。 -->
+    GROUP BY DATE_FORMAT(m.created_time, '%Y-%m-%d')
 
-      UNION ALL
+    UNION ALL
 
-      <!-- 历史会话消息表：统计已归档但仍落在最近三十天内的用户消息。 -->
-      SELECT
-      DATE_FORMAT(m.created_time, '%Y-%m-%d') AS stat_date,
-      COUNT(*) AS message_count
-      FROM bt_bot_session_msg_his m
-      JOIN bt_bot_session_his s
-        ON s.session_id = m.session_id
-      <!-- 历史表沿用相同口径：当前租户、有效消息、用户角色、日期范围。 -->
-      WHERE s.tenant_id = #{tenantId}
-        AND m.status_cd = '00A'
-        AND m.role = 'user'
-        AND m.created_time &gt;= #{startTime}
-        AND m.created_time &lt; #{endTime}
-      GROUP BY DATE_FORMAT(m.created_time, '%Y-%m-%d')
+    <!-- 历史会话消息表：统计已归档但仍落在最近三十天内的用户消息。 -->
+    SELECT
+    DATE_FORMAT(m.created_time, '%Y-%m-%d') AS stat_date,
+    COUNT(*) AS message_count
+    FROM bt_bot_session_msg_his m
+    JOIN bt_bot_session_his s
+    ON s.session_id = m.session_id
+    <!-- 历史表沿用相同口径：当前租户、有效消息、用户角色、日期范围。 -->
+    WHERE s.tenant_id = #{tenantId}
+    AND m.status_cd = '00A'
+    AND m.role = 'user'
+    AND m.created_time &gt;= #{startTime}
+    AND m.created_time &lt; #{endTime}
+    GROUP BY DATE_FORMAT(m.created_time, '%Y-%m-%d')
     ) message_source
     <!-- 当前表和历史表同一天都有数据时，在这里把两边数量相加。 -->
     GROUP BY message_source.stat_date

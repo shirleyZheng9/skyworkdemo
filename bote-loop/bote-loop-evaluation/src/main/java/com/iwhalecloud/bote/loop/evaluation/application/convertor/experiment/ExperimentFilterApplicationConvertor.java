@@ -26,7 +26,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.ScoreFilter;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.TurnRunState;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.TurnRunStateFilter;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.IEvalTargetService;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;

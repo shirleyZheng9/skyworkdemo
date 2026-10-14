@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.license.util;
 
 import com.iwhalecloud.bote.license.enums.LicenseErrorConst;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

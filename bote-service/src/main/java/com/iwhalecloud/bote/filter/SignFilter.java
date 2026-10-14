@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.filter;
 
-import com.iwhalecloud.bss.litchi.util.IPUtil;
+import com.cmsr.tiangong.util.IPUtil;
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

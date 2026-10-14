@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.skill.SkillSquareDetailVO;
 import com.iwhalecloud.bote.dto.skill.SkillSquareItemVO;
 import com.iwhalecloud.bote.dto.skill.query.SkillSquareQueryParams;
 import com.iwhalecloud.bote.service.skill.ISkillSquareService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

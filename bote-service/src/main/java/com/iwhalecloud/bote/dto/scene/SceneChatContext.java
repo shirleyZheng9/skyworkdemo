@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.client.dto.message.SystemMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.llm.helper.TokenCounter;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;

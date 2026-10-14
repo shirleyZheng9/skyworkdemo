@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.cache.TenantSettingInfoCache;
 import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineRequest;
 import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineResponse;
 import com.iwhalecloud.bote.service.orchestration.IOrchestrationEngine;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;

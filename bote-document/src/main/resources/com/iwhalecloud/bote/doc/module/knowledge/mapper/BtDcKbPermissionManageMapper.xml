@@ -76,8 +76,8 @@
     <!--    #{dto.tenantId},-->
     #{dto.creatorId},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd}
     )
   </insert>
@@ -110,8 +110,8 @@
       <!--    #{dto.tenantId},-->
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -145,8 +145,8 @@
       <!--      #{dto.tenantId},-->
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -180,7 +180,7 @@
       <if test="dto.checkFieldUpdateFlag('updatorId')">
         updator_id = #{dto.updatorId},
       </if>
-      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       <if test="dto.checkFieldUpdateFlag('statusCd')">
         status_cd = #{dto.statusCd},
       </if>
@@ -208,7 +208,7 @@
     SET status_cd = '00X',
     updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE kb_id = #{knowledgeId} AND status_cd = '00A'
   </delete>
   <select id="selectBtDcKbPermissionDTO" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.BtDcKbPermissionDTO">
@@ -251,7 +251,7 @@
     SET status_cd = '00X',
     updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE permission_id = #{permissionId}
   </delete>
   <delete id="batchDeletePermissions">
@@ -259,7 +259,7 @@
     SET status_cd = '00X',
     updator_id = #{updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE permission_id IN (<foreach collection="list" item="id" separator=",">#{id}</foreach>)
   </delete>
 

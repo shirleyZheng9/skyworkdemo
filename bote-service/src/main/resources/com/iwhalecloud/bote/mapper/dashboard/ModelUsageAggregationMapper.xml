@@ -3,7 +3,7 @@
 <mapper namespace="com.iwhalecloud.bote.mapper.dashboard.ModelUsageAggregationMapper">
 
   <!--
-    锁定模型汇总任务的唯一检查点。
+    锁定模型汇总任务的唯一检查点
     检查点锁与汇总写入位于同一事务，可以串行化多节点任务，避免重复消费同一游标区间。
   -->
   <select id="selectCheckpointForUpdate"
@@ -20,11 +20,11 @@
   -->
   <insert id="insertCheckpoint">
     INSERT INTO bt_dashboard_aggregation_checkpoint (
-      task_code, statistics_start_time, last_created_time, last_log_id, created_time, updated_time
+    task_code, statistics_start_time, last_created_time, last_log_id, created_time, updated_time
     ) VALUES (
-      #{taskCode}, #{startTime}, #{startTime}, 0,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    #{taskCode}, #{startTime}, #{startTime}, 0,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -58,27 +58,27 @@
   -->
   <select id="selectPendingLogs" resultMap="modelUsageLogIncrementResultMap">
     SELECT source_log.log_id,
-           source_log.tenant_id,
-           source_log.model_id,
-           source_log.model_name,
-           COALESCE(NULLIF(own_model.product_type, ''), NULLIF(platform_model.product_type, '')) AS product_type,
-           source_log.created_time
+    source_log.tenant_id,
+    source_log.model_id,
+    source_log.model_name,
+    COALESCE(NULLIF(own_model.product_type, ''), NULLIF(platform_model.product_type, '')) AS product_type,
+    source_log.created_time
     FROM (
-      SELECT log_id, tenant_id, model_id, model_name, created_time
-      FROM bt_model_usage_log
-      WHERE created_time IS NOT NULL
-        AND created_time &gt;= #{statisticsStartTime}
-        AND created_time &lt; #{cutoffTime}
-        AND (created_time &gt; #{lastCreatedTime}
-          OR (created_time = #{lastCreatedTime} AND log_id &gt; #{lastLogId}))
-      UNION
-      SELECT log_id, tenant_id, model_id, model_name, created_time
-      FROM bt_model_usage_log_his
-      WHERE created_time IS NOT NULL
-        AND created_time &gt;= #{statisticsStartTime}
-        AND created_time &lt; #{cutoffTime}
-        AND (created_time &gt; #{lastCreatedTime}
-          OR (created_time = #{lastCreatedTime} AND log_id &gt; #{lastLogId}))
+    SELECT log_id, tenant_id, model_id, model_name, created_time
+    FROM bt_model_usage_log
+    WHERE created_time IS NOT NULL
+    AND created_time &gt;= #{statisticsStartTime}
+    AND created_time &lt; #{cutoffTime}
+    AND (created_time &gt; #{lastCreatedTime}
+    OR (created_time = #{lastCreatedTime} AND log_id &gt; #{lastLogId}))
+    UNION
+    SELECT log_id, tenant_id, model_id, model_name, created_time
+    FROM bt_model_usage_log_his
+    WHERE created_time IS NOT NULL
+    AND created_time &gt;= #{statisticsStartTime}
+    AND created_time &lt; #{cutoffTime}
+    AND (created_time &gt; #{lastCreatedTime}
+    OR (created_time = #{lastCreatedTime} AND log_id &gt; #{lastLogId}))
     ) source_log
     LEFT JOIN bt_library_large_model own_model
     ON own_model.model_id = source_log.model_id
@@ -90,30 +90,30 @@
     AND platform_model.tenant_id = -1
     AND platform_model.status_cd = '00A'
     ORDER BY source_log.created_time, source_log.log_id
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
   <!--
-    累加已有模型。名称使用最近一批的非空快照；
+    累加已有模型名称使用最近一批的非空快照；
     主键 (tenant_id, model_id) 保证不同租户互不影响。
   -->
   <update id="incrementTotal">
     UPDATE bt_dashboard_model_usage_total
     SET invoke_count = invoke_count + #{increment},
-        model_name = COALESCE(#{modelName}, model_name),
-        product_type = COALESCE(#{productType}, product_type),
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    model_name = COALESCE(#{modelName}, model_name),
+    product_type = COALESCE(#{productType}, product_type),
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND model_id = #{modelId}
   </update>
 
   <!-- 首次观察到某租户使用某模型时，创建一行独立汇总记录。 -->
   <insert id="insertTotal">
     INSERT INTO bt_dashboard_model_usage_total (
-      tenant_id, model_id, model_name, product_type, invoke_count, created_time, updated_time
+    tenant_id, model_id, model_name, product_type, invoke_count, created_time, updated_time
     ) VALUES (
-      #{tenantId}, #{modelId}, #{modelName}, #{productType}, #{increment},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    #{tenantId}, #{modelId}, #{modelName}, #{productType}, #{increment},
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -121,8 +121,8 @@
   <update id="updateCheckpoint">
     UPDATE bt_dashboard_aggregation_checkpoint
     SET last_created_time = #{lastCreatedTime},
-        last_log_id = #{lastLogId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    last_log_id = #{lastLogId},
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE task_code = #{taskCode}
   </update>
 
@@ -147,82 +147,82 @@
   <select id="selectStatusCandidates"
           resultMap="modelUsageStatusCandidateResultMap">
     SELECT s.tenant_id,
-           s.model_id,
-           CASE
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model m
-             WHERE m.model_id = s.model_id
-               AND m.status_cd = '00A'
-               AND m.tenant_id IN (s.tenant_id, -1)
-           ) THEN 'ACTIVE'
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model disabled_model
-             WHERE disabled_model.model_id = s.model_id
-               AND disabled_model.tenant_id IN (s.tenant_id, -1)
-               AND disabled_model.status_cd = '00D'
-           ) THEN 'DISABLED'
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model waiting_model
-             WHERE waiting_model.model_id = s.model_id
-               AND waiting_model.tenant_id IN (s.tenant_id, -1)
-               AND waiting_model.status_cd = '00W'
-           ) THEN 'WAITING'
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model deleted_model
-             WHERE deleted_model.model_id = s.model_id
-               AND deleted_model.tenant_id IN (s.tenant_id, -1)
-               AND deleted_model.status_cd = '00X'
-           ) THEN 'DELETED'
-           WHEN NOT EXISTS (
-             SELECT 1 FROM bt_library_large_model existing_model
-             WHERE existing_model.model_id = s.model_id
-               AND existing_model.tenant_id IN (s.tenant_id, -1)
-           ) THEN 'DELETED'
-           ELSE 'UNKNOWN' END AS model_status,
-           CASE
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model own_model
-             WHERE own_model.model_id = s.model_id
-               AND s.tenant_id &lt;&gt; -1
-               AND own_model.tenant_id = s.tenant_id
-               AND own_model.status_cd = '00A'
-           ) THEN 'CUSTOM'
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model platform_model
-             WHERE platform_model.model_id = s.model_id
-               AND platform_model.tenant_id = -1
-               AND platform_model.status_cd = '00A'
-           ) THEN 'PLATFORM'
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model own_record
-             WHERE own_record.model_id = s.model_id
-               AND s.tenant_id &lt;&gt; -1
-               AND own_record.tenant_id = s.tenant_id
-           ) THEN 'CUSTOM'
-           WHEN EXISTS (
-             SELECT 1 FROM bt_library_large_model platform_record
-             WHERE platform_record.model_id = s.model_id
-               AND platform_record.tenant_id = -1
-           ) THEN 'PLATFORM'
-           ELSE 'UNKNOWN' END AS model_source,
-           COALESCE(
-             (SELECT NULLIF(own_product.product_type, '')
-              FROM bt_library_large_model own_product
-              WHERE own_product.model_id = s.model_id
-                AND s.tenant_id &lt;&gt; -1
-                AND own_product.tenant_id = s.tenant_id
-                AND own_product.status_cd = '00A'
-              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1),
-             (SELECT NULLIF(platform_product.product_type, '')
-              FROM bt_library_large_model platform_product
-              WHERE platform_product.model_id = s.model_id
-                AND platform_product.tenant_id = -1
-                AND platform_product.status_cd = '00A'
-              <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-           ) AS product_type
+    s.model_id,
+    CASE
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model m
+    WHERE m.model_id = s.model_id
+    AND m.status_cd = '00A'
+    AND m.tenant_id IN (s.tenant_id, -1)
+    ) THEN 'ACTIVE'
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model disabled_model
+    WHERE disabled_model.model_id = s.model_id
+    AND disabled_model.tenant_id IN (s.tenant_id, -1)
+    AND disabled_model.status_cd = '00D'
+    ) THEN 'DISABLED'
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model waiting_model
+    WHERE waiting_model.model_id = s.model_id
+    AND waiting_model.tenant_id IN (s.tenant_id, -1)
+    AND waiting_model.status_cd = '00W'
+    ) THEN 'WAITING'
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model deleted_model
+    WHERE deleted_model.model_id = s.model_id
+    AND deleted_model.tenant_id IN (s.tenant_id, -1)
+    AND deleted_model.status_cd = '00X'
+    ) THEN 'DELETED'
+    WHEN NOT EXISTS (
+    SELECT 1 FROM bt_library_large_model existing_model
+    WHERE existing_model.model_id = s.model_id
+    AND existing_model.tenant_id IN (s.tenant_id, -1)
+    ) THEN 'DELETED'
+    ELSE 'UNKNOWN' END AS model_status,
+    CASE
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model own_model
+    WHERE own_model.model_id = s.model_id
+    AND s.tenant_id &lt;&gt; -1
+    AND own_model.tenant_id = s.tenant_id
+    AND own_model.status_cd = '00A'
+    ) THEN 'CUSTOM'
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model platform_model
+    WHERE platform_model.model_id = s.model_id
+    AND platform_model.tenant_id = -1
+    AND platform_model.status_cd = '00A'
+    ) THEN 'PLATFORM'
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model own_record
+    WHERE own_record.model_id = s.model_id
+    AND s.tenant_id &lt;&gt; -1
+    AND own_record.tenant_id = s.tenant_id
+    ) THEN 'CUSTOM'
+    WHEN EXISTS (
+    SELECT 1 FROM bt_library_large_model platform_record
+    WHERE platform_record.model_id = s.model_id
+    AND platform_record.tenant_id = -1
+    ) THEN 'PLATFORM'
+    ELSE 'UNKNOWN' END AS model_source,
+    COALESCE(
+    (SELECT NULLIF(own_product.product_type, '')
+    FROM bt_library_large_model own_product
+    WHERE own_product.model_id = s.model_id
+    AND s.tenant_id &lt;&gt; -1
+    AND own_product.tenant_id = s.tenant_id
+    AND own_product.status_cd = '00A'
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1),
+    (SELECT NULLIF(platform_product.product_type, '')
+    FROM bt_library_large_model platform_product
+    WHERE platform_product.model_id = s.model_id
+    AND platform_product.tenant_id = -1
+    AND platform_product.status_cd = '00A'
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+    ) AS product_type
     FROM bt_dashboard_model_usage_total s
     ORDER BY s.last_status_check_time, s.tenant_id, s.model_id
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
   <!--
@@ -232,10 +232,10 @@
   <update id="updateModelStatus">
     UPDATE bt_dashboard_model_usage_total
     SET model_status = #{modelStatus},
-        model_source = #{modelSource},
-        product_type = #{productType},
-        last_status_check_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    model_source = #{modelSource},
+    product_type = #{productType},
+    last_status_check_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND model_id = #{modelId}
   </update>
 </mapper>

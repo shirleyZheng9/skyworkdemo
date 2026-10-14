@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.collaboration.socket.message.ExtractedMes
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.UniverCmdType;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.UniverCommand;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.model.CmdMessage;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

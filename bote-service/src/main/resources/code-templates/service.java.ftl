@@ -1,7 +1,7 @@
 package ${package.service};
 
 import com.github.pagehelper.PageInfo;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import ${package.dto}.${dtoName};
 import ${package.query}.${queryParamsName};
 import java.util.List;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.orchestration.context.ConverterContext;
 import com.iwhalecloud.bote.dto.orchestration.step.AgentSwitchStep;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphNodeDTO;
 import com.iwhalecloud.bote.service.orchestration.converter.AbstractStepConverter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import org.apache.commons.collections4.MapUtils;
 import org.springframework.util.Assert;
 

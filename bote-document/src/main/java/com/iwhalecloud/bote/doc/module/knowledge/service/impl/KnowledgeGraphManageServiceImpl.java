@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeGraphTokenDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.knowledgegraph.rsp.KnowledgeGraphResponse;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IKnowledgeGraphManageService;
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.KnowledgeGraphClientHelper;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;

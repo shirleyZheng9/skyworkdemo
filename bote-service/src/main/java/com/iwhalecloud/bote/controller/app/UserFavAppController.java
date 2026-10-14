@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.app.BatchSaveUserFavAppDTO;
 import com.iwhalecloud.bote.dto.app.UserFavAppDTO;
 import com.iwhalecloud.bote.dto.app.query.UserFavAppQueryParams;
 import com.iwhalecloud.bote.service.app.IUserFavAppService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

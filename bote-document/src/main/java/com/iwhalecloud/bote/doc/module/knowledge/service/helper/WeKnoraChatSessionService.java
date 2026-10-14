@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.knowledge.service.helper;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraSessionDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.entity.WeKnoraChatSessionEntity;
 import com.iwhalecloud.bote.doc.module.knowledge.mapper.WeKnoraChatSessionMapper;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.Date;
 import java.util.HashMap;
 import lombok.RequiredArgsConstructor;

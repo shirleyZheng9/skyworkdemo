@@ -20,10 +20,10 @@ import com.iwhalecloud.bote.doc.module.document.service.helper.DocumentAttachmen
 import com.iwhalecloud.bote.dto.base.FileInfoDTO;
 import com.iwhalecloud.bote.mapper.base.BoteFileInfoMapper;
 import com.iwhalecloud.bote.mapper.base.FileInfoManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.file.service.IFileStoreService;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.file.service.IFileStoreService;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.FileInputStream;

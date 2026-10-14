@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.entity.scene;
 
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;

@@ -14,8 +14,8 @@ import com.iwhalecloud.bote.mapper.app.WorkbenchAppMapper;
 import com.iwhalecloud.bote.mapper.bot.BotQueryMapper;
 import com.iwhalecloud.bote.service.chat.search.IChatSearchProvider;
 import com.iwhalecloud.bote.service.organization.IOrganizationMemberService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import java.util.ArrayList;
 import java.util.List;

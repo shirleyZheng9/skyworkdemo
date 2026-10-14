@@ -41,6 +41,7 @@ public class ListDatasetsRequest {
   @JsonProperty("biz_categorys")
   private List<String> bizCategorys;
   private String catalogItemId;
+  private List<Long> catalogItemIds;
 
   @JsonProperty("page_size")
   private Integer pageSize;

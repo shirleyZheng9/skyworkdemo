@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.dto.job;
 
-import com.iwhalecloud.bss.litchi.job.vo.BssJobLogVO;
+import com.cmsr.tiangong.job.vo.BssJobLogVO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import lombok.Getter;

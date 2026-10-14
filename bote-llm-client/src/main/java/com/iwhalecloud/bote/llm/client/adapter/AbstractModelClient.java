@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.llm.client.ModelClient;
 import com.iwhalecloud.bote.llm.client.config.AbstractModelProperties;
 import com.iwhalecloud.bote.llm.client.dto.HeaderItem;
 import com.iwhalecloud.bote.llm.client.ext.ModelRequestHeaderResolver;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import okhttp3.Headers;
 import okhttp3.HttpUrl;
 import org.apache.commons.collections4.CollectionUtils;

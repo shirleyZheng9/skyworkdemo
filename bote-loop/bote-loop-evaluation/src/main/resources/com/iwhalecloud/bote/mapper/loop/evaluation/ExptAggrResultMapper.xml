@@ -31,7 +31,7 @@
     WHERE experiment_id = #{experimentId}
     AND field_type = #{fieldType}
     AND field_key = #{fieldKey}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 
@@ -115,7 +115,7 @@
     UPDATE bt_expt_aggr_result
     SET version = version + 1,
     status = 2,
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE experiment_id = #{experimentId}
     AND field_type = #{fieldType}
     AND field_key = #{fieldKey}

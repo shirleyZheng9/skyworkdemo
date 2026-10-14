@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.skill.PromptDTO;
 import com.iwhalecloud.bote.dto.skill.SimplePromptDTO;
 import com.iwhalecloud.bote.dto.skill.query.SkillQueryParams;
 import com.iwhalecloud.bote.service.skill.IPromptManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

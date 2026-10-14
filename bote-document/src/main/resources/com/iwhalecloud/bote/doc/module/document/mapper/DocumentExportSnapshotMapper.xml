@@ -30,7 +30,7 @@
       ORDER BY created_time DESC
     ) tmp_snapshot
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 
@@ -56,8 +56,8 @@
     #{entity.fileSize},
     #{entity.creatorId},
     #{entity.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{entity.statusCd},
     #{entity.tenantId}
     )
@@ -82,7 +82,7 @@
         updator_id = #{entity.updatorId},
       </if>
       updated_time =
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE id = #{entity.id}
     AND status_cd = '00A'
@@ -92,7 +92,7 @@
     UPDATE bt_dc_document_export_snap
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -100,7 +100,7 @@
     UPDATE bt_dc_document_export_snap
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
   </update>
 
@@ -128,7 +128,7 @@
   <update id="deleteByDocumentIdAndRevisionLessThan">
     UPDATE bt_dc_document_export_snap
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND revision &lt; #{maxRevision}
       AND status_cd = '00A'
@@ -149,7 +149,7 @@
   <update id="deleteByDocumentIdAndRevisions">
     UPDATE bt_dc_document_export_snap
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND revision IN
       <foreach collection="revisions" item="revision" open="(" separator="," close=")">

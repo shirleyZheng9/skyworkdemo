@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
 import com.iwhalecloud.bote.llm.client.dto.FunctionCall;
 import com.iwhalecloud.bote.llm.client.dto.ToolCall;
 import com.iwhalecloud.bote.llm.client.dto.message.AssistantMessage;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;

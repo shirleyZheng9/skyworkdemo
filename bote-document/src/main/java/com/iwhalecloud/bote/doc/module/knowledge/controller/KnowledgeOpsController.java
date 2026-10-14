@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeOpsOverviewDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeReferenceDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.KnowledgeOpsQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IKnowlegeOpsService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

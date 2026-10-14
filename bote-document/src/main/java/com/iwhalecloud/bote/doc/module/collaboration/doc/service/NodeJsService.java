@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.doc.module.collaboration.doc.vo.DocumentImportResult
 import com.iwhalecloud.bote.doc.module.collaboration.doc.vo.DocumentMarkdownExportResult;
 import com.iwhalecloud.bote.doc.module.collaboration.doc.vo.DocumentRefreshResult;
 import com.iwhalecloud.bote.doc.module.control.model.NodeBaseInfoDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;

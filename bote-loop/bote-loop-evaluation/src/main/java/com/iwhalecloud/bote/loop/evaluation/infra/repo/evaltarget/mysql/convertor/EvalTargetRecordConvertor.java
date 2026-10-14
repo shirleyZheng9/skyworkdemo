@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvalTargetInputData;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvalTargetOutputData;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvalTargetRecord;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvalTargetRunStatus;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Date;
 
 /**

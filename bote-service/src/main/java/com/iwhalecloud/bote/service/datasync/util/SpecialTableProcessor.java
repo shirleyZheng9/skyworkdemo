@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.model.SimpleLargeModelDTO;
 import com.iwhalecloud.bote.mapper.base.CatalogManageMapper;
 import com.iwhalecloud.bote.mapper.base.LabelManageMapper;
 import com.iwhalecloud.bote.service.model.ILargeModelManageService;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

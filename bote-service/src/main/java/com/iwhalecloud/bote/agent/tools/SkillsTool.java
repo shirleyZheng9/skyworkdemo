@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.agent.annotation.ToolParam;
 import com.iwhalecloud.bote.agent.skill.AgentSkillMarkdownParser;
 import com.iwhalecloud.bote.agent.skill.AgentSkillSpec;
 import com.iwhalecloud.bote.agent.tool.context.ToolContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.nio.file.Files;

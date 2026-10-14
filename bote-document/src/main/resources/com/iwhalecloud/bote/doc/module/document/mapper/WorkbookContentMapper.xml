@@ -56,8 +56,8 @@
     #{entity.revision},
     #{entity.creatorId},
     #{entity.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{entity.statusCd}
     )
   </insert>
@@ -75,7 +75,7 @@
         updator_id = #{entity.updatorId},
       </if>
       updated_time =
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE id = #{entity.id}
     AND status_cd = '00A'
@@ -94,7 +94,7 @@
         updator_id = #{entity.updatorId},
       </if>
       updated_time =
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE document_id = #{entity.documentId}
     AND status_cd = '00A'

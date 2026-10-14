@@ -27,7 +27,7 @@ import com.iwhalecloud.bote.service.engine.SqlSkillEngine;
 import com.iwhalecloud.bote.service.orchestration.IOrchestrationEngine;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.NonStreamFlowReplyHandler;
 import com.iwhalecloud.bote.service.orchestration.reply.handlers.StreamFlowReplyHandler;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;

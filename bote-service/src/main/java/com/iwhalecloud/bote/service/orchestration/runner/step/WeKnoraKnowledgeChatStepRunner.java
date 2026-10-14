@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.orchestration.log.OrchestrationStepRunLog;
 import com.iwhalecloud.bote.dto.orchestration.step.WeKnoraKnowledgeChatStep;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.service.orchestration.runner.step.KnowledgeChatStepRunner.SseInvokerHandler;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;

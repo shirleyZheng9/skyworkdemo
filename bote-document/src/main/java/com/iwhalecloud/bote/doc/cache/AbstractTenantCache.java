@@ -2,9 +2,9 @@ package com.iwhalecloud.bote.doc.cache;
 
 import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.consts.DocCacheConsts;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
-import com.iwhalecloud.bss.litchi.cache.refresh.IRefreshBroadcastService;
-import com.iwhalecloud.bss.litchi.cache.refresh.command.RefreshCommand;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.cache.refresh.IRefreshBroadcastService;
+import com.cmsr.tiangong.cache.refresh.command.RefreshCommand;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

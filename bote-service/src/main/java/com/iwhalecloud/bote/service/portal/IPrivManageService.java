@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.portal;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.portal.PrivDTO;
 import com.iwhalecloud.bote.dto.portal.query.PrivQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.lark.LarkResultDTO;
 import com.iwhalecloud.bote.dto.plugin.params.LarkSearchRecordPluginParams;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

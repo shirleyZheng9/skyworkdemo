@@ -26,8 +26,8 @@
     ) VALUES (
     #{evaluator.id}, #{evaluator.spaceId}, #{evaluator.evaluatorType}, #{evaluator.name}, #{evaluator.description},
     COALESCE(#{evaluator.draftSubmitted}, true),
-    #{evaluator.createdBy}, #{evaluator.updatedBy}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{evaluator.createdBy}, #{evaluator.updatedBy}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{evaluator.latestVersion}, #{evaluator.catalogItemId}
     )
   </insert>
@@ -43,8 +43,8 @@
       <when test="evaluator.draftSubmitted == true">1</when>
       <otherwise>0</otherwise>
     </choose>,
-    #{evaluator.createdBy}, #{evaluator.updatedBy}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    #{evaluator.createdBy}, #{evaluator.updatedBy}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{evaluator.latestVersion}, #{evaluator.catalogItemId}
     )
   </insert>
@@ -77,7 +77,7 @@
     name = #{evaluator.name},
     description = #{evaluator.description},
     updated_by = #{evaluator.updatedBy},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     <if test="evaluator.catalogItemId != null">
       , catalog_item_id = #{evaluator.catalogItemId}
     </if>
@@ -91,7 +91,7 @@
     SET
     draft_submitted = #{draftSubmitted},
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{evaluatorId}
     AND deleted_at IS NULL
   </update>
@@ -106,7 +106,7 @@
         <otherwise>0</otherwise>
       </choose>,
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{evaluatorId}
     AND deleted_at IS NULL
   </update>
@@ -115,9 +115,9 @@
   <update id="batchDeleteEvaluator">
     UPDATE bt_evaluator
     SET
-    deleted_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    deleted_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id IN
     <foreach collection="ids" item="id" open="(" separator="," close=")">
       #{id}
@@ -192,7 +192,7 @@
     draft_submitted = true,
     latest_version = #{version},
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{evaluatorId}
     AND deleted_at IS NULL
   </update>
@@ -203,7 +203,7 @@
     draft_submitted = 1,
     latest_version = #{version},
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{evaluatorId}
     AND deleted_at IS NULL
   </update>

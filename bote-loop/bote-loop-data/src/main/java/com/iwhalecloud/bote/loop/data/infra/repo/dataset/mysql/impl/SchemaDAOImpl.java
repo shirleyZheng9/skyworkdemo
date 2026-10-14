@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.impl;
 import com.iwhalecloud.bote.entity.loop.data.dataset.DatasetSchemaEntity;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.SchemaDAO;
 import com.iwhalecloud.bote.mapper.loop.data.dataset.SchemaMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

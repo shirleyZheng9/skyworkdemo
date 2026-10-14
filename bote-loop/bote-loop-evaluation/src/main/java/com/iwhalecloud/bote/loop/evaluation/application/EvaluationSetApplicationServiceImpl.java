@@ -2,6 +2,7 @@ package com.iwhalecloud.bote.loop.evaluation.application;
 
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Maps;
+import com.iwhalecloud.bote.common.consts.CatalogConsts;
 import com.iwhalecloud.bote.common.util.ExcelUtil;
 import com.iwhalecloud.bote.loop.client.common.userinfo.UserInfoCarrier;
 import com.iwhalecloud.bote.loop.client.common.userinfo.UserInfoService;
@@ -73,7 +74,8 @@ import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluationSetSchemaSe
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluationSetService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluationSetVersionService;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.iwhalecloud.bote.service.base.ICatalogManageService;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.commons.lang3.StringUtils;
@@ -104,6 +106,7 @@ public class EvaluationSetApplicationServiceImpl implements EvaluationSetApplica
   private final EvaluationSetVersionService evaluationSetVersionService;
   private final EvaluationSetItemService evaluationSetItemService;
   private final UserInfoService userInfoService;
+  private final ICatalogManageService catalogManageService;
 
   @Override
   public CreateEvaluationSetResponse createEvaluationSet(CreateEvaluationSetRequest request) {
@@ -230,6 +233,18 @@ public class EvaluationSetApplicationServiceImpl implements EvaluationSetApplica
           .build()
         ).collect(Collectors.toList()) : null)
       .build();
+
+    // 目录查询需包含子目录：将目录ID展开为当前目录及其所有子目录的ID列表
+    if (StringUtils.isNotBlank(request.getCatalogItemId())) {
+      try {
+        Long tenantId = request.getTenantId() != null ? request.getTenantId() : request.getWorkspaceId();
+        param.setCatalogItemIds(catalogManageService.queryChildrenCatalogIds(
+          tenantId, Long.valueOf(request.getCatalogItemId().trim()), CatalogConsts.EVALUATION_SET));
+      }
+      catch (NumberFormatException e) {
+        logger.warn("解析评测集目录ID失败, catalogItemId={}", request.getCatalogItemId(), e);
+      }
+    }
 
     PageInfo<EvaluationSet> result = evaluationSetService.listEvaluationSets(param);
     PageInfo<EvaluationSetDTO> pageInfo = result.convert(EvaluationSetApplicationConvertor::convertDO2DTO);

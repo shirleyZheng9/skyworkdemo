@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.UniverCmdT
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.univer.handler.AbstractUniverMessageHandler;
 import com.iwhalecloud.bote.doc.module.collaboration.workbook.dto.socket.RegisterDownDTO;
 import com.iwhalecloud.bote.doc.module.collaboration.workbook.dto.socket.RegisterDownDTO.InfoRspDTO;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import io.netty.channel.ChannelHandlerContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

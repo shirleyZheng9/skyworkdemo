@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.impl;
 import com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnEvaluatorResultRefEntity;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptTurnEvaluatorResultRefDAO;
 import com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnEvaluatorResultRefMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

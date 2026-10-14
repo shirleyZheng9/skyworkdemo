@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.controller.plugin;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.plugin.PluginExecuteParams;
 import com.iwhalecloud.bote.service.plugin.IPluginEngine;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;

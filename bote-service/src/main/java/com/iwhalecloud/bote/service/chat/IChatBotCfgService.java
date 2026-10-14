@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.chat;
 
 import com.iwhalecloud.bote.dto.chat.ChatBotCfgDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

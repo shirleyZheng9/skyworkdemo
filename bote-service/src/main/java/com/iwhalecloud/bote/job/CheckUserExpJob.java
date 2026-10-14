@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.job;
 
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.iwhalecloud.bote.service.portal.IUserManageService;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 检查账号是否失效定时任务：

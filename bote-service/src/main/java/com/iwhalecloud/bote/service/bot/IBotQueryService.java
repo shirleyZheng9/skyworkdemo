@@ -18,7 +18,7 @@ import com.iwhalecloud.bote.dto.bot.query.PublishedAppQueryParams;
 import java.util.List;
 import java.util.Map;
 
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 
 /**

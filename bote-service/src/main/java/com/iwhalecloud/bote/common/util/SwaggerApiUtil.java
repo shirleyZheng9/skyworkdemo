@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.util;
 
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import io.swagger.v3.oas.models.Operation;

@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.doc.common.tenant.TenantContextHolder;
 import com.iwhalecloud.bote.doc.consts.DocCacheConsts;
 import com.iwhalecloud.bote.doc.module.person.dto.homepage.PinnedLibraryDTO;
 import com.iwhalecloud.bote.doc.module.person.mapper.HomepageMapper;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

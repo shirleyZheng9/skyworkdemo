@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.doc.module.document.entity.DocumentActivityEntity;
 import com.iwhalecloud.bote.doc.module.document.mapper.DocumentActivityMapper;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentActivityService;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;

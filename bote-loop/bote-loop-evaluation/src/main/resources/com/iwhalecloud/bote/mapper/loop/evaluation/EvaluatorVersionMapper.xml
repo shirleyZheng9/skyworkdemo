@@ -28,8 +28,8 @@
     #{version.id}, #{version.spaceId}, #{version.evaluatorType}, #{version.evaluatorId}, #{version.version},
     #{version.description}, #{version.metainfo}, #{version.receiveChatHistory}, #{version.inputSchema},
     #{version.createdBy}, #{version.updatedBy},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -47,8 +47,8 @@
     </choose>,
     #{version.inputSchema},
     #{version.createdBy}, #{version.updatedBy},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -63,7 +63,7 @@
     receive_chat_history = #{version.receiveChatHistory},
     input_schema = #{version.inputSchema},
     updated_by = #{version.updatedBy},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE evaluator_id = #{version.evaluatorId}
     AND version = 'draft'
     AND deleted_at IS NULL
@@ -84,7 +84,7 @@
       </choose>,
     input_schema = #{version.inputSchema},
     updated_by = #{version.updatedBy},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE evaluator_id = #{version.evaluatorId}
     AND version = 'draft'
     AND deleted_at IS NULL
@@ -94,9 +94,9 @@
   <update id="deleteEvaluatorVersion">
     UPDATE bt_evaluator_version
     SET
-    deleted_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    deleted_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -104,9 +104,9 @@
   <update id="batchDeleteEvaluatorVersionByEvaluatorIds">
     UPDATE bt_evaluator_version
     SET
-    deleted_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    deleted_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updated_by = #{userId},
-    updated_at = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_at = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE evaluator_id IN
     <foreach collection="evaluatorIds" item="evaluatorId" open="(" separator="," close=")">
       #{evaluatorId}

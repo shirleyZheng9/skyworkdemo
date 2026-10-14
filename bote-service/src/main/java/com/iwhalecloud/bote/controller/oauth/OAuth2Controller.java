@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.oauth.OAuth2UserInfo;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
 import com.iwhalecloud.bote.portal.IAuthProvider;
 import com.iwhalecloud.bote.service.oauth.OAuth2Service;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

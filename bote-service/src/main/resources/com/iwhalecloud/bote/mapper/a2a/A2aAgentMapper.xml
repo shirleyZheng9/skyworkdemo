@@ -76,9 +76,9 @@
       #{dto.tenantId},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
     )
   </insert>
@@ -116,7 +116,7 @@
       <if test="dto.checkFieldUpdateFlag('remark')">
         remark = #{dto.remark},
       </if>
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{dto.tenantId}
       AND agent_id = #{dto.agentId}
   </update>
@@ -125,7 +125,7 @@
     UPDATE bt_a2a_agent
     SET status_cd = '00X',
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
       AND agent_id = #{agentId}
   </update>
@@ -144,9 +144,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (
-        LOWER(a.agent_name) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        LOWER(a.agent_name) LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         OR
-        LOWER(a.agent_desc) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        LOWER(a.agent_desc) LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     ORDER BY a.updated_time DESC
@@ -166,9 +166,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (
-        LOWER(a.agent_name) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        LOWER(a.agent_name) LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         OR
-        LOWER(a.agent_desc) LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        LOWER(a.agent_desc) LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>LOWER(#{query.searchContent})<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     ORDER BY a.updated_time DESC

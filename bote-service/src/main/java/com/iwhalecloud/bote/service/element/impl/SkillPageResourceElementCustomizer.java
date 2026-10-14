@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.skill.SkillPageFuncDTO;
 import com.iwhalecloud.bote.mapper.skill.SkillAttrManageMapper;
 import com.iwhalecloud.bote.mapper.skill.SkillPageFuncManageMapper;
 import com.iwhalecloud.bote.mapper.skill.SkillPageManageMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

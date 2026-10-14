@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.doc.module.crawl.step;
 
 import com.iwhalecloud.bote.doc.module.crawl.dto.CrawlResult;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 步骤执行器：后处理

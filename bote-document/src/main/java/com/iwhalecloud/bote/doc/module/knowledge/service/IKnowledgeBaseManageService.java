@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
 import com.iwhalecloud.bote.dto.knowledge.docchain.DocChainExtraDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.DocKnowledgeBaseQueryParams;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.KnowledgeComboboxQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;

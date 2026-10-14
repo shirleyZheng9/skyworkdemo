@@ -14,8 +14,8 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.knowledgegraph.rsp.Knowledg
 import com.iwhalecloud.bote.doc.module.knowledge.dto.knowledgegraph.rsp.KnowledgeGraphSsoLoginResponse;
 import com.iwhalecloud.bote.dto.portal.KnowledgeGraphAccountSettingDTO;
 import com.iwhalecloud.bote.dto.tenant.setting.KnowledgeGraphLoginDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;

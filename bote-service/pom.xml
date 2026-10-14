@@ -29,29 +29,29 @@
       <artifactId>bote-skills</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-crypto</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-crypto</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-archive</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-archive</artifactId>
     </dependency>
 
     <!-- 鉴权模块 -->
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-security</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-security</artifactId>
     </dependency>
 
     <!-- 消息发送节点 -->
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-mq</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-mq</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-mq-kafka</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-mq-kafka</artifactId>
     </dependency>
 
     <!-- license核心包 -->

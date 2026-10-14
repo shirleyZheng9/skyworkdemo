@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.doc.module.document.service;
 
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentAttachmentDTO;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;

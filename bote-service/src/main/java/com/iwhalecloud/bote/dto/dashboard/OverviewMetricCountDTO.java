@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -17,7 +16,6 @@ import lombok.ToString;
 @Setter
 @ToString
 public class OverviewMetricCountDTO {
-
   /**
    * 页面卡片编码，例如 agent、knowledge、model、tool。
    * <p>该值来自 SQL 中写死的 metric_code，不直接使用表名，避免暴露数据库结构给前端。</p>

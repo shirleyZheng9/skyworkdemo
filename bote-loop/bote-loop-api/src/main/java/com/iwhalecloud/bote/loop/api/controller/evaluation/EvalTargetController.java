@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.loop.client.evaluation.eval_target.dto.ListSourceEva
 import com.iwhalecloud.bote.loop.client.evaluation.eval_target.dto.ListSourceEvalTargetVersionsResponse;
 import com.iwhalecloud.bote.loop.client.evaluation.eval_target.dto.ListSourceEvalTargetsRequest;
 import com.iwhalecloud.bote.loop.client.evaluation.eval_target.dto.ListSourceEvalTargetsResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.control.service.RolePermissionConfigServi
 import com.iwhalecloud.bote.doc.module.control.vo.NodePermissionView;
 import com.iwhalecloud.bote.dto.workspace.WorkspaceDTO;
 import com.iwhalecloud.bote.service.workspace.helper.WorkspaceHelper;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

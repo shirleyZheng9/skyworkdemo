@@ -49,7 +49,7 @@ import com.iwhalecloud.bote.doc.common.utils.converter.DcExcelHelper;
 import com.iwhalecloud.bote.doc.module.document.dto.AttachmentUrlInfoDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
 import com.iwhalecloud.bote.doc.module.document.service.helper.DocumentAttachmentHelper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 
 /**
  * excel工具类

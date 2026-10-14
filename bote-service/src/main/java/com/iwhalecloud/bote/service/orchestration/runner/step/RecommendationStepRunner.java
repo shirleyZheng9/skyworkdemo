@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.consts.ChatMessageType;
 import com.iwhalecloud.bote.common.consts.SceneConsts;
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
 import com.iwhalecloud.bote.dto.orchestration.step.RecommendationStep;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;

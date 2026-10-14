@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.config.properties.ElasticSearchProperties;
 import com.iwhalecloud.bote.dto.intent.IntentStrategyDTO;
 import com.iwhalecloud.bote.dto.intent.IntentionEmbeddingDTO;
 import com.iwhalecloud.bote.llm.client.EmbeddingClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;

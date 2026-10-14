@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.service.plugin.impl;
 
-import static com.iwhalecloud.bss.litchi.base.vo.ResultVO.success;
+import static com.cmsr.tiangong.base.vo.ResultVO.success;
 
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.cache.TenantSettingInfoCache;
@@ -26,8 +26,8 @@ import com.iwhalecloud.bote.mapper.portal.TenantQueryMapper;
 import com.iwhalecloud.bote.service.plugin.IPluginManageService;
 import com.iwhalecloud.bote.service.plugin.impl.helper.PluginHubHelper;
 import com.iwhalecloud.bote.service.portal.ITenantSettingInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

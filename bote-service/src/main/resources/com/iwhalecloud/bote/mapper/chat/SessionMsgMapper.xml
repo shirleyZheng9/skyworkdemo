@@ -13,7 +13,7 @@
     UPDATE bt_bot_session_msg
     SET like_type = #{likeType},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE msg_id = #{msgId}
   </update>
 
@@ -56,9 +56,9 @@
       #{dto.endTime},
       #{dto.msgStatus},
       #{dto.sort},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.refMsgId}
@@ -105,9 +105,9 @@
       #{dto.endTime},
       #{dto.msgStatus},
       #{dto.sort},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.refMsgId}
@@ -188,7 +188,7 @@
         </if>
         GROUP BY transaction_id
     ) tmp
-    ORDER BY sort
+    ORDER BY sort DESC
   </select>
 
   <select id="selectMessagesByTransactionIds" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
@@ -357,7 +357,7 @@
     <!-- 不要添加 msg_text 不为空条件，为空的消息也应该允许查看，比如只上传了文件没输入消息内容 -->
     <if test="query.keyword != null and query.keyword != ''">
       AND c.msg_text IS NOT NULL
-      AND c.msg_text LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND c.msg_text LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.begin_time DESC
   </select>
@@ -428,7 +428,7 @@
     </if>
     ORDER BY a.sort DESC, a.created_time DESC) TMP
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="selectSceneIdByContextId" resultType="java.lang.Long">
@@ -437,7 +437,7 @@
     WHERE status_cd = '00A'
       AND session_id = #{sessionId}
       AND context_id = #{contextId}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <select id="existsMessage" resultType="java.lang.Boolean">
@@ -446,7 +446,7 @@
             WHEN EXISTS (SELECT 1 FROM bt_bot_session_msg WHERE session_id = #{sessionId} AND context_id = #{contextId}) THEN 1
             ELSE 0
         END AS existence
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.from_dual"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.from_dual"/>
   </select>
 
   <select id="selectLastMessageForShow" resultType="com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO">
@@ -469,7 +469,7 @@
       AND a.role = 'user'
     ORDER BY a.sort DESC, a.created_time DESC) TMP
     WHERE 1=1
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 
   <update id="updateFeedbackMessage">
@@ -479,7 +479,7 @@
       feedback_reason = #{feedbackReason},
     </if>
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE msg_id = #{msgId}
   </update>
 

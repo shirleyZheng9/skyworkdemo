@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.base.query.FileInfoQueryParams;
 import com.iwhalecloud.bote.dto.knowledge.query.UploadFileParams;
 import com.iwhalecloud.bote.dto.knowledge.query.UpdateFileParams;
 import com.iwhalecloud.bote.service.base.IFileInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

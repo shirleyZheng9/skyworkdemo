@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.license.check;
 
 import com.iwhalecloud.bote.license.enums.LicenseErrorConst;
-import com.iwhalecloud.bss.litchi.base.error.IErrorConstant;
+import com.cmsr.tiangong.base.error.IErrorConstant;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Getter;
 import org.springframework.lang.Nullable;

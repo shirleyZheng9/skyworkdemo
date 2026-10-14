@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.plugin.request.TestPluginToolRequest;
 import com.iwhalecloud.bote.dto.plugin.response.PluginDefinition;
 import com.iwhalecloud.bote.dto.plugin.response.PluginToolSpec;
 import com.iwhalecloud.bote.dto.skill.query.PluginQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import org.springframework.lang.Nullable;
 
 import java.util.List;

@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.organization.query.OrganizationMemberQueryParams
 import com.iwhalecloud.bote.dto.organization.request.BatchAddOrganizationMembersRequest;
 import com.iwhalecloud.bote.service.organization.IOrganizationMemberService;
 import com.iwhalecloud.bote.service.portal.IUserManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

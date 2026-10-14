@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.iwhalecloud.bote.common.consts.CommonConsts;
 import com.iwhalecloud.bote.common.consts.KnowledgeConsts;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;

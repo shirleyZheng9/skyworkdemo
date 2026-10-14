@@ -9,10 +9,10 @@ import com.iwhalecloud.bote.dto.portal.ExternalPortalDTO;
 import com.iwhalecloud.bote.dto.portal.query.ExternalPortalQueryParams;
 import com.iwhalecloud.bote.mapper.portal.ExternalPortalMapper;
 import com.iwhalecloud.bote.service.portal.IExternalPortalManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;
@@ -105,6 +105,7 @@ public class ExternalPortalManageServiceImpl implements IExternalPortalManageSer
       Assert.hasText(portal.getCookieName(), "TGPortal Cookie 名称不能为空");
       Assert.hasText(portal.getLoginUrl(), "TGPortal 登录地址不能为空");
       // TGPortal 没有有效项目时不允许回退到默认租户，因此不要求配置 defaultTenantId。
+      //Assert.notNull(portal.getDefaultTenantId(), "TGPortal 默认项目不能为空");
       if (StringUtils.isNotEmpty(portal.getDefaultRole())) {
         Assert.isTrue(BaseConsts.ROLES.contains(portal.getDefaultRole()), () -> "未知的默认角色: " + portal.getDefaultRole());
       }

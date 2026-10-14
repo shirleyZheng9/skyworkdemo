@@ -11,8 +11,8 @@ import com.iwhalecloud.bote.doc.module.document.mapper.DocumentContributorMapper
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentContributorService;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContributeRequestDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContributorDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;

@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.doc.module.collaboration.socket.message.ExtractedMes
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.generic.GenericCmdType;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.generic.GenericCommand;
 import com.iwhalecloud.bote.doc.module.collaboration.socket.ws.generic.model.SocketSendInfo;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

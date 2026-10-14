@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.mcp;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.mcp.McpServerQueryParams;
 import com.iwhalecloud.bote.dto.mcp.SimpleMcpServiceDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.mcp.McpServerDTO;
 import java.util.List;
 

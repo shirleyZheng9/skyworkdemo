@@ -41,9 +41,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.knowledge_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -77,9 +77,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.knowledge_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.catalogItemList != null and query.catalogItemList.size() > 0">
       AND a.catalog_item_id IN (<foreach collection="query.catalogItemList" item="catalogItemId" separator=",">#{catalogItemId}</foreach>)
@@ -193,9 +193,9 @@
     #{dto.ownerId},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -253,7 +253,7 @@
       <if test="dto.checkFieldUpdateFlag('isTemporary')">
         is_temporary = #{dto.isTemporary},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE knowledge_id = #{dto.knowledgeId}
       AND tenant_id = #{dto.tenantId}
@@ -263,7 +263,7 @@
     UPDATE bt_knowledge_base
     SET topic_id = #{dto.topicId},
     updator_id = #{dto.updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE knowledge_id = #{dto.knowledgeId}
       AND tenant_id = #{dto.tenantId}
   </update>
@@ -272,7 +272,7 @@
     UPDATE bt_knowledge_base
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE knowledge_id = #{knowledgeId}
       AND tenant_id = #{tenantId}
   </update>
@@ -392,8 +392,8 @@
       AND a.tenant_id = #{query.tenantId}
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
-      AND a.knowledge_name LIKE<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND a.knowledge_name LIKE<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.knowledgeType != null and query.knowledgeType != ''">
       AND a.knowledge_type = #{query.knowledgeType}
@@ -459,7 +459,7 @@
 
   <update id="updateDocChainExtraCfgTime">
     UPDATE bt_docchain_extra_cfg
-    SET updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    SET updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = 1
   </update>
   <select id="selectKnowledgeBaseById" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeBaseDTO">
@@ -469,7 +469,7 @@
   </select>
   <update id="updateKnowledgeBaseVisibilityScope">
     UPDATE bt_knowledge_base SET visibility_scope=#{visibilityScope},updator_id=#{userId},updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where knowledge_id = #{knowledgeId} AND tenant_id = #{tenantId}
   </update>
 </mapper>

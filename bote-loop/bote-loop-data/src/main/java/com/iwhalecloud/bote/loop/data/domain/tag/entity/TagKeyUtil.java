@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.loop.data.domain.tag.entity;
 
 import com.iwhalecloud.bote.entity.loop.data.tag.TagKeyEntity;
 import com.iwhalecloud.bote.loop.data.infra.repo.tag.convertor.TagConsts;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

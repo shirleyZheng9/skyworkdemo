@@ -18,7 +18,7 @@ import com.iwhalecloud.bote.dto.chat.query.ChatSessionQueryParams;
 import com.iwhalecloud.bote.dto.chat.query.CreateSessionParams;
 import com.iwhalecloud.bote.dto.chat.query.MessageGroupResponse;
 import com.iwhalecloud.bote.dto.chat.vo.ChatTraceLogVO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 import java.util.List;
@@ -51,9 +51,10 @@ public interface IChatSessionService {
    * 删除会话
    *
    * @param sessionId 会话 ID
+   * @param publishId 发布记录 ID（发布链接场景，用于校验会话归属，可为空）
    * @return 结果
    */
-  ResultVO<Void> deleteSession(Long sessionId);
+  ResultVO<Void> deleteSession(Long sessionId, @Nullable Long publishId);
 
   /**
    * 清空会话

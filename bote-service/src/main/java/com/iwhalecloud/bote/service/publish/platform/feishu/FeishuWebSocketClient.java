@@ -4,7 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.iwhalecloud.bote.common.thread.ThreadPools;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import com.lark.oapi.core.enums.BaseUrlEnum;
 import com.lark.oapi.core.utils.Jsons;
 import com.lark.oapi.event.EventDispatcher;

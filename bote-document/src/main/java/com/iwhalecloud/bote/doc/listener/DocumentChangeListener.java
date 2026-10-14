@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.doc.module.document.enums.RecordTypeEnum;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentActivityService;
 import com.iwhalecloud.bote.doc.module.person.service.IFavoriteService;
 import com.iwhalecloud.bote.doc.module.person.service.IHomepageService;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorEventListener;
+import com.cmsr.tiangong.disruptor.DisruptorEventListener;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;

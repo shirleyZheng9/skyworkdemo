@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.doc.module.control.base.ControlTemplate;
 import com.iwhalecloud.bote.doc.module.control.base.permission.NodePermission;
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentAttachmentDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;

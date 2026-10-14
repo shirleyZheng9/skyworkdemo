@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.app.BatchSaveUserFavAppDTO;
 import com.iwhalecloud.bote.dto.app.UserFavAppDTO;
 import com.iwhalecloud.bote.dto.app.query.UserFavAppQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import java.util.List;
 

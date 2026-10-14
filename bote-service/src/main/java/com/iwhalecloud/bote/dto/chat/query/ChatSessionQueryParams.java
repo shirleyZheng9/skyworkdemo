@@ -32,6 +32,8 @@ public class ChatSessionQueryParams extends PagingQueryParams {
   private String actionType;
   @Schema(description = "是否调试")
   private Boolean isTest;
+  @Schema(description = "发布记录 ID")
+  private Long publishId;
 
   @Schema(description = "用户 ID")
   private Long userId;

@@ -80,8 +80,8 @@
     #{dto.tenantId},
     #{dto.creatorId},
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
     #{dto.remark}
     )
@@ -133,7 +133,7 @@
         remark = #{dto.remark},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE scene_id = #{dto.sceneId}
       AND tenant_id = #{dto.tenantId}
@@ -152,7 +152,7 @@
       catalog_item_id = #{dto.catalogItemId},
     </if>
     updator_id = #{dto.updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE scene_id = #{dto.sceneId}
       AND tenant_id = #{dto.tenantId}
   </update>
@@ -161,7 +161,7 @@
     UPDATE bt_bot_scene
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE scene_id = #{sceneId}
     AND tenant_id = #{tenantId}
   </update>
@@ -169,7 +169,7 @@
   <update id="updateSceneStatus">
     UPDATE bt_bot_scene
     SET scene_status = #{sceneStatus},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updator_id = #{updatorId}
     WHERE status_cd = '00A'
     AND scene_id = #{sceneId}
@@ -217,9 +217,9 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.scene_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.sceneTypes != null and !query.sceneTypes.isEmpty()">
       AND a.scene_type IN (<foreach collection="query.sceneTypes" item="sceneType" separator=",">#{sceneType}</foreach>)
@@ -263,9 +263,9 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.scene_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.sceneStatus != null and query.sceneStatus != ''">
       AND a.scene_status = #{query.sceneStatus}
@@ -296,9 +296,9 @@
       AND a.tenant_id = #{query.tenantId}
     <if test="query.name != null and query.name != ''">
       AND a.scene_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.name}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.status != null and query.status != ''">
       AND a.scene_status = #{query.status}
@@ -318,9 +318,9 @@
     WHERE a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.scene_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.sceneTypes != null and !query.sceneTypes.isEmpty()">
       AND a.scene_type IN (<foreach collection="query.sceneTypes" item="sceneType" separator=",">#{sceneType}</foreach>)
@@ -358,9 +358,9 @@
       AND a.tenant_id = #{query.tenantId}
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.scene_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.sceneTypes != null and !query.sceneTypes.isEmpty()">
       AND a.scene_type IN (<foreach collection="query.sceneTypes" item="sceneType" separator=",">#{sceneType}</foreach>)
@@ -416,7 +416,7 @@
   <update id="batchUpdateSceneStatus">
     UPDATE bt_bot_scene
     SET scene_status = #{dto.sceneStatus},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     WHERE status_cd = '00A'
       AND tenant_id = #{dto.tenantId}
@@ -426,7 +426,7 @@
   <update id="batchUpdateSceneCatalogItemId">
     UPDATE bt_bot_scene
     SET catalog_item_id = #{dto.targetCatalogItemId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     WHERE status_cd = '00A'
       AND tenant_id = #{dto.tenantId}
@@ -437,7 +437,7 @@
     UPDATE bt_bot_scene
       SET status_cd = '00X',
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND tenant_id = #{dto.tenantId}
       AND scene_id IN (<foreach collection="dto.sceneIds" item="sceneId" separator=",">#{sceneId}</foreach>)

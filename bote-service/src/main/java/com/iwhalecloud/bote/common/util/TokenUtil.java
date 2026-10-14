@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.enums.SystemParameter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;
 
@@ -26,8 +26,25 @@ public final class TokenUtil {
    */
   @Nullable
   public static String buildAccessToken(String content) {
+    return buildAccessToken(content, null);
+  }
+
+  /**
+   * 构造 accessToken，并将发布记录 ID 一并加密在其中
+   *
+   * <p>publishId 加密在 accessToken 中，服务端校验发布链接是否有效时以此为准，
+   * 链接上的参数被删除或篡改都不会影响校验结果</p>
+   *
+   * @param content 加密内容（用户密钥）
+   * @param publishId 发布记录 ID，为空时不携带
+   */
+  @Nullable
+  public static String buildAccessToken(String content, @Nullable Long publishId) {
     Map<String, Object> map = new HashMap<>();
     map.put("key", content);
+    if (publishId != null) {
+      map.put("publishId", publishId);
+    }
     String encrypt = AesUtil.aesEncrypt(JsonUtil.toJsonString(map), SystemParameter.ENCRYPTION_AES.getValueFromDb());
     if (StringUtils.isEmpty(encrypt)) {
       return null;

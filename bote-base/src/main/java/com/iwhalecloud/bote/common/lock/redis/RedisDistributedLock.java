@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.lock.redis;
 
 import com.iwhalecloud.bote.common.lock.DistributedLock;
 import com.iwhalecloud.bote.common.lock.DistributedLockException;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;

@@ -81,7 +81,7 @@
     ) t
     where 1 = 1
     <if test="limit != null and limit > 0">
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
       #{limit}
     </if>
   </select>
@@ -112,7 +112,7 @@
     AND expt_id = #{exptId}
     AND expt_run_id = #{exptRunId}
     AND item_id = #{itemId}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 

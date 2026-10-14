@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.skill.AttrSpecValueImport;
 import com.iwhalecloud.bote.dto.skill.SkillAttrSpecDTO;
 import com.iwhalecloud.bote.dto.skill.query.SkillQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.dto.DocDeleteDocumentsDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.DocumentAddParams;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.query.DocumentQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 

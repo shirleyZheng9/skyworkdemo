@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.IOJob;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemErrorGroup;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.JobStatus;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.JobType;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;

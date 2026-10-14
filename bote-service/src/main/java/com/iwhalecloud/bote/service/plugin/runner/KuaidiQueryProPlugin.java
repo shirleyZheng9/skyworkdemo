@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.params.KuaidiQueryProPluginParams;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.codec.digest.DigestUtils;

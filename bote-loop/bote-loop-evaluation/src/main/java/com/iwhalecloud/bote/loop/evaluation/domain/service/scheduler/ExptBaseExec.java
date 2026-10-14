@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.event.OnlineExptTurnEv
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExptItemResultRepo;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluatorRecordService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.IExptManager;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;

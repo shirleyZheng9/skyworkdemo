@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.dto.plugin.PluginAuthDTO;
 import com.iwhalecloud.bote.dto.plugin.params.PluginAuthQueryParams;
 import com.iwhalecloud.bote.service.plugin.IPluginAuthManageService;
 import com.iwhalecloud.bote.service.plugin.impl.helper.PluginHubHelper;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.lang.Nullable;

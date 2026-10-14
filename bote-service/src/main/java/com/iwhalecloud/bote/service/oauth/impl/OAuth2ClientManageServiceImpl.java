@@ -20,10 +20,10 @@ import com.iwhalecloud.bote.dto.oauth.OAuth2ClientRedirectUriDTO;
 import com.iwhalecloud.bote.mapper.oauth.OAuth2ClientManageMapper;
 import com.iwhalecloud.bote.mapper.oauth.OAuth2ClientRedirectUriMapper;
 import com.iwhalecloud.bote.service.oauth.IOAuth2ClientManageService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.DataDifferenceStarter;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.DataDifferenceStarter;
+import com.cmsr.tiangong.diffc.result.DataDifference;
 import lombok.RequiredArgsConstructor;
 
 /**

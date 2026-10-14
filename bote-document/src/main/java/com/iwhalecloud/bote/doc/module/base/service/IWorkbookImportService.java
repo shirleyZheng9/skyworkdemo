@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.module.base.service;
 
 import com.iwhalecloud.bote.doc.module.base.dto.UnifiedUploadRequest;
 import com.iwhalecloud.bote.doc.module.document.dto.DcDocumentDTO;
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import org.springframework.web.multipart.MultipartFile;
 
 /**

@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.skill;
 
 import com.iwhalecloud.bote.entity.skill.SkillAttrValueEntity;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
+import com.cmsr.tiangong.diffc.annotations.DiffField;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 import lombok.Getter;

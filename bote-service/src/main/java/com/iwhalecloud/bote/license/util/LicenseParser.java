@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.iwhalecloud.bote.license.entity.LicenseExtInfoDTO;
 import com.iwhalecloud.bote.license.enums.LicenseErrorConst;
 import com.iwhalecloud.bote.license.enums.VersionEnum;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import com.iwhalecloud.common.license.core.model.LicenseInfo;
 import com.iwhalecloud.common.license.core.util.AESUtil;
 import com.iwhalecloud.common.license.core.util.LicenseUtil;

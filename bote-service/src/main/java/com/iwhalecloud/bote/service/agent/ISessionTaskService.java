@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.agent;
 import com.iwhalecloud.bote.dto.agent.SessionTaskDTO;
 import com.iwhalecloud.bote.dto.agent.task.UpdateTaskRequest;
 import com.iwhalecloud.bote.entity.agent.SessionTaskEntity;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.common.operator.impl.list;
 import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.common.util.ParamUtil;
 import com.iwhalecloud.bote.dto.orchestration.IfCondition;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;

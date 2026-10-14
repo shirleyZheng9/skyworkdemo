@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.enums.AttrDataType;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.llm.client.consts.JsonSchemaDataType;
 import com.iwhalecloud.bote.llm.client.dto.schema.JsonSchemaNode;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;

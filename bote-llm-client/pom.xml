@@ -14,12 +14,12 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-base</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-base</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.iwhalecloud.bss.litchi</groupId>
-      <artifactId>litchi-spring</artifactId>
+      <groupId>com.cmsr.tiangong</groupId>
+      <artifactId>tiangong-spring</artifactId>
     </dependency>
 
     <dependency>

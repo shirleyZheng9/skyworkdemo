@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.dto.database;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.List;

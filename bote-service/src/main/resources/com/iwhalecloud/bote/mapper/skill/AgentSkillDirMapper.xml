@@ -8,8 +8,8 @@
       created_time, updated_time, creator_id, updator_id, remark
     ) VALUES (
       #{dto.dirId}, #{dto.parentDirId}, #{dto.skillId}, #{dto.tenantId}, #{dto.dirName}, #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId}, #{dto.updatorId}, #{dto.remark}
     )
   </insert>
@@ -24,7 +24,7 @@
       dir_name = #{dto.dirName},
     </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE dir_id = #{dto.dirId} AND tenant_id = #{dto.tenantId}
   </update>
 
@@ -71,14 +71,14 @@
   <update id="deleteByDirId">
     UPDATE bt_agent_skill_dir
     SET status_cd = '00X', updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND dir_id = #{dirId} AND status_cd = '00A'
   </update>
 
   <update id="deleteAllBySkillId">
     UPDATE bt_agent_skill_dir
     SET status_cd = '00X', updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId} AND skill_id = #{skillId} AND status_cd = '00A'
   </update>
 </mapper>

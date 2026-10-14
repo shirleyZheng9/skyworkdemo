@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.diffc.persist.impl;
 
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import com.iwhalecloud.bote.dto.portal.PrivDTO;
 import com.iwhalecloud.bote.mapper.portal.PrivManageMapper;
 import org.springframework.stereotype.Component;

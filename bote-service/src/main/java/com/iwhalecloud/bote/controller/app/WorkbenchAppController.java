@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.app.WorkbenchAppDTO;
 import com.iwhalecloud.bote.dto.app.WorkbenchAppRelDTO;
 import com.iwhalecloud.bote.dto.app.query.WorkbenchAppQueryParams;
 import com.iwhalecloud.bote.service.app.IWorkbenchAppService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;

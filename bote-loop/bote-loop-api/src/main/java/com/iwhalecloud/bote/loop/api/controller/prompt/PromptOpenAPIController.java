@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.loop.client.prompt.openapi.PromptOpenAPIService;
 import com.iwhalecloud.bote.loop.client.prompt.openapi.dto.BatchGetPromptByPromptKeyRequest;
 import com.iwhalecloud.bote.loop.client.prompt.openapi.dto.BatchGetPromptByPromptKeyResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;

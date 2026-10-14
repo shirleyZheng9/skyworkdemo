@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.portal.TenantDTO;
 import com.iwhalecloud.bote.dto.workspace.WorkspaceDTO;
 import com.iwhalecloud.bote.mapper.portal.TenantQueryMapper;
 import com.iwhalecloud.bote.mapper.workspace.WorkspaceManageMapper;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

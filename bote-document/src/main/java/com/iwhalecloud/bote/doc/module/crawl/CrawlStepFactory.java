@@ -18,8 +18,8 @@ import com.iwhalecloud.bote.doc.module.crawl.step.FetchRawHtmlStep;
 import com.iwhalecloud.bote.doc.module.crawl.step.PostprocessHtmlStep;
 import com.iwhalecloud.bote.doc.module.crawl.step.TransformHtmlStep;
 import com.iwhalecloud.bote.doc.module.crawl.step.WrapHtmlStep;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 爬取步骤执行器工厂类

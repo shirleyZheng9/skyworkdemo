@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.portal;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.portal.ExternalPortalDTO;
 import com.iwhalecloud.bote.dto.portal.query.ExternalPortalQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 外部门户管理服务

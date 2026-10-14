@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.cache;
 
 import com.google.common.cache.Cache;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;

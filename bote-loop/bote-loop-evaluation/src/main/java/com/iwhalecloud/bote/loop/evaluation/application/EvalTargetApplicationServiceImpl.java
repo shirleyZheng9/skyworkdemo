@@ -40,7 +40,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.ListSourceVersionParam
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ListSourceVersionResult;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.IEvalTargetService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.ISourceEvalTargetOperateService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;

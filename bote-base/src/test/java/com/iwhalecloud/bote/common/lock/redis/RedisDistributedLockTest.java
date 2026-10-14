@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
 import com.iwhalecloud.bote.common.lock.DistributedLock.LockMetadata;
 import com.iwhalecloud.bote.common.lock.DistributedLock.LockType;
 import com.iwhalecloud.bote.common.lock.DistributedLockException;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import java.lang.reflect.Field;
 import java.util.concurrent.TimeUnit;
 import org.junit.jupiter.api.BeforeEach;

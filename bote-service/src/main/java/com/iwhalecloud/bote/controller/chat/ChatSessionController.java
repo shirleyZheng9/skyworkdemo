@@ -24,7 +24,7 @@ import com.iwhalecloud.bote.dto.chat.query.CreateSessionParams;
 import com.iwhalecloud.bote.dto.chat.query.MessageGroupResponse;
 import com.iwhalecloud.bote.dto.chat.vo.ChatTraceLogVO;
 import com.iwhalecloud.bote.service.chat.IChatSessionService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -63,9 +63,10 @@ public class ChatSessionController {
   @Operation(summary = "创建会话", description = "创建会话")
   @PostMapping("createSession")
   public ResultVO<SessionDTO> createSession(@RequestParam(value = "tenantId", required = false) Long tenantId,
-    @RequestParam(value = "botId", required = false) Long botId, @RequestParam(value = "botTenantId", required = false) Long botTenantId,
-    @RequestParam(value = "extSystemId", required = false) Long extSystemId, @RequestParam(value = "platBotId", required = false) Long platBotId,
-    @RequestParam(value = "spaceId", required = false) Long spaceId, @RequestParam(value = "isTest", required = false) Boolean isTest) {
+                                            @RequestParam(value = "botId", required = false) Long botId, @RequestParam(value = "botTenantId", required = false) Long botTenantId,
+                                            @RequestParam(value = "extSystemId", required = false) Long extSystemId, @RequestParam(value = "platBotId", required = false) Long platBotId,
+                                            @RequestParam(value = "spaceId", required = false) Long spaceId, @RequestParam(value = "isTest", required = false) Boolean isTest,
+                                            @RequestParam(value = "publishId", required = false) Long publishId) {
     CreateSessionParams params = new CreateSessionParams();
     params.setSpaceId(spaceId);
     params.setTenantId(tenantId);
@@ -74,20 +75,21 @@ public class ChatSessionController {
     params.setExtSystemId(extSystemId);
     params.setPlatBotId(platBotId);
     params.setIsTest(BooleanUtils.isTrue(isTest));
+    params.setPublishId(publishId);
     return chatSessionService.createSession(params);
   }
 
   @Operation(summary = "删除会话", description = "删除会话")
   @PostMapping("deleteSession")
-  public ResultVO<Void> deleteSession(@RequestParam("sessionId") Long sessionId) {
+  public ResultVO<Void> deleteSession(@RequestParam("sessionId") Long sessionId, @RequestParam(value = "publishId", required = false) Long publishId) {
     Assert.notNull(sessionId, "会话 ID 不能为空");
-    return chatSessionService.deleteSession(sessionId);
+    return chatSessionService.deleteSession(sessionId, publishId);
   }
 
   @Operation(summary = "根据应用 ID 删除会话")
   @PostMapping("deleteSessionByBotId")
   public ResultVO<Void> deleteSessionByBotId(@RequestParam(value = "tenantId", required = false) Long tenantId, @RequestParam("botId") Long botId,
-    @RequestParam(value = "botTenantId", required = false) Long botTenantId, @RequestParam(value = "spaceId", required = false) Long spaceId) {
+                                             @RequestParam(value = "botTenantId", required = false) Long botTenantId, @RequestParam(value = "spaceId", required = false) Long spaceId) {
     Assert.notNull(botId, "应用 ID 不能为空");
     return chatSessionService.clearSessions(spaceId, tenantId, botId, botTenantId);
   }
@@ -111,9 +113,9 @@ public class ChatSessionController {
   @Operation(summary = "获取应用下的会话列表", description = "获取当前用户会话列表")
   @GetMapping("listSessions")
   public ResultVO<SessionGroupDTO> listSessions(@RequestParam(value = "tenantId", required = false) Long tenantId,
-    @RequestParam(value = "botId", required = false) Long botId, @RequestParam(value = "extSystemId", required = false) Long extSystemId,
-    @RequestParam(value = "searchContent", required = false) String searchContent, @RequestParam(value = "spaceId", required = false) Long spaceId,
-    @RequestParam(value = "isTest", required = false) Boolean isTest) {
+                                                @RequestParam(value = "botId", required = false) Long botId, @RequestParam(value = "extSystemId", required = false) Long extSystemId,
+                                                @RequestParam(value = "searchContent", required = false) String searchContent, @RequestParam(value = "spaceId", required = false) Long spaceId,
+                                                @RequestParam(value = "isTest", required = false) Boolean isTest, @RequestParam(value = "publishId", required = false) Long publishId) {
     ChatSessionQueryParams params = new ChatSessionQueryParams();
     params.setSpaceId(spaceId);
     params.setTenantId(tenantId);
@@ -121,6 +123,7 @@ public class ChatSessionController {
     params.setExtSystemId(extSystemId);
     params.setSearchContent(searchContent);
     params.setIsTest(BooleanUtils.isTrue(isTest));
+    params.setPublishId(publishId);
     return ResultVO.success(chatSessionService.listSessions(params));
   }
 
@@ -153,7 +156,7 @@ public class ChatSessionController {
   @Operation(summary = "获取会话消息", description = "供第三方系统使用")
   @GetMapping("/listMessages")
   public ResultVO<MessageGroupResponse> listMessages(@RequestParam(value = "tenantId", required = false) Long tenantId,
-    @RequestParam("sessionId") Long sessionId) {
+                                                     @RequestParam("sessionId") Long sessionId) {
     Assert.notNull(sessionId, "会话 ID 不能为空");
     if (tenantId == null) {
       // TODO 待前端调整后，统一移除

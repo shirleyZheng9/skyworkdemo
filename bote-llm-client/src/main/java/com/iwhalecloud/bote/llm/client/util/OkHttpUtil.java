@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.llm.client.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;

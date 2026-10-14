@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.diffc.persist.impl.channel;
 
 import com.iwhalecloud.bote.dto.channel.AiChannelDTO;
 import com.iwhalecloud.bote.mapper.channel.AiChannelManagerMapper;
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import org.springframework.stereotype.Component;
 
 /**

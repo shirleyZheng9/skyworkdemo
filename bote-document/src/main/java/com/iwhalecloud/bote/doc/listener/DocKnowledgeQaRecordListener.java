@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 import com.iwhalecloud.bote.doc.common.constant.DocBaseConsts;
 import com.iwhalecloud.bote.doc.listener.event.DocKnowledgeQaEventMessage;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IBtDcQaRecordManageService;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorEventListener;
+import com.cmsr.tiangong.disruptor.DisruptorEventListener;
 
 import lombok.RequiredArgsConstructor;
 

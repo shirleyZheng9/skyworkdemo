@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.config;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.customized.IWorkerIdStrategy;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.customized.IWorkerIdStrategy;
 import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.Strings;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
@@ -14,7 +14,7 @@ import org.springframework.util.Assert;
 /**
  * 博特定制的机器号生成策略
  *
- * <p>荔枝包的 {@link com.iwhalecloud.bss.litchi.util.sequence.IDUtils} 使用系统的 MAC 地址生成 dataCenterId, 然后使用 dataCenterId + 进程 ID 生成 workerId,
+ * <p>荔枝包的 {@link com.cmsr.tiangong.util.sequence.IDUtils} 使用系统的 MAC 地址生成 dataCenterId, 然后使用 dataCenterId + 进程 ID 生成 workerId,
  * 一般情况下不同应用实例生成的 dataCenterId, workerId 是不同的（容器部署时 MAC 地址一般不同，传统部署时进程 ID 一般不同）。</p>
  *
  * <p>但某些环境会有问题，比如性能压测时，在几台主机上分别启动一个容器实例，且使用 Docker 默认的容器网络，此时每个容器的 IP 都相同，

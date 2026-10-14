@@ -56,7 +56,7 @@
     FROM bt_prompt_commit
     WHERE prompt_id = #{promptId,jdbcType=BIGINT}
     AND version = #{commitVersion,jdbcType=VARCHAR}
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 

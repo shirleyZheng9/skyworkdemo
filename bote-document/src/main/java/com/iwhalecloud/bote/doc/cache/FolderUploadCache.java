@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.doc.cache;
 
 import com.iwhalecloud.bote.doc.consts.DocCacheConsts;
 import com.iwhalecloud.bote.doc.module.base.dto.FolderUploadCacheDTO;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -160,7 +160,7 @@ public class FolderUploadCache extends BaseSecondaryCache<FolderUploadCacheDTO> 
     }
     catch (Exception e) {
       logger.error("保存文件信息失败: taskId={}, fileHash={}, error={}", taskId, fileHash, e.getMessage(), e);
-      throw new com.iwhalecloud.bss.litchi.base.exception.BssException("保存文件信息失败: " + e.getMessage(), e);
+      throw new com.cmsr.tiangong.base.exception.BssException("保存文件信息失败: " + e.getMessage(), e);
     }
   }
 

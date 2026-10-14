@@ -26,7 +26,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.OrderBy;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.VersionWithDatasetResult;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.Paginator;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;

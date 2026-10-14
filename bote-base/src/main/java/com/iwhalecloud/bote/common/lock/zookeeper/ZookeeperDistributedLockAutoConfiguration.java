@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.lock.zookeeper;
 
 import com.iwhalecloud.bote.common.lock.DistributedLockException;
 import com.iwhalecloud.bote.common.lock.DistributedLockFactory;
-import com.iwhalecloud.bss.litchi.cache.refresh.impl.ZooKeeperRefreshBroadcastServiceImpl.CreatorACLProvider;
+import com.cmsr.tiangong.cache.refresh.impl.ZooKeeperRefreshBroadcastServiceImpl.CreatorACLProvider;
 import jakarta.annotation.PreDestroy;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.lang3.StringUtils;

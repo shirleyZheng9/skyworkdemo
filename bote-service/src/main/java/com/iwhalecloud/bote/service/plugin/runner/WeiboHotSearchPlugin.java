@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
 import com.iwhalecloud.bote.dto.plugin.WeiBoHotListDTO;
 import com.iwhalecloud.bote.dto.plugin.params.WeiBoHotSearchPluginParams;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;

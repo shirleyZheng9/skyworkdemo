@@ -22,9 +22,9 @@ import com.iwhalecloud.bote.doc.module.document.service.DocumentChangEventPublis
 import com.iwhalecloud.bote.doc.module.document.service.IDocContentService;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentService;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.HashMap;

@@ -41,9 +41,9 @@
       #{dto.skillVersion},
       #{dto.statusCd},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark})
   </insert>
 
@@ -81,7 +81,7 @@
       remark = #{dto.remark},
     </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{dto.skillId}
       AND tenant_id = #{dto.tenantId}
   </update>
@@ -90,7 +90,7 @@
       UPDATE bt_agent_skill
       SET status_cd = '00X',
           updator_id = #{updatorId},
-          updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+          updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       WHERE skill_id = #{skillId}
         AND tenant_id = #{tenantId}
   </delete>
@@ -153,9 +153,9 @@
     </choose>
     <if test="query.keyword != null and query.keyword != ''">
       AND (
-        a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        a.skill_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         OR
-        a.skill_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        a.skill_code LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.keyword}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     ORDER BY a.updated_time DESC
@@ -230,7 +230,7 @@
       AND a.creator_id = #{params.userId}
       AND a.skill_square_id IS NULL
     <if test="params.keyword != null and params.keyword != ''">
-      AND a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{params.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND a.skill_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{params.keyword}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -267,7 +267,7 @@
       AND b.skill_type = #{params.skillType}
     </if>
     <if test="params.keyword != null and params.keyword != ''">
-      AND a.skill_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{params.keyword}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND a.skill_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{params.keyword}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -302,7 +302,7 @@
     UPDATE bt_agent_skill
     SET file_info_id = #{fileInfoId},
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{skillId}
       AND tenant_id = #{tenantId}
       AND status_cd = '00A'
@@ -312,7 +312,7 @@
     UPDATE bt_agent_skill
     SET skill_file_name = #{skillFileName},
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{skillId}
       AND tenant_id = #{tenantId}
       AND status_cd = '00A'
@@ -322,7 +322,7 @@
     UPDATE bt_agent_skill
     SET skill_ext_json = #{skillExtJson},
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE skill_id = #{skillId}
       AND tenant_id = #{tenantId}
       AND status_cd = '00A'

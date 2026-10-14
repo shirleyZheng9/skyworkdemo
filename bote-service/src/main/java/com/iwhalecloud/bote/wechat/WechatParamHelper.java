@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.wechat;
 
 import com.iwhalecloud.bote.common.util.ExpUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;

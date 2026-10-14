@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.config.properties.PublishProperties;
 import com.iwhalecloud.bote.dto.wechat.WechatAccessTokenResponse;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

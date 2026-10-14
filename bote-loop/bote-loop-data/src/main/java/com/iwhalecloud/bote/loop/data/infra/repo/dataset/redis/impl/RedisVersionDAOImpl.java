@@ -3,9 +3,9 @@ package com.iwhalecloud.bote.loop.data.infra.repo.dataset.redis.impl;
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.loop.data.infra.rediskey.RedisKeyFormatter;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.redis.RedisVersionDAO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import org.springframework.stereotype.Repository;
 
 /**

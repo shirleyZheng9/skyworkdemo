@@ -16,7 +16,7 @@ import com.iwhalecloud.bote.mapper.portal.RolePrivManageMapper;
 import com.iwhalecloud.bote.service.portal.IMenuManageService;
 import com.iwhalecloud.bote.service.portal.IRolePrivManageService;
 import com.iwhalecloud.bote.service.portal.ITenantManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

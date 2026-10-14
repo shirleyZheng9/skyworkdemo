@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.base;
 
 import com.iwhalecloud.bote.cache.TenantCacheMarker;
 import com.iwhalecloud.bote.common.jdbc.ConnectionWrapper;
-import com.iwhalecloud.bss.litchi.database.consts.DatabaseType;
+import com.cmsr.tiangong.database.consts.DatabaseType;
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.lang.Nullable;

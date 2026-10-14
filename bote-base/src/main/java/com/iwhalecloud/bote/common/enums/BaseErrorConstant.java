@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.enums;
 
-import com.iwhalecloud.bss.litchi.base.error.IErrorConstant;
+import com.cmsr.tiangong.base.error.IErrorConstant;
 import lombok.Getter;
 
 /**

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.GroovyUtil;
 import com.iwhalecloud.bote.service.asr.realtime.RealtimeAsrHandler;
 import com.iwhalecloud.bote.service.asr.realtime.IRealtimeAsrProvider;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.function.Consumer;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

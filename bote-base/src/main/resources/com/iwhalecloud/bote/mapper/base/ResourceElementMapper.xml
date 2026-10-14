@@ -27,8 +27,8 @@
       #{dto.statusCd},
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -60,8 +60,8 @@
       #{dto.statusCd},
       #{dto.creatorId},
       #{dto.updatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.remark}
       )
     </foreach>
@@ -97,37 +97,37 @@
     a.element_id AS id,
     a.element_type AS type,
     (CASE
-      WHEN a.element_type = 'bt_label' THEN (SELECT b.label_name FROM bt_label b where a.tenant_id = b.tenant_id and a.element_id = b.label_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'catalog' THEN (SELECT b.catalog_name FROM bt_catalog b where a.tenant_id = b.tenant_id and a.element_id = b.catalog_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'data_source' THEN (SELECT b.data_source_name from bt_data_source b where a.tenant_id = b.tenant_id and a.element_id = b.data_source_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'service_platform' THEN (SELECT b.platform_name from bt_service_platform b where a.tenant_id = b.tenant_id and a.element_id = b.platform_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'library_large_model' THEN (SELECT b.model_name from bt_library_large_model b where a.tenant_id = b.tenant_id and a.element_id = b.model_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'copilot_point' THEN (SELECT b.point_name from bt_copilot_point b where a.tenant_id = b.tenant_id and a.element_id = b.point_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'prompt' THEN (SELECT b.name from bt_prompt_basic b where a.tenant_id = b.space_id and a.element_id = b.id AND (b.deleted_at = 0 OR b.deleted_at IS NULL) <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'page_file_info' THEN (SELECT b.file_name from bt_file_info b where a.tenant_id = b.tenant_id and a.element_id = b.file_info_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_mcp' THEN (SELECT b.server_name from bt_mcp_server b where a.tenant_id = b.tenant_id and a.element_id = b.server_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'a2a_agent' THEN (SELECT b.agent_name from bt_a2a_agent b where a.tenant_id = b.tenant_id and a.element_id = b.agent_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'a2a_platform' THEN (SELECT b.platform_name from bt_a2a_platform b where a.tenant_id = b.tenant_id and a.element_id = b.platform_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'agent_skill' THEN (SELECT b.skill_name from bt_agent_skill b where a.tenant_id = b.tenant_id and a.element_id = b.skill_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'agent_skill_file' THEN (SELECT b.file_name from bt_file_info b where a.tenant_id = b.tenant_id and a.element_id = b.file_info_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_sql' THEN (SELECT b.service_name from bt_skill_sql b where a.tenant_id = b.tenant_id and a.element_id = b.service_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_page' THEN (SELECT b.page_name from bt_skill_page b where a.tenant_id = b.tenant_id and a.element_id = b.page_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_page_func' THEN (SELECT b.func_name from bt_skill_page_func b where a.tenant_id = b.tenant_id and a.element_id = b.page_func_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_plugin' THEN (SELECT b.api_name from bt_skill_plugin b where a.tenant_id = b.tenant_id and a.element_id = b.api_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_attr_spec' THEN (SELECT b.attr_name from bt_skill_attr_spec b where a.tenant_id = b.tenant_id and a.element_id = b.attr_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_function' THEN (SELECT b.func_name from bt_skill_function b where a.tenant_id = b.tenant_id and a.element_id = b.func_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_flow' THEN (SELECT b.flow_name from bt_skill_flow b where a.tenant_id = b.tenant_id and a.element_id = b.flow_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'skill_service' THEN (select b.service_name from bt_skill_service b where a.tenant_id = b.tenant_id and a.element_id = b.service_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'corpus' THEN (select b.corpus_name from bt_corpus_info b where a.tenant_id = b.tenant_id and a.element_id = b.corpus_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'document_file_info' THEN (select b.file_name from bt_file_info b where a.tenant_id = b.tenant_id and a.element_id = b.file_info_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'knowledge_base' THEN (select b.knowledge_name from bt_knowledge_base b where a.tenant_id = b.tenant_id and a.element_id = b.knowledge_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'bot_scene' THEN (select b.scene_name from bt_bot_scene b where a.tenant_id = b.tenant_id and a.element_id = b.scene_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'bot_base' THEN (select b.bot_name from bt_bot b where a.tenant_id = b.tenant_id and a.element_id = b.bot_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'bot_user_experience' THEN (select COALESCE(title, content) from bt_bot_user_experience b where a.tenant_id = b.tenant_id and a.element_id = b.experience_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'tenant_setting_info' THEN (select b.func_type from bt_tenant_setting_info b where a.tenant_id = b.tenant_id and a.element_id = b.setting_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'chat_theme' THEN (select b.theme_name from bt_chat_theme b where a.tenant_id = b.tenant_id and a.element_id = b.id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'data_table' THEN (select b.table_name from bt_data_table b where a.tenant_id = b.tenant_id and a.element_id = b.table_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
-      WHEN a.element_type = 'env_variable' THEN (select b.variable_name from bt_env_variable b where a.tenant_id = b.tenant_id and a.element_id = b.variable_id <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'bt_label' THEN (SELECT b.label_name FROM bt_label b where a.tenant_id = b.tenant_id and a.element_id = b.label_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'catalog' THEN (SELECT b.catalog_name FROM bt_catalog b where a.tenant_id = b.tenant_id and a.element_id = b.catalog_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'data_source' THEN (SELECT b.data_source_name from bt_data_source b where a.tenant_id = b.tenant_id and a.element_id = b.data_source_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'service_platform' THEN (SELECT b.platform_name from bt_service_platform b where a.tenant_id = b.tenant_id and a.element_id = b.platform_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'library_large_model' THEN (SELECT b.model_name from bt_library_large_model b where a.tenant_id = b.tenant_id and a.element_id = b.model_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'copilot_point' THEN (SELECT b.point_name from bt_copilot_point b where a.tenant_id = b.tenant_id and a.element_id = b.point_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'prompt' THEN (SELECT b.name from bt_prompt_basic b where a.tenant_id = b.space_id and a.element_id = b.id AND (b.deleted_at = 0 OR b.deleted_at IS NULL) <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'page_file_info' THEN (SELECT b.file_name from bt_file_info b where a.tenant_id = b.tenant_id and a.element_id = b.file_info_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_mcp' THEN (SELECT b.server_name from bt_mcp_server b where a.tenant_id = b.tenant_id and a.element_id = b.server_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'a2a_agent' THEN (SELECT b.agent_name from bt_a2a_agent b where a.tenant_id = b.tenant_id and a.element_id = b.agent_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'a2a_platform' THEN (SELECT b.platform_name from bt_a2a_platform b where a.tenant_id = b.tenant_id and a.element_id = b.platform_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'agent_skill' THEN (SELECT b.skill_name from bt_agent_skill b where a.tenant_id = b.tenant_id and a.element_id = b.skill_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'agent_skill_file' THEN (SELECT b.file_name from bt_file_info b where a.tenant_id = b.tenant_id and a.element_id = b.file_info_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_sql' THEN (SELECT b.service_name from bt_skill_sql b where a.tenant_id = b.tenant_id and a.element_id = b.service_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_page' THEN (SELECT b.page_name from bt_skill_page b where a.tenant_id = b.tenant_id and a.element_id = b.page_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_page_func' THEN (SELECT b.func_name from bt_skill_page_func b where a.tenant_id = b.tenant_id and a.element_id = b.page_func_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_plugin' THEN (SELECT b.api_name from bt_skill_plugin b where a.tenant_id = b.tenant_id and a.element_id = b.api_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_attr_spec' THEN (SELECT b.attr_name from bt_skill_attr_spec b where a.tenant_id = b.tenant_id and a.element_id = b.attr_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_function' THEN (SELECT b.func_name from bt_skill_function b where a.tenant_id = b.tenant_id and a.element_id = b.func_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_flow' THEN (SELECT b.flow_name from bt_skill_flow b where a.tenant_id = b.tenant_id and a.element_id = b.flow_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'skill_service' THEN (select b.service_name from bt_skill_service b where a.tenant_id = b.tenant_id and a.element_id = b.service_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'corpus' THEN (select b.corpus_name from bt_corpus_info b where a.tenant_id = b.tenant_id and a.element_id = b.corpus_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'document_file_info' THEN (select b.file_name from bt_file_info b where a.tenant_id = b.tenant_id and a.element_id = b.file_info_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'knowledge_base' THEN (select b.knowledge_name from bt_knowledge_base b where a.tenant_id = b.tenant_id and a.element_id = b.knowledge_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'bot_scene' THEN (select b.scene_name from bt_bot_scene b where a.tenant_id = b.tenant_id and a.element_id = b.scene_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'bot_base' THEN (select b.bot_name from bt_bot b where a.tenant_id = b.tenant_id and a.element_id = b.bot_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'bot_user_experience' THEN (select COALESCE(title, content) from bt_bot_user_experience b where a.tenant_id = b.tenant_id and a.element_id = b.experience_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'tenant_setting_info' THEN (select b.func_type from bt_tenant_setting_info b where a.tenant_id = b.tenant_id and a.element_id = b.setting_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'chat_theme' THEN (select b.theme_name from bt_chat_theme b where a.tenant_id = b.tenant_id and a.element_id = b.id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'data_table' THEN (select b.table_name from bt_data_table b where a.tenant_id = b.tenant_id and a.element_id = b.table_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
+      WHEN a.element_type = 'env_variable' THEN (select b.variable_name from bt_env_variable b where a.tenant_id = b.tenant_id and a.element_id = b.variable_id <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1)
     ELSE '' END) AS name
     FROM bt_resource_element a
     WHERE status_cd = '00A'

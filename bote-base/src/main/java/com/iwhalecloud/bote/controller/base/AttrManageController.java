@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.cache.AttrSpecCache;
 import com.iwhalecloud.bote.common.consts.CommonConsts;
 import com.iwhalecloud.bote.dto.base.SimpleAttrDTO;
 import com.iwhalecloud.bote.dto.base.query.AttrSpecQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.Collections;

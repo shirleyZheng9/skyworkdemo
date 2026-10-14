@@ -14,9 +14,9 @@ import com.iwhalecloud.bote.dto.base.CatalogTree;
 import com.iwhalecloud.bote.dto.base.query.ApiAuthQueryParams;
 import com.iwhalecloud.bote.mapper.base.ApiAuthManageMapper;
 import com.iwhalecloud.bote.service.base.IApiAuthManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -107,8 +107,10 @@ public class ApiAuthManageServiceImpl implements IApiAuthManageService {
     // 获取博特api地址
     String boteApiUrl = SystemParameter.BOTE_API_URL.getValueFromEnv();
     Assert.hasText(boteApiUrl, "博特平台接口地址不能为空，请联系系统管理员");
-    // 生成access_token
-    String accessToken = TokenUtil.buildAccessToken(publish.getToken());
+    // 生成发布记录ID
+    publish.setPublishId(Sequences.APP_PUBLISH_ID.next());
+    // 生成access_token，发布记录ID加密在access_token中，用于校验发布链接对应的发布记录是否已被删除
+    String accessToken = TokenUtil.buildAccessToken(publish.getToken(), publish.getPublishId());
     // 重定向地址
     String redirect = getBotRedirect(publish);
     // 构造单点链接地址
@@ -125,13 +127,14 @@ public class ApiAuthManageServiceImpl implements IApiAuthManageService {
     else {
       url = String.format("%s/bote/single?tenantId=%s&modeType=%s&accessToken=%s&redirect=%s", prefix, publish.getTenantId(), publish.getModeType(), accessToken, redirect);
     }
+    // 追加发布记录ID，便于前端使用；服务端校验以 access_token 中加密的发布记录ID为准
+    url = url + "&publishId=" + publish.getPublishId();
     if (BaseConsts.TRUE.equals(publish.getIsNewSession())) {
       url = url + "&pattern=S";
     }
     // 保存智能体发布信息
     publish.setUrl(url);
     Long userId = SessionUtil.getLoginInfo().getUserId();
-    publish.setPublishId(Sequences.APP_PUBLISH_ID.next());
     publish.setStatusCd(BaseConsts.STATUS_CD_VALID);
     publish.setCreatorId(userId);
     publish.setUpdatorId(userId);

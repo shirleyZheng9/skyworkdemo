@@ -3,8 +3,8 @@ package com.iwhalecloud.bote.doc.config;
 import com.iwhalecloud.bote.common.diffc.extend.DiffcDataMapper;
 import com.iwhalecloud.bote.common.requestcache.RequestCacheAspect;
 import com.iwhalecloud.bote.common.requestcache.RequestCacheableParamResolver;
-import com.iwhalecloud.bss.litchi.diffc.config.LitchiDiffcAutoConfiguration;
-import com.iwhalecloud.bss.litchi.diffc.mapper.DataMapper;
+import com.cmsr.tiangong.diffc.config.TiangongDiffcAutoConfiguration;
+import com.cmsr.tiangong.diffc.mapper.DataMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -31,7 +31,7 @@ import org.springframework.web.servlet.LocaleResolver;
  * @author chen.linfa
  * @since 2025-11-19
  */
-@AutoConfiguration(before = {LitchiDiffcAutoConfiguration.class, WebMvcAutoConfiguration.class})
+@AutoConfiguration(before = {TiangongDiffcAutoConfiguration.class, WebMvcAutoConfiguration.class})
 @ComponentScan(basePackages = "com.iwhalecloud.bote", excludeFilters = @Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class))
 @MapperScan(basePackages = {"com.iwhalecloud.bote.mapper", "com.iwhalecloud.bote.doc.module.*.mapper"})
 @EnableScheduling
@@ -48,7 +48,7 @@ public class DocumentAutoConfiguration {
   }
 
   /**
-   * 覆盖 bean: {@link LitchiDiffcAutoConfiguration#litchiDataMapper}
+   * 覆盖 bean: {@link TiangongDiffcAutoConfiguration#tiangongDataMapper}
    */
   @Bean
   public DataMapper customDataMapper(JdbcTemplate jdbcTemplate) {

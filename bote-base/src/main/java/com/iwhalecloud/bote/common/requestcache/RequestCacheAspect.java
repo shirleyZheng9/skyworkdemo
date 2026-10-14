@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.requestcache;
 
 import com.iwhalecloud.bote.common.annotation.RequestCacheable;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;

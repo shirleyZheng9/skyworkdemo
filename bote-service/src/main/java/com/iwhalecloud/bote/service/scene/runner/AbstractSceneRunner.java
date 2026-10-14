@@ -26,7 +26,7 @@ import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.UserMessage;
 import com.iwhalecloud.bote.mapper.scene.SceneChatMessageMapper;
 import com.iwhalecloud.bote.service.skill.IFlowRunLogService;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
+import com.cmsr.tiangong.database.util.TransactionUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

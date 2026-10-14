@@ -6,8 +6,8 @@ import com.iwhalecloud.bote.dto.base.PublishRecordDTO;
 import com.iwhalecloud.bote.dto.base.PublishStepDTO;
 import com.iwhalecloud.bote.dto.datasync.query.DataSyncParams;
 import com.iwhalecloud.bote.service.publish.step.datasync.AbstractDataSyncStep;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Map;
 
 /**

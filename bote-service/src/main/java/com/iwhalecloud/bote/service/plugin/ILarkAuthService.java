@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.plugin;
 
 import com.iwhalecloud.bote.dto.plugin.lark.LarkUserAuthInfoDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 飞书授权服务

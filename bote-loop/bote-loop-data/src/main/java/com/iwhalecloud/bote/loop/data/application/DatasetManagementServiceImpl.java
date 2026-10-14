@@ -28,7 +28,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.OrderBy;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.SearchDatasetsParam;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.UpdateDatasetParam;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -157,6 +157,7 @@ public class DatasetManagementServiceImpl implements DatasetManagementService {
     param.setOrderBy(orderBy);
     param.setBizCategorys(request.getBizCategorys());
     param.setCatalogItemId(request.getCatalogItemId());
+    param.setCatalogItemIds(request.getCatalogItemIds());
 
     PageInfo<DatasetWithSchema> pageInfo = datasetService.searchDataset(param);
     List<DatasetWithSchema> datasetWithSchemas = pageInfo.getList();

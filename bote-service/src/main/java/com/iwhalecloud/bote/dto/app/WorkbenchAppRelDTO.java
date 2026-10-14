@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.dto.app;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.iwhalecloud.bote.entity.app.WorkbenchAppRelEntity;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

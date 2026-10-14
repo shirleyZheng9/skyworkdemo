@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.orchestration.step.RecommendationStep;
 import com.iwhalecloud.bote.dto.orchestration.step.RecommendationStep.RecommendationQuestionItem;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphNodeDTO;
 import com.iwhalecloud.bote.service.orchestration.converter.AbstractStepConverter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 
 /**

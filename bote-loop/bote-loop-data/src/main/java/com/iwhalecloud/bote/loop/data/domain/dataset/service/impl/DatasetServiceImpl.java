@@ -19,7 +19,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.UpdateDatasetPa
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.SchemaUtils;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.Paginator;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.PaginatorFactory;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 
 import java.util.Date;
 import java.util.List;
@@ -147,6 +147,7 @@ public class DatasetServiceImpl implements DatasetService {
     datasetsParam.setPaginator(pg);
     datasetsParam.setBizCategorys(req.getBizCategorys());
     datasetsParam.setCatalogItemId(req.getCatalogItemId() == null ? null : Long.parseLong(req.getCatalogItemId()));
+    datasetsParam.setCatalogItemIds(req.getCatalogItemIds());
     PageInfo<Dataset> datasetPageInfo = repo.listDatasets(datasetsParam);
     List<Dataset> datasets = datasetPageInfo.getList();
     List<Long> schemaIDs = datasets.stream().map(Dataset::getSchemaId).toList();

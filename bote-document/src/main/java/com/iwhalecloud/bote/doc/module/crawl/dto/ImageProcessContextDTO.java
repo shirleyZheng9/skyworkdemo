@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.crawl.dto;
 import java.util.List;
 import java.util.Map;
 
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

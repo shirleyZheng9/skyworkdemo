@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service;
 import com.iwhalecloud.bote.dto.base.DocumentPreviewDTO;
 import com.iwhalecloud.bote.dto.base.FilePreviewDTO;
 import com.iwhalecloud.bote.dto.base.FilePreviewRequestParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * 文件预览服务

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.PrivConsts;
 import com.iwhalecloud.bote.dto.portal.SimpleRolePrivDTO;
 import com.iwhalecloud.bote.dto.portal.SimpleRolePrivInfoDTO;
 import com.iwhalecloud.bote.mapper.portal.RolePrivManageMapper;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -1,13 +1,13 @@
 package com.iwhalecloud.bote.mapper.base;
 
-import com.iwhalecloud.bss.litchi.file.vo.FileInfoVO;
+import com.cmsr.tiangong.file.vo.FileInfoVO;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
 /**
  * 文件资源管理 Mapper
  *
- * <p>注意: bean 名称需要避免和 {@link com.iwhalecloud.bss.litchi.file.mapper.FileInfoMapper} 冲突</p>
+ * <p>注意: bean 名称需要避免和 {@link com.cmsr.tiangong.file.mapper.FileInfoMapper} 冲突</p>
  *
  * @author chen.linfa
  * @since 2024-07-30

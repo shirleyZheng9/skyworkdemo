@@ -6,8 +6,8 @@ import com.iwhalecloud.bote.dto.portal.LoginInfo;
 import com.iwhalecloud.bote.portal.config.properties.TGPortalProperties;
 import com.iwhalecloud.bote.portal.tg.TGAuthService;
 import com.iwhalecloud.bote.portal.tg.TGUserInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -61,7 +61,7 @@ public class TGPortalAuthProvider extends AbstractAuthProvider {
       return null;
     }
     request.setAttribute(REQUEST_VALIDATED_ATTRIBUTE, Boolean.TRUE);
-    // 控制器会把该值保存到 LoginInfo.extSessionId 并返回前端，不能暴露真实 OIDC Token。
+    // 控制器会把该值保存到 LoginInfo.extSessionId 并返回前端，不暴露真实 OIDC Token。
     // state 一并参与摘要，使同一用户切换天工项目后能够触发重新同步。
     String fingerprint = sessionFingerprint(token, request.getParameter("state"));
     logger.info("[TGPortal] Token 校验成功: requestUri={}, sessionFingerprint={}",
@@ -159,7 +159,11 @@ public class TGPortalAuthProvider extends AbstractAuthProvider {
     // 要求：TGPortal 解析不到有效 projectId 时必须去掉默认租户兜底，
     // 不创建项目、不绑定 tenant_id=0，/logged 也不返回默认项目。
     attributes.put(BaseConsts.ATTR_SKIP_DEFAULT_TENANT_FALLBACK, Boolean.TRUE);
-
+    // 该标识只能由已验签的 TGPortal 在解析出有效项目后写入，
+    // MultiPortalAdapter 据此走天工项目专属判重，不能用通用 autoCreateTenant 代替。
+    if (syncProjectTenant) {
+      attributes.put(BaseConsts.ATTR_TIANGONG_PROJECT_LOGIN, Boolean.TRUE);
+    }
     // 保持 systemCode=tiangong-noheader + extUserId=userId，才能命中 OAuth2 时期的存量用户。
     String externalUserId = String.valueOf(userInfo.getUserId());
     // 页面展示优先使用昵称；昵称缺失时回退到登录名。

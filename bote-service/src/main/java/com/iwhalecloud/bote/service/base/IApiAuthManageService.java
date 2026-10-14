@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.base.ApiDTO;
 import com.iwhalecloud.bote.dto.base.AppPublishDTO;
 import com.iwhalecloud.bote.dto.base.CatalogTree;
 import com.iwhalecloud.bote.dto.base.query.ApiAuthQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

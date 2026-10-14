@@ -102,8 +102,8 @@ public class ListPromptBasicParam {
    * - 类型: Go的bool对应Java的Boolean
    */
   private Boolean asc;
-  @Schema(description = "目录ID")
-  private Long catalogItemId;
+  @Schema(description = "目录ID列表（当前目录及其所有子目录）")
+  private List<Long> catalogItemIds;
   @Schema(description = "Prompt类型")
   private String promptType;
 }

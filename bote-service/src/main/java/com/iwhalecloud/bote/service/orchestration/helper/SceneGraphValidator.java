@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.StepType;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphDTO;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphEdgeDTO;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphNodeDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;

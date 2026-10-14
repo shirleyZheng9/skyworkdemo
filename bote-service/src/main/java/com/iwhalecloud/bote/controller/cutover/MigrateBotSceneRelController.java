@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.dto.bot.BotSceneRelDTO;
 import com.iwhalecloud.bote.mapper.base.ResourceElementMapper;
 import com.iwhalecloud.bote.mapper.bot.BotRelaManageMapper;
 import com.iwhalecloud.bote.mapper.cutover.CutOverMapper;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
+import com.cmsr.tiangong.database.util.TransactionUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Hidden;
 import java.io.IOException;

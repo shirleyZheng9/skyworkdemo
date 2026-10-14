@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.Dataset;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldStatus;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

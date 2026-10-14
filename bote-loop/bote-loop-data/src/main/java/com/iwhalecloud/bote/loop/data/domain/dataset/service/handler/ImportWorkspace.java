@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.loop.data.domain.component.IFileReader;
 import com.iwhalecloud.bote.loop.data.domain.component.IUnionFS;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetIOFile;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetIOJobProgress;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.HashMap;

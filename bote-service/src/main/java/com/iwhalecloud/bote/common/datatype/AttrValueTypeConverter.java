@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.datatype;
 
 import com.iwhalecloud.bote.common.enums.AttrDataType;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.LinkedHashMap;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

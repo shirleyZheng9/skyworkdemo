@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemErrorGroup;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemErrorType;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.DatasetWithSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.IndexedItem;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;

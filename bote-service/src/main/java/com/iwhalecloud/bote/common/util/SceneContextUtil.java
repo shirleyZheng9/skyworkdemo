@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.UUID;

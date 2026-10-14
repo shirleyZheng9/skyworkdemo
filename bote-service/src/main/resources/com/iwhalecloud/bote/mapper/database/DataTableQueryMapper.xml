@@ -27,8 +27,8 @@
       AND data_source_id = #{query.dataSourceId}
     </if>
     <if test="query.tableName != null and query.tableName != ''">
-      AND (table_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
-          OR table_code LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND (table_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
+          OR table_code LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.tableName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
           )
     </if>
     ORDER BY updated_time DESC

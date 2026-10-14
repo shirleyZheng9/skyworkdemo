@@ -9,7 +9,7 @@
     #{dto.tenantId},
     #{dto.questionId},
     #{dto.question},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -22,7 +22,7 @@
       #{dto.tenantId},
       #{dto.questionId},
       #{dto.question,typeHandler=org.apache.ibatis.type.UnknownTypeHandler},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
       )
     </foreach>
   </insert>
@@ -30,7 +30,7 @@
   <update id="update">
     UPDATE bt_intention_embedding
     SET question = #{question},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{id}
   </update>
 
@@ -79,6 +79,6 @@
     </if>
       AND (2 - (a.question &lt;=&gt; #{question}::halfvec)) / 2 &gt; #{minScore}
     ORDER BY score DESC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{topNum}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{topNum}
   </select>
 </mapper>

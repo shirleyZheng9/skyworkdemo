@@ -5,7 +5,7 @@ import com.iwhalecloud.bassc.basiccenter.util.VerificationCodeUtils;
 import com.iwhalecloud.bote.common.annotation.IgnoreSign;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.portal.adapter.DefaultPortalAuthProvider;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

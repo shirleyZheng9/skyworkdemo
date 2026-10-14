@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.datasync.query.DataSyncQueryParams;
 import com.iwhalecloud.bote.dto.datasync.query.ExportDataParams;
 import com.iwhalecloud.bote.dto.datasync.query.ImportDataParams;
 import com.iwhalecloud.bote.dto.datasync.query.OnlinePublishParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.io.File;
 import java.util.List;
 

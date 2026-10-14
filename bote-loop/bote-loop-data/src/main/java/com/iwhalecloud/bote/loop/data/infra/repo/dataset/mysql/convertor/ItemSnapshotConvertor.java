@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.Item;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemData;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemDataProperties;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemSnapshot;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Optional;
 

@@ -10,7 +10,7 @@ import com.iwhalecloud.bote.dto.publish.PublishGatewayQueryParams;
 import com.iwhalecloud.bote.dto.publish.PublishGatewaySimpleDTO;
 import com.iwhalecloud.bote.mapper.publish.PublishGatewayManageMapper;
 import com.iwhalecloud.bote.service.publish.IPublishGatewayManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;

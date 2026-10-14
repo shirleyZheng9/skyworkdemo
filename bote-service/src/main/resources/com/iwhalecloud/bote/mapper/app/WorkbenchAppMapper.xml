@@ -52,9 +52,9 @@
     #{dto.catalogItemId},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.remark}
     )
   </insert>
@@ -75,7 +75,7 @@
         catalog_item_id = #{dto.catalogItemId},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE workbench_app_id = #{dto.workbenchAppId}
       AND space_id = #{dto.spaceId}
@@ -93,7 +93,7 @@
     UPDATE bt_workbench_app
     SET status_cd = '00X',
         updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND workbench_app_id = #{workbenchAppId}
       AND space_id = #{spaceId}
@@ -107,7 +107,7 @@
     WHERE a.status_cd = '00A'
       AND a.space_id = #{query.spaceId}
     <if test="query.appName != null and query.appName != ''">
-      AND a.app_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.appName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND a.app_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.appName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.appStatus != null and query.appStatus != ''">
       AND a.app_status = #{query.appStatus}
@@ -125,7 +125,7 @@
     UPDATE bt_workbench_app
     SET app_status = #{dto.appStatus},
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND workbench_app_id = #{dto.workbenchAppId}
       AND space_id = #{dto.spaceId}
@@ -160,7 +160,7 @@
         app_setting_status = #{dto.appSettingStatus},
       </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE status_cd = '00A'
       AND workbench_app_id = #{dto.workbenchAppId}
@@ -216,7 +216,7 @@
       AND wa.catalog_item_id = #{query.catalogItemId}
     </if>
     <if test="query.appName != null and query.appName != ''">
-      AND wa.app_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.appName}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND wa.app_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.appName}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     GROUP BY au.workbench_app_id, wa.app_name, wa.app_desc, wa.app_scene
     ORDER BY updated_time DESC
@@ -252,7 +252,7 @@
       </if>
       )
     <if test="query.searchContent != null and query.searchContent != ''">
-      AND c.bot_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND c.bot_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY c.updated_time DESC
   </select>
@@ -276,7 +276,7 @@
       </if>
       )
     <if test="query.searchContent != null and query.searchContent != ''">
-      AND c.app_name LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      AND c.app_name LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{query.searchContent}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY c.updated_time DESC
   </select>

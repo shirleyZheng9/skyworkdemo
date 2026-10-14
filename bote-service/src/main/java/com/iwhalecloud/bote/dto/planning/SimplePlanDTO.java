@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.dto.planning;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iwhalecloud.bote.dto.base.SimpleFlowStepDTO;
 import com.iwhalecloud.bote.dto.chat.vo.SessionMsgVO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

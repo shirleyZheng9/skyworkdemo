@@ -47,7 +47,7 @@
     #{entity.updatorId},
     #{entity.tenantId},
     #{entity.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{entity.statusCd}
     )
   </insert>
@@ -62,7 +62,7 @@
     expires_at = #{entity.expiresAt},
     updator_id = #{entity.updatorId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE permission_id = #{entity.permissionId}
     AND status_cd = '00A'
   </update>
@@ -71,7 +71,7 @@
     UPDATE bt_dc_library_permission
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE permission_id = #{permissionId}
     AND status_cd = '00A'
   </update>
@@ -119,7 +119,7 @@
       #{permission.updatorId},
       #{permission.tenantId},
       #{permission.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{permission.statusCd}
       )
     </foreach>
@@ -143,7 +143,7 @@
       #{permission.updatorId},
       #{permission.tenantId},
       #{permission.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{permission.statusCd}
       )
     </foreach>
@@ -155,7 +155,7 @@
     UPDATE bt_dc_library_permission
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE permission_id IN
     <foreach collection="permissionIds" item="permissionId" open="(" separator="," close=")">
       #{permissionId}

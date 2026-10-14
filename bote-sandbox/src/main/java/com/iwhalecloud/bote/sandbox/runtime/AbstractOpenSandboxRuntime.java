@@ -18,7 +18,7 @@ import com.iwhalecloud.bote.sandbox.dto.SandboxFileSearchResult;
 import com.iwhalecloud.bote.sandbox.dto.SandboxFileWriteResult;
 import com.iwhalecloud.bote.sandbox.dto.SandboxRunRequest;
 import com.iwhalecloud.bote.sandbox.dto.SandboxRunResult;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;

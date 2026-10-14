@@ -6,8 +6,8 @@ logging:
     # 嵌套类需要加 "[]", 否则 Binder 解析时会自动去掉 "$": org.springframework.boot.context.logging.LoggingApplicationListener#setLogLevels
     # https://stackoverflow.com/questions/58549705/setting-logging-levels-for-nested-classes-in-spring-boot-properties
     com.iwhalecloud.bote.common.util.[HttpUtil$CustomRestTemplate]: info
-    com.iwhalecloud.bss.litchi: debug
-    com.iwhalecloud.bss.litchi.database.jdbc.LitchiJdbcTemplate: info
+    com.cmsr.tiangong: debug
+    com.cmsr.tiangong.database.jdbc.TiangongJdbcTemplate: info
     com.iwhalecloud.bote.doc.common.mybatis.parser.JsqlParserSupport: info
     sun.rmi: info
     org.apache.zookeeper: info
@@ -21,7 +21,13 @@ ftf.management.security.enabled: false
 # 天工 AI 网关 / 模型广场同步（额度管理）
 bote.tg.ai-gateway.base-url: https://ai-sit.artifex-cmcc.com.cn
 bote.tg.ai-gateway.quota-base-url: https://inner-api-ft.artifex-cmcc.com.cn
-bote.tg.ai-gateway.token: 
-bote.tg.ai-gateway.access-url: 
+bote.tg.ai-gateway.token:
+bote.tg.ai-gateway.access-url:
 bote.tg.ai-gateway.page-size: 100
 bote.tg.ai-gateway.sync-interval-seconds: 300
+
+# 天工 MQ 项目成员同步技术账号与业务用户门户；生产环境应通过同名配置覆盖默认值。
+integration.tiangong.sync-user-id: 1
+integration.tiangong.sync-user-system-code: DEFAULT
+integration.tiangong.business-user-system-code: tiangong-noheader
+integration.tiangong.max-batch-size: 200

@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.dto.scene.graph.SceneGraphDTO;
 import com.iwhalecloud.bote.service.bot.IBotSceneManageService;
 import com.iwhalecloud.bote.service.element.helper.EntityRelationParseUtil;
 import com.iwhalecloud.bote.service.element.helper.StepElementConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

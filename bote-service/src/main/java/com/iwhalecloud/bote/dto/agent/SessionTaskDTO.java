@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.dto.agent;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.entity.agent.SessionTaskEntity;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;

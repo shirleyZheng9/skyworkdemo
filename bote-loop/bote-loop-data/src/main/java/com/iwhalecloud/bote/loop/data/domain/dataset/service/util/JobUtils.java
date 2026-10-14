@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.entity.JobRunMessage;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.JobRunType;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.DatasetDomainService;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.DatasetWithSchema;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 
 import java.util.Map;
 

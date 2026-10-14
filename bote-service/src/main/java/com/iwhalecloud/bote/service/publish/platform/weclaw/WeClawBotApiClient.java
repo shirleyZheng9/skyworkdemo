@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.publish.platform.weclaw;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.common.util.HttpUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.HashMap;

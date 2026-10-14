@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.doc.common.constant.DocBaseConsts;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.WeKnoraTokenDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraKnowledgeBaseRespDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IWeknoraManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

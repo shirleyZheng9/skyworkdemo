@@ -38,7 +38,7 @@ import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluator
 import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluatorRecordResponse;
 import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluatorRequest;
 import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluatorResponse;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

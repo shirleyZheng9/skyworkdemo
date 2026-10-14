@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.CollectionUtils;

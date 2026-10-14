@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.cache;
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.entity.base.DcPublicEntity;
 import com.iwhalecloud.bote.mapper.base.DcPublicQueryMapper;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseSecondaryCache;
+import com.cmsr.tiangong.cache.helper.BaseSecondaryCache;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;

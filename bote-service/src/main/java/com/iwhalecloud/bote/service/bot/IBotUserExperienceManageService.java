@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.bot;
 
 
 import com.github.pagehelper.PageInfo;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO;
 import com.iwhalecloud.bote.dto.bot.query.BotUserExperienceQryParams;
 import java.util.List;

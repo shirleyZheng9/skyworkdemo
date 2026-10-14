@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.base.query.CatalogQueryParams;
 import com.iwhalecloud.bote.dto.base.query.DeleteCatalogDTO;
 import com.iwhalecloud.bote.dto.base.CatalogDTO;
 import com.iwhalecloud.bote.service.base.ICatalogManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

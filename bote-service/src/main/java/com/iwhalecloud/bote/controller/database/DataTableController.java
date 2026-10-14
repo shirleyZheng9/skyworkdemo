@@ -13,7 +13,7 @@ import com.iwhalecloud.bote.dto.database.DataTableDTO;
 import com.iwhalecloud.bote.dto.database.SimpleDataTableDTO;
 import com.iwhalecloud.bote.dto.database.query.DataTableQueryParams;
 import com.iwhalecloud.bote.service.database.IDataTableService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;

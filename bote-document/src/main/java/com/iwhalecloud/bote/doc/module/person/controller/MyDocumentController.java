@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.doc.common.constant.DocBaseConsts;
 import com.iwhalecloud.bote.doc.module.person.dto.MyDocumentDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.MyDocumentQueryParams;
 import com.iwhalecloud.bote.doc.module.person.service.IMyDocumentService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

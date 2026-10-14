@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.doc.module.knowledge.service.impl;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.WeKnoraTokenDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.WeKnoraKnowledgeClientHelper;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraKnowledgeBaseRespDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBooleanProperty;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import com.iwhalecloud.bote.doc.module.knowledge.service.helper.WeKnoraLoginHelper;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.weknora.resp.WeKnoraLoginResponse;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IWeknoraManageService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 
 import lombok.RequiredArgsConstructor;
 

@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.bot.RecommendedSceneDTO;
 import com.iwhalecloud.bote.dto.bot.query.BotApplyParams;
 import com.iwhalecloud.bote.dto.bot.query.BotSceneQueryParams;
 import com.iwhalecloud.bote.dto.skill.StandardServiceDiffViewDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 

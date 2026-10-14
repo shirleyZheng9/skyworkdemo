@@ -15,7 +15,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.LLMCallParam;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ModelConfig;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ReplyItem;
 import com.iwhalecloud.bote.mapper.model.LargeModelManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

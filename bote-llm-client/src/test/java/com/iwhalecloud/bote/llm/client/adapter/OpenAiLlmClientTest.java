@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.llm.client.dto.schema.JsonSchemaNode;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.function.Consumer;
 import okhttp3.Headers;

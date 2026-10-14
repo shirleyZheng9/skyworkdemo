@@ -18,7 +18,7 @@ import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallParamDTO;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallTextItem;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;

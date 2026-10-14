@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListItemSnapshotsP
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.ItemSnapshotDAO;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.Paginator;
 import com.iwhalecloud.bote.mapper.loop.data.dataset.ItemSnapshotMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;

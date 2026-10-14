@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.portal.config.properties.DefaultPortalProperties;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

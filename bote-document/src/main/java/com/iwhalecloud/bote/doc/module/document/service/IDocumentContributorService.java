@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.doc.module.document.dto.request.QueryDocContributors
 import com.iwhalecloud.bote.doc.module.document.entity.DocumentContributorEntity;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContributeRequestDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.DocumentContributorDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.math.BigDecimal;
 import java.util.List;
 

@@ -2,9 +2,9 @@ package com.iwhalecloud.bote.cache;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.common.consts.CacheConsts;
-import com.iwhalecloud.bss.litchi.cache.CacheFactory;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.cache.CacheFactory;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Map;

@@ -7,7 +7,7 @@ import org.springframework.lang.Nullable;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.oauth.OAuth2ClientDTO;
 import com.iwhalecloud.bote.dto.oauth.OAuth2ClientQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 /**
  * OAuth2客户端管理服务

@@ -25,6 +25,8 @@ public class PlatBotInfoQueryParams extends PagingQueryParams {
   private Long spaceId;
   @Schema(description = "租户ID")
   private Long tenantId;
+  @Schema(description = "选中租户ID，前端已在传该字段，后端兼容接收，等价于租户ID")
+  private Long selectedTenantId;
   @Schema(description = "用户ID")
   private Long userId;
   @Schema(description = "组织ID列表", hidden = true)

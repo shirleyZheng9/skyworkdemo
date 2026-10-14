@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.search.internal.engine;
 
 import com.iwhalecloud.bote.service.search.internal.model.SearchQuery;
 import com.iwhalecloud.bote.service.search.internal.model.SearchResult;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;

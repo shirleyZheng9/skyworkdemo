@@ -24,9 +24,9 @@
     AND a.tenant_id = #{query.tenantId}
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.file_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     <if test="query.catalogItemId != null">
       AND a.catalog_item_id = #{query.catalogItemId}
@@ -94,9 +94,9 @@
     #{dto.remark},
     #{dto.statusCd},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -130,7 +130,7 @@
       <if test="dto.checkFieldUpdateFlag('reqJson')">
         req_json = #{dto.reqJson},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE file_info_id = #{dto.fileInfoId}
     AND tenant_id = #{dto.tenantId}
@@ -141,7 +141,7 @@
     SET file_id = #{fileId},
     file_name = #{fileName},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE file_info_id = #{fileInfoId}
       AND tenant_id = #{tenantId}
   </update>
@@ -150,7 +150,7 @@
     UPDATE bt_file_info
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE file_info_id = #{fileInfoId}
     AND tenant_id = #{tenantId}
   </update>
@@ -205,7 +205,7 @@
                     WHERE b.tenant_id = a.tenant_id
                       AND b.status_cd = '00A'
                       AND b.func_type = 'chat_plugins'
-                      AND b.setting_info LIKE <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>#{template}<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+                      AND b.setting_info LIKE <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>#{template}<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
       </when>
       <otherwise>
         AND 1=2
@@ -239,7 +239,7 @@
     UPDATE bt_file_info
     SET file_name = #{fileName},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE file_info_id = #{fileInfoId}
       AND tenant_id = #{tenantId}
       AND status_cd = '00A'
@@ -253,6 +253,6 @@
     WHERE a.file_id = #{fileId}
     AND a.tenant_id = #{tenantId}
     AND a.status_cd = '00A'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> 1
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> 1
   </select>
 </mapper>

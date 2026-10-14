@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.loop.prompt.domain.entity.Reply;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.ReplyItem;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.Role;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.TokenUsage;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;

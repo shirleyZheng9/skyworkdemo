@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.agent.AiSkillDTO;
 import com.iwhalecloud.bote.dto.agent.query.AiQueryParams;
 import com.iwhalecloud.bote.dto.skill.AgentSkillDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import java.util.List;
 

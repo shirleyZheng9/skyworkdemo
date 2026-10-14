@@ -79,7 +79,7 @@
     <if test="spaceId != null">
       AND space_id = #{spaceId}
     </if>
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/>
     1
   </select>
 

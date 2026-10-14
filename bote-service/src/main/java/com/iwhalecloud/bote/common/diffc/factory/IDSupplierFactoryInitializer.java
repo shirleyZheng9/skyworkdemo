@@ -63,8 +63,8 @@ import com.iwhalecloud.bote.dto.skill.SkillPluginDTO;
 import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
 import com.iwhalecloud.bote.dto.skill.SkillSqlDTO;
 import com.iwhalecloud.bote.dto.skill.SkillTextDTO;
-import com.iwhalecloud.bss.litchi.diffc.factory.IDSupplierFactory;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.diffc.factory.IDSupplierFactory;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import org.springframework.stereotype.Component;
 
 /**

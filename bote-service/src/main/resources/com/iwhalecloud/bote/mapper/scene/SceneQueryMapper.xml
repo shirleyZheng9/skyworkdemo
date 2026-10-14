@@ -75,9 +75,9 @@
       AND a.scene_status = #{query.sceneStatus}
     <if test="query.searchContent != null and query.searchContent != ''">
       AND lower(a.scene_name) LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       lower(#{query.searchContent})
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     AND EXISTS (SELECT 1 FROM bt_bot_scene_rel r
                 WHERE a.scene_id = r.scene_id AND a.tenant_id = r.tenant_id AND r.status_cd = '00A'

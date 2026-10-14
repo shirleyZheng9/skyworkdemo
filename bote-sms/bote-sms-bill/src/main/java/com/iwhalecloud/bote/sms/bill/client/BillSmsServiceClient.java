@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.sms.bill.data.BillResVo;
 import com.iwhalecloud.bote.sms.bill.data.ObjectFactory;
 import com.iwhalecloud.bote.sms.bill.data.UserVo;
 import com.iwhalecloud.bote.sms.bill.util.BillHexUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import jakarta.xml.bind.JAXBElement;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

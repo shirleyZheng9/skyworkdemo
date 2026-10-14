@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.service.dashboard.impl;
-
 import com.iwhalecloud.bote.dto.dashboard.ModelUsageAggregationCheckpointDTO;
 import com.iwhalecloud.bote.dto.dashboard.ModelUsageLogIncrementDTO;
 import com.iwhalecloud.bote.dto.dashboard.ModelUsageStatusCandidateDTO;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * 使用 created_time 而非模型请求 start_time，避免异步日志延迟入库后落到已推进的游标之前。</p>
  */
 @Service
-public class ModelUsageAggregationServiceImpl implements IModelUsageAggregationService {
+public class ModelUsageAggregationServiceImpl implements IModelUsageAggregationService{
   /** 检查点业务编码；修改编码会产生新的统计起点，因此上线后不能随意变更。 */
   static final String TASK_CODE = "dashboard_model_usage_total_v1";
 

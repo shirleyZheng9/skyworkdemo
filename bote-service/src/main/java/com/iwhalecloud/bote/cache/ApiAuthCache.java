@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.cache;
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.dto.base.SimpleApiAuthDTO;
 import com.iwhalecloud.bote.mapper.base.ApiAuthManageMapper;
-import com.iwhalecloud.bss.litchi.cache.helper.BaseLocalCache;
+import com.cmsr.tiangong.cache.helper.BaseLocalCache;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map.Entry;

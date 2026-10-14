@@ -2,16 +2,16 @@ package com.iwhalecloud.bote.common.diffc;
 
 import com.iwhalecloud.bote.common.enums.OperClassEnum;
 import com.iwhalecloud.bote.service.element.ResourceElementFactory;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.diffc.ComputeArgument;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.diffc.support.log.DataDifferenceLogSupport;
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
-import com.iwhalecloud.bss.litchi.diffc.vo.log.OperLogMessage;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.diffc.ComputeArgument;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.diffc.support.log.DataDifferenceLogSupport;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.diffc.vo.log.OperLogMessage;
+import com.cmsr.tiangong.disruptor.DisruptorUtil;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -60,7 +60,7 @@ public final class DataDifferenceStarter {
       Date date = getUpdatedTime(clazz, difference, tenantId);
       setUpdatedTime(clazz, difference, date);
     };
-    return com.iwhalecloud.bss.litchi.diffc.DataDifferenceStarter.computeSave(oldObject, newObject, false,
+    return com.cmsr.tiangong.diffc.DataDifferenceStarter.computeSave(oldObject, newObject, false,
       ComputeArgument.builder().computeWithChildren(computeWithChildren).build(), null, Collections.singletonList(updateTimeConsumer));
   }
 
@@ -105,7 +105,7 @@ public final class DataDifferenceStarter {
       setUpdatedTime(clazz, difference, date);
     };
 
-    DataDifference<T> difference = com.iwhalecloud.bss.litchi.diffc.DataDifferenceStarter.computeSave(oldObject, newObject, false,
+    DataDifference<T> difference = com.cmsr.tiangong.diffc.DataDifferenceStarter.computeSave(oldObject, newObject, false,
       ComputeArgument.builder().computeWithChildren(computeWithChildren).build(), null, Arrays.asList(logConsumer, updateTimeConsumer));
     // 记录实体关系
     if (difference != null) {

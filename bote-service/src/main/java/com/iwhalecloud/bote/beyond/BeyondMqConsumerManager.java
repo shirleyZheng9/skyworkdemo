@@ -13,16 +13,16 @@ import com.iwhalecloud.bote.dto.mq.MqConfig;
 import com.iwhalecloud.bote.dto.skill.ServiceGatewayDTO;
 import com.iwhalecloud.bote.dto.skill.ServicePlatformDTO;
 import com.iwhalecloud.bote.dto.skill.SkillServiceDTO;
-import com.iwhalecloud.bote.mq.client.LitchiMqConsumer;
+import com.iwhalecloud.bote.mq.client.TiangongMqConsumer;
 import com.iwhalecloud.bote.service.mcp.IMcpServerManageService;
 import com.iwhalecloud.bote.service.skill.ISkillServiceManageService;
-import com.iwhalecloud.bss.litchi.mq.MQClientFactory;
-import com.iwhalecloud.bss.litchi.mq.config.properties.LitchiMQProperties;
-import com.iwhalecloud.bss.litchi.mq.consts.MQProcessStatus;
-import com.iwhalecloud.bss.litchi.mq.consumer.MQConsumer;
-import com.iwhalecloud.bss.litchi.mq.dto.ConsumerMessage;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.mq.MQClientFactory;
+import com.cmsr.tiangong.mq.config.properties.TiangongMQProperties;
+import com.cmsr.tiangong.mq.consts.MQProcessStatus;
+import com.cmsr.tiangong.mq.consumer.MQConsumer;
+import com.cmsr.tiangong.mq.dto.ConsumerMessage;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -68,7 +68,7 @@ public class BeyondMqConsumerManager implements ApplicationListener<ApplicationR
   private final ISkillServiceManageService serviceManageService;
 
   /** MQ 客户端实例映射。key 为 mqInstId, value 为客户端实例 */
-  private final Map<Long, LitchiMqConsumer> clientMap = new ConcurrentHashMap<>();
+  private final Map<Long, TiangongMqConsumer> clientMap = new ConcurrentHashMap<>();
 
   public BeyondMqConsumerManager(Environment environment, IMcpServerManageService mcpServerManageService,
     ISkillServiceManageService serviceManageService) {
@@ -101,7 +101,7 @@ public class BeyondMqConsumerManager implements ApplicationListener<ApplicationR
   private void registerConsumer(String server) {
     try {
       Long key = 1L;
-      LitchiMqConsumer client = clientMap.get(key);
+      TiangongMqConsumer client = clientMap.get(key);
       // 已有客户端实例时，检查客户端状态是否正常，必要时删除客户端实例以触发重新创建
       if (isClientHealthy(client)) {
         logger.debug("The beyond mq consumer client has not been changed and continues to use");
@@ -129,18 +129,18 @@ public class BeyondMqConsumerManager implements ApplicationListener<ApplicationR
    * 创建消费者客户端实例
    */
   @SuppressWarnings("java:S2139")
-  private LitchiMqConsumer createConsumerClient(String server) {
+  private TiangongMqConsumer createConsumerClient(String server) {
     // 构造消费者配置
     MqConfig mqConfig = new MqConfig();
     mqConfig.setServer(server);
     mqConfig.setConsumerGroup(environment.getProperty("beyond.kafka.consumer.group", "boteConsumer"));
-    LitchiMQProperties properties = mqConfig.buildProperties(BaseConsts.MQ_TYPE_KAFKA, false);
+    TiangongMQProperties properties = mqConfig.buildProperties(BaseConsts.MQ_TYPE_KAFKA, false);
     // 创建消费者
     MQConsumer consumer = null;
     try {
       consumer = MQClientFactory.createConsumer(properties);
       consumer.afterPropertiesSet();
-      return new LitchiMqConsumer(1L, mqConfig, consumer);
+      return new TiangongMqConsumer(1L, mqConfig, consumer);
     }
     catch (Exception e) {
       // 启动失败时销毁实例，避免残留线程
@@ -169,7 +169,7 @@ public class BeyondMqConsumerManager implements ApplicationListener<ApplicationR
    * @param client client客户端
    * @return client 是否检查
    */
-  private boolean isClientHealthy(@Nullable LitchiMqConsumer client) {
+  private boolean isClientHealthy(@Nullable TiangongMqConsumer client) {
     if (client == null) {
       logger.warn("The beyond mq consumer client is null");
       return false;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptRunLog;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExptRunLogRepo;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptRunLogDAO;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.convertor.ExptRunLogConvertor;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Map;

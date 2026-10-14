@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.service.skill.impl;
 
-import static com.iwhalecloud.bss.litchi.base.vo.ResultVO.success;
+import static com.cmsr.tiangong.base.vo.ResultVO.success;
 
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
@@ -15,11 +15,11 @@ import com.iwhalecloud.bote.mapper.skill.AgentSkillMapper;
 import com.iwhalecloud.bote.mapper.skill.AgentSkillSquareMapper;
 import com.iwhalecloud.bote.mapper.skill.SkillPublishApplyMapper;
 import com.iwhalecloud.bote.service.skill.ISkillPublishApplyService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
 
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

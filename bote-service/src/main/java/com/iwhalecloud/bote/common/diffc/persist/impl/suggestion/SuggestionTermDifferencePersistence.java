@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.common.diffc.persist.impl.suggestion;
 
-import com.iwhalecloud.bss.litchi.diffc.persist.BaseRootPersistence;
+import com.cmsr.tiangong.diffc.persist.BaseRootPersistence;
 import com.iwhalecloud.bote.entity.suggestion.SuggestionTermEntity;
 import com.iwhalecloud.bote.mapper.suggestion.SuggestionTermManageMapper;
 import org.springframework.stereotype.Component;

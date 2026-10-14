@@ -74,9 +74,9 @@
     #{dto.catalogItemId},
     #{dto.pageBaseInfo},
     #{dto.pageSettingInfo},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark},
@@ -123,7 +123,7 @@
       <if test="dto.checkFieldUpdateFlag('remark')">
         remark = #{dto.remark},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       updator_id = #{dto.updatorId}
     </set>
     WHERE bot_id = #{dto.botId}
@@ -134,7 +134,7 @@
     UPDATE bt_bot
     SET agent_strategy = #{dto.agentStrategy},
     updator_id = #{dto.updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE bot_id = #{dto.botId}
       AND tenant_id = #{dto.tenantId}
   </update>
@@ -146,7 +146,7 @@
       page_setting_icon = #{dto.pageSettingIcon},
     </if>
       updator_id = #{dto.updatorId},
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND bot_id = #{dto.botId}
       AND tenant_id = #{dto.tenantId}
@@ -156,7 +156,7 @@
     UPDATE bt_bot
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE bot_id = #{botId}
       AND tenant_id = #{tenantId}
   </update>
@@ -176,7 +176,7 @@
     <if test="isDefault != null and isDefault != ''">
       is_default = #{isDefault},
     </if>
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE bot_id = #{botId}
       AND tenant_id = #{tenantId}
   </update>
@@ -193,7 +193,7 @@
   <update id="modifyBotUpdateTime">
     UPDATE bt_bot
     SET updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND bot_id = #{botId}
       AND tenant_id = #{tenantId}
@@ -202,7 +202,7 @@
   <update id="modifyBotUpdateTimeBatch">
     UPDATE bt_bot
     SET updator_id = #{updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00A'
       AND tenant_id = #{tenantId}
       AND bot_id IN (<foreach collection="botIds" item="botId" separator=", ">#{botId}</foreach>)

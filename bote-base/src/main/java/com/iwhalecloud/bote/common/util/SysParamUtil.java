@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.enums.ParamSourceType;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
-import com.iwhalecloud.bss.litchi.util.DateUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.DateUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import okhttp3.Headers;
 import org.apache.commons.lang3.StringUtils;

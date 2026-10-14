@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.bot.BotSceneDTO;
 import com.iwhalecloud.bote.dto.bot.BotSettingInfoDTO;
 import com.iwhalecloud.bote.dto.bot.SimpleAgentStrategyDTO;
 import com.iwhalecloud.bote.dto.bot.query.BotApplyParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 
 import java.util.List;
 import java.util.Map;

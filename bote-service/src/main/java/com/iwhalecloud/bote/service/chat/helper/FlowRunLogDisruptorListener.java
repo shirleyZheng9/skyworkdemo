@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.chat.helper;
 
 import com.iwhalecloud.bote.entity.skill.FlowRunLogDTO;
 import com.iwhalecloud.bote.mapper.skill.FlowRunLogMapper;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorEventListener;
+import com.cmsr.tiangong.disruptor.DisruptorEventListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

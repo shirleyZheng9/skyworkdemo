@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.dto.suggestion;
 
-import com.iwhalecloud.bss.litchi.transform.imports.importers.dto.ImportFailedColumn;
+import com.cmsr.tiangong.transform.imports.importers.dto.ImportFailedColumn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

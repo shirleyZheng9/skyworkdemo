@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
 import com.iwhalecloud.bote.llm.client.dto.ModelConfigInfoDTO;
 import com.iwhalecloud.bote.llm.client.util.ModelHttpClient;
 import com.iwhalecloud.bote.llm.client.util.ModelResponseUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;

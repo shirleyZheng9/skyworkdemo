@@ -37,8 +37,8 @@ import com.iwhalecloud.bote.loop.prompt.infra.repo.mysql.convertor.ManageConvert
 import com.iwhalecloud.bote.loop.prompt.infra.repo.redis.IPromptBasicCacheDAO;
 import com.iwhalecloud.bote.loop.prompt.infra.repo.redis.IPromptCacheDAO;
 import com.iwhalecloud.bote.service.element.IResourceElementService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +57,9 @@ public class ManageRepoImpl implements IManageRepo {
   private final IPromptCommitDAO promptCommitDAO;
   private final IIDGenerator idGenerator;
   private final IResourceElementService resourceElementService;
+
+  /** LIKE 查询转义符，需与 PromptBasicMapper.xml 中 KeyWord_Condition 的 ESCAPE '/' 保持一致 */
+  private static final String LIKE_ESCAPE_CHAR = "/";
 
   @Override
   @Transactional
@@ -498,14 +501,14 @@ public class ManageRepoImpl implements IManageRepo {
   public ListPromptResult listPrompt(ListPromptParam param) {
     ListPromptBasicParam listBasicParam = ListPromptBasicParam.builder()
       .spaceId(param.getSpaceId())
-      .keyWord(param.getKeyWord())
+      .keyWord(escapeKeyWord(param.getKeyWord()))
       .createdBys(param.getCreatedBys())
       .committedOnly(param.getCommittedOnly())
       .offset((param.getPageNum() - 1) * param.getPageSize())
       .limit(param.getPageSize())
       .orderBy(param.getOrderBy())
       .asc(param.getAsc())
-      .catalogItemId(param.getCatalogItemId())
+      .catalogItemIds(param.getCatalogItemIds())
       .promptType(param.getPromptType())
       .build();
 
@@ -528,6 +531,21 @@ public class ManageRepoImpl implements IManageRepo {
       .total(total)
       .promptDOs(ManageConverter.batchBasicAndDraftPO2PromptDO(basicPOs, draftPOMap, param.getUserId()))
       .build();
+  }
+
+  /**
+   * 转义关键词中的 LIKE 通配符（% _ 及转义符本身），避免用户输入 % 时被当成通配符匹配到全部数据
+   *
+   * @param keyWord 用户输入的关键词
+   * @return 转义后的关键词
+   */
+  private static String escapeKeyWord(String keyWord) {
+    if (keyWord == null || keyWord.isEmpty()) {
+      return keyWord;
+    }
+    return keyWord.replace(LIKE_ESCAPE_CHAR, LIKE_ESCAPE_CHAR + LIKE_ESCAPE_CHAR)
+      .replace("%", LIKE_ESCAPE_CHAR + "%")
+      .replace("_", LIKE_ESCAPE_CHAR + "_");
   }
 
   @Override

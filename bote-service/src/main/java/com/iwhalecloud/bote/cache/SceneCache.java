@@ -19,7 +19,7 @@ import com.iwhalecloud.bote.dto.scene.SimpleClawEnvVariableDTO;
 import com.iwhalecloud.bote.dto.skill.LlmSkillItem;
 import com.iwhalecloud.bote.mapper.scene.SceneQueryMapper;
 import com.iwhalecloud.bote.service.model.helper.SkillToolConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;

@@ -27,13 +27,13 @@
     AND a.status_cd = '00A'
     <if test="query.searchContent != null and query.searchContent != ''">
       AND (a.bot_code LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       OR a.bot_name LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       )
     </if>
     <if test="query.catalogItemId != null">
@@ -55,8 +55,8 @@
     SELECT CASE WHEN count(*) &gt; 0 THEN 1 ELSE 0 END AS existence
     FROM bt_plat_bot_info
     WHERE status_cd = '00A'
-    AND bot_id = #{dto.botId}
-    AND owner_tenant_id = #{dto.ownerTenantId}
+      AND bot_id = #{dto.botId}
+      AND owner_tenant_id = #{dto.ownerTenantId}
   </select>
 
   <select id="getPlatBot" resultType="com.iwhalecloud.bote.dto.bot.TemplateBotDTO">
@@ -83,8 +83,8 @@
     <include refid="platBotInfoColumns"/>
     FROM bt_plat_bot_info a
     WHERE a.bot_id = #{botId}
-      AND a.owner_tenant_id = #{ownerTenantId}
-      AND a.status_cd = '00A'
+    AND a.owner_tenant_id = #{ownerTenantId}
+    AND a.status_cd = '00A'
   </select>
 
   <insert id="insertPlatBotInfo">
@@ -120,9 +120,9 @@
     #{dto.botDesc},
     #{dto.reqUrl},
     #{dto.catalogItemId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -164,9 +164,9 @@
       #{dto.botDesc},
       #{dto.reqUrl},
       #{dto.catalogItemId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -209,9 +209,9 @@
       #{dto.botDesc},
       #{dto.reqUrl},
       #{dto.catalogItemId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.creatorId},
       #{dto.updatorId},
       #{dto.remark}
@@ -274,7 +274,7 @@
     <if test="dto.checkFieldUpdateFlag('ownerTenantId')">
       owner_tenant_id = #{dto.ownerTenantId},
     </if>
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE plat_bot_id = #{dto.platBotId}
   </update>
@@ -283,7 +283,7 @@
     UPDATE bt_plat_bot_info
     SET status_cd = '00X',
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE plat_bot_id = #{platBotId}
   </update>
 
@@ -291,7 +291,7 @@
     UPDATE bt_plat_bot_info
     SET status = #{status},
     updator_id = #{updatorId},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE plat_bot_id = #{platBotId}
   </update>
 
@@ -362,9 +362,9 @@
       </if>
       <if test="query.searchContent != null and query.searchContent != ''">
         AND a.bot_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       </if>
       <if test="query.catalogItemId != null">
         AND a.catalog_item_id = #{query.catalogItemId}
@@ -392,12 +392,37 @@
       AND (i.bot_type != 'platform' OR (o.status_cd = '00A' AND o.bot_status = '1'))
       <if test="query.searchContent != null and query.searchContent != ''">
         AND i.bot_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       </if>
       <if test="query.catalogItemId != null">
         AND i.catalog_item_id = #{query.catalogItemId}
+      </if>
+    </if>
+    <if test="query.tenantId != null">
+      UNION ALL
+      SELECT  b.bot_id, b.bot_icon AS bot_icon, b.bot_name, b.bot_use AS bot_desc, b.bot_id, b.tenant_id AS owner_tenant_id,
+      NULL AS auth_tenant_id, NULL AS user_id, b.catalog_item_id, c.catalog_name, t.tenant_name, u.real_name AS "creatorName",
+      u.user_name AS "creatorCode", NULL AS req_url, b.creator_id, 'other' AS "botType",
+      'F' AS "isPlatformPublish", b.created_time
+      FROM bt_bot b
+      LEFT JOIN bt_catalog c on b.catalog_item_id = c.catalog_id and b.tenant_id = c.tenant_id
+      LEFT JOIN bt_tenant t on t.tenant_id = b.tenant_id
+      LEFT JOIN bt_user u on u.user_id = b.creator_id
+      WHERE b.status_cd = '00A'
+      AND b.tenant_id = #{query.tenantId}
+      AND b.bot_status = '1'
+      AND (b.data_from != '10A' OR b.data_from IS NULL)
+      AND NOT EXISTS (SELECT 1 FROM bt_bot_auth x WHERE x.status_cd = '00A' AND x.auth_status = 'T' AND x.bot_id = b.bot_id)
+      <if test="query.searchContent != null and query.searchContent != ''">
+        AND b.bot_name LIKE
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
+        #{query.searchContent}
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
+      </if>
+      <if test="query.catalogItemId != null">
+        AND b.catalog_item_id = #{query.catalogItemId}
       </if>
     </if>
     ) temp_result
@@ -440,9 +465,9 @@
       </if>
       <if test="query.searchContent != null and query.searchContent != ''">
         AND a.bot_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{query.searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
       </if>
       <if test="query.catalogItemId != null">
         AND a.catalog_item_id = #{query.catalogItemId}

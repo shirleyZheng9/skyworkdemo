@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.llm.client.dto.message.SystemMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.UserMessage;
 import com.iwhalecloud.bote.llm.helper.TokenCounter;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;

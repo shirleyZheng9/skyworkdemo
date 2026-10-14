@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.scene.graph.SceneGraphEdgeDTO;
 import com.iwhalecloud.bote.dto.scene.graph.SceneGraphNodeDTO;
 import com.iwhalecloud.bote.dto.skill.ServiceNodeDiffTreeDTO;
 import com.iwhalecloud.bote.dto.skill.StandardServiceDiffViewDTO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;

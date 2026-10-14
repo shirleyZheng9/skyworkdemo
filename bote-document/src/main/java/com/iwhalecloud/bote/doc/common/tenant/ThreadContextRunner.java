@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.doc.common.tenant;
 
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.function.Supplier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 

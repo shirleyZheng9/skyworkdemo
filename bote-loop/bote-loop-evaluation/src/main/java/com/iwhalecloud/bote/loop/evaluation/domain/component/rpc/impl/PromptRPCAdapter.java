@@ -29,7 +29,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.component.rpc.dto.ListPromptV
 import com.iwhalecloud.bote.loop.evaluation.domain.component.rpc.dto.LoopPrompt;
 import com.iwhalecloud.bote.loop.evaluation.domain.component.rpc.dto.MGetPromptQuery;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.TokenUsage;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.compress.utils.Lists;

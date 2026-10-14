@@ -151,9 +151,17 @@
       <if test="category != null">
         AND category = #{category.value}
       </if>
-      <if test="catalogItemId != null">
-        AND catalog_item_id = #{catalogItemId}
-      </if>
+      <choose>
+        <when test="catalogItemIds != null and catalogItemIds.size() > 0">
+          AND catalog_item_id IN
+          <foreach collection="catalogItemIds" item="catalogItemIdItem" open="(" separator="," close=")">
+            #{catalogItemIdItem}
+          </foreach>
+        </when>
+        <when test="catalogItemId != null">
+          AND catalog_item_id = #{catalogItemId}
+        </when>
+      </choose>
       <if test="createdBys != null and createdBys.size() > 0">
         AND created_by IN
         <foreach collection="createdBys" item="createdBy" open="(" separator="," close=")">

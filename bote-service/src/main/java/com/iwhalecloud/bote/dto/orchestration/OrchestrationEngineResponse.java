@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.dto.chat.ReplyDTO;
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
 import com.iwhalecloud.bote.dto.orchestration.log.OrchestrationStepRunLog;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 import java.util.List;

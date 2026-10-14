@@ -1,6 +1,6 @@
 package com.iwhalecloud.bote.service.plugin;
 
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

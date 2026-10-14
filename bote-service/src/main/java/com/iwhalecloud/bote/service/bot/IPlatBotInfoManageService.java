@@ -4,7 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.bot.PlatBotInfoDTO;
 import com.iwhalecloud.bote.dto.bot.TemplateBotDTO;
 import com.iwhalecloud.bote.dto.bot.query.PlatBotInfoQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

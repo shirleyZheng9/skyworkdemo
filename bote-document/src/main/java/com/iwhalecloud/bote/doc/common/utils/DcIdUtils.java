@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.common.utils;
 
 import com.iwhalecloud.bote.doc.consts.DocumentTypeEnum;
 import com.iwhalecloud.bote.doc.consts.IdRulePrefixEnum;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 

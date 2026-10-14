@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.cache;
 
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.service.plugin.impl.helper.PluginHubHelper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 

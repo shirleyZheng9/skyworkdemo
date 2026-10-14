@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.dto.beyond.BeyondChatResponse;
 import com.iwhalecloud.bote.dto.beyond.BeyondReferenceDocumentDTO;
 import com.iwhalecloud.bote.dto.knowledge.ReferenceDocumentDTO;
 import com.iwhalecloud.bote.llm.client.dto.message.AssistantMessage;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;

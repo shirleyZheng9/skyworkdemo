@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.base.PublishRecordDTO;
 import com.iwhalecloud.bote.dto.base.PublishStepDTO;
 import com.iwhalecloud.bote.dto.base.query.CopyRecordQueryParams;
 import com.iwhalecloud.bote.dto.base.query.RecordQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 

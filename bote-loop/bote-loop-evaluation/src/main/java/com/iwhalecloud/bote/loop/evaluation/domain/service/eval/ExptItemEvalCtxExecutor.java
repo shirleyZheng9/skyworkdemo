@@ -20,7 +20,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExptItemResultRepo;
 import com.iwhalecloud.bote.loop.evaluation.domain.repo.IExptTurnResultRepo;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluatorRecordService;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.IEvalTargetService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

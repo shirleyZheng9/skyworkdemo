@@ -5,8 +5,8 @@ import com.iwhalecloud.bote.agent.skill.AgentSkillMarkdownParser.SkillMdParseRes
 import com.iwhalecloud.bote.agent.skill.AgentSkillSpec;
 import com.iwhalecloud.bote.common.consts.SkillSquareConsts;
 import com.iwhalecloud.bote.common.util.ZipUtil;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;

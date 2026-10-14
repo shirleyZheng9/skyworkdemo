@@ -58,7 +58,7 @@
     INSERT INTO bt_organization_field_config (
       config_id, space_id, field_key, field_name, field_type, field_options, status_cd, creator_id, created_time
     ) VALUES (
-      #{dto.configId}, #{dto.spaceId}, #{dto.fieldKey}, #{dto.fieldName}, #{dto.fieldType}, #{dto.fieldOptions}, '00A', #{dto.creatorId}, <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      #{dto.configId}, #{dto.spaceId}, #{dto.fieldKey}, #{dto.fieldName}, #{dto.fieldType}, #{dto.fieldOptions}, '00A', #{dto.creatorId}, <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
@@ -70,7 +70,7 @@
         field_type = #{dto.fieldType},
         field_options = #{dto.fieldOptions},
         updator_id = #{dto.updatorId},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE config_id = #{dto.configId}
   </update>
 
@@ -98,13 +98,13 @@
       </if>
       <if test="searchContent != null and searchContent != ''">
         AND (field_key LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
         OR field_name LIKE
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
         #{searchContent}
-        <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>)
+        <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>)
       </if>
     ORDER BY field_key ASC
   </select>

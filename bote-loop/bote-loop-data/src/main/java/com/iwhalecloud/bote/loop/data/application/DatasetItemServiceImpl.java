@@ -40,7 +40,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.ItemUtils;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.Paginator;
 import com.iwhalecloud.bote.loop.data.pkg.pagination.PaginatorFactory;
 import com.iwhalecloud.bote.loop.infra.session.SessionContext;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;

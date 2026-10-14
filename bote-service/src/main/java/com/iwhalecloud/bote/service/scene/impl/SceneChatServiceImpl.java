@@ -25,7 +25,7 @@ import com.iwhalecloud.bote.service.scene.ISceneChatService;
 import com.iwhalecloud.bote.service.scene.runner.impl.ClawSceneRunner;
 import com.iwhalecloud.bote.service.scene.runner.impl.KnowledgeSceneRunner;
 import com.iwhalecloud.bote.service.scene.runner.impl.SimpleSceneRunner;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

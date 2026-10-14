@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.iwhalecloud.bote.doc.module.document.dto.AttachmentUrlInfoDTO;
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentAttachmentDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

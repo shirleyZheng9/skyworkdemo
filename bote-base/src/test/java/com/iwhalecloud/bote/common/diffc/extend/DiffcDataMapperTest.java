@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.iwhalecloud.bss.litchi.database.util.DbUtil;
+import com.cmsr.tiangong.database.util.DbUtil;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;

@@ -4,8 +4,8 @@ import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.doc.module.crawl.dto.CrawlResult;
 import com.iwhalecloud.bote.doc.module.crawl.step.transformer.ImageTransformer;
 import com.iwhalecloud.bote.doc.module.crawl.step.transformer.MarkdownTransformer;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 步骤执行器: Transformer 处理器

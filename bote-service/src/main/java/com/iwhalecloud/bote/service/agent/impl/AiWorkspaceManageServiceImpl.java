@@ -21,7 +21,7 @@ import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
 import com.iwhalecloud.bote.mapper.agent.AiWorkspaceManageMapper;
 import com.iwhalecloud.bote.mapper.bot.BotQueryMapper;
 import com.iwhalecloud.bote.service.agent.IAiWorkspaceManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;

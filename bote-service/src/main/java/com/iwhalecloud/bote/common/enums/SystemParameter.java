@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.enums;
 
 import com.iwhalecloud.bote.cache.DcParamCache;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.skill;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.base.SimpleFlowStepDTO;
 import com.iwhalecloud.bote.dto.skill.SimpleSkillFlowDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.skill.SkillFlowDTO;
 import com.iwhalecloud.bote.dto.skill.SkillFlowNodeConfigResponseDTO;
 import com.iwhalecloud.bote.dto.skill.SkillFlowParamDTO;

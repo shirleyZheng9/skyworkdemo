@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.doc.module.person.dto.favorite.PinFavoriteRequestDTO
 import com.iwhalecloud.bote.doc.module.person.dto.favorite.RemoveFavoriteRequestDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.favorite.UnpinFavoriteRequestDTO;
 import com.iwhalecloud.bote.doc.module.person.service.IFavoriteService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

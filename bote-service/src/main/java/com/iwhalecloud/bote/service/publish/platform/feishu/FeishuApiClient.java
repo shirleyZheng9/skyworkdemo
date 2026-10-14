@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.service.publish.platform.feishu;
 
 import com.iwhalecloud.bote.service.publish.platform.feishu.dto.FeishuMessageResponse.ImageResponse.ImageContent;
 import com.iwhalecloud.bote.service.publish.platform.feishu.dto.FeishuMessageResponse.TextResponse.TextContent;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import com.lark.oapi.Client;
 import com.lark.oapi.service.application.v6.model.GetApplicationReq;
 import com.lark.oapi.service.application.v6.model.GetApplicationResp;

@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.llm.client.dto.ChatCompletionResponse;
 import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.helper.MarkdownHelper;
 import com.iwhalecloud.bote.llm.helper.QuestionClassifierHelper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;

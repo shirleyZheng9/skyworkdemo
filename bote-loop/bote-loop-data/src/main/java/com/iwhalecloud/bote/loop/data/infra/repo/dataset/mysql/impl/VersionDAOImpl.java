@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.entity.loop.data.dataset.DatasetVersionEntity;
 import com.iwhalecloud.bote.loop.data.domain.dataset.repo.dto.ListDatasetVersionsParams;
 import com.iwhalecloud.bote.loop.data.infra.repo.dataset.mysql.VersionDAO;
 import com.iwhalecloud.bote.mapper.loop.data.dataset.VersionMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.apache.ibatis.session.RowBounds;

@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.service.chat;
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.chat.ChatReplyThemeDTO;
 import com.iwhalecloud.bote.dto.chat.query.ChatReplyThemeQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.intent.IntentQuestionImportDTO;
 import com.iwhalecloud.bote.dto.intent.query.IntentQueryParams;
 import com.iwhalecloud.bote.intent.IIntentEmbeddingService;
 import com.iwhalecloud.bote.intent.IIntentQuestionManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

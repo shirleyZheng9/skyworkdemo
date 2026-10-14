@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.ListCommitResult;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.ListPromptParam;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.ListPromptResult;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.UpdatePromptParam;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import java.util.Map;
 

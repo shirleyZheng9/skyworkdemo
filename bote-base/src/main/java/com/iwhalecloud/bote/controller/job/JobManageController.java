@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.job.JobLogDTO;
 import com.iwhalecloud.bote.dto.job.JobDTO;
 import com.iwhalecloud.bote.dto.job.query.JobQueryParams;
 import com.iwhalecloud.bote.service.job.IJobManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

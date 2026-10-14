@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.evaluation.infra.pdf.page;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.OpenPdfContext;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.factory.OpenPdfElementFactory;
 import com.iwhalecloud.bote.loop.evaluation.infra.pdf.module.ReportInfo;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.Getter;
 import lombok.Setter;
 import org.openpdf.text.Document;

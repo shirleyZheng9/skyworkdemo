@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.service.channel;
 
 import com.iwhalecloud.bote.dto.channel.AiChannelDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

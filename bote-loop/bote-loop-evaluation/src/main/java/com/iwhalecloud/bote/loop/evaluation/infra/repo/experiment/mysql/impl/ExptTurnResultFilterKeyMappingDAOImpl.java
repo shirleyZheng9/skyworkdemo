@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.impl;
 import com.iwhalecloud.bote.entity.loop.evaluation.ExptTurnResultFilterKeyMappingEntity;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptTurnResultFilterKeyMappingDAO;
 import com.iwhalecloud.bote.mapper.loop.evaluation.ExptTurnResultFilterKeyMappingMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;

@@ -25,9 +25,9 @@ import com.iwhalecloud.bote.service.element.IResourceElementService;
 import com.iwhalecloud.bote.service.model.ILargeModelManageService;
 import com.iwhalecloud.bote.service.model.helper.GatewayModelSyncHelper;
 import com.iwhalecloud.bote.service.portal.ITenantSettingInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.util.JsonUtil;
 
 import java.util.HashMap;
 import java.util.List;

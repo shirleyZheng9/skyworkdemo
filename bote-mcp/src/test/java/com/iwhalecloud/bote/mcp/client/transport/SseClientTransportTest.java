@@ -11,7 +11,7 @@ import static org.mockito.Mockito.verify;
 import com.iwhalecloud.bote.mcp.consts.McpConsts;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcMessage;
 import com.iwhalecloud.bote.mcp.dto.message.JsonRpcNotification;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.EOFException;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.atomic.AtomicReference;

@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.mapper.loop.prompt.PromptBasicMapper;
 import com.iwhalecloud.bote.mapper.loop.prompt.PromptCommitMapper;
 import com.iwhalecloud.bote.mapper.loop.prompt.PromptUserDraftMapper;
 import com.iwhalecloud.bote.mapper.skill.PromptManageMapper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

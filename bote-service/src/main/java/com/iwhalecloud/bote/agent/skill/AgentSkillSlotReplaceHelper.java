@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.sandbox.api.SandboxClient;
 import com.iwhalecloud.bote.sandbox.dto.SandboxFileReadResult;
 import com.iwhalecloud.bote.sandbox.dto.SandboxFileSearchResult;
 import com.iwhalecloud.bote.sandbox.dto.SandboxFileWriteResult;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.nio.charset.StandardCharsets;

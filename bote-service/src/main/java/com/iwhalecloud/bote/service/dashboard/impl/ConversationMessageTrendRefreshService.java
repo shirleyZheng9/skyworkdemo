@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.service.dashboard.impl;
-
 import com.iwhalecloud.bote.cache.DataDashboardCache;
 import com.iwhalecloud.bote.doc.common.tenant.ThreadContextRunner;
 import com.iwhalecloud.bote.dto.dashboard.ConversationMessageTrendCountDTO;

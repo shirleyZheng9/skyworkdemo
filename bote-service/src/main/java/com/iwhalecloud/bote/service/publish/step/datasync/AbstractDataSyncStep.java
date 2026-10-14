@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.service.datasync.IDataSyncService;
 import com.iwhalecloud.bote.service.datasync.impl.DataSyncConsumer;
 import com.iwhalecloud.bote.service.datasync.impl.DataSyncProducer;
 import com.iwhalecloud.bote.service.publish.step.AbstractPublishStep;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 
 /**
  * 步骤执行器：数据同步抽象类

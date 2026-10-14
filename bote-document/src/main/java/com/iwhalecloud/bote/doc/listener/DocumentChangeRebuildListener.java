@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.doc.consts.DocumentActionTypeEnum;
 import com.iwhalecloud.bote.doc.listener.event.DocChangeEventMessage;
 import com.iwhalecloud.bote.doc.module.document.enums.RecordTypeEnum;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IDocumentManageService;
-import com.iwhalecloud.bss.litchi.disruptor.DisruptorEventListener;
+import com.cmsr.tiangong.disruptor.DisruptorEventListener;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

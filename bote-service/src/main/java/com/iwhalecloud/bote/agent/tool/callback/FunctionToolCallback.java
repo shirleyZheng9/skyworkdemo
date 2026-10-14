@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.agent.tool.callback;
 
 import com.iwhalecloud.bote.agent.tool.context.ToolContext;
 import com.iwhalecloud.bote.llm.client.dto.Tool;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.function.BiFunction;

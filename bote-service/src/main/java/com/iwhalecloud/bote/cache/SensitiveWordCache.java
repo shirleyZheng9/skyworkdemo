@@ -5,7 +5,7 @@ import com.github.houbb.sensitive.word.api.IWordDeny;
 import com.github.houbb.sensitive.word.bs.SensitiveWordBs;
 import com.iwhalecloud.bote.common.consts.CacheConsts;
 import com.iwhalecloud.bote.mapper.base.SensitiveWordMapper;
-import com.iwhalecloud.bss.litchi.cache.refresh.Refreshable;
+import com.cmsr.tiangong.cache.refresh.Refreshable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;

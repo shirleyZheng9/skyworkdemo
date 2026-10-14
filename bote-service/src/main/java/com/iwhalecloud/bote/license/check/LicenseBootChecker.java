@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.license.check;
 
 import com.iwhalecloud.bote.license.cache.LicenseCache;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.CollectionUtils;

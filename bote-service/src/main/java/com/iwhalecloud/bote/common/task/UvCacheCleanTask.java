@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.task;
 
 import com.iwhalecloud.bote.config.properties.PythonProperties;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;

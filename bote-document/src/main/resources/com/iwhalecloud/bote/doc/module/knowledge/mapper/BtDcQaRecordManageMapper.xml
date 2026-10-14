@@ -104,8 +104,8 @@
     #{dto.tenantId},
     #{dto.botId},
     #{dto.creatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd}
     )
   </insert>
@@ -150,8 +150,8 @@
       #{dto.tenantId},
       #{dto.botId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -197,8 +197,8 @@
       #{dto.tenantId},
       #{dto.botId},
       #{dto.creatorId},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{dto.statusCd}
       )
     </foreach>
@@ -220,7 +220,7 @@
       <if test="dto.checkFieldUpdateFlag('feedbackType')">
         feedback_type = #{dto.feedbackType},
       </if>
-      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       <if test="dto.checkFieldUpdateFlag('statusCd')">
         status_cd = #{dto.statusCd},
       </if>
@@ -235,7 +235,7 @@
       operate_state = '0',
     </if>
     feedback_time = #{dto.feedbackTime},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE session_id = #{dto.sessionId}
   </update>
 
@@ -640,7 +640,7 @@
     ORDER BY temp.name ASC
   </select>
   <update id="deleteBtDcQaRecord">
-    update bt_dc_qa_record set status_cd='00X',updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
+    update bt_dc_qa_record set status_cd='00X',updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/> where qa_id=#{qaId} and tenant_id = #{tenantId}
   </update>
   <select id="selectKnowledgeByQaId" resultType="com.iwhalecloud.bote.doc.module.knowledge.dto.SimpleKnowledgeBaseDTO">
     select a.knowledge_id ,a.owner_id ,a.visibility_scope  from bt_knowledge_base a ,bt_dc_qa_record_kb_rel b where a.tenant_id = #{tenantId} and a.knowledge_id = b.kb_id and a.status_cd ='00A' and b.qa_id = #{qaId}
@@ -654,7 +654,7 @@
       <if test="dto.checkFieldUpdateFlag('feedbackTime')">
         feedback_time = #{dto.feedbackTime},
       </if>
-      updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE session_id = #{dto.sessionId}
   </update>
@@ -662,7 +662,7 @@
   <update id="updateStandardQuestionBySession">
     UPDATE bt_dc_qa_record
     SET standard_question = #{standardQuestion},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE tenant_id = #{tenantId}
       AND session_id = #{sessionId}
       AND status_cd = '00A'
@@ -671,7 +671,7 @@
   <update id="updateStandardQuestionByQaId">
     UPDATE bt_dc_qa_record
     SET standard_question = #{standardQuestion},
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE qa_id = #{qaId}
       AND tenant_id = #{tenantId}
       AND status_cd = '00A'
@@ -688,7 +688,7 @@
       AND qa.session_id IS NOT NULL
       AND (qa.standard_question IS NULL OR qa.standard_question = '')
     ORDER BY qa.created_time ASC
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
 </mapper>

@@ -3,8 +3,8 @@ package com.iwhalecloud.bote.job;
 import com.dangdang.ddframe.job.api.ShardingContext;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.mapper.chat.ChatTraceLogMapper;
-import com.iwhalecloud.bss.litchi.job.AbstractSimpleJob;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.job.AbstractSimpleJob;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Date;
 import org.apache.commons.lang3.time.DateUtils;
 

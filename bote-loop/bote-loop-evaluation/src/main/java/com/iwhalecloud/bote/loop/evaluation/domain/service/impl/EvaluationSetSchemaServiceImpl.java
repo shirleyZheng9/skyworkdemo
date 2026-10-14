@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.loop.evaluation.domain.service.impl;
 import com.iwhalecloud.bote.loop.evaluation.domain.component.rpc.IDatasetRPCAdapter;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.FieldSchema;
 import com.iwhalecloud.bote.loop.evaluation.domain.service.EvaluationSetSchemaService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

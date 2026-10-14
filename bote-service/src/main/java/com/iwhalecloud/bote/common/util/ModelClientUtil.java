@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.llm.client.LlmClientFactory;
 import com.iwhalecloud.bote.llm.client.adapter.OpenAIEmbeddingClient;
 import com.iwhalecloud.bote.llm.client.config.EmbeddingProperties;
 import com.iwhalecloud.bote.llm.client.config.LlmProperties;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.commons.collections4.IterableUtils;

@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.dto.chat.KnowledgeChatParamsDTO;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeChatResponse;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallParamDTO;
 import com.iwhalecloud.bote.dto.knowledge.KnowledgeRecallResponse;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.function.Consumer;
 import okhttp3.sse.EventSource;
 import org.springframework.lang.Nullable;

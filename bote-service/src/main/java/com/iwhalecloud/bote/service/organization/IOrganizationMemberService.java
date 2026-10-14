@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.organization.OrganizationMemberImportDTO;
 import com.iwhalecloud.bote.dto.organization.OrganizationUserDTO;
 import com.iwhalecloud.bote.dto.organization.query.OrganizationMemberQueryParams;
 import com.iwhalecloud.bote.dto.organization.request.BatchAddOrganizationMembersRequest;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 import org.springframework.lang.Nullable;
 import org.springframework.web.multipart.MultipartFile;

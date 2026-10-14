@@ -1,8 +1,8 @@
 package com.iwhalecloud.bote.common.util;
 
-import com.iwhalecloud.bss.litchi.crypto.config.FtfKeyProperties;
-import com.iwhalecloud.bss.litchi.crypto.ftf.encryptor.FtfRsaEncryptor;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.crypto.config.FtfKeyProperties;
+import com.cmsr.tiangong.crypto.ftf.encryptor.FtfRsaEncryptor;
+import com.cmsr.tiangong.util.SpringUtil;
 import com.iwhalecloud.bote.common.enums.BaseErrorConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;

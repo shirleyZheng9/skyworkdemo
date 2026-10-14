@@ -2,8 +2,8 @@ package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.mapper.portal.TenantQueryMapper;
 import com.iwhalecloud.bote.mapper.workspace.WorkspaceManageMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.SpringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.lang.Nullable;

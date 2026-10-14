@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.annotation.EncryptField;
 import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.ExpUtil;
 import com.iwhalecloud.bote.common.util.FieldEncryptUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Statement;

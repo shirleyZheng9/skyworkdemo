@@ -1,5 +1,4 @@
 package com.iwhalecloud.bote.dto.dashboard;
-
 import java.util.Date;
 
 /** 模型使用量汇总任务检查点。 */

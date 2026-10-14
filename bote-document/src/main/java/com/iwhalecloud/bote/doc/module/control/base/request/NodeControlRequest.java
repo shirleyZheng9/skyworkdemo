@@ -14,7 +14,7 @@ import com.iwhalecloud.bote.doc.module.control.model.SimpleNodeInfo;
 import com.iwhalecloud.bote.doc.module.control.service.LibraryPermissionInheritanceService;
 import com.iwhalecloud.bote.doc.module.control.service.NodeRoleService;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentPermissionService;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;

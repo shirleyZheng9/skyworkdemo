@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.loop.data.domain.dataset.service.util;
 
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.Dataset;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetVersion;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.regex.Pattern;
 import org.springframework.util.StringUtils;
 

@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.doc.module.user.dto.UserSearchRequest;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserManageService;
 import com.iwhalecloud.bote.doc.module.user.service.IDcUserService;
 import com.iwhalecloud.bote.dto.portal.LoginInfo;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;

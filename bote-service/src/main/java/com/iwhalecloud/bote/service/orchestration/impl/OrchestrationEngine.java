@@ -16,7 +16,7 @@ import com.iwhalecloud.bote.service.base.IDataSourceProviderService;
 import com.iwhalecloud.bote.service.orchestration.IOrchestrationEngine;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
 import com.iwhalecloud.bote.service.skill.IFlowRunLogService;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;

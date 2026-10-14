@@ -3,12 +3,12 @@ package com.iwhalecloud.bote.dto.mq;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
-import com.iwhalecloud.bss.litchi.mq.config.properties.CtgMQProperties;
-import com.iwhalecloud.bss.litchi.mq.config.properties.KafkaProperties;
-import com.iwhalecloud.bss.litchi.mq.config.properties.KafkaProperties.KafkaConsumerProperties;
-import com.iwhalecloud.bss.litchi.mq.config.properties.LitchiMQProperties;
-import com.iwhalecloud.bss.litchi.mq.config.properties.RocketMQProperties;
-import com.iwhalecloud.bss.litchi.mq.consts.MQType;
+import com.cmsr.tiangong.mq.config.properties.CtgMQProperties;
+import com.cmsr.tiangong.mq.config.properties.KafkaProperties;
+import com.cmsr.tiangong.mq.config.properties.KafkaProperties.KafkaConsumerProperties;
+import com.cmsr.tiangong.mq.config.properties.TiangongMQProperties;
+import com.cmsr.tiangong.mq.config.properties.RocketMQProperties;
+import com.cmsr.tiangong.mq.consts.MQType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.EqualsAndHashCode;
@@ -174,8 +174,8 @@ public class MqConfig {
    * @param isProducer 是否是生产者
    * @return MQ 配置属性
    */
-  public LitchiMQProperties buildProperties(String mqType, boolean isProducer) {
-    LitchiMQProperties properties = new LitchiMQProperties();
+  public TiangongMQProperties buildProperties(String mqType, boolean isProducer) {
+    TiangongMQProperties properties = new TiangongMQProperties();
     MQType type = MQType.typeOf(mqType);
     properties.setType(type);
     switch (type) {

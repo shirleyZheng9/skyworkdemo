@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.skill.SkillPublishApplyDTO;
 import com.iwhalecloud.bote.dto.skill.query.SkillPublishApplyQueryParams;
 import com.iwhalecloud.bote.service.skill.ISkillPublishApplyService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;

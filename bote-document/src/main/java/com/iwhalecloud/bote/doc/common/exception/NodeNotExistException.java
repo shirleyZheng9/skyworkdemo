@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.doc.common.exception;
 
 import com.iwhalecloud.bote.doc.common.constant.DocErrorCodeConsts;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.Serial;
 
 /**

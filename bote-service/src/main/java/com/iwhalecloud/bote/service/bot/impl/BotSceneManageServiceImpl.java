@@ -74,13 +74,14 @@ import com.iwhalecloud.bote.service.skill.ISkillPluginManageService;
 import com.iwhalecloud.bote.service.skill.ISkillServiceManageService;
 import com.iwhalecloud.bote.service.skill.ISkillSqlManageService;
 import com.iwhalecloud.bote.service.skill.impl.helper.DiffOperLogHelper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
-import com.iwhalecloud.bss.litchi.diffc.result.DataDifference;
-import com.iwhalecloud.bss.litchi.util.BeanUtil;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
-import com.iwhalecloud.bss.litchi.util.sequence.UUIDUtils;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.base.vo.ResultVO;
+import com.cmsr.tiangong.diffc.result.DataDifference;
+import com.cmsr.tiangong.util.BeanUtil;
+import com.cmsr.tiangong.util.JsonUtil;
+import com.cmsr.tiangong.util.sequence.UUIDUtils;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -97,14 +98,18 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 智能体管理服务
@@ -118,6 +123,9 @@ import org.springframework.util.Assert;
 public class BotSceneManageServiceImpl implements IBotSceneManageService {
 
   private static final Logger logger = LoggerFactory.getLogger(BotSceneManageServiceImpl.class);
+
+  /** AI 生成智能体时的默认图标（前端未传 sceneIcon 时兜底），取自 assets/images/ai-gen-scene-icon.png */
+  private static final String DEFAULT_AI_GEN_SCENE_ICON = readDefaultAiGenSceneIcon();
 
   // @formatter:off
   private final BotSceneManageMapper sceneManageMapper;
@@ -205,6 +213,10 @@ public class BotSceneManageServiceImpl implements IBotSceneManageService {
       scene.setSceneType(SceneConsts.SCENE_TYPE_SCENE);
       scene.setStatusCd(BaseConsts.STATUS_CD_VALID);
       scene.setSceneStatus(SceneConsts.SCENE_STATUS_UNPUBLISH);
+      // 前端未传图标时兜底使用默认图标，避免生成的智能体没有图标
+      if (StringUtils.isBlank(scene.getSceneIcon())) {
+        scene.setSceneIcon(DEFAULT_AI_GEN_SCENE_ICON);
+      }
       scene.setSceneName(String.valueOf(chatResult.get("name")));
       scene.setSceneDesc(String.valueOf(chatResult.get("description")));
       scene.setScenePrompt(String.valueOf(chatResult.get("cueWords")));
@@ -1119,5 +1131,21 @@ public class BotSceneManageServiceImpl implements IBotSceneManageService {
     BotSceneDTO botScene = JsonUtil.parseJsonRequired(boteSceneJson, BotSceneDTO.class);
     botScene.setUpdatedTime(operLog.getUpdatedTime());
     return botScene;
+  }
+
+  /**
+   * 读取 AI 生成智能体时的默认图标
+   *
+   * @return data URL 形式的图标；读取失败返回 null，此时不设置图标
+   */
+  @Nullable
+  private static String readDefaultAiGenSceneIcon() {
+    try (InputStream inputStream = new ClassPathResource("assets/images/ai-gen-scene-icon.png").getInputStream()) {
+      return "data:image/png;base64," + Base64.getEncoder().encodeToString(IOUtils.toByteArray(inputStream));
+    }
+    catch (IOException e) {
+      logger.warn("读取AI生成智能体默认图标失败", e);
+      return null;
+    }
   }
 }

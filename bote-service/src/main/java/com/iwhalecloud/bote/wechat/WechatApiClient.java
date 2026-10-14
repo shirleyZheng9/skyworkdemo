@@ -5,7 +5,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.config.properties.PublishProperties;
 import com.iwhalecloud.bote.dto.wechat.WechatSendTextRequest;
 import com.iwhalecloud.bote.dto.wechat.WechatSendTextResponse;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;

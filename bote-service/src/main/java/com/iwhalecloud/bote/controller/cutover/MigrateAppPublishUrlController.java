@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.common.enums.SystemParameter;
 import com.iwhalecloud.bote.common.util.TokenUtil;
 import com.iwhalecloud.bote.dto.base.AppPublishDTO;
 import com.iwhalecloud.bote.mapper.cutover.CutOverMapper;
-import com.iwhalecloud.bss.litchi.database.util.TransactionUtil;
+import com.cmsr.tiangong.database.util.TransactionUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletResponse;
@@ -106,8 +106,8 @@ public class MigrateAppPublishUrlController {
         List<String> queryList = new ArrayList<>();
         for (Map.Entry<String, String> entry : queryParams.entrySet()) {
           if ("token".equals(entry.getKey())) {
-            // 将参数中的 token 加密为 accessToken
-            String accessToken = TokenUtil.buildAccessToken(entry.getValue());
+            // 将参数中的 token 加密为 accessToken，同时将发布记录ID加密在其中
+            String accessToken = TokenUtil.buildAccessToken(entry.getValue(), publish.getPublishId());
             if (accessToken == null) {
               return false;
             }
@@ -118,6 +118,8 @@ public class MigrateAppPublishUrlController {
             queryList.add(entry.getKey() + "=" + entry.getValue());
           }
         }
+        // 补充发布记录ID
+        queryList.add("publishId=" + publish.getPublishId());
         // 补充重定向参数
         queryList.add("redirect=" + URLEncoder.encode(components.getPath() + "#" + fragmentPath, StandardCharsets.UTF_8));
         // 构造新的url

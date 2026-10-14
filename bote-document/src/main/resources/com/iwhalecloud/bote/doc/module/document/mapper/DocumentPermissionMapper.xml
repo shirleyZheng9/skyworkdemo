@@ -35,8 +35,8 @@
     #{permission.expiresAt},
     #{permission.creatorId},
     #{permission.updatorId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{permission.statusCd},
     #{permission.inheritConvert}
     )
@@ -50,7 +50,7 @@
     granted_by = #{permission.grantedBy},
     expires_at = #{permission.expiresAt},
     updator_id = #{permission.updatorId},
-    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     status_cd = #{permission.statusCd}
     WHERE permission_id = #{permission.permissionId}
   </update>
@@ -59,7 +59,7 @@
     UPDATE bt_dc_document_permission
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE permission_id = #{permissionId}
   </update>
 
@@ -143,7 +143,7 @@
     set status_cd = '00X',
     updator_id = #{optUser},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId}
     and subject_id = #{subjectId}
     and subject_type = #{subjectType}
@@ -154,7 +154,7 @@
     set permission_type = #{permissionType},
     updator_id = #{optUserId},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where permission_id = #{permissionId}
   </update>
   <update id="removeAnnoPermission">
@@ -162,7 +162,7 @@
     set status_cd = '00X',
     updator_id = #{optUser},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId}
     and subject_id = #{subjectId}
     and subject_type = #{subjectType}
@@ -214,7 +214,7 @@
     set status_cd = '00X',
     updator_id = #{optUser},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where document_id = #{documentId}
     and inherit_convert = 'T'
     and status_cd = '00A'

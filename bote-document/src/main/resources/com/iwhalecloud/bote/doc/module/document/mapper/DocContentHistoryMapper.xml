@@ -26,8 +26,8 @@
     #{version.content},
     #{version.revision},
     #{version.tenantId},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{version.statusCd},
     #{version.creatorId}
     )
@@ -39,7 +39,7 @@
     content = #{version.content},
     revision = #{version.revision},
     tenant_id = #{version.tenantId},
-    updated_time =<include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time =<include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     status_cd = #{version.statusCd}
     WHERE id = #{version.id}
   </update>
@@ -48,7 +48,7 @@
     UPDATE bt_dc_doc_content_history
     SET status_cd = '00X',
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE id = #{versionId}
   </update>
 
@@ -82,7 +82,7 @@
   <update id="deleteByDocumentIdAndRevisionLessThan">
     UPDATE bt_dc_doc_content_history
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE document_id = #{documentId}
       AND revision &lt; #{maxRevision}
       AND status_cd = '00A'

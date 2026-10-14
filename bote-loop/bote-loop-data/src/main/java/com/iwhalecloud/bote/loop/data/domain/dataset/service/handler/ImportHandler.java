@@ -17,7 +17,7 @@ import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.IndexedItem;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.dto.MAddItemOpt;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.impl.ItemServiceImpl;
 import com.iwhalecloud.bote.loop.data.domain.dataset.service.util.ItemUtils;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;

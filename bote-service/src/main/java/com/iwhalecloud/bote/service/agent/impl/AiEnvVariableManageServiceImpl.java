@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.dto.agent.AiEnvVariableDTO;
 import com.iwhalecloud.bote.dto.agent.query.AiQueryParams;
 import com.iwhalecloud.bote.mapper.agent.AiEnvVariableManageMapper;
 import com.iwhalecloud.bote.service.agent.IAiEnvVariableManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.common.license.core.util.CollectionUtil;
 import java.util.ArrayList;
 import java.util.List;

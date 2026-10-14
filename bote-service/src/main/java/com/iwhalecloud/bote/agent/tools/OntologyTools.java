@@ -11,7 +11,7 @@ import com.iwhalecloud.bote.common.util.HttpUtil;
 import com.iwhalecloud.bote.common.util.ServletUtil;
 import com.iwhalecloud.bote.dto.ontology.ActionExecuteRequest;
 import com.iwhalecloud.bote.dto.ontology.RuleExecuteRequest;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.Map;

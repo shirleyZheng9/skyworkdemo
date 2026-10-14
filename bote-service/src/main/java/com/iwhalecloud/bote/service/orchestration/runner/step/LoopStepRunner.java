@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.common.util.SceneParamUtil;
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
 import com.iwhalecloud.bote.dto.orchestration.step.LoopStep;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;

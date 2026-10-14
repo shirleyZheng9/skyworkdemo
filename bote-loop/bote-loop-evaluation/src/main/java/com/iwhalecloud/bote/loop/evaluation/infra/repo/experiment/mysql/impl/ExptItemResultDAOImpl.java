@@ -9,7 +9,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.Page;
 import com.iwhalecloud.bote.loop.evaluation.infra.repo.experiment.mysql.IExptItemResultDAO;
 import com.iwhalecloud.bote.mapper.loop.evaluation.ExptItemResultMapper;
 import com.iwhalecloud.bote.mapper.loop.evaluation.ExptItemResultRunLogMapper;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;

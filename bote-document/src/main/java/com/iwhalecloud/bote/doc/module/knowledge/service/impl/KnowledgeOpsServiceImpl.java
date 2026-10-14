@@ -16,7 +16,7 @@ import com.iwhalecloud.bote.doc.module.knowledge.mapper.KnowledgeOpsMapper;
 import com.iwhalecloud.bote.doc.module.knowledge.semantic.impl.KnowledgeQuestionVectorHelper;
 import com.iwhalecloud.bote.doc.module.knowledge.service.IKnowlegeOpsService;
 import com.iwhalecloud.bote.dto.base.SimpleAttrDTO;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
+import com.cmsr.tiangong.base.exception.BssException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;

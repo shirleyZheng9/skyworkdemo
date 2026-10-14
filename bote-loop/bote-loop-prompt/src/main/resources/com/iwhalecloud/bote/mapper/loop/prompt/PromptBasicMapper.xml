@@ -25,6 +25,12 @@
     id, space_id, prompt_key, name, description, created_by, updated_by, commit_status, latest_version, latest_commit_time, created_at, updated_at, deleted_at, catalog_item_id, prompt_type
   </sql>
 
+  <!-- 关键词模糊查询条件：keyWord 中的 LIKE 通配符（% _ /）已在 Java 侧转义，ESCAPE '/' 与之配套使用 -->
+  <sql id="KeyWord_Condition">
+    AND (prompt_key LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%') ESCAPE '/'
+    OR name LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%') ESCAPE '/')
+  </sql>
+
   <!-- 插入记录 -->
   <insert id="insert" parameterType="com.iwhalecloud.bote.entity.loop.prompt.PromptBasicEntity" >
     INSERT INTO bt_prompt_basic (id, space_id, prompt_key, name, created_by, updated_by, commit_status, latest_version, latest_commit_time, created_at, updated_at, deleted_at, catalog_item_id, description, prompt_type)
@@ -59,7 +65,7 @@
     <include refid="Base_Column_List"/>
     FROM bt_prompt_basic
     WHERE id = #{promptId,jdbcType=BIGINT}
-      AND space_id = #{spaceId,jdbcType=BIGINT}
+    AND space_id = #{spaceId,jdbcType=BIGINT}
     <if test="lock">
       FOR UPDATE
     </if>
@@ -116,11 +122,13 @@
         </foreach>
       </if>
       <if test="keyWord != null and keyWord != ''">
-        AND (prompt_key LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%')
-        OR name LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%'))
+        <include refid="KeyWord_Condition"/>
       </if>
-      <if test="catalogItemId != null and catalogItemId != ''">
-        AND catalog_item_id = #{catalogItemId,jdbcType=BIGINT}
+      <if test="catalogItemIds != null and catalogItemIds.size() > 0">
+        AND catalog_item_id IN
+        <foreach collection="catalogItemIds" item="catalogItemId" open="(" separator="," close=")">
+          #{catalogItemId,jdbcType=BIGINT}
+        </foreach>
       </if>
       <if test="committedOnly">
         <choose>
@@ -174,11 +182,13 @@
         </foreach>
       </if>
       <if test="keyWord != null and keyWord != ''">
-        AND (prompt_key LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%')
-        OR name LIKE CONCAT('%', #{keyWord,jdbcType=VARCHAR}, '%'))
+        <include refid="KeyWord_Condition"/>
       </if>
-      <if test="catalogItemId != null and catalogItemId != ''">
-        AND catalog_item_id = #{catalogItemId,jdbcType=BIGINT}
+      <if test="catalogItemIds != null and catalogItemIds.size() > 0">
+        AND catalog_item_id IN
+        <foreach collection="catalogItemIds" item="catalogItemId" open="(" separator="," close=")">
+          #{catalogItemId,jdbcType=BIGINT}
+        </foreach>
       </if>
       <if test="committedOnly">
         <choose>

@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.loop.infra.idgen;
 
 import com.google.common.collect.Lists;
-import com.iwhalecloud.bss.litchi.util.sequence.IDUtils;
+import com.cmsr.tiangong.util.sequence.IDUtils;
 import java.util.List;
 import org.springframework.stereotype.Component;
 

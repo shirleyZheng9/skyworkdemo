@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.skill;
 
 import com.github.pagehelper.PageInfo;
 import com.iwhalecloud.bote.dto.skill.SimpleSkillPageDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import com.iwhalecloud.bote.dto.skill.SkillPageDTO;
 import com.iwhalecloud.bote.dto.skill.query.SkillQueryParams;
 import java.util.List;

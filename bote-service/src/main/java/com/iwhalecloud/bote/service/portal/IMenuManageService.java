@@ -4,7 +4,7 @@ import com.iwhalecloud.bote.dto.portal.PortalDirDTO;
 import com.iwhalecloud.bote.dto.portal.PortalDirMenuDTO;
 import com.iwhalecloud.bote.dto.portal.SimplePortalMenuDTO;
 import com.iwhalecloud.bote.dto.portal.query.PortalDirParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

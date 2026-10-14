@@ -15,14 +15,14 @@
     updated_time AS status_date
   </sql>
 
-  <select id="getFileInfoById" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+  <select id="getFileInfoById" resultType="com.cmsr.tiangong.file.vo.FileInfoVO">
     select
     <include refid="fileInfoCloumns"/>
     FROM bt_file
     where file_id = #{fileId}
   </select>
 
-  <select id="queryFileInfoByIds" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+  <select id="queryFileInfoByIds" resultType="com.cmsr.tiangong.file.vo.FileInfoVO">
     select
     <include refid="fileInfoCloumns"/>
     FROM bt_file
@@ -54,30 +54,30 @@
     #{dto.fileDesc},
     #{dto.fileSize},
     #{dto.fileType},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     )
   </insert>
 
   <update id="markDropFileInfo">
     UPDATE bt_file
     set status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     where file_id = #{fileId}
   </update>
 
-  <select id="selectDisabledFiles" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+  <select id="selectDisabledFiles" resultType="com.cmsr.tiangong.file.vo.FileInfoVO">
     SELECT file_id, store_type, file_path_in_server
     FROM bt_file
     WHERE status_cd = '00D'
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_and_limit"/> #{limit}
   </select>
 
   <delete id="deleteDisabledFilesByIds">
     UPDATE bt_file
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE status_cd = '00D'
       AND file_id IN (<foreach collection="fileIds" item="id" separator=", ">#{id}</foreach>)
   </delete>
@@ -87,7 +87,7 @@
     SET
     file_name = #{fileName},
     updated_time =
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE file_id = #{fileId}
       AND status_cd = '00A'
   </update>
@@ -113,12 +113,12 @@
       <if test="dto.statusCd != null">
         status_cd = #{dto.statusCd},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     </set>
     WHERE file_id = #{dto.fileId}
   </update>
 
-  <select id="getFileInfoByFileInfoId" resultType="com.iwhalecloud.bss.litchi.file.vo.FileInfoVO">
+  <select id="getFileInfoByFileInfoId" resultType="com.cmsr.tiangong.file.vo.FileInfoVO">
    select
     a.file_id,
     a.bot_id AS app_id,

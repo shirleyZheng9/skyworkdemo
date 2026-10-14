@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.service.publish.platform.weclaw;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.iwhalecloud.bote.dto.beyond.PublishChannelDTO;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;

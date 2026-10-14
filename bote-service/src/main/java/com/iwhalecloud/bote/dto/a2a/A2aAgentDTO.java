@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.dto.a2a;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.iwhalecloud.bote.entity.a2a.A2aAgentEntity;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import io.a2a.spec.AgentCard;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.nio.charset.StandardCharsets;

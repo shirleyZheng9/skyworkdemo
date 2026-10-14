@@ -3,7 +3,7 @@ package com.iwhalecloud.bote.dto.skill;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
 import com.iwhalecloud.bote.dto.base.ParameterSpec;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

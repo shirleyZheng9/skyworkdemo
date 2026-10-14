@@ -16,8 +16,8 @@ import com.iwhalecloud.bote.dto.beyond.BeyondOrgDetailRequest;
 import com.iwhalecloud.bote.dto.beyond.BeyondResourcePublishData;
 import com.iwhalecloud.bote.dto.beyond.BeyondResourcePublishRequest;
 import com.iwhalecloud.bote.dto.beyond.BeyondResponse;
-import com.iwhalecloud.bss.litchi.base.exception.BssException;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.base.exception.BssException;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.io.File;
 import java.io.IOException;
 

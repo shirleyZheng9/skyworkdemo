@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.plugin.PluginExecuteParams;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
 import com.iwhalecloud.bote.service.plugin.IPluginEngine;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.lang.Nullable;

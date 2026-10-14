@@ -1,9 +1,9 @@
 package com.iwhalecloud.bote.entity.mcp;
 
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffField;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffId;
-import com.iwhalecloud.bss.litchi.diffc.annotations.DiffNode;
-import com.iwhalecloud.bss.litchi.diffc.vo.BaseEntity;
+import com.cmsr.tiangong.diffc.annotations.DiffField;
+import com.cmsr.tiangong.diffc.annotations.DiffId;
+import com.cmsr.tiangong.diffc.annotations.DiffNode;
+import com.cmsr.tiangong.diffc.vo.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;

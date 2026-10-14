@@ -61,9 +61,9 @@
     </if>
     <if test="query.searchContent != null and query.searchContent != ''">
       AND a.term_content LIKE
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-left"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-left"/>
       #{query.searchContent}
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.like-right"/>
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.like-right"/>
     </if>
     ORDER BY a.updated_time DESC
   </select>
@@ -91,9 +91,9 @@
     #{termContent},
     #{termType},
     #{ownerType},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     '00A',
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{creatorId},
     #{updatorId},
     #{remark}
@@ -109,7 +109,7 @@
     term_type = #{termType},
     owner_type = #{ownerType},
     remark = #{remark},
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     updator_id = #{updatorId}
     WHERE term_id = #{termId}
     AND tenant_id = #{tenantId}
@@ -120,7 +120,7 @@
     UPDATE bt_suggestion_term
     SET
     status_cd = '00X',
-    updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>
+    updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>
     WHERE term_id = #{termId}
     AND tenant_id = #{tenantId}
     AND status_cd = '00A'
@@ -214,9 +214,9 @@
       #{entity.termContent},
       #{entity.termType},
       #{entity.ownerType},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       '00A',
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.creatorId},
       #{entity.updatorId},
       #{entity.remark}
@@ -249,9 +249,9 @@
       #{entity.termContent},
       #{entity.termType},
       #{entity.ownerType},
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       '00A',
-      <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       #{entity.creatorId},
       #{entity.updatorId},
       #{entity.remark}

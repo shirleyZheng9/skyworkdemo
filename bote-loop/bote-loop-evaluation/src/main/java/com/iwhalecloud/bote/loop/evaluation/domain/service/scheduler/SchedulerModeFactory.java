@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.loop.evaluation.domain.service.scheduler;
 
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ExptRunMode;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 
 public final class SchedulerModeFactory {
   private SchedulerModeFactory() {

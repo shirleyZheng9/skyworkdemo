@@ -8,7 +8,7 @@ import com.iwhalecloud.bote.dto.bot.BotUserExperienceDTO;
 import com.iwhalecloud.bote.dto.skill.SimplePageTemplateDTO;
 import com.iwhalecloud.bote.service.element.IResourceElementService;
 import com.iwhalecloud.bote.service.skill.impl.helper.ParsePageTemplateHelper;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

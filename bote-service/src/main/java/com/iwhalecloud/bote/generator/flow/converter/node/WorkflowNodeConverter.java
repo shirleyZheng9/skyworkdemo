@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.generator.flow.node.WorkflowNodeData;
 import com.iwhalecloud.bote.dto.skill.SkillFlowDTO;
 import com.iwhalecloud.bote.generator.flow.context.FlowConverterContext;
 import com.iwhalecloud.bote.generator.flow.converter.AbstractNodeConverter;
-import com.iwhalecloud.bss.litchi.util.JsonUtil;
+import com.cmsr.tiangong.util.JsonUtil;
 import java.util.List;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.lang.Nullable;

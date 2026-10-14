@@ -2,7 +2,7 @@ package com.iwhalecloud.bote.doc.module.knowledge.service;
 
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeGraphTokenDTO;
 import com.iwhalecloud.bote.doc.module.knowledge.dto.KnowledgeGraphDTO;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

@@ -16,7 +16,7 @@ import com.iwhalecloud.bote.doc.module.control.base.ControlTemplate;
 import com.iwhalecloud.bote.doc.module.control.base.permission.NodePermission;
 import com.iwhalecloud.bote.doc.module.document.dto.DocumentAttachmentDTO;
 import com.iwhalecloud.bote.doc.module.document.service.IDocumentAttachmentService;
-import com.iwhalecloud.bss.litchi.cache.inf.ICacheClient;
+import com.cmsr.tiangong.cache.inf.ICacheClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

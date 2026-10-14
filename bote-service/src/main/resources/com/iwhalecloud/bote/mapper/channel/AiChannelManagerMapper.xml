@@ -46,9 +46,9 @@
     #{dto.channelType},
     #{dto.isEnabled},
     #{dto.channelJson},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.statusCd},
-    <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+    <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
     #{dto.creatorId},
     #{dto.updatorId},
     #{dto.remark}
@@ -67,7 +67,7 @@
       <if test="dto.channelJson != null and dto.channelJson != ''">
         channel_json = #{dto.channelJson},
       </if>
-      updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+      updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
       <if test="dto.updatorId != null">
         updator_id = #{dto.updatorId},
       </if>
@@ -97,7 +97,7 @@
   <update id="deleteAiChannelsBySpaceBotUser">
     UPDATE bt_ai_channel
     SET status_cd = '00X',
-        updated_time = <include refid="com.iwhalecloud.bss.litchi.mybatis.mapper.SqlFragments.func_now"/>,
+        updated_time = <include refid="com.cmsr.tiangong.mybatis.mapper.SqlFragments.func_now"/>,
         updator_id = #{userId}
     WHERE status_cd = '00A'
       AND space_id = #{spaceId}

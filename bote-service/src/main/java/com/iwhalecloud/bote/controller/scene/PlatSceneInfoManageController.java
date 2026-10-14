@@ -6,7 +6,7 @@ import com.iwhalecloud.bote.dto.bot.PlatSceneInfoDTO;
 import com.iwhalecloud.bote.dto.bot.query.PlatSceneInfoQueryParams;
 import com.iwhalecloud.bote.dto.scene.SimpleSceneDTO;
 import com.iwhalecloud.bote.service.bot.IPlatSceneInfoManageService;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;

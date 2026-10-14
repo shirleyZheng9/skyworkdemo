@@ -1,7 +1,7 @@
 package com.iwhalecloud.bote.common.util;
 
 import com.iwhalecloud.bote.common.consts.BaseConsts;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import lombok.Getter;
 
 /**

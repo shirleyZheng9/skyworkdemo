@@ -12,7 +12,7 @@ import com.iwhalecloud.bote.doc.module.person.dto.homepage.SearchDocumentDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.homepage.UnpinResourceRequestDTO;
 import com.iwhalecloud.bote.doc.module.person.dto.homepage.query.RecentFileQueryParams;
 import com.iwhalecloud.bote.doc.module.person.dto.homepage.query.SearchDocumentQueryParams;
-import com.iwhalecloud.bss.litchi.base.vo.ResultVO;
+import com.cmsr.tiangong.base.vo.ResultVO;
 import java.util.List;
 
 /**

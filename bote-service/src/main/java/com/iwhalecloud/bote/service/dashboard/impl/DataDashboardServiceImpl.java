@@ -223,8 +223,8 @@ public class DataDashboardServiceImpl implements IDataDashboardService {
   @Override
   public List<DistributionItemVO> queryKnowledgeFileDistribution(Long tenantId) {
     Assert.notNull(tenantId, "租户 ID 不能为空");
-   // 优先查询当前租户的文件类型分布缓存。
-   // snapshot 中同时包含缓存数据和“是否需要后台刷新”的状态。
+    // 优先查询当前租户的文件类型分布缓存。
+    // snapshot 中同时包含缓存数据和“是否需要后台刷新”的状态。
     CacheSnapshot<Map<String, Long>> snapshot = getCachedKnowledgeFileCounts(tenantId);
     if (snapshot != null && !snapshot.value().isEmpty()) {
       if (snapshot.refreshRequired()) {

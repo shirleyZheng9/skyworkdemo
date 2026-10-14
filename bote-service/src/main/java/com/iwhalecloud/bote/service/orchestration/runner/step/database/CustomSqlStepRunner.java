@@ -7,7 +7,7 @@ import com.iwhalecloud.bote.dto.orchestration.step.database.CustomSqlStep;
 import com.iwhalecloud.bote.dto.scene.SceneChatParamsDTO;
 import com.iwhalecloud.bote.service.base.IDataSourceProviderService;
 import com.iwhalecloud.bote.service.orchestration.runner.AbstractStepRunner;
-import com.iwhalecloud.bss.litchi.util.SpringUtil;
+import com.cmsr.tiangong.util.SpringUtil;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
