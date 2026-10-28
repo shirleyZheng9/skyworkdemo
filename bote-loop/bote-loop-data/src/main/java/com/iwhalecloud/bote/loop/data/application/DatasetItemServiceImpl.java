@@ -21,9 +21,12 @@ import com.iwhalecloud.bote.loop.client.data.dataset.dto.UpdateDatasetItemRespon
 import com.iwhalecloud.bote.loop.client.data.domain.dataset.DatasetItemDTO;
 import com.iwhalecloud.bote.loop.client.data.domain.dataset.ItemErrorGroupDTO;
 import com.iwhalecloud.bote.loop.data.application.convertor.DatasetItemConvertor;
+import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetCategory;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetOpType;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.DatasetVersion;
+import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldData;
+import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldSchema;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.Item;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemErrorGroup;
 import com.iwhalecloud.bote.loop.data.domain.dataset.entity.ItemSnapshot;
@@ -55,6 +58,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * 数据集项目管理服务实现类
@@ -136,6 +140,7 @@ public class DatasetItemServiceImpl implements DatasetItemService {
     Long oldId = item.getId();
     boolean inPlace = item.getAddVN().equals(datasetWithSchema.getDataset().getNextVersionNum());
     buildItem(request, datasetWithSchema, item, inPlace);
+    validateRequiredFields(datasetWithSchema, item);
     ItemUtils.validateItem(datasetWithSchema, item);
     if (inPlace) {
       logger.info("update item in place, id={}, item_id={}", datasetWithSchema.getDataset().getId(), item.getId());
@@ -149,6 +154,40 @@ public class DatasetItemServiceImpl implements DatasetItemService {
     updateDataset(datasetWithSchema, DatasetOpType.WRITE_ITEM);
 
     return new UpdateDatasetItemResponse();
+  }
+
+  /**
+   * 编辑数据项时校验必填字段：字段缺失、内容为空或仅包含空白字符均视为未填写（TGAIP 评测集必填项可提交空格问题）。
+   * 只做校验，不修改提交的内容；仅对评测集生效，普通数据集不受影响。
+   */
+  private void validateRequiredFields(DatasetWithSchema datasetWithSchema, Item item) {
+    if (datasetWithSchema.getDataset().getCategory() != DatasetCategory.EVALUATION) {
+      return;
+    }
+    List<FieldSchema> requiredFields = datasetWithSchema.getSchema().getAvailableFields().stream()
+      .filter(field -> Boolean.TRUE.equals(field.getIsRequired()))
+      .toList();
+    if (requiredFields.isEmpty()) {
+      return;
+    }
+    for (List<FieldData> data : item.getAllData()) {
+      Map<String, FieldData> dataByKey = new HashMap<>();
+      if (data != null) {
+        data.forEach(fd -> dataByKey.put(fd.getKey(), fd));
+      }
+      for (FieldSchema field : requiredFields) {
+        if (isBlankFieldData(dataByKey.get(field.getKey()))) {
+          throw new BssException(field.getName() + " 为必填项，不能为空");
+        }
+      }
+    }
+  }
+
+  private boolean isBlankFieldData(FieldData fieldData) {
+    return fieldData == null
+      || !StringUtils.hasText(fieldData.getContent())
+      && CollectionUtils.isEmpty(fieldData.getAttachments())
+      && CollectionUtils.isEmpty(fieldData.getParts());
   }
 
   @Override
