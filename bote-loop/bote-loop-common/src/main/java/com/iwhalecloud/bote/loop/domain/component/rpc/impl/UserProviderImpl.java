@@ -6,6 +6,7 @@ import com.iwhalecloud.bote.mapper.portal.UserManageMapper;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -21,7 +22,8 @@ public class UserProviderImpl implements IUserProvider {
       .map(o -> userManageMapper.getUser(o)).filter(Objects::nonNull).map(userPO -> {
         return RpcUserInfo.builder()
           .userId(String.valueOf(userPO.getUserId()))
-          .userName(userPO.getUserName())
+          // 展示名优先取 real_name：天工用户的 user_name 存的是外部用户 ID
+          .userName(StringUtils.isNotBlank(userPO.getRealName()) ? userPO.getRealName() : userPO.getUserName())
           .build();
       })
       .toList();
