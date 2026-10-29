@@ -55,6 +55,8 @@ public class GatewayModelSyncHelper {
   private static final String EXT_AIMARKET = "aimarket";
   /** 网关同步默认产品系列：OpenAI（字典 MODEL_PRODUCT_TYPE） */
   private static final String DEFAULT_PRODUCT_TYPE = "1400";
+  /** 网关未配置 logo 时使用的默认模型图标 */
+  private static final String DEFAULT_MODEL_ICON = "./images/model/ico-model-6.png";
   private static final int MODEL_DESC_MAX_LEN = 255;
   private static final int ACCESS_URL_MAX_LEN = 255;
   private static final int ACCESS_KEY_MAX_LEN = 255;
@@ -303,7 +305,8 @@ public class GatewayModelSyncHelper {
     model.setModelCode(remote.getApiModelId());
     model.setModelName(StringUtils.defaultIfBlank(remote.getName(), remote.getApiModelId()));
     model.setModelDesc(truncate(StringUtils.defaultString(remote.getBrief()), MODEL_DESC_MAX_LEN));
-    model.setModelIcon(remote.getLogoUrl());
+    //设置默认头像
+    model.setModelIcon(resolveModelIcon(remote));
     model.setModelType(modelType);
     model.setProtocolType(ModelConsts.MODEL_PROTOCOL_OPENAI);
     model.setProductType(DEFAULT_PRODUCT_TYPE);
@@ -318,10 +321,14 @@ public class GatewayModelSyncHelper {
       || !Objects.equals(local.getModelName(), StringUtils.defaultIfBlank(remote.getName(), remote.getApiModelId()))
       || !Objects.equals(StringUtils.defaultString(local.getModelDesc()),
       truncate(StringUtils.defaultString(remote.getBrief()), MODEL_DESC_MAX_LEN))
-      || !Objects.equals(StringUtils.defaultString(local.getModelIcon()), StringUtils.defaultString(remote.getLogoUrl()))
+      || !Objects.equals(StringUtils.defaultString(local.getModelIcon()), resolveModelIcon(remote))
       || !Objects.equals(local.getModelType(), mappedType)
       || !Objects.equals(local.getContextLength(), parseContextLength(remote.getContextWindow()))
       || !Objects.equals(StringUtils.defaultString(local.getProductType()), DEFAULT_PRODUCT_TYPE);
+  }
+
+  private static String resolveModelIcon(AimarketModelRecord remote) {
+    return StringUtils.defaultIfBlank(remote.getLogoUrl(), DEFAULT_MODEL_ICON);
   }
 
   private boolean isExtOrKeyChanged(LargeModelDTO local, AimarketModelRecord remote, String accessUrl, String accessKey) {
