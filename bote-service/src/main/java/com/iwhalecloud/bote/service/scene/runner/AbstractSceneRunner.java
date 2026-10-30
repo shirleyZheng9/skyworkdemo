@@ -11,6 +11,7 @@ import com.iwhalecloud.bote.common.consts.StepType;
 import com.iwhalecloud.bote.common.enums.Sequences;
 import com.iwhalecloud.bote.common.util.ScenePromptUtil;
 import com.iwhalecloud.bote.dto.bot.SimpleBotSceneDTO;
+import com.iwhalecloud.bote.dto.model.LargeModelDTO;
 import com.iwhalecloud.bote.dto.model.SkillToolDTO;
 import com.iwhalecloud.bote.dto.orchestration.OrchestrationEngineRequest;
 import com.iwhalecloud.bote.dto.orchestration.context.SceneOrchestrationContext;
@@ -24,8 +25,10 @@ import com.iwhalecloud.bote.llm.client.dto.message.Message;
 import com.iwhalecloud.bote.llm.client.dto.message.SystemMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.ToolMessage;
 import com.iwhalecloud.bote.llm.client.dto.message.UserMessage;
+import com.iwhalecloud.bote.mapper.model.LargeModelManageMapper;
 import com.iwhalecloud.bote.mapper.scene.SceneChatMessageMapper;
 import com.iwhalecloud.bote.service.skill.IFlowRunLogService;
+import com.cmsr.tiangong.base.exception.BssException;
 import com.cmsr.tiangong.database.util.TransactionUtil;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +58,8 @@ public abstract class AbstractSceneRunner implements SceneRunner {
   protected IFlowRunLogService flowTraceLogService;
   @Autowired
   protected SceneChatMessageMapper sceneChatMessageMapper;
+  @Autowired
+  protected LargeModelManageMapper largeModelManageMapper;
 
   /**
    * 获取大模型 ID
@@ -63,6 +68,14 @@ public abstract class AbstractSceneRunner implements SceneRunner {
     Long modelId = sceneChatParams.getModelId();
     if (modelId == null || ModelConsts.DEFAULT_MODEL.equals(modelId)) {
       modelId = tenantSettingInfoCache.getModelId(sceneChatParams.getTenantId());
+    } else {
+      // 智能体绑定的大模型已删除时，不允许继续对话
+      // 例如知识问答（DocChain）场景，DocChain 回调本系统获取模型失败后会改用自身模型回答，用户无感知。
+      // 所有入口（调试、智能体应用、微信、SDK 等）都会经过这里，因此在此统一拦截。
+      LargeModelDTO model = largeModelManageMapper.getLargeModel(sceneChatParams.getTenantId(), modelId);
+      if (model == null) {
+        throw new BssException(ModelConsts.MODEL_DELETED_MSG);
+      }
     }
     return modelId;
   }

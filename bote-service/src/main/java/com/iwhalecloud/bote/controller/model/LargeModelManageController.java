@@ -112,7 +112,13 @@ public class LargeModelManageController {
       WorkspaceDTO workspaceDTO = workspaceHelper.initAiTenantId(spaceId);
       tenantId = workspaceDTO.getSpaceTenantId();
     }
-    return modelManageService.deleteLargeModel(tenantId, modelId);
+    ResultVO<Void> result = modelManageService.deleteLargeModel(tenantId, modelId);
+    // 删除后需要刷新客户端缓存：缓存按最后访问时间保留 1 小时，不刷新的话已删除的模型仍可通过缓存调用
+    // （如工作流大模型节点、DocChain 回调的模型代理接口）
+    if (result.isSuccess()) {
+      refreshCacheService.refresh(CacheConsts.CACHE_NAME_MODEL_CLIENT, tenantId + CacheConsts.COLON + modelId);
+    }
+    return result;
   }
 
   @Operation(summary = "修改大模型是否启用状态")
@@ -445,7 +451,13 @@ public class LargeModelManageController {
                                                  @RequestParam("spaceId") Long spaceId) {
     Assert.notNull(modelId, "模型 ID 不能为空");
     Assert.notNull(spaceId, "空间 ID 不能为空");
-    return modelManageService.deleteLargeModel(spaceId, modelId);
+    ResultVO<Void> result = modelManageService.deleteLargeModel(spaceId, modelId);
+    // 删除后需要刷新客户端缓存：缓存按最后访问时间保留 1 小时，不刷新的话已删除的模型仍可通过缓存调用
+    // （如工作流大模型节点、DocChain 回调的模型代理接口）
+    if (result.isSuccess()) {
+      refreshCacheService.refresh(CacheConsts.CACHE_NAME_MODEL_CLIENT, spaceId + CacheConsts.COLON + modelId);
+    }
+    return result;
   }
 
   @Operation(summary = "修改个人大模型是否启用状态")

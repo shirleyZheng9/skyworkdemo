@@ -26,6 +26,16 @@ public final class ModelConsts {
   /** 默认模型(虚拟的模型 ID, 表示使用机器人/租户/平台配置的默认模型) */
   public static final Long DEFAULT_MODEL = -1L;
 
+  /**
+   * 智能体绑定的大模型已删除时的提示
+   * <p>
+   * 保存智能体（BotSceneManageServiceImpl#validateModel）和智能体对话（AbstractSceneRunner#resolveModelId）共用，
+   * 保证两处提示一致。业务约定：大模型删除后，绑定该模型的智能体不允许继续对话，需要更换大模型。
+   * 注意：大模型的"启用/停用"（is_enabled）表示是否为空间/平台 AI 助手的默认模型，同一空间只能启用一个，
+   * 并不表示模型不可用，因此"停用"的模型不做拦截。
+   */
+  public static final String MODEL_DELETED_MSG = "当前大模型已删除，请更换大模型";
+
   /** json 内容前缀 */
   public static final String JSON_PREFIX = "```json\n";
   /** json 内容后缀 */

@@ -7,6 +7,7 @@ import com.iwhalecloud.bote.cache.AiGenSceneCache;
 import com.iwhalecloud.bote.cache.FlowDslCache;
 import com.iwhalecloud.bote.cache.TenantSettingInfoCache;
 import com.iwhalecloud.bote.common.consts.BaseConsts;
+import com.iwhalecloud.bote.common.consts.ModelConsts;
 import com.iwhalecloud.bote.common.consts.CatalogConsts;
 import com.iwhalecloud.bote.common.consts.SceneConsts;
 import com.iwhalecloud.bote.common.consts.StepType;
@@ -528,6 +529,8 @@ public class BotSceneManageServiceImpl implements IBotSceneManageService {
       scene.setSceneGraphJson(scene.getKnowledgeSetting() == null ? null : JsonUtil.toJsonString(scene.getKnowledgeSetting()));
       fillSceneSkill(scene);
       validateKnowledgeTypeConsistency(scene);
+      // 知识问答智能体此前不走 validateDelete，保存时不校验模型，导致能绑定已删除的模型，这里补上
+      validateModel(scene);
     }
     // 复杂智能体需要有流程图，但新增智能体时没有
     else if (scene.getGraph() != null) {
@@ -577,20 +580,32 @@ public class BotSceneManageServiceImpl implements IBotSceneManageService {
         .collect(Collectors.joining("、"));
       throw new BssException("以下数据已被删除或未启用，请启用或请移除：" + deletedNames);
     }
+    validateModel(scene);
+  }
+
+  /**
+   * 校验智能体绑定的大模型
+   * <p>
+   * 从 validateDelete 中拆出，供普通智能体、claw 智能体、知识问答智能体共用。
+   * 指定模型时要求模型未删除，否则不允许保存；对话时在 AbstractSceneRunner#resolveModelId 中还会再校验一次，
+   * 用于拦截"先绑定模型、后删除模型"的情况。
+   */
+  private void validateModel(BotSceneDTO scene) {
     if (scene.getModelId() == null) {
       return;
     }
-    Long modelId = null;
+    // 使用默认模型时，只校验默认模型是否存在
     if (Objects.equals(-1L, scene.getModelId())) {
-      modelId = tenantSettingInfoCache.getModelIdOrNull(scene.getTenantId());
-      if (modelId == null) {
-        return;
+      Long modelId = tenantSettingInfoCache.getModelIdOrNull(scene.getTenantId());
+      if (modelId != null && largeModelManageMapper.getLargeModel(scene.getTenantId(), modelId) == null) {
+        throw new BssException("大模型不存在，请切换大模型");
       }
+      return;
     }
-    modelId = modelId == null ? scene.getModelId() : modelId;
-    LargeModelDTO largeModel = largeModelManageMapper.getLargeModel(scene.getTenantId(), modelId);
+    // 指定的大模型已删除时，不允许保存（不校验启用/停用，停用只表示不是 AI 助手的默认模型）
+    LargeModelDTO largeModel = largeModelManageMapper.getLargeModel(scene.getTenantId(), scene.getModelId());
     if (largeModel == null) {
-      throw new BssException("大模型不存在，请切换大模型");
+      throw new BssException(ModelConsts.MODEL_DELETED_MSG);
     }
   }
 
