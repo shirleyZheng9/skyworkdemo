@@ -44,6 +44,7 @@ import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluation
 import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluationSetSchemaRequest;
 import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.UpdateEvaluationSetSchemaResponse;
 import com.iwhalecloud.bote.loop.client.evaluation.eval_set.dto.VersionedEvaluationSetDTO;
+import com.iwhalecloud.bote.loop.data.domain.dataset.entity.FieldStatus;
 import com.iwhalecloud.bote.loop.evaluation.application.convertor.evaluationset.EvaluationSetApplicationConvertor;
 import com.iwhalecloud.bote.loop.evaluation.application.convertor.evaluationset.EvaluationSetItemApplicationConvertor;
 import com.iwhalecloud.bote.loop.evaluation.application.convertor.evaluationset.EvaluationSetSchemaApplicationConvertor;
@@ -61,6 +62,7 @@ import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvaluationSetItem;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvaluationSetVersion;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.EvaluationSetVersionResult;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.FieldData;
+import com.iwhalecloud.bote.loop.evaluation.domain.entity.FieldSchema;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ItemErrorGroup;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ListEvaluationSetItemsParam;
 import com.iwhalecloud.bote.loop.evaluation.domain.entity.ListEvaluationSetVersionsParam;
@@ -423,11 +425,27 @@ public class EvaluationSetApplicationServiceImpl implements EvaluationSetApplica
       throw new BssException("errno set not found");
     }
 
+    List<EvaluationSetItem> items = EvaluationSetItemApplicationConvertor.convertItemDTO2DOs(request.getItems());
+    // 必填项校验（TGAIP-650）
+    List<FieldSchema> requiredFields = set.getEvaluationSetVersion().getEvaluationSetSchema().getFieldSchemas().stream()
+      .filter(f -> Boolean.TRUE.equals(f.getIsRequired()) && f.getStatus() != FieldStatus.DELETED).toList();
+    for (EvaluationSetItem item : items) {
+      for (Turn turn : item.getTurns()) {
+        for (FieldSchema field : requiredFields) {
+          boolean filled = turn.getFieldDataList().stream().anyMatch(fd -> field.getKey().equals(fd.getKey())
+            && fd.getContent() != null && StringUtils.isNotBlank(fd.getContent().getText()));
+          if (!filled) {
+            throw new BssException(field.getName() + " 为必填项，不能为空");
+          }
+        }
+      }
+    }
+
     // domain调用
     BatchCreateEvaluationSetItemsParam param = BatchCreateEvaluationSetItemsParam.builder()
       .spaceId(request.getWorkspaceId())
       .evaluationSetId(request.getEvaluationSetId())
-      .items(EvaluationSetItemApplicationConvertor.convertItemDTO2DOs(request.getItems()))
+      .items(items)
       .skipInvalidItems(request.getSkipInvalidItems())
       .allowPartialAdd(request.getAllowPartialAdd())
       .build();
