@@ -29,7 +29,8 @@ public abstract class AbstractPage {
     // 新建页面
     document.newPage();
     // 页眉
-    Paragraph leftParagraph = new Paragraph("博特平台智能评测", openPdfContext.getFontNormal());
+    //测试，产品已确认去掉“博特平台智能评测”
+    Paragraph leftParagraph = new Paragraph("", openPdfContext.getFontNormal());
     Paragraph rightParagraph = new Paragraph("内部文件 注意保密", openPdfContext.getFontSmall());
     PdfPTable pageHeader = OpenPdfElementFactory.createPageHeader(leftParagraph, rightParagraph);
     addElement(pageHeader);
