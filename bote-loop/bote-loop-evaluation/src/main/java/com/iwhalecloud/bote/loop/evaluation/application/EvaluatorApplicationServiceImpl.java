@@ -489,7 +489,7 @@ public class EvaluatorApplicationServiceImpl implements EvaluatorApplicationServ
     if (exist) {
       return CheckEvaluatorNameResponse.builder()
         .pass(false)
-        .message(String.format("evaluator name %s already exists", request.getName()))
+        .message("评估器名称已存在")
         .build();
     }
 
