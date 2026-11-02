@@ -38,6 +38,7 @@ import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluator
 import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluatorRecordResponse;
 import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluatorRequest;
 import com.iwhalecloud.bote.loop.client.evaluation.evaluator.dto.UpdateEvaluatorResponse;
+import com.cmsr.tiangong.base.exception.BssException;
 import com.cmsr.tiangong.base.vo.ResultVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -147,7 +148,13 @@ public class EvaluatorController {
   public ResultVO<UpdateEvaluatorResponse> updateEvaluator(@PathVariable Long evaluatorId,
                                                            @RequestBody UpdateEvaluatorRequest request) {
     request.setEvaluatorId(evaluatorId);
-    return ResultVO.success(evaluatorApplicationService.updateEvaluator(request));
+    try {
+      return ResultVO.success(evaluatorApplicationService.updateEvaluator(request));
+    }
+    catch (BssException e) {
+      // 业务异常（如名称重复）直接返回提示信息，避免前端收到 500
+      return ResultVO.fail(e.getFailMsg());
+    }
   }
 
   /**
