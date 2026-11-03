@@ -147,6 +147,8 @@ public class EvaluatorRepoImpl implements IEvaluatorRepo {
       return evaluatorVersionPOS.stream()
         .filter(versionPO -> versionPO.getEvaluatorType() != null)
         .filter(versionPO -> versionPO.getEvaluatorType().equals(EvaluatorType.PROMPT.getValue()))
+        // 评估器主体已删除（版本未删）时跳过，避免空指针
+        .filter(versionPO -> evaluatorMap.containsKey(versionPO.getEvaluatorId()))
         .map(versionPO -> {
           Evaluator evaluatorDO = EvaluatorConvertor.convertToDO(evaluatorMap.get(versionPO.getEvaluatorId()));
           Evaluator evaluatorVersion = EvaluatorConvertor.convertVersionToDO(versionPO);

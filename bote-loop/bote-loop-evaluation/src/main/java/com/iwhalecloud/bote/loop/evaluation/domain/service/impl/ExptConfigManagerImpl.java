@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -132,6 +133,8 @@ public class ExptConfigManagerImpl implements IExptConfigManager {
     if (req.getExptType() == ExptType.ONLINE) {
       req.getCreateEvalTargetParam().setSourceTargetVersion(DEFAULT_SOURCE_TARGET_VERSION);
     }
+    // 先校验评估器，避免已删除的评估器仍能发起实验
+    checkEvaluatorsAvailable(req.getEvaluatorVersionIds(), req.getWorkspaceId());
     EvalTargetCreateResult targetCreateResult = evalTargetService.createEvalTarget(
       req.getWorkspaceId(),
       req.getCreateEvalTargetParam().getSourceTargetId(),
@@ -170,6 +173,23 @@ public class ExptConfigManagerImpl implements IExptConfigManager {
     exptResultService.insertExptTurnResultFilterKeyMappings(refsAndMappings.mappings());
     create(experiment);
     return experiment;
+  }
+
+  /**
+   * 校验评估器版本均存在且未被删除
+   */
+  private void checkEvaluatorsAvailable(List<Long> evaluatorVersionIds, Long workspaceId) {
+    if (evaluatorVersionIds == null || evaluatorVersionIds.isEmpty()) {
+      return;
+    }
+    Set<Long> availableVersionIds = evaluatorService.batchGetEvaluatorVersion(workspaceId, evaluatorVersionIds, false)
+      .stream()
+      .filter(evaluator -> evaluator != null && evaluator.getEvaluatorVersion() != null)
+      .map(evaluator -> evaluator.getEvaluatorVersion().getId())
+      .collect(Collectors.toSet());
+    if (!availableVersionIds.containsAll(evaluatorVersionIds)) {
+      throw new BssException("所选评估器已被删除或不存在，请重新选择评估器");
+    }
   }
 
   /**
