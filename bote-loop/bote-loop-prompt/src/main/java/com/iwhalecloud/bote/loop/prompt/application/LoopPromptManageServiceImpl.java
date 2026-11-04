@@ -40,10 +40,16 @@ import com.iwhalecloud.bote.loop.infra.session.SessionContext;
 import com.iwhalecloud.bote.loop.prompt.application.convertor.ManageConvertor;
 import com.iwhalecloud.bote.loop.prompt.application.convertor.UserConvertor;
 import com.iwhalecloud.bote.loop.prompt.domain.component.conf.IConfigProvider;
+import com.iwhalecloud.bote.loop.prompt.domain.entity.DebugContext;
+import com.iwhalecloud.bote.loop.prompt.domain.entity.DebugCore;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.DraftInfo;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.Prompt;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.PromptBasic;
+import com.iwhalecloud.bote.loop.prompt.domain.entity.PromptDetail;
 import com.iwhalecloud.bote.loop.prompt.domain.entity.PromptDraft;
+import com.iwhalecloud.bote.loop.prompt.domain.entity.VariableDef;
+import com.iwhalecloud.bote.loop.prompt.domain.entity.VariableVal;
+import com.iwhalecloud.bote.loop.prompt.domain.repo.IDebugContextRepo;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.IManageRepo;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.CommitDraftParam;
 import com.iwhalecloud.bote.loop.prompt.domain.repo.dto.GetPromptParam;
@@ -63,6 +69,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -92,11 +100,14 @@ import org.springframework.util.StringUtils;
 @Service
 @RequiredArgsConstructor
 public class LoopPromptManageServiceImpl implements PromptManageService {
+  private static final Logger logger = LoggerFactory.getLogger(LoopPromptManageServiceImpl.class);
+
   private final IManageRepo manageRepo;
   private final IConfigProvider configProvider;
   private final IUserProvider userProvider;
   private final IResourceElementService resourceElementService;
   private final ICatalogManageService catalogManageService;
+  private final IDebugContextRepo debugContextRepo;
 
   @Override
   public boolean existsPromptKey(Long workspaceId, String promptKey) {
@@ -420,7 +431,73 @@ public class LoopPromptManageServiceImpl implements PromptManageService {
     promptDO.getPromptDraft().setPromptDetail(promptDO.getPromptCommit().getPromptDetail());
     promptDO.setSpaceId(request.getTenantId());
     manageRepo.saveDraft(promptDO);
+    // 调试上下文不区分版本，还原后需同步为目标版本的变量，否则页面仍会显示还原前的变量（TGAIP-708）
+    syncDebugContextMockVariables(request.getPromptId(), userId, promptDO.getPromptCommit().getPromptDetail());
     return response;
+  }
+
+  /**
+   * 将调试上下文中的mock变量与提示词变量定义对齐：保留已有值、补齐缺失变量、剔除多余变量
+   * 仅为还原的附加步骤，失败只记录日志，不影响还原结果
+   */
+  private void syncDebugContextMockVariables(Long promptId, String userId, PromptDetail promptDetail) {
+    try {
+      //取出目标版本的变量 key（保持定义顺序，忽略空 key 和重复 key），作为对齐的基准
+      List<String> variableKeys = new ArrayList<>();
+      if (promptDetail != null && promptDetail.getPromptTemplate() != null
+        && promptDetail.getPromptTemplate().getVariableDefs() != null) {
+        for (VariableDef variableDef : promptDetail.getPromptTemplate().getVariableDefs()) {
+          if (variableDef != null && variableDef.getKey() != null && !variableKeys.contains(variableDef.getKey())) {
+            variableKeys.add(variableDef.getKey());
+          }
+        }
+      }
+
+      //查询当前用户在该提示词上最新的调试上下文
+      DebugContext debugContext = debugContextRepo.getDebugContext(promptId, userId);
+      if (debugContext == null) {
+        // 用户从未调试过，且目标版本没有变量：无需处理，避免产生无意义的调试记录
+        if (variableKeys.isEmpty()) {
+          return;
+        }
+        // 用户从未调试过，但目标版本有变量：新建调试上下文，保证面板能展示目标版本的变量
+        debugContext = DebugContext.builder().promptId(promptId).userId(userId).build();
+      }
+      if (debugContext.getDebugCore() == null) {
+        debugContext.setDebugCore(new DebugCore());
+      }
+
+      //整理现有调试变量：按 key 建索引，用于保留用户已填写的调试值；同时记录原有 key 的顺序，用于判断是否需要更新
+      List<VariableVal> oldMockVariables = debugContext.getDebugCore().getMockVariables() == null
+        ? new ArrayList<>() : debugContext.getDebugCore().getMockVariables();
+      Map<String, VariableVal> oldMockVariableMap = Maps.newHashMap();
+      List<String> oldKeys = new ArrayList<>();
+      for (VariableVal variableVal : oldMockVariables) {
+        if (variableVal != null && variableVal.getKey() != null) {
+          // 存在重复 key 时以第一个为准
+          oldMockVariableMap.putIfAbsent(variableVal.getKey(), variableVal);
+        }
+        oldKeys.add(variableVal == null ? null : variableVal.getKey());
+      }
+      //调试变量与目标版本完全一致（key 与顺序都相同）：无需更新。
+      //调试上下文每次保存都会新增一条记录，这里避免重复写库
+      if (oldKeys.equals(variableKeys)) {
+        return;
+      }
+
+      //以目标版本变量定义为准重建调试变量：已有的保留原值，缺失的补空值，多余的不再保留
+      List<VariableVal> newMockVariables = new ArrayList<>();
+      for (String key : variableKeys) {
+        VariableVal variableVal = oldMockVariableMap.get(key);
+        newMockVariables.add(variableVal != null ? variableVal : VariableVal.builder().key(key).value("").build());
+      }
+      //保存调试上下文（新增一条记录，读取时按 updated_at 取最新一条），前端重新加载后即展示目标版本的变量
+      debugContext.getDebugCore().setMockVariables(newMockVariables);
+      debugContextRepo.saveDebugContext(debugContext);
+    }
+    catch (Exception e) {
+      logger.error("Sync debug context mock variables failed, prompt id = {}, user id = {}", promptId, userId, e);
+    }
   }
 
   /**
