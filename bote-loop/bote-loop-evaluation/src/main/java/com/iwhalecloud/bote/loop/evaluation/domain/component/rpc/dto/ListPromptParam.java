@@ -12,4 +12,8 @@ public class ListPromptParam {
   private Integer page;
   private Integer pageSize;
   private String keyWord;
+  /**
+   * 是否仅查询已提交(有版本)的Prompt
+   */
+  private Boolean committedOnly;
 }

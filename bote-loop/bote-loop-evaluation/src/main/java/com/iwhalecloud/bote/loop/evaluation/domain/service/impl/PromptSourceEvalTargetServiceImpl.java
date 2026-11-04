@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -298,6 +299,8 @@ public class PromptSourceEvalTargetServiceImpl implements ISourceEvalTargetOpera
     listParam.setPageSize(param.getPageSize());
     listParam.setPage(page);
     listParam.setKeyWord(param.getKeyWord());
+    // 评测对象只能选择已提交过版本的Prompt，过滤掉没有版本的草稿
+    listParam.setCommittedOnly(true);
 
     List<LoopPrompt> prompts = promptRPCAdapter.listPrompt(listParam);
 
@@ -311,7 +314,7 @@ public class PromptSourceEvalTargetServiceImpl implements ISourceEvalTargetOpera
       if (p.getPromptBasic() != null) {
         name = p.getPromptBasic().getDisplayName();
         desc = p.getPromptBasic().getDescription();
-        status = p.getPromptBasic().getLatestVersion() == null ? SubmitStatus.DRAFT : SubmitStatus.SUBMITTED;
+        status = StringUtils.isEmpty(p.getPromptBasic().getLatestVersion()) ? SubmitStatus.DRAFT : SubmitStatus.SUBMITTED;
       }
 
       EvalTarget target = new EvalTarget();
@@ -358,7 +361,7 @@ public class PromptSourceEvalTargetServiceImpl implements ISourceEvalTargetOpera
     SubmitStatus status = SubmitStatus.DRAFT;
     if (prompt.getPromptBasic() != null) {
       name = prompt.getPromptBasic().getDisplayName();
-      status = prompt.getPromptBasic().getLatestVersion() == null ? SubmitStatus.DRAFT : SubmitStatus.SUBMITTED;
+      status = StringUtils.isEmpty(prompt.getPromptBasic().getLatestVersion()) ? SubmitStatus.DRAFT : SubmitStatus.SUBMITTED;
     }
 
     ListPromptVersionParam versionParam = new ListPromptVersionParam();

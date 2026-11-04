@@ -122,6 +122,7 @@ public class PromptRPCAdapter implements IPromptRPCAdapter {
     req.setPageNum(param.getPage());
     req.setPageSize(param.getPageSize());
     req.setKeyWord(param.getKeyWord());
+    req.setCommittedOnly(param.getCommittedOnly());
 
     ListPromptResponse resp = promptManageService.listPrompt(req);
     if (resp == null) {
