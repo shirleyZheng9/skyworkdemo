@@ -129,6 +129,10 @@ public class EvaluatorServiceImpl implements EvaluatorService {
       injectUserInfo(evaluator);
       return evaluatorRepo.createEvaluator(evaluator);
     }
+    catch (BssException e) {
+      // 业务异常（如名称重复）原样抛出，保持提示信息干净
+      throw e;
+    }
     catch (Exception e) {
       throw new BssException("创建评估器失败: " + e.getMessage(), e);
     }

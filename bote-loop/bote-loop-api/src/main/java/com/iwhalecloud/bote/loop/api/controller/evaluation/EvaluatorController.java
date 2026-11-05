@@ -71,7 +71,13 @@ public class EvaluatorController {
   @PostMapping("createEvaluator")
   @Operation(summary = "创建评测器")
   public ResultVO<CreateEvaluatorResponse> createEvaluator(@RequestBody CreateEvaluatorRequest request) {
-    return ResultVO.success(evaluatorApplicationService.createEvaluator(request));
+    try {
+      return ResultVO.success(evaluatorApplicationService.createEvaluator(request));
+    }
+    catch (BssException e) {
+      // 业务异常（如名称重复）直接返回提示信息，避免前端收到 500
+      return ResultVO.fail(e.getFailMsg());
+    }
   }
 
   /**
