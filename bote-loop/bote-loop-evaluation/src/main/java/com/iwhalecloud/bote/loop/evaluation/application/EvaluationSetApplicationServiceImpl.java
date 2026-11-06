@@ -426,9 +426,11 @@ public class EvaluationSetApplicationServiceImpl implements EvaluationSetApplica
     }
 
     List<EvaluationSetItem> items = EvaluationSetItemApplicationConvertor.convertItemDTO2DOs(request.getItems());
-    // 必填项校验（TGAIP-650）
+    // 必填项校验（TGAIP-650）：schema 标记必填的字段，以及 input 字段（无论 schema 是否标记）都不能为空
     List<FieldSchema> requiredFields = set.getEvaluationSetVersion().getEvaluationSetSchema().getFieldSchemas().stream()
-      .filter(f -> Boolean.TRUE.equals(f.getIsRequired()) && f.getStatus() != FieldStatus.DELETED).toList();
+      .filter(f -> (Boolean.TRUE.equals(f.getIsRequired()) || "input".equals(f.getKey()) || "input".equals(f.getName()))
+        && f.getStatus() != FieldStatus.DELETED)
+      .toList();
     for (EvaluationSetItem item : items) {
       for (Turn turn : item.getTurns()) {
         for (FieldSchema field : requiredFields) {
