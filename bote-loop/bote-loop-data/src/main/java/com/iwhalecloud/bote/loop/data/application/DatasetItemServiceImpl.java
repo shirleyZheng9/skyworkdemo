@@ -165,7 +165,8 @@ public class DatasetItemServiceImpl implements DatasetItemService {
       return;
     }
     List<FieldSchema> requiredFields = datasetWithSchema.getSchema().getAvailableFields().stream()
-      .filter(field -> Boolean.TRUE.equals(field.getIsRequired()))
+      // input 字段无论 schema 是否标记必填，都不能为空（与新增 batch_create 的 TGAIP-650 校验保持一致）
+      .filter(field -> Boolean.TRUE.equals(field.getIsRequired()) || "input".equals(field.getKey()) || "input".equals(field.getName()))
       .toList();
     if (requiredFields.isEmpty()) {
       return;
